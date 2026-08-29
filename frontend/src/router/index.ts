@@ -46,7 +46,7 @@ const routes: RouteRecordRaw[] = [
     path: '/auctions',
     name: 'LiveAuctions',
     component: LiveAuctionsPage,
-    alias: ['/canlı-aaçıtmalar', '/canli-acik-artirmalar', '/canlı-açık-artırmalar', '/canli-aacitmalar'],
+    alias: ['/canli-acik-artirmalar', '/canlı-açık-artırmalar'],
     meta: { titleKey: 'nav.auctions', requiresAuth: false }
   },
   {
@@ -69,7 +69,7 @@ const routes: RouteRecordRaw[] = [
     name: 'Sell',
     component: SellPage,
     alias: ['/sat', '/ilan-ver'],
-    meta: { titleKey: 'sell.title', requiresAuth: false }
+    meta: { titleKey: 'sell.title', requiresAuth: true }
   },
   {
     path: '/dashboard/:tab?',
@@ -97,7 +97,7 @@ const routes: RouteRecordRaw[] = [
     path: '/how-it-works',
     name: 'HowItWorks',
     component: HowItWorksPage,
-    alias: ['/nasil-calisir', '/nasıl-calışır', '/nasıl-çalışır'],
+    alias: ['/nasil-calisir', '/nasıl-çalışır'],
     meta: { titleKey: 'howItWorks.title', requiresAuth: false }
   },
   {
@@ -225,9 +225,8 @@ const router = createRouter({
 // never via /admin on the main domain — this SPA ships one bundle for both hosts,
 // so the split is enforced here at the router level (server-side JWT role checks
 // in server/src/routes/adminRoutes.ts remain the real authorization boundary).
-const isAdminHost = typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')
-
 router.beforeEach((to, _from, next) => {
+  const isAdminHost = typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
   const userJson = typeof window !== 'undefined' ? localStorage.getItem('user') : null
   let user: any = null
@@ -258,7 +257,7 @@ router.beforeEach((to, _from, next) => {
   // Admin route check
   if (isAdminRoute) {
     // If not logged in and no token in localStorage, redirect to login
-    if (!token && !user) {
+    if (!token || !user) {
       return next({ path: '/login', query: { redirect: to.fullPath } })
     }
     // If user exists and has a non-staff role (e.g. standard buyer/seller)
@@ -271,7 +270,7 @@ router.beforeEach((to, _from, next) => {
 
   // General auth route check
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!token && !user) {
+    if (!token || !user) {
       return next({ path: '/login', query: { redirect: to.fullPath } })
     }
   }

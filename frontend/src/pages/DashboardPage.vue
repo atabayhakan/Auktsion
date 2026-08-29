@@ -39,10 +39,6 @@ const uiStore = useUIStore()
 const { t } = useI18n()
 const { currency, date, status: statusLabels } = useFormatters()
 
-// Active tab synced with route
-const route = router.currentRoute.value
-const activeTab = ref(route.params.tab || 'overview')
-
 const tabs = computed(() => [
   { id: 'overview', label: t('dashboard.overview'), icon: LayoutDashboard, path: '/dashboard/overview' },
   { id: 'listings', label: t('dashboard.myListings'), icon: Store, path: '/dashboard/listings' },
@@ -55,6 +51,15 @@ const tabs = computed(() => [
   { id: 'settings', label: t('dashboard.settings'), icon: Settings, path: '/dashboard/settings' },
 ])
 
+// Active tab synced with route (with validation)
+const route = router.currentRoute.value
+const validTabIds = new Set(tabs.value.map(t => t.id))
+const initialTab = route.params.tab as string | undefined
+const activeTab = ref(validTabIds.has(initialTab as string) ? (initialTab as string) : 'overview')
+if (initialTab && !validTabIds.has(initialTab)) {
+  router.replace('/dashboard/overview')
+}
+
 // Sync tab with route
 watch(activeTab, (newTab) => {
   const tab = tabs.value.find(t => t.id === newTab)
@@ -66,6 +71,8 @@ watch(activeTab, (newTab) => {
 watch(() => router.currentRoute.value.params.tab, (newTab) => {
   if (newTab && tabs.value.some(t => t.id === newTab)) {
     activeTab.value = newTab as string
+  } else if (newTab && !validTabIds.has(newTab as string)) {
+    router.replace('/dashboard/overview')
   }
 })
 

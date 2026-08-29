@@ -8,6 +8,8 @@ import Badge from '@/components/ui/Badge.vue'
 interface Props {
   payment: {
     id: string
+    auctionId?: string
+    auction_id?: string
     auctionTitle: string
     amount: { amount: string; minorUnits: number; currency: string; formatted: string }
     gateway: string
@@ -48,9 +50,10 @@ const gatewayInfo = computed(() => getPaymentGatewayInfo(props.payment.gateway))
     <!-- Payment Details -->
     <div class="flex-1 min-w-0">
       <div class="flex items-center gap-3 mb-1">
-        <RouterLink :to="`/auctions/${payment.id}`" class="text-text-primary font-medium truncate hover:text-primary transition-colors">
+        <RouterLink v-if="payment.auctionId || payment.auction_id" :to="`/auctions/${payment.auctionId || payment.auction_id}`" class="text-text-primary font-medium truncate hover:text-primary transition-colors">
           {{ payment.auctionTitle }}
         </RouterLink>
+        <span v-else class="text-text-primary font-medium truncate">{{ payment.auctionTitle }}</span>
         <Badge :variant="gatewayInfo.color === '#0052CC' ? 'info' : gatewayInfo.color === '#E60012' ? 'danger' : gatewayInfo.color === '#00A651' ? 'success' : 'info'" size="sm">
           {{ gatewayInfo.name }}
         </Badge>

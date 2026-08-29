@@ -45,7 +45,8 @@ const breadcrumbs = computed(() => {
     kyc: t('admin.nav.kyc'),
     financials: t('admin.nav.financials'),
     monitoring: t('admin.nav.monitoring'),
-    analytics: t('admin.nav.analytics')
+    analytics: t('admin.nav.analytics'),
+    media: t('admin.nav.media')
   }
 
   return parts.map((p, idx) => ({

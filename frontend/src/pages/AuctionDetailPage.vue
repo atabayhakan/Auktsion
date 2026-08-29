@@ -164,7 +164,7 @@ async function handleBuyNow() {
     const updated = res?.data || res?.auction
     if (updated) auction.value = updated
     uiStore.toastSuccess(t('toasts.success'), t('auctionDetail.buyNow') + ' — ' + t('paymentModal.successDescription'))
-    router.push('/dashboard?tab=payouts')
+    router.push('/dashboard/payouts')
   } catch (err: any) {
     const msg = err?.response?.data?.error || err?.data?.error || err?.message || t('common.error')
     uiStore.toastWarning(t('toasts.warning'), msg)
