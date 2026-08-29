@@ -97,10 +97,10 @@ export async function login(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    if (user.status === 'banned') {
+    if (user.status === 'banned' || user.status === 'suspended') {
       res.status(403).json({
         success: false,
-        error: 'Сиздин аккаунтуңуз бөгөттөлгөн (Account is banned)',
+        error: 'Сиздин аккаунтуңуз бөгөттөлгөн (Account is banned or suspended)',
       });
       return;
     }

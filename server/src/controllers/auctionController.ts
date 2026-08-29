@@ -178,17 +178,26 @@ export async function deleteAuction(req: Request, res: Response): Promise<void> 
 export async function placeBid(req: Request, res: Response): Promise<void> {
   try {
     const auctionId = req.params.id;
-    const { amount } = req.body;
+    const { amount, amount_minor } = req.body;
 
-    if (!amount || Number(amount) <= 0) {
-      res.status(400).json({
-        success: false,
-        error: 'Туура коюм суммасын жазыңыз (Valid bid amount required)',
-      });
+    let amountMinor: number;
+    if (amount_minor !== undefined && amount_minor !== null && amount_minor !== '') {
+      amountMinor = Number(amount_minor);
+      if (!Number.isFinite(amountMinor) || !Number.isInteger(amountMinor) || amountMinor <= 0) {
+        res.status(400).json({ success: false, error: 'Туура коюм суммасын жазыңыз (Valid bid amount required)' });
+        return;
+      }
+    } else if (amount !== undefined && amount !== null && amount !== '') {
+      const amt = Number(amount);
+      if (!Number.isFinite(amt) || amt <= 0) {
+        res.status(400).json({ success: false, error: 'Туура коюм суммасын жазыңыз (Valid bid amount required)' });
+        return;
+      }
+      amountMinor = Math.round(amt * 100);
+    } else {
+      res.status(400).json({ success: false, error: 'Туура коюм суммасын жазыңыз (Valid bid amount required)' });
       return;
     }
-
-    const amountMinor = Math.round(Number(amount) * 100);
     const ipAddress = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress;
 
     const result = placeBidAtomic(auctionId, req.user!.id, amountMinor, ipAddress);

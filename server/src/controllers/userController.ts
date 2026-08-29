@@ -245,6 +245,10 @@ export async function getKyc(req: Request, res: Response): Promise<void> {
 export async function submitKyc(req: Request, res: Response): Promise<void> {
   try {
     const { inn, idFrontUrl, idBackUrl, selfieUrl, proofOfAddressUrl } = req.body;
+    if (inn && !/^\d{14}$/.test(String(inn))) {
+      res.status(400).json({ success: false, error: 'INN 14 сандан турушу керек (INN must be 14 digits)' });
+      return;
+    }
     const kyc = submitKycVerification({
       userId: req.user!.id,
       inn,
@@ -285,6 +289,11 @@ export async function addPayoutMethod(req: Request, res: Response): Promise<void
         success: false,
         error: 'Банк, эсеп номери жана ээсинин аты милдеттүү (bankCode, accountNumber, and accountHolderName required)',
       });
+      return;
+    }
+    const allowedBanks = ['mbank', 'optima', 'demirbank', 'elqr', 'o_nom'];
+    if (!allowedBanks.includes(String(bankCode).toLowerCase())) {
+      res.status(400).json({ success: false, error: 'Жараксыз банк коду (Invalid bankCode)' });
       return;
     }
 
@@ -333,17 +342,26 @@ export async function getPayouts(req: Request, res: Response): Promise<void> {
 
 export async function requestPayout(req: Request, res: Response): Promise<void> {
   try {
-    const { amount, payoutMethodId } = req.body;
+    const { amount, amount_minor, payoutMethodId } = req.body;
 
-    if (!amount || amount <= 0) {
-      res.status(400).json({
-        success: false,
-        error: 'Туура сумманы жазыңыз (Valid amount required)',
-      });
+    let amountMinor: number;
+    if (amount_minor !== undefined && amount_minor !== null && amount_minor !== '') {
+      amountMinor = Number(amount_minor);
+      if (!Number.isFinite(amountMinor) || !Number.isInteger(amountMinor) || amountMinor <= 0) {
+        res.status(400).json({ success: false, error: 'Туура сумманы жазыңыз (Valid amount required)' });
+        return;
+      }
+    } else if (amount !== undefined && amount !== null && amount !== '') {
+      const amt = Number(amount);
+      if (!Number.isFinite(amt) || amt <= 0) {
+        res.status(400).json({ success: false, error: 'Туура сумманы жазыңыз (Valid amount required)' });
+        return;
+      }
+      amountMinor = Math.round(amt * 100);
+    } else {
+      res.status(400).json({ success: false, error: 'Туура сумманы жазыңыз (Valid amount required)' });
       return;
     }
-
-    const amountMinor = Math.round(Number(amount) * 100);
     const payout = createPayoutRequest({
       userId: req.user!.id,
       payoutMethodId,
