@@ -1,0 +1,87 @@
+version: "3.9"
+
+services:
+  # ---- App: PHP-FPM + Nginx ----
+  app:
+    image: auktsion/app:latest
+    build:
+      context: ./docker/app
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+      - redis
+      - kafka
+    networks: [backend]
+
+  queue:
+    image: auktsion/app:latest
+    command: php artisan queue:work redis --queue=high,default,low --tries=3 --timeout=60
+    depends_on:
+      - redis
+      - app
+    networks: [backend]
+
+  scheduler:
+    image: auktsion/app:latest
+    command: php artisan schedule:work
+    depends_on: [app]
+    networks: [backend]
+
+  soketi:
+    image: quay.io/soketi/soketi:latest
+    ports:
+      - "6001:6001"
+      - "9601:9601"
+    environment:
+      SOKETI_DEFAULT_APP_ID: ${SOKETI_APP_ID:-auktsion}
+      SOKETI_DEFAULT_APP_KEY: ${SOKETI_APP_KEY}
+      SOKETI_DEFAULT_APP_SECRET: ${SOKETI_APP_SECRET}
+    networks: [backend]
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes: [redis_data:/data]
+    networks: [backend]
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: auktsion
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes: [mysql_data:/var/lib/mysql]
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks: [backend]
+
+  kafka:
+    image: bitnami/kafka:3.6
+    environment:
+      KAFKA_CFG_NODE_ID: 0
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
+    ports:
+      - "9092:9092"
+    volumes: [kafka_data:/bitnami/kafka]
+    networks: [backend]
+
+  meilisearch:
+    image: bitnami/meilisearch:latest
+    ports:
+      - "7700:7700"
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+    volumes: [meili_data:/bitnami/meilisearch]
+    networks: [backend]
+
+volumes:
+  redis_data:
+  mysql_data:
+  kafka_data:
+  meili_data:
+
+networks:
+  backend:
+    driver: bridge

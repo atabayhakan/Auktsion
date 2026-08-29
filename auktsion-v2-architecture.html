@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auktsion v2.0 — Kırgızistan Mimari Diyagramı</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #020617;
+      min-height: 100vh;
+      padding: 2rem;
+      color: white;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    .header { margin-bottom: 2rem; }
+    .header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .pulse-dot { width: 12px; height: 12px; background: #22d3ee; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; }
+    .subtitle { color: #94a3b8; font-size: 0.875rem; margin-left: 1.75rem; }
+    .diagram-container {
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 1rem;
+      border: 1px solid #1e293b;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+    svg { width: 100%; min-width: 1200px; display: block; }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 0.75rem;
+      border: 1px solid #1e293b;
+      padding: 1.25rem;
+    }
+    .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .card-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .card-dot.cyan { background: #22d3ee; }
+    .card-dot.emerald { background: #34d399; }
+    .card-dot.violet { background: #a78bfa; }
+    .card-dot.amber { background: #fbbf24; }
+    .card-dot.rose { background: #fb7185; }
+    .card-dot.orange { background: #fb923c; }
+    .card h3 { font-size: 0.875rem; font-weight: 600; }
+    .card ul { list-style: none; color: #94a3b8; font-size: 0.75rem; }
+    .card li { margin-bottom: 0.375rem; }
+    .footer { text-align: center; margin-top: 1.5rem; color: #475569; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-row">
+        <div class="pulse-dot"></div>
+        <h1>Auktsion v2.0 — Kırgızistan Gerçek Zamanlı Açık Artırma Mimari</h1>
+      </div>
+      <p class="subtitle">KGS Para Birimi · MBank/Optima/DemirBank · KYC/AML · Soketi+Kafka · Bishkek POP</p>
+    </div>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1200 900">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+          </marker>
+          <marker id="arrowhead-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee" />
+          </marker>
+          <marker id="arrowhead-rose" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#fb7185" />
+          </marker>
+          <marker id="arrowhead-amber" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#fbbf24" />
+          </marker>
+          <marker id="arrowhead-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#fb923c" />
+          </marker>
+          <marker id="arrowhead-emerald" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#34d399" />
+          </marker>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
+        <!-- ===== KI RGIZISTAN COĞRAFİK SINIR ===== -->
+        <rect x="20" y="20" width="1160" height="860" rx="12" fill="rgba(120, 53, 15, 0.05)" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="12,4"/>
+        <text x="34" y="42" fill="#fbbf24" font-size="11" font-weight="600">🇰🇬 Kırgızistan — Bishkek DC (AS-KG)</text>
+
+        <!-- ===== CDN / EDGE KATMANI ===== -->
+        <rect x="20" y="55" width="1160" height="75" rx="8" fill="rgba(8, 51, 68, 0.2)" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="34" y="73" fill="#22d3ee" font-size="9" font-weight="600">CDN / EDGE LAYER — Cloudflare POP: Bishkek (FRU) + Almaty (ALA)</text>
+
+        <rect x="40" y="82" width="140" height="40" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="110" y="100" fill="white" font-size="10" font-weight="600" text-anchor="middle">Cloudflare CDN</text>
+        <text x="110" y="114" fill="#94a3b8" font-size="8" text-anchor="middle">KG POP · Static + API Cache</text>
+
+        <rect x="200" y="82" width="140" height="40" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="270" y="100" fill="white" font-size="10" font-weight="600" text-anchor="middle">WAF + DDoS</text>
+        <text x="270" y="114" fill="#94a3b8" font-size="8" text-anchor="middle">Rate Limit · GeoIP (KG)</text>
+
+        <rect x="360" y="82" width="140" height="40" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="430" y="100" fill="white" font-size="10" font-weight="600" text-anchor="middle">TLS 1.3 Termination</text>
+        <text x="430" y="114" fill="#94a3b8" font-size="8" text-anchor="middle">HSTS · OCSP Stapling</text>
+
+        <rect x="520" y="82" width="160" height="40" rx="6" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="600" y="100" fill="white" font-size="10" font-weight="600" text-anchor="middle">Soketi WS Gateway</text>
+        <text x="600" y="114" fill="#94a3b8" font-size="8" text-anchor="middle">Port 6001 · WSS · <30ms RTT</text>
+
+        <rect x="700" y="82" width="160" height="40" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="780" y="100" fill="white" font-size="10" font-weight="600" text-anchor="middle">SMS Gateway (KG)</text>
+        <text x="780" y="114" fill="#94a3b8" font-size="8" text-anchor="middle">Megacom · Beeline · O!;</text>
+
+        <rect x="880" y="82" width="160" height="40" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="960" y="100" fill="white" font-size="10" font-weight="600" text-anchor="middle">GeoIP / VPN Block</text>
+        <text x="960" y="114" fill="#94a3b8" font-size="8" text-anchor="middle">MaxMind · KG-only bids</text>
+
+        <rect x="1060" y="82" width="110" height="40" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="1115" y="100" fill="white" font-size="10" font-weight="600" text-anchor="middle">reCAPTCHA</text>
+        <text x="1115" y="114" fill="#94a3b8" font-size="8" text-anchor="middle">v3 Score-based</text>
+
+        <!-- ===== PRESENTATION LAYER ===== -->
+        <rect x="20" y="145" width="1160" height="100" rx="8" fill="rgba(6, 78, 59, 0.15)" stroke="#34d399" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="34" y="163" fill="#34d399" font-size="9" font-weight="600">PRESENTATION LAYER</text>
+
+        <rect x="40" y="175" width="200" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="140" y="195" fill="white" font-size="11" font-weight="600" text-anchor="middle">Inertia.js + Vue 3</text>
+        <text x="140" y="210" fill="#94a3b8" font-size="8" text-anchor="middle">SSR · SEO · Bishkek latency</text>
+        <text x="140" y="224" fill="#22d3ee" font-size="7" text-anchor="middle">auktsion.kg</text>
+
+        <rect x="270" y="175" width="180" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="360" y="195" fill="white" font-size="11" font-weight="600" text-anchor="middle">Laravel Echo Client</text>
+        <text x="360" y="210" fill="#94a3b8" font-size="8" text-anchor="middle">WSS → Soketi · Reconnect</text>
+        <text x="360" y="224" fill="#22d3ee" font-size="7" text-anchor="middle">auction.{id} private channel</text>
+
+        <rect x="480" y="175" width="180" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="570" y="195" fill="white" font-size="11" font-weight="600" text-anchor="middle">REST API (Sanctum)</text>
+        <text x="570" y="210" fill="#94a3b8" font-size="8" text-anchor="middle">Mobile App · 3rd Party</text>
+        <text x="570" y="224" fill="#22d3ee" font-size="7" text-anchor="middle">api.auktsion.kg/v1</text>
+
+        <rect x="690" y="175" width="150" height="60" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="765" y="195" fill="white" font-size="11" font-weight="600" text-anchor="middle">KYC UI Wizard</text>
+        <text x="765" y="210" fill="#94a3b8" font-size="8" text-anchor="middle">Passport · INN · Selfie</text>
+        <text x="765" y="224" fill="#fb7185" font-size="7" text-anchor="middle">KYC/AML Step 1-3</text>
+
+        <rect x="870" y="175" width="150" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="945" y="195" fill="white" font-size="11" font-weight="600" text-anchor="middle">Admin Dashboard</text>
+        <text x="945" y="210" fill="#94a3b8" font-size="8" text-anchor="middle">Filament 3.x</text>
+        <text x="945" y="224" fill="#22d3ee" font-size="7" text-anchor="middle">admin.auktsion.kg</text>
+
+        <rect x="1050" y="175" width="120" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="1110" y="195" fill="white" font-size="11" font-weight="600" text-anchor="middle">PWA Shell</text>
+        <text x="1110" y="210" fill="#94a3b8" font-size="8" text-anchor="middle">Offline · Push</text>
+        <text x="1110" y="224" fill="#22d3ee" font-size="7" text-anchor="middle">Workbox</text>
+
+        <!-- ===== APPLICATION LAYER ===== -->
+        <rect x="20" y="260" width="1160" height="100" rx="8" fill="rgba(6, 78, 59, 0.15)" stroke="#34d399" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="34" y="278" fill="#34d399" font-size="9" font-weight="600">APPLICATION LAYER — Actions (Use Cases) + Controllers</text>
+
+        <rect x="40" y="290" width="130" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="105" y="308" fill="white" font-size="10" font-weight="600" text-anchor="middle">PlaceBidAction</text>
+        <text x="105" y="322" fill="#94a3b8" font-size="7" text-anchor="middle">Atomic TX · Race-safe</text>
+        <text x="105" y="334" fill="#34d399" font-size="7" text-anchor="middle">Optimistic Lock v2</text>
+
+        <rect x="185" y="290" width="130" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="250" y="308" fill="white" font-size="10" font-weight="600" text-anchor="middle">PaymentAction</text>
+        <text x="250" y="322" fill="#94a3b8" font-size="7" text-anchor="middle">Escrow · 3 Gateway</text>
+        <text x="250" y="334" fill="#34d399" font-size="7" text-anchor="middle">MBank/Optima/Demir</text>
+
+        <rect x="330" y="290" width="130" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="395" y="308" fill="white" font-size="10" font-weight="600" text-anchor="middle">PayoutAction</text>
+        <text x="395" y="322" fill="#94a3b8" font-size="7" text-anchor="middle">Bank Transfer · KYC</text>
+        <text x="395" y="334" fill="#34d399" font-size="7" text-anchor="middle">ELSIBIR/Uniper</text>
+
+        <rect x="475" y="290" width="130" height="60" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="540" y="308" fill="white" font-size="10" font-weight="600" text-anchor="middle">KycVerifyAction</text>
+        <text x="540" y="322" fill="#94a3b8" font-size="7" text-anchor="middle">INN · Passport · Address</text>
+        <text x="540" y="334" fill="#fb7185" font-size="7" text-anchor="middle">KG Mevzuat uyum</text>
+
+        <rect x="620" y="290" width="130" height="60" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="685" y="308" fill="white" font-size="10" font-weight="600" text-anchor="middle">FraudCheckAction</text>
+        <text x="685" y="322" fill="#94a3b8" font-size="7" text-anchor="middle">Velocity · Pattern</text>
+        <text x="685" y="334" fill="#fb7185" font-size="7" text-anchor="middle">Real-time + Batch</text>
+
+        <rect x="765" y="290" width="130" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="830" y="308" fill="white" font-size="10" font-weight="600" text-anchor="middle">AuctionEndAction</text>
+        <text x="830" y="322" fill="#94a3b8" font-size="7" text-anchor="middle">Cron + Event-driven</text>
+        <text x="830" y="334" fill="#34d399" font-size="7" text-anchor="middle">Soft-close logic</text>
+
+        <rect x="910" y="290" width="130" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="975" y="308" fill="white" font-size="10" font-weight="600" text-anchor="middle">NotifyAction</text>
+        <text x="975" y="322" fill="#94a3b8" font-size="7" text-anchor="middle">SMS · Email · Push</text>
+        <text x="975" y="334" fill="#34d399" font-size="7" text-anchor="middle">Multi-channel</text>
+
+        <rect x="1055" y="290" width="115" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="1112" y="308" fill="white" font-size="10" font-weight="600" text-anchor="middle">ReportAction</text>
+        <text x="1112" y="322" fill="#94a3b8" font-size="7" text-anchor="middle">Analytics · Audit</text>
+        <text x="1112" y="334" fill="#34d399" font-size="7" text-anchor="middle">KG Tax reports</text>
+
+        <!-- ===== DOMAIN LAYER ===== -->
+        <rect x="20" y="375" width="1160" height="100" rx="8" fill="rgba(76, 29, 149, 0.15)" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="34" y="393" fill="#a78bfa" font-size="9" font-weight="600">DOMAIN LAYER — Aggregates · Value Objects · Domain Events · Enums (KG-optimized)</text>
+
+        <rect x="40" y="405" width="140" height="60" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="110" y="423" fill="white" font-size="10" font-weight="600" text-anchor="middle">Auction Aggregate</text>
+        <text x="110" y="437" fill="#94a3b8" font-size="7" text-anchor="middle">Bid rules · Soft-close</text>
+        <text x="110" y="449" fill="#a78bfa" font-size="7" text-anchor="middle">Version (Optimistic)</text>
+
+        <rect x="195" y="405" width="120" height="60" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="255" y="423" fill="white" font-size="10" font-weight="600" text-anchor="middle">Bid Aggregate</text>
+        <text x="255" y="437" fill="#94a3b8" font-size="7" text-anchor="middle">Amount · Sequence</text>
+        <text x="255" y="449" fill="#a78bfa" font-size="7" text-anchor="middle">ULID ordered</text>
+
+        <rect x="330" y="405" width="140" height="60" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="400" y="423" fill="white" font-size="10" font-weight="600" text-anchor="middle">Money VO</text>
+        <text x="400" y="437" fill="#94a3b8" font-size="7" text-anchor="middle">KGS default · TRY/USD</text>
+        <text x="400" y="449" fill="#a78bfa" font-size="7" text-anchor="middle">brick/money · som</text>
+
+        <rect x="485" y="405" width="140" height="60" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="555" y="423" fill="white" font-size="10" font-weight="600" text-anchor="middle">KYC Profile</text>
+        <text x="555" y="437" fill="#94a3b8" font-size="7" text-anchor="middle">INN · Passport · Address</text>
+        <text x="555" y="449" fill="#fb7185" font-size="7" text-anchor="middle">KG Mevzuat uyum</text>
+
+        <rect x="640" y="405" width="140" height="60" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="710" y="423" fill="white" font-size="10" font-weight="600" text-anchor="middle">Domain Events</text>
+        <text x="710" y="437" fill="#94a3b8" font-size="7" text-anchor="middle">BidPlaced · AuctionEnd</text>
+        <text x="710" y="449" fill="#a78bfa" font-size="7" text-anchor="middle">PaymentReceived</text>
+
+        <rect x="795" y="405" width="120" height="60" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="855" y="423" fill="white" font-size="10" font-weight="600" text-anchor="middle">Enums (KG)</text>
+        <text x="855" y="437" fill="#94a3b8" font-size="7" text-anchor="middle">Bank · Status · Currency</text>
+        <text x="855" y="449" fill="#a78bfa" font-size="7" text-anchor="middle">PaymentGateway enum</text>
+
+        <rect x="930" y="405" width="120" height="60" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="990" y="423" fill="white" font-size="10" font-weight="600" text-anchor="middle">Fraud Rules</text>
+        <text x="990" y="437" fill="#94a3b8" font-size="7" text-anchor="middle">Velocity · IP · Device</text>
+        <text x="990" y="449" fill="#fb7185" font-size="7" text-anchor="middle">KG-specific patterns</text>
+
+        <rect x="1065" y="405" width="105" height="60" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="1117" y="423" fill="white" font-size="10" font-weight="600" text-anchor="middle">Payout VO</text>
+        <text x="1117" y="437" fill="#94a3b8" font-size="7" text-anchor="middle">BankCode · Account</text>
+        <text x="1117" y="449" fill="#a78bfa" font-size="7" text-anchor="middle">BIC/SWIFT</text>
+
+        <!-- ===== KAFKA EVENT BUS (Orion Pattern) ===== -->
+        <rect x="40" y="490" width="1120" height="55" rx="8" fill="rgba(251, 146, 60, 0.2)" stroke="#fb923c" stroke-width="2"/>
+        <text x="600" y="509" fill="#fb923c" font-size="11" font-weight="700" text-anchor="middle">⚡ KAFKA EVENT BUS — Topics: auktsion.bids · auktsion.payments · auktsion.payouts · auktsion.fraud · auktsion.audit</text>
+        <text x="600" y="528" fill="#94a3b8" font-size="8" text-anchor="middle">Partition by auction_id · Exactly-once semantics · Consumer groups: gateway-service · fraud-service · analytics-service · notification-service</text>
+
+        <!-- ===== INFRASTRUCTURE LAYER ===== -->
+        <rect x="20" y="560" width="1160" height="190" rx="8" fill="rgba(6, 78, 59, 0.15)" stroke="#34d399" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="34" y="578" fill="#34d399" font-size="9" font-weight="600">INFRASTRUCTURE LAYER</text>
+
+        <!-- Payment Gateways -->
+        <rect x="40" y="590" width="160" height="75" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="120" y="608" fill="white" font-size="10" font-weight="600" text-anchor="middle">MBankGateway</text>
+        <text x="120" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">REST API · QR Code</text>
+        <text x="120" y="634" fill="#94a3b8" font-size="7" text-anchor="middle">OAuth2 · P2P transfer</text>
+        <text x="120" y="648" fill="#fbbf24" font-size="7" text-anchor="middle">Payworld API · KGS</text>
+
+        <rect x="215" y="590" width="160" height="75" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="295" y="608" fill="white" font-size="10" font-weight="600" text-anchor="middle">OptimaGateway</text>
+        <text x="295" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">OpenAPI · Card Token</text>
+        <text x="295" y="634" fill="#94a3b8" font-size="7" text-anchor="middle">3-D Secure · Visa/MC</text>
+        <text x="295" y="648" fill="#fbbf24" font-size="7" text-anchor="middle">Optima Pay · KGS</text>
+
+        <rect x="390" y="590" width="160" height="75" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="470" y="608" fill="white" font-size="10" font-weight="600" text-anchor="middle">DemirBankGateway</text>
+        <text x="470" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">REST · E-Commerce</text>
+        <text x="470" y="634" fill="#94a3b8" font-size="7" text-anchor="middle">Webhook · HMAC-SHA256</text>
+        <text x="470" y="648" fill="#fbbf24" font-size="7" text-anchor="middle">DemirPay · KGS</text>
+
+        <!-- Payout -->
+        <rect x="565" y="590" width="160" height="75" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="645" y="608" fill="white" font-size="10" font-weight="600" text-anchor="middle">PayoutService</text>
+        <text x="645" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">ELSIBIR · Uniper KYC</text>
+        <text x="645" y="634" fill="#94a3b8" font-size="7" text-anchor="middle">Bank Transfer API</text>
+        <text x="645" y="648" fill="#34d399" font-size="7" text-anchor="middle">T+1 settlement · KGS</text>
+
+        <!-- KYC Services -->
+        <rect x="740" y="590" width="160" height="75" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="820" y="608" fill="white" font-size="10" font-weight="600" text-anchor="middle">KYC Service</text>
+        <text x="820" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">INN validation (SFB)</text>
+        <text x="820" y="634" fill="#94a3b8" font-size="7" text-anchor="middle">Passport OCR · Face match</text>
+        <text x="820" y="648" fill="#fb7185" font-size="7" text-anchor="middle">KG AML Law #74</text>
+
+        <!-- Notification -->
+        <rect x="915" y="590" width="145" height="75" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="987" y="608" fill="white" font-size="10" font-weight="600" text-anchor="middle">NotificationHub</text>
+        <text x="987" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">SMS (Megacom)</text>
+        <text x="987" y="634" fill="#94a3b8" font-size="7" text-anchor="middle">Email (Postmark)</text>
+        <text x="987" y="648" fill="#34d399" font-size="7" text-anchor="middle">Push (Web)</text>
+
+        <!-- Queue Workers -->
+        <rect x="1075" y="590" width="100" height="75" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="1125" y="608" fill="white" font-size="10" font-weight="600" text-anchor="middle">Queue Workers</text>
+        <text x="1125" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">Redis + Kafka</text>
+        <text x="1125" y="634" fill="#94a3b8" font-size="7" text-anchor="middle">3 priority queues</text>
+        <text x="1125" y="648" fill="#fbbf24" font-size="7" text-anchor="middle">Payout/Payment/SMS</text>
+
+        <!-- Kafka Consumer -->
+        <rect x="40" y="680" width="260" height="55" rx="6" fill="rgba(251, 146, 60, 0.25)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="170" y="700" fill="white" font-size="10" font-weight="600" text-anchor="middle">Kafka Consumer (Pisces equivalent)</text>
+        <text x="170" y="714" fill="#94a3b8" font-size="7" text-anchor="middle">BidEvent → Soketi WS broadcast</text>
+        <text x="170" y="726" fill="#fb923c" font-size="7" text-anchor="middle">Go microservice · Horizontal scale</text>
+
+        <!-- Search -->
+        <rect x="315" y="680" width="140" height="55" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="385" y="700" fill="white" font-size="10" font-weight="600" text-anchor="middle">Meilisearch</text>
+        <text x="385" y="714" fill="#94a3b8" font-size="7" text-anchor="middle">Full-text · RU/KK/KG</text>
+        <text x="385" y="726" fill="#fbbf24" font-size="7" text-anchor="middle">Scout driver</text>
+
+        <!-- Analytics -->
+        <rect x="470" y="680" width="140" height="55" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="540" y="700" fill="white" font-size="10" font-weight="600" text-anchor="middle">ClickHouse</text>
+        <text x="540" y="714" fill="#94a3b8" font-size="7" text-anchor="middle">Bid analytics · Revenue</text>
+        <text x="540" y="726" fill="#a78bfa" font-size="7" text-anchor="middle">Kafka → ClickHouse sink</text>
+
+        <!-- Media -->
+        <rect x="625" y="680" width="120" height="55" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="685" y="700" fill="white" font-size="10" font-weight="600" text-anchor="middle">MinIO / S3</text>
+        <text x="685" y="714" fill="#94a3b8" font-size="7" text-anchor="middle">Auction images</text>
+        <text x="685" y="726" fill="#fbbf24" font-size="7" text-anchor="middle">Bishkek region</text>
+
+        <!-- Scheduler -->
+        <rect x="760" y="680" width="120" height="55" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="820" y="700" fill="white" font-size="10" font-weight="600" text-anchor="middle">Scheduler</text>
+        <text x="820" y="714" fill="#94a3b8" font-size="7" text-anchor="middle">Cron · Every 1 min</text>
+        <text x="820" y="726" fill="#34d399" font-size="7" text-anchor="middle">Auction end check</text>
+
+        <!-- Redis -->
+        <rect x="895" y="680" width="120" height="55" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="955" y="700" fill="white" font-size="10" font-weight="600" text-anchor="middle">Redis 7</text>
+        <text x="955" y="714" fill="#94a3b8" font-size="7" text-anchor="middle">Cache · Locks</text>
+        <text x="955" y="726" fill="#a78bfa" font-size="7" text-anchor="middle">Bid sequence · Sessions</text>
+
+        <!-- Audit -->
+        <rect x="1030" y="680" width="145" height="55" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="1102" y="700" fill="white" font-size="10" font-weight="600" text-anchor="middle">Audit Log</text>
+        <text x="1102" y="714" fill="#94a3b8" font-size="7" text-anchor="middle">Immutable · Append-only</text>
+        <text x="1102" y="726" fill="#fb7185" font-size="7" text-anchor="middle">KG Tax / AML compliance</text>
+
+        <!-- ===== DATA LAYER ===== -->
+        <rect x="20" y="765" width="1160" height="100" rx="8" fill="rgba(76, 29, 149, 0.15)" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="34" y="783" fill="#a78bfa" font-size="9" font-weight="600">DATA LAYER — Bishkek Datacenter</text>
+
+        <rect x="40" y="795" width="260" height="60" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="170" y="815" fill="white" font-size="11" font-weight="600" text-anchor="middle">MySQL 8.0 (Primary + Read Replicas)</text>
+        <text x="170" y="830" fill="#94a3b8" font-size="8" text-anchor="middle">auctions · bids · payments · payouts</text>
+        <text x="170" y="844" fill="#a78bfa" font-size="7" text-anchor="middle">users · kyc_profiles · fraud_events · utf8mb4_kg_0900_ai_ci</text>
+
+        <rect x="320" y="795" width="200" height="60" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="420" y="815" fill="white" font-size="11" font-weight="600" text-anchor="middle">Kafka 3.x Cluster</text>
+        <text x="420" y="830" fill="#94a3b8" font-size="8" text-anchor="middle">3 Brokers · ZK-less (KRaft)</text>
+        <text x="420" y="844" fill="#a78bfa" font-size="7" text-anchor="middle">5 topics · 3 partitions each · RF=2</text>
+
+        <rect x="540" y="795" width="150" height="60" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="615" y="815" fill="white" font-size="11" font-weight="600" text-anchor="middle">Redis Cluster</text>
+        <text x="615" y="830" fill="#94a3b8" font-size="8" text-anchor="middle">3 nodes · HA</text>
+        <text x="615" y="844" fill="#a78bfa" font-size="7" text-anchor="middle">Sessions · Cache · Locks</text>
+
+        <rect x="710" y="795" width="160" height="60" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="790" y="815" fill="white" font-size="11" font-weight="600" text-anchor="middle">ClickHouse</text>
+        <text x="790" y="830" fill="#94a3b8" font-size="8" text-anchor="middle">Analytics · Real-time</text>
+        <text x="790" y="844" fill="#a78bfa" font-size="7" text-anchor="middle">Bid heatmaps · Revenue</text>
+
+        <rect x="890" y="795" width="140" height="60" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="960" y="815" fill="white" font-size="11" font-weight="600" text-anchor="middle">Meilisearch</text>
+        <text x="960" y="830" fill="#94a3b8" font-size="8" text-anchor="middle">Search index</text>
+        <text x="960" y="844" fill="#a78bfa" font-size="7" text-anchor="middle">RU · KK · EN analyzer</text>
+
+        <rect x="1050" y="795" width="125" height="60" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="1112" y="815" fill="white" font-size="11" font-weight="600" text-anchor="middle">MinIO</text>
+        <text x="1112" y="830" fill="#94a3b8" font-size="8" text-anchor="middle">S3-compatible</text>
+        <text x="1112" y="844" fill="#fbbf24" font-size="7" text-anchor="middle">Bishkek DC · 500GB</text>
+
+        <!-- ===== ARROWS ===== -->
+        <!-- CDN → Presentation -->
+        <line x1="600" y1="122" x2="140" y2="174" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrowhead-cyan)"/>
+        <line x1="600" y1="122" x2="570" y2="174" stroke="#22d3ee" stroke-width="1" opacity="0.5"/>
+        <!-- Presentation → App -->
+        <line x1="140" y1="235" x2="105" y2="289" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrowhead-emerald)"/>
+        <line x1="360" y1="235" x2="250" y2="289" stroke="#34d399" stroke-width="1" opacity="0.5"/>
+        <!-- App → Domain (implicit, shown minimal) -->
+        <line x1="105" y1="350" x2="110" y2="404" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
+        <!-- Domain → Kafka -->
+        <line x1="710" y1="465" x2="710" y2="489" stroke="#fb923c" stroke-width="2" marker-end="url(#arrowhead-orange)"/>
+        <line x1="400" y1="465" x2="400" y2="489" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arrowhead-orange)" opacity="0.6"/>
+        <!-- Kafka → Infra -->
+        <line x1="600" y1="545" x2="645" y2="589" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arrowhead-orange)"/>
+        <line x1="300" y1="545" x2="170" y2="589" stroke="#fb923c" stroke-width="1" opacity="0.5"/>
+        <!-- Kafka Consumer → Soketi -->
+        <line x1="170" y1="680" x2="600" y2="122" stroke="#fb923c" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
+        <!-- Infra → Data -->
+        <line x1="170" y1="855" x2="170" y2="795" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
+
+        <!-- ===== LEGEND ===== -->
+        <text x="930" y="808" fill="white" font-size="9" font-weight="600">Legend</text>
+        <rect x="930" y="814" width="14" height="9" rx="2" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="950" y="821" fill="#94a3b8" font-size="7">Frontend</text>
+        <rect x="930" y="827" width="14" height="9" rx="2" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="950" y="834" fill="#94a3b8" font-size="7">Backend/Action</text>
+        <rect x="1000" y="814" width="14" height="9" rx="2" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="1020" y="821" fill="#94a3b8" font-size="7">Domain/Data</text>
+        <rect x="1000" y="827" width="14" height="9" rx="2" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="1020" y="834" fill="#94a3b8" font-size="7">Bank/Cloud</text>
+        <rect x="1070" y="814" width="14" height="9" rx="2" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1"/>
+        <text x="1090" y="821" fill="#94a3b8" font-size="7">Security/KYC</text>
+        <rect x="1070" y="827" width="14" height="9" rx="2" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1"/>
+        <text x="1090" y="834" fill="#94a3b8" font-size="7">Event Bus</text>
+
+      </svg>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot amber"></div>
+          <h3>Banka Entegrasyonu (KGS)</h3>
+        </div>
+        <ul>
+          <li>• MBank: Payworld REST API · QR + P2P transfer</li>
+          <li>• Optima: OpenAPI · 3-D Secure · Kart tokenizasyon</li>
+          <li>• DemirBank: REST · E-Commerce · HMAC webhook</li>
+          <li>• Gateway Interface: 3 banka + genişletilebilir</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot rose"></div>
+          <h3>KYC / AML / Fraud</h3>
+        </div>
+        <ul>
+          <li>• KYC: INN (SFB) + Passport OCR + Selfie</li>
+          <li>• AML: KG Law #74 uyumu · Sanksiyon kontrolü</li>
+          <li>• Fraud: Velocity + IP/Geo + Device fingerprint</li>
+          <li>• SMS: Megacom/Beeline/O! doğrulama</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot orange"></div>
+          <h3>Real-time + Event Bus</h3>
+        </div>
+        <ul>
+          <li>• Soketi WSS: Bishkek DC · <30ms RTT</li>
+          <li>• Kafka 3.x: 5 topic · KRaft mode (ZK-less)</li>
+          <li>• Bid event: Atomic TX → Kafka → WS broadcast</li>
+          <li>• Consumer groups: gateway/fraud/analytics</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer">
+      Auktsion v2.0 · Kırgızistan · KGS · MBank/Optima/DemirBank · BidPulse + Devcraft Orion hibrit mimari · 14 Ağustos 2026
+    </p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Agents / local tooling (do not commit)
+.agents/
+.claude/
+.opencode/
+
+# Temp / cache
+.tmp_verify3/
+tmp/
+temp/
+.cache/
+.parcel-cache/
+.turbo/
+
+# Coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# Misc
+*.tsbuildinfo
+.eslintcache
+.stylelintcache

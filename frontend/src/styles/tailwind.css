@@ -1,0 +1,356 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Sunlit Sky Color Palette — replaces the previous Liquid Luster deep-gold theme,
+       see frontend/DESIGN_SYSTEM.md. Values sourced from a shadcn/ui "Sunlit Sky" theme
+       reference (Poppins, 0.625rem radius — both already matched the prior setup). */
+    --color-primary: 242 177 56;         /* #F2B138 Sunlit Gold - filled CTAs, on-primary is dark text */
+    --color-primary-hover: 224 158 34;   /* #E09E22 deeper gold on hover */
+    --color-primary-muted: 242 177 56 / 0.12;
+    --color-primary-container: 250 224 158;    /* #FAE09E light gold chip */
+    --color-on-primary-container: 133 92 8;    /* #855C08 text on a light-gold chip */
+
+    --color-secondary: 91 155 213;       /* #5B9BD5 Sunlit Blue - links, secondary buttons, focus */
+    --color-secondary-hover: 71 135 196;
+    --color-secondary-muted: 91 155 213 / 0.12;
+
+    --color-accent: 244 244 245;
+    --color-accent-hover: 234 234 236;
+
+    --color-background: 255 255 255;     /* #FFFFFF */
+    --color-surface: 255 255 255;
+    --color-surface-elevated: 255 255 255;
+
+    --color-text-primary: 24 24 27;      /* #18181B */
+    --color-text-secondary: 82 82 91;    /* #52525B */
+    --color-text-muted: 113 113 122;     /* #71717A */
+
+    --color-border: 228 228 231 / 0.8;   /* #E4E4E7 neutral outline */
+    --color-border-focus: 91 155 213;
+
+    --color-success: 34 197 94;
+    --color-warning: 255 193 7;
+    --color-error: 192 57 43;            /* #C0392B Destructive Red */
+
+    /* Liquid Glass Variables — Level 1 panel per DESIGN.md */
+    --glass-bg: 255 255 255 / 0.6;
+    --glass-border: 255 255 255 / 0.4;
+    --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+    --glass-blur: blur(20px);
+    --glass-blur-strong: blur(40px);
+  }
+
+  * {
+    @apply border-slate-200;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Poppins', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-[rgb(var(--color-background))] text-[rgb(var(--color-text-primary))] antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    @apply bg-[rgb(var(--color-primary))] text-[rgb(var(--color-text-primary))];
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-[rgb(var(--color-secondary))] ring-offset-2 ring-offset-white;
+  }
+
+  /* FOUT Prevention — titles never flash fallback font */
+  .fonts-pending .font-sans,
+  .fonts-pending h1, .fonts-pending h2, .fonts-pending h3,
+  .fonts-pending .text-2xl, .fonts-pending .text-3xl, .fonts-pending .text-4xl,
+  .fonts-pending .text-5xl, .fonts-pending .text-6xl {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+  }
+  .fonts-ready .font-sans,
+  .fonts-ready h1, .fonts-ready h2, .fonts-ready h3,
+  .fonts-ready .text-2xl, .fonts-ready .text-3xl, .fonts-ready .text-4xl,
+  .fonts-ready .text-5xl, .fonts-ready .text-6xl {
+    opacity: 1;
+  }
+
+  /* Respect prefers-reduced-motion globally */
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Horizontal overflow guard — body backstop */
+  body {
+    overflow-x: clip;
+  }
+}
+
+@layer components {
+  /* Liquid Glass Base */
+  .glass {
+    @apply relative overflow-hidden;
+    background: rgba(var(--glass-bg));
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(var(--glass-border));
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-strong {
+    background: rgba(var(--glass-bg));
+    -webkit-backdrop-filter: var(--glass-blur-strong);
+    backdrop-filter: var(--glass-blur-strong);
+  }
+
+  .glass::before {
+    content: '';
+    @apply absolute inset-0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.05) 100%);
+    pointer-events: none;
+  }
+
+  /* Liquid Button Variants */
+  .btn-liquid {
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[0.625rem] font-medium transition-all duration-300 ease-out;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+    @apply hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-liquid-primary {
+    @apply btn-liquid;
+    @apply bg-[rgb(var(--color-primary))] text-[rgb(var(--color-text-primary))];
+    @apply hover:bg-[rgb(var(--color-primary-hover))];
+    @apply focus-visible:ring-[rgb(var(--color-primary))];
+    @apply shadow-lg shadow-[rgb(var(--color-primary))/0.3] hover:shadow-xl hover:shadow-[rgb(var(--color-primary))/0.4];
+  }
+
+  .btn-liquid-secondary {
+    @apply btn-liquid;
+    @apply bg-[rgb(var(--color-secondary))] text-white;
+    @apply hover:bg-[rgb(var(--color-secondary-hover))];
+    @apply focus-visible:ring-[rgb(var(--color-secondary))];
+    @apply shadow-lg shadow-[rgb(var(--color-secondary))/0.3] hover:shadow-xl hover:shadow-[rgb(var(--color-secondary))/0.4];
+  }
+
+  .btn-liquid-glass {
+    @apply btn-liquid glass;
+    @apply text-[rgb(var(--color-text-primary))];
+    @apply hover:bg-[rgb(var(--color-accent))/0.5];
+    @apply focus-visible:ring-[rgb(var(--color-secondary))];
+  }
+
+  .btn-liquid-outline {
+    @apply btn-liquid;
+    @apply border-2 border-[rgb(var(--color-secondary))] text-[rgb(var(--color-secondary))] bg-transparent;
+    @apply hover:bg-[rgb(var(--color-secondary))/0.1];
+    @apply focus-visible:ring-[rgb(var(--color-secondary))];
+  }
+
+  .btn-liquid-ghost {
+    @apply btn-liquid;
+    @apply text-[rgb(var(--color-text-primary))] bg-transparent;
+    @apply hover:bg-[rgb(var(--color-accent))];
+    @apply focus-visible:ring-[rgb(var(--color-accent))];
+  }
+
+  /* Liquid Input */
+  .input-liquid {
+    @apply w-full px-4 py-3.5 rounded-[0.625rem] text-base text-[rgb(var(--color-text-primary))];
+    @apply bg-[rgb(var(--color-background))] border border-[rgb(var(--color-border))];
+    @apply placeholder:text-[rgb(var(--color-text-muted))];
+    @apply transition-all duration-300 ease-out;
+    @apply hover:border-[rgb(var(--color-secondary))/0.5];
+    @apply focus:border-[rgb(var(--color-secondary))] focus:ring-2 focus:ring-[rgb(var(--color-secondary))/0.2] focus:outline-none;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .input-liquid-glass {
+    @apply input-liquid glass;
+    @apply border-[rgb(var(--color-border))/0.5];
+  }
+
+  /* Liquid Card */
+  .card-liquid {
+    @apply glass rounded-2xl p-6 transition-all duration-500 ease-out;
+    @apply hover:shadow-2xl hover:-translate-y-1;
+  }
+
+  .card-liquid-glow {
+    @apply card-liquid relative overflow-hidden;
+  }
+
+  .card-liquid-glow::after {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-500;
+    background: linear-gradient(135deg, rgba(var(--color-primary)/0.15) 0%, rgba(var(--color-secondary)/0.1) 100%);
+  }
+
+  .card-liquid-glow:hover::after {
+    @apply opacity-100;
+  }
+
+  /* Auction Card Specific */
+  .auction-card {
+    @apply card-liquid-glow relative;
+  }
+
+  .auction-card-image {
+    @apply w-full h-48 object-cover rounded-xl transition-all duration-500 ease-out group-hover:scale-105;
+  }
+
+  .auction-card-badge {
+    @apply absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-semibold glass-strong;
+    @apply animate-bounce-in;
+  }
+
+  .auction-card-timer {
+    @apply absolute bottom-3 right-3 px-3 py-1.5 rounded-full text-sm font-mono font-bold glass-strong;
+    @apply bg-[rgb(var(--color-error))/0.9] text-white;
+    @apply animate-pulse-glow;
+  }
+
+  /* Category Card */
+  .category-card {
+    @apply card-liquid aspect-square flex flex-col items-center justify-center gap-3 text-center;
+    @apply cursor-pointer;
+  }
+
+  .category-card-icon {
+    @apply w-14 h-14 rounded-2xl flex items-center justify-center text-2xl transition-all duration-500 ease-out;
+    @apply bg-gradient-to-br from-[rgb(var(--color-primary))] to-[rgb(var(--color-secondary))];
+  }
+  
+  .category-card:hover .category-card-icon {
+    @apply scale-110 rotate-3;
+  }
+
+  /* Navbar */
+  .navbar-liquid {
+    @apply fixed top-0 left-0 right-0 z-50 glass-strong border-b border-[rgb(var(--color-border))/0.3];
+    @apply backdrop-blur-2xl;
+  }
+
+  /* Animation Keyframes */
+  .animate-bounce-in {
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .animate-pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s linear infinite;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes bounceIn {
+    0% { opacity: 0; transform: scale(0.3); }
+    50% { opacity: 1; transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(var(--color-error), 0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(var(--color-error), 0); }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* Stagger Animation Delays */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+  .stagger-6 { animation-delay: 0.6s; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-[rgb(var(--color-border))] rounded-full hover:bg-[rgb(var(--color-text-muted))];
+  }
+
+  /* Loading Skeleton */
+  .skeleton {
+    @apply relative overflow-hidden bg-[rgb(var(--color-accent))];
+  }
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 animate-shimmer;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background-size: 200% 100%;
+  }
+
+  /* Badge Variants */
+  .badge-liquid {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium glass;
+  }
+
+  .badge-primary { @apply badge-liquid bg-[rgb(var(--color-primary))/0.2] text-[rgb(var(--color-text-primary))]; }
+  .badge-secondary { @apply badge-liquid bg-[rgb(var(--color-secondary))/0.2] text-[rgb(var(--color-secondary))]; }
+  .badge-success { @apply badge-liquid bg-[rgb(var(--color-success))/0.2] text-[rgb(var(--color-success))]; }
+  .badge-warning { @apply badge-liquid bg-[rgb(var(--color-warning))/0.2] text-[rgb(var(--color-warning))]; }
+  .badge-error { @apply badge-liquid bg-[rgb(var(--color-error))/0.2] text-[rgb(var(--color-error))]; }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; text-wrap: pretty; }
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, rgb(var(--color-primary)) 0%, rgb(var(--color-secondary)) 100%);
+  }
+  .bg-gradient-liquid {
+    background: linear-gradient(135deg, rgba(var(--color-primary)/0.1) 0%, rgba(var(--color-secondary)/0.1) 100%);
+  }
+  .bg-gradient-hero {
+    background: linear-gradient(135deg, rgb(var(--color-primary)) 0%, rgb(var(--color-secondary)) 100%);
+  }
+}
