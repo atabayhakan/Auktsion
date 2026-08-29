@@ -10,13 +10,16 @@ import {
 import Button from '@/components/ui/Button.vue'
 import Input from '@/components/ui/Input.vue'
 import { useAuctionStore } from '@/stores/auction'
+import { useUserStore } from '@/stores/user'
 import { useI18n } from '@/composables/useI18n'
 import { kyrgyzstanRegions } from '@/data/regions'
 import { platformCategories } from '@/data/categories'
 import { generateListingWithAI } from '@/services/aiService'
+import { auctionService } from '@/services/auctionService'
 
 const router = useRouter()
 const auctionStore = useAuctionStore()
+const userStore = useUserStore()
 const { t, locale } = useI18n()
 
 // Current Wizard Step (1: Details & AI, 2: Specific Attributes, 3: Pricing & Timing, 4: Preview)
@@ -138,82 +141,60 @@ function prevStep() {
   }
 }
 
-// Publish Auction
+// Publish Auction — now via real API (P1)
 async function submitAuction() {
-  isSubmitting.value = true
-  
-  const activeRegion = kyrgyzstanRegions.find(r => r.id === formData.value.regionId)
-  const activeDistrict = activeRegion?.districts.find(d => d.id === formData.value.districtId)
-  
-  const newLot: any = {
-    id: 'lot-' + Date.now(),
-    title: formData.value.title,
-    description: formData.value.description,
-    category: formData.value.category,
-    subCategory: formData.value.subCategory,
-    images: formData.value.images,
-    startingPrice: {
-      amount: formData.value.startingPrice.toFixed(2),
-      minorUnits: formData.value.startingPrice * 100,
-      currency: 'KGS',
-      formatted: `${formData.value.startingPrice.toLocaleString()} сом`
-    },
-    currentPrice: {
-      amount: formData.value.startingPrice.toFixed(2),
-      minorUnits: formData.value.startingPrice * 100,
-      currency: 'KGS',
-      formatted: `${formData.value.startingPrice.toLocaleString()} сом`
-    },
-    reservePrice: {
-      amount: formData.value.reservePrice.toFixed(2),
-      minorUnits: formData.value.reservePrice * 100,
-      currency: 'KGS',
-      formatted: `${formData.value.reservePrice.toLocaleString()} сом`
-    },
-    buyNowPrice: {
-      amount: formData.value.buyNowPrice.toFixed(2),
-      minorUnits: formData.value.buyNowPrice * 100,
-      currency: 'KGS',
-      formatted: `${formData.value.buyNowPrice.toLocaleString()} сом`
-    },
-    bidIncrement: {
-      amount: formData.value.bidIncrement.toFixed(2),
-      minorUnits: formData.value.bidIncrement * 100,
-      currency: 'KGS',
-      formatted: `${formData.value.bidIncrement.toLocaleString()} сом`
-    },
-    bidCount: 0,
-    status: 'active',
-    sellerId: 'current-user',
-    seller: {
-      id: 'current-user',
-      fullName: 'Сиздин Профилиңиз',
-      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
-      city: activeRegion?.name.ky || 'Бишкек',
-      rating: 5.0,
-      totalSales: 1
-    },
-    city: activeRegion?.name.ky || 'Бишкек',
-    regionId: formData.value.regionId,
-    district: activeDistrict?.name.ky || '',
-    startAt: new Date().toISOString(),
-    endsAt: new Date(Date.now() + (formData.value.isBlitz ? 3600000 : formData.value.durationDays * 86400000)).toISOString(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    views: 1,
-    isWatching: false,
-    isBlitz: formData.value.isBlitz,
-    livestock: formData.value.category === 'livestock' ? formData.value.livestock : undefined,
-    vehicle: formData.value.category === 'vehicles' ? formData.value.vehicle : undefined,
-    realEstate: formData.value.category === 'real-estate' ? formData.value.realEstate : undefined
+  if (!userStore.isAuthenticated) {
+    router.push('/login?redirect=/sell')
+    return
+  }
+  if (!formData.value.title.trim() || !formData.value.description.trim()) {
+    alert(t('sell.validation.required') || 'Бардык милдеттүү талааларды толтуруңуз')
+    return
   }
 
-  auctionStore.auctions.unshift(newLot)
-  
-  setTimeout(() => {
+  isSubmitting.value = true
+
+  const activeRegion = kyrgyzstanRegions.find(r => r.id === formData.value.regionId)
+  const activeDistrict = activeRegion?.districts.find(d => d.id === formData.value.districtId)
+
+  const categoryAttrs =
+    formData.value.category === 'livestock' ? formData.value.livestock :
+    formData.value.category === 'vehicles' ? formData.value.vehicle :
+    formData.value.category === 'real-estate' ? formData.value.realEstate : undefined
+
+  const payload = {
+    title: formData.value.title.trim(),
+    description: formData.value.description.trim(),
+    category: formData.value.category,
+    subCategory: formData.value.subCategory,
+    startingPrice: formData.value.startingPrice,
+    reservePrice: formData.value.reservePrice,
+    buyNowPrice: formData.value.buyNowPrice,
+    bidIncrement: formData.value.bidIncrement,
+    city: activeRegion?.name.ky || activeRegion?.name.ru || 'Бишкек',
+    regionId: formData.value.regionId,
+    district: activeDistrict?.name.ky || activeDistrict?.name.ru || '',
+    isBlitz: formData.value.isBlitz,
+    durationHours: formData.value.isBlitz ? 1 : formData.value.durationDays * 24,
+    images: formData.value.images,
+    attributes: categoryAttrs,
+  }
+
+  try {
+    const res = await auctionService.createAuction(payload as any)
+    const created = (res as any)?.data || res
+    // Optimistic local update for instant feedback
+    if (created?.id) {
+      auctionStore.auctions.unshift(created as any)
+    }
+    router.push(`/auctions/${created.id}`)
+  } catch (err: any) {
+    const msg = err?.response?.data?.error || err?.data?.error || err?.message || 'Лот жарыяланган жок. Кайра аракет кылыңыз.'
+    alert(msg)
+    console.error('createAuction failed:', err)
+  } finally {
     isSubmitting.value = false
-    router.push(`/auctions/${newLot.id}`)
-  }, 600)
+  }
 }
 </script>
 
