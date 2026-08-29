@@ -64,8 +64,8 @@ const filteredCategories = computed(() => {
 
         <div class="w-full md:w-80 relative">
           <input
-            type="text"
             v-model="searchQuery"
+            type="text"
             placeholder="Категория же товар боюнча издөө..."
             class="w-full pl-9 pr-4 py-2.5 rounded-2xl bg-white border border-black/10 text-base focus:outline-none focus:border-primary shadow-sm text-text-primary placeholder-gray-400"
           />

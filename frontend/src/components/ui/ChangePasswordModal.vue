@@ -45,8 +45,8 @@ function handleSubmit() {
 </script>
 
 <template>
-  <Modal :modelValue="modelValue" @update:modelValue="emit('update:modelValue', $event)" :title="t('auth.changePassword')">
-    <form @submit.prevent="handleSubmit" class="space-y-4">
+  <Modal :model-value="modelValue" :title="t('auth.changePassword')" @update:model-value="emit('update:modelValue', $event)">
+    <form class="space-y-4" @submit.prevent="handleSubmit">
       <div v-if="error" class="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-sm">
         {{ error }}
       </div>

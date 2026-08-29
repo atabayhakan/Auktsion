@@ -188,11 +188,11 @@ watch(() => props.modelValue, (val) => {
             <div
               v-for="gw in gateways"
               :key="gw.id"
-              @click="handleSelectGateway(gw.id)"
               class="p-4 rounded-2xl border transition-all cursor-pointer space-y-2"
               :class="selectedGateway === gw.id
                 ? 'border-primary bg-primary/10 shadow-sm ring-2 ring-primary/20'
                 : 'border-border hover:border-black/20 bg-white'"
+              @click="handleSelectGateway(gw.id)"
             >
               <div class="flex items-start justify-between">
                 <div class="flex items-center gap-2.5">

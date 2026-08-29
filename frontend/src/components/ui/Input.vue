@@ -136,8 +136,8 @@ watch(() => props.modelValue, (newVal) => {
     
     <div class="relative">
       <input
-        ref="inputRef"
         :id="id"
+        ref="inputRef"
         :type="type"
         :placeholder="placeholder"
         :value="localValue"
@@ -171,16 +171,16 @@ watch(() => props.modelValue, (newVal) => {
         <button
           v-if="props.clearable && localValue.length > 0 && !disabled && !readonly"
           type="button"
-          @click="handleClear"
           class="p-1 text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors rounded-lg hover:bg-black/5 dark:hover:bg-white/10"
           aria-label="Clear input"
+          @click="handleClear"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
         
-        <component v-else-if="iconRightComponent" :is="iconRightComponent" class="w-4 h-4 text-gray-400" />
+        <component :is="iconRightComponent" v-else-if="iconRightComponent" class="w-4 h-4 text-gray-400" />
       </div>
     </div>
     

@@ -184,16 +184,16 @@ function buyNow() {
 
               <!-- Navigation Arrows -->
               <button
-                @click="prevImage"
                 class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full glass flex items-center justify-center text-[rgb(var(--color-text-primary))] hover:shadow-liquid-lg transition-all opacity-0 group-hover:opacity-100"
                 aria-label="Önceki görsel"
+                @click="prevImage"
               >
                 <ChevronLeft class="w-6 h-6" />
               </button>
               <button
-                @click="nextImage"
                 class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full glass flex items-center justify-center text-[rgb(var(--color-text-primary))] hover:shadow-liquid-lg transition-all opacity-0 group-hover:opacity-100"
                 aria-label="Sonraki görsel"
+                @click="nextImage"
               >
                 <ChevronRight class="w-6 h-6" />
               </button>
@@ -219,7 +219,6 @@ function buyNow() {
               <button
                 v-for="(img, index) in auction.images"
                 :key="index"
-                @click="currentImageIndex = index"
                 :class="[
                   'relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 transition-all',
                   'border-2',
@@ -227,6 +226,7 @@ function buyNow() {
                 ]"
                 :aria-label="`Görsel ${index + 1}`"
                 :aria-current="currentImageIndex === index"
+                @click="currentImageIndex = index"
               >
                 <img :src="img" :alt="`${auction.title} - Küçük görsel ${index + 1}`" class="w-full h-full object-cover" />
               </button>
@@ -321,8 +321,8 @@ function buyNow() {
                     variant="outline"
                     size="lg"
                     class="h-14"
-                    @click="bidAmount = String(recommendedBid)"
                     :disabled="isBidding"
+                    @click="bidAmount = String(recommendedBid)"
                   >
                     {{ t('auctionDetail.recommendedBid', { amount: formatPrice(recommendedBid) }) }}
                   </LiquidButton>
@@ -331,8 +331,8 @@ function buyNow() {
                     size="lg"
                     class="h-14"
                     :loading="isBidding"
-                    @click="placeBid"
                     :disabled="isBidding || parseInt(bidAmount.value.replace(/[^\d]/g, '') || '0') < minBid"
+                    @click="placeBid"
                   >
                     {{ t('auctionDetail.placeBid') }}
                   </LiquidButton>
@@ -343,8 +343,8 @@ function buyNow() {
                   <button
                     v-for="increment in [100, 500, 1000, 5000]"
                     :key="increment"
-                    @click="bidAmount = String(auction.currentPrice + increment)"
                     class="px-3 py-2 rounded-lg glass text-sm font-medium text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] hover:shadow-liquid transition-all"
+                    @click="bidAmount = String(auction.currentPrice + increment)"
                   >
                     +{{ formatPrice(increment) }}
                   </button>
@@ -379,7 +379,6 @@ function buyNow() {
                     { id: 'seller', label: 'Satıcı', icon: User },
                   ]"
                   :key="tab.id"
-                  @click="activeTab = tab.id"
                   :class="[
                     'px-4 py-3 rounded-xl text-sm font-medium transition-all',
                     activeTab === tab.id
@@ -388,6 +387,7 @@ function buyNow() {
                   ]"
                   :aria-selected="activeTab === tab.id"
                   role="tab"
+                  @click="activeTab = tab.id"
                 >
                   <component :is="tab.icon" class="w-4 h-4 inline-block mr-2" />
                   {{ t(`auctionDetail.tabs.${tab.id}`) }}
@@ -415,7 +415,8 @@ function buyNow() {
               <!-- Bid History -->
               <div v-else-if="activeTab === 'bids'" class="animate-fade-in">
                 <div class="space-y-3">
-                  <div v-for="(bid, index) in auction.bidHistory" :key="index" class="flex items-center justify-between p-4 glass rounded-xl"
+                  <div
+v-for="(bid, index) in auction.bidHistory" :key="index" class="flex items-center justify-between p-4 glass rounded-xl"
                        :class="bid.isWinning ? 'bg-[rgb(var(--color-primary))/0.05] border border-[rgb(var(--color-primary))/0.3]' : ''">
                     <div class="flex items-center gap-3">
                       <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[rgb(var(--color-primary))] to-[rgb(var(--color-secondary))] flex items-center justify-center font-bold text-white text-sm">
@@ -574,7 +575,8 @@ function buyNow() {
             <div class="card-liquid">
               <h3 class="font-semibold text-[rgb(var(--color-text-primary))] mb-4">{{ t('auctionDetail.protections') }}</h3>
               <div class="space-y-3">
-                <div v-for="badge in [
+                <div
+v-for="badge in [
                   { icon: Shield, title: 'auctionDetail.buyerProtection', desc: 'auctionDetail.buyerProtectionDesc' },
                   { icon: Truck, title: 'auctionDetail.fastShipping', desc: 'auctionDetail.fastShippingDesc' },
                   { icon: RotateCcw, title: 'auctionDetail.easyReturns', desc: 'auctionDetail.easyReturnsDesc' },

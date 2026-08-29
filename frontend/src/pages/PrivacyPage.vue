@@ -92,11 +92,11 @@ const privacySections = computed<Record<string, { title: string; content: string
         <button
           v-for="tab in privacyTabs"
           :key="tab.id"
-          @click="activeTab = tab.id"
           class="px-4 py-2 rounded-2xl text-xs font-bold transition-all flex items-center gap-2"
           :class="activeTab === tab.id
             ? 'bg-amber-500/15 text-amber-800 border border-amber-500/30 shadow-sm'
             : 'bg-white border border-border text-text-secondary hover:text-text-primary'"
+          @click="activeTab = tab.id"
         >
           <component :is="tab.icon" class="w-4 h-4" />
           <span>{{ tab.label }}</span>

@@ -61,7 +61,7 @@ function handleReject() {
             {{ t('admin.financials.modal.title') }}
           </h3>
         </div>
-        <button @click="emit('close')" class="text-text-muted hover:text-text-primary">
+        <button class="text-text-muted hover:text-text-primary" @click="emit('close')">
           <X class="w-5 h-5" />
         </button>
       </div>
@@ -113,8 +113,8 @@ function handleReject() {
       <div class="p-5 border-t border-black/[0.06] flex items-center justify-between bg-accent/40">
         <button
           type="button"
-          @click="emit('close')"
           class="px-4 py-2 rounded-lg bg-accent text-text-secondary font-semibold hover:bg-accent-hover"
+          @click="emit('close')"
         >
           {{ t('admin.actions.close') }}
         </button>
@@ -122,26 +122,26 @@ function handleReject() {
         <div class="flex items-center gap-2">
           <button
             v-if="!isRejecting"
-            @click="isRejecting = true"
             type="button"
             class="px-4 py-2 rounded-lg font-semibold bg-error/10 text-error hover:bg-error/20 border border-error/30"
+            @click="isRejecting = true"
           >
             {{ t('admin.actions.reject') }}
           </button>
           <button
             v-else
-            @click="handleReject"
             type="button"
             class="px-4 py-2 rounded-lg font-semibold text-white bg-error hover:bg-error/90"
+            @click="handleReject"
           >
             {{ t('admin.financials.modal.confirmReject') }}
           </button>
 
           <button
             v-if="!isRejecting"
-            @click="handleApprove"
             type="button"
             class="px-5 py-2 rounded-xl font-bold text-white bg-purple-600 hover:bg-purple-700 shadow-md shadow-purple-600/30 flex items-center gap-1.5"
+            @click="handleApprove"
           >
             <CheckCircle class="w-4 h-4" />
             <span>{{ t('admin.financials.modal.markPaid') }}</span>

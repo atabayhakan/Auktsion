@@ -169,12 +169,12 @@ watch(() => userStore.isAuthenticated, (val) => {
 
         <!-- Search Bar (Desktop) -->
         <div class="hidden lg:flex flex-1 min-w-[180px] max-w-sm xl:max-w-md mx-2">
-          <form @submit="handleSearch" class="w-full relative group">
+          <form class="w-full relative group" @submit="handleSearch">
             <div class="glass rounded-full flex items-center pl-3.5 pr-1.5 py-1.5 focus-within:border-secondary transition-all duration-300">
               <Search class="w-4 h-4 text-text-muted group-focus-within:text-secondary transition-colors flex-shrink-0" />
               <input
-                type="text"
                 v-model="searchQuery"
+                type="text"
                 :placeholder="t('nav.searchPlaceholder')"
                 class="bg-transparent border-none focus:ring-0 w-full text-base text-text-primary placeholder-text-muted outline-none ml-2 font-sans min-w-0"
               />
@@ -211,9 +211,9 @@ watch(() => userStore.isAuthenticated, (val) => {
 
           <!-- Mobile Search Toggle -->
           <button
-            @click="toggleSearch"
             class="lg:hidden p-2 rounded glass hover:bg-black/5 text-text-secondary hover:text-text-primary transition-colors"
             aria-label="Search"
+            @click="toggleSearch"
           >
             <Search class="w-4 h-4" />
           </button>
@@ -250,11 +250,11 @@ watch(() => userStore.isAuthenticated, (val) => {
                 <button
                   v-for="loc in supportedLocales"
                   :key="loc.code"
-                  @click="handleLanguageChange(loc.code)"
                   class="w-full flex items-center justify-between px-3 py-2 text-xs font-medium rounded-xl transition-colors text-left"
                   :class="loc.code === currentLocale.code
                     ? 'bg-primary/10 text-primary font-bold border border-primary/20'
                     : 'text-text-secondary hover:bg-black/5'"
+                  @click="handleLanguageChange(loc.code)"
                 >
                   <div class="flex items-center gap-2">
                     <span class="text-base">{{ loc.flag }}</span>
@@ -314,8 +314,8 @@ watch(() => userStore.isAuthenticated, (val) => {
                 <div class="border-t border-black/[0.06] my-1" />
 
                 <button
-                  @click="handleLogout"
                   class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-error hover:bg-error/10 rounded-lg transition-colors"
+                  @click="handleLogout"
                 >
                   <LogOut class="w-4 h-4" />
                   <span>{{ t('nav.logout') }}</span>
@@ -342,9 +342,9 @@ watch(() => userStore.isAuthenticated, (val) => {
           <!-- Mobile Hamburger Menu Button (stays visible through tablet widths —
                the desktop mega-menu/nav links don't appear until lg/xl) -->
           <button
-            @click="toggleMobileMenu"
             class="lg:hidden p-2 rounded glass hover:bg-black/5 text-text-secondary hover:text-text-primary transition-colors"
             aria-label="Toggle menu"
+            @click="toggleMobileMenu"
           >
             <Menu v-if="!mobileMenuOpen" class="w-6 h-6" />
             <X v-else class="w-6 h-6" />
@@ -355,20 +355,20 @@ watch(() => userStore.isAuthenticated, (val) => {
 
     <!-- Mobile Search Dropdown (Inside fixed Header) -->
     <div v-if="isSearchOpen" class="lg:hidden px-4 pb-3 pt-1 border-t border-black/10 bg-white/95 backdrop-blur-xl">
-      <form @submit="handleSearch" class="relative">
+      <form class="relative" @submit="handleSearch">
         <input
           id="header-search-mobile"
-          type="text"
           v-model="searchQuery"
+          type="text"
           :placeholder="t('nav.searchPlaceholder')"
           class="w-full pl-10 pr-10 py-2.5 rounded bg-black/5 border border-black/10 text-base text-text-primary placeholder-text-muted focus:outline-none focus:border-secondary"
         />
         <Search class="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
         <button
           v-if="searchQuery"
-          @click="searchQuery = ''"
           type="button"
           class="p-1 absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
+          @click="searchQuery = ''"
         >
           <X class="w-4 h-4" />
         </button>

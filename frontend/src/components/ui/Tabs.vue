@@ -71,6 +71,7 @@ function handleTabClick(tabId: string) {
   >
     <template v-for="tab in tabs" :key="tab.id">
       <button
+        :id="`tab-${tab.id}`"
         :class="[
           tabClasses.base,
           modelValue === tab.id ? tabClasses.active : tabClasses[props.variant],
@@ -78,7 +79,6 @@ function handleTabClick(tabId: string) {
         ]"
         :aria-selected="modelValue === tab.id"
         :aria-controls="`tabpanel-${tab.id}`"
-        :id="`tab-${tab.id}`"
         :disabled="tab.disabled"
         role="tab"
         tabindex="0"
@@ -87,9 +87,10 @@ function handleTabClick(tabId: string) {
         @keydown.space.prevent="handleTabClick(tab.id)"
       >
         <span class="flex items-center gap-2">
-          <component v-if="tab.icon" :is="tab.icon" class="w-4 h-4" aria-hidden="true" />
+          <component :is="tab.icon" v-if="tab.icon" class="w-4 h-4" aria-hidden="true" />
           {{ tab.label }}
-          <span v-if="tab.badge !== undefined"
+          <span
+v-if="tab.badge !== undefined"
             class="ml-1.5 px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-primary-container text-onPrimaryContainer"
           >
             {{ tab.badge }}

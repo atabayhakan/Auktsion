@@ -109,7 +109,7 @@ async function handleSubmit() {
 
         <!-- Right: Message Form -->
         <div class="lg:col-span-2 glass p-6 sm:p-8 rounded-3xl shadow-sm">
-          <form @submit.prevent="handleSubmit" class="space-y-4">
+          <form class="space-y-4" @submit.prevent="handleSubmit">
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>

@@ -49,12 +49,12 @@ function handleSubmit() {
             {{ targetStatus === 'active' ? t('admin.actions.unban') : t('admin.users.ban.banOrSuspend') }}
           </h3>
         </div>
-        <button @click="emit('close')" class="text-text-muted hover:text-text-primary">
+        <button class="text-text-muted hover:text-text-primary" @click="emit('close')">
           <X class="w-5 h-5" />
         </button>
       </div>
 
-      <form @submit.prevent="handleSubmit" class="p-5 space-y-4 text-xs">
+      <form class="p-5 space-y-4 text-xs" @submit.prevent="handleSubmit">
         <div class="flex items-center gap-3 p-3 rounded-xl bg-accent border border-border">
           <img
             :src="user.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80'"
@@ -91,9 +91,9 @@ function handleSubmit() {
 
         <div v-if="targetStatus === 'banned'" class="flex items-center gap-2">
           <input
-            type="checkbox"
             id="cancel-bids"
             v-model="cancelBids"
+            type="checkbox"
             class="rounded border-border text-error focus:ring-error"
           />
           <label for="cancel-bids" class="text-text-secondary font-medium">
@@ -104,8 +104,8 @@ function handleSubmit() {
         <div class="pt-3 border-t border-black/[0.06] flex justify-end gap-2">
           <button
             type="button"
-            @click="emit('close')"
             class="px-4 py-2 rounded-lg bg-black/5 text-text-secondary font-semibold hover:bg-black/10 transition-colors"
+            @click="emit('close')"
           >
             {{ t('admin.actions.cancel') }}
           </button>

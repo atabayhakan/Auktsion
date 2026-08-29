@@ -116,11 +116,11 @@ function handleStepClick(stepIndex: number) {
             { 'flex-col items-start gap-3': isVertical, 'flex-1': !isVertical && !isVertical },
           ]"
           :disabled="step.disabled"
+          :aria-current="index === modelValue ? 'step' : undefined"
+          :aria-disabled="step.disabled"
           @click="() => handleStepClick(index)"
           @keydown.enter="() => handleStepClick(index)"
           @keydown.space.prevent="() => handleStepClick(index)"
-          :aria-current="index === modelValue ? 'step' : undefined"
-          :aria-disabled="step.disabled"
         >
           <!-- Step circle -->
           <div 

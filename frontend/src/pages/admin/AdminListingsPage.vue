@@ -100,13 +100,13 @@ async function handleToggleFeatured(id: string) {
           { id: 'ended_sold', label: t('admin.listings.tabs.ended_sold') }
         ]"
         :key="tab.id"
-        @click="handleTabChange(tab.id)"
         :class="[
           'px-4 py-2 rounded-xl transition-all border whitespace-nowrap',
           activeTab === tab.id
             ? 'bg-primary text-text-primary border-primary shadow-sm'
             : 'bg-white text-text-secondary border-border hover:bg-accent'
         ]"
+        @click="handleTabChange(tab.id)"
       >
         {{ tab.label }}
       </button>
@@ -118,18 +118,18 @@ async function handleToggleFeatured(id: string) {
         <Search class="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
         <input
           v-model="adminStore.listingFilters.search"
-          @input="adminStore.fetchListings(1)"
           type="text"
           :placeholder="t('admin.listings.searchPlaceholder')"
           class="w-full pl-9 pr-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-base text-text-primary"
+          @input="adminStore.fetchListings(1)"
         />
       </div>
 
       <div>
         <select
           v-model="adminStore.listingFilters.category"
-          @change="adminStore.fetchListings(1)"
           class="w-full px-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-text-primary font-medium"
+          @change="adminStore.fetchListings(1)"
         >
           <option value="all">{{ t('admin.listings.categoryOptions.all') }}</option>
           <option value="livestock">{{ t('admin.listings.categoryOptions.livestock') }}</option>
@@ -221,12 +221,12 @@ async function handleToggleFeatured(id: string) {
               <!-- Featured toggle -->
               <td class="p-4 text-center">
                 <button
-                  @click="handleToggleFeatured(l.id)"
                   :class="[
                     'p-1.5 rounded-lg transition-colors',
                     l.isFeatured ? 'text-amber-500 hover:text-amber-600 bg-amber-50' : 'text-text-muted hover:text-text-secondary'
                   ]"
                   :title="t('admin.listings.toggleFeaturedTitle')"
+                  @click="handleToggleFeatured(l.id)"
                 >
                   <Star class="w-4 h-4 fill-current" />
                 </button>
@@ -236,18 +236,18 @@ async function handleToggleFeatured(id: string) {
               <td class="p-4 text-right">
                 <div class="flex items-center justify-end gap-1.5">
                   <button
-                    @click="handleViewListing(l)"
                     class="p-1.5 text-text-secondary hover:bg-accent rounded-lg transition-colors"
                     :title="t('admin.listings.viewDetail')"
+                    @click="handleViewListing(l)"
                   >
                     <Eye class="w-4 h-4" />
                   </button>
 
                   <button
                     v-if="l.status === 'pending_approval' || l.status === 'flagged'"
-                    @click="handleApproveListing(l.id)"
                     class="p-1.5 text-success hover:bg-success/10 rounded-lg transition-colors"
                     :title="t('admin.actions.approve')"
+                    @click="handleApproveListing(l.id)"
                   >
                     <CheckCircle2 class="w-4 h-4" />
                   </button>
@@ -264,8 +264,8 @@ async function handleToggleFeatured(id: string) {
         <div class="flex gap-2">
           <button
             :disabled="adminStore.listingsMeta.currentPage <= 1"
-            @click="adminStore.fetchListings(adminStore.listingsMeta.currentPage - 1)"
             class="px-3 py-1.5 rounded-lg border border-border disabled:opacity-40 hover:bg-accent font-medium flex items-center gap-1"
+            @click="adminStore.fetchListings(adminStore.listingsMeta.currentPage - 1)"
           >
             <ChevronLeft class="w-3.5 h-3.5" />
             <span>{{ t('admin.pagination.prev') }}</span>
@@ -273,8 +273,8 @@ async function handleToggleFeatured(id: string) {
 
           <button
             :disabled="adminStore.listingsMeta.currentPage >= adminStore.listingsMeta.lastPage"
-            @click="adminStore.fetchListings(adminStore.listingsMeta.currentPage + 1)"
             class="px-3 py-1.5 rounded-lg border border-border disabled:opacity-40 hover:bg-accent font-medium flex items-center gap-1"
+            @click="adminStore.fetchListings(adminStore.listingsMeta.currentPage + 1)"
           >
             <span>{{ t('admin.pagination.next') }}</span>
             <ChevronRight class="w-3.5 h-3.5" />

@@ -126,10 +126,10 @@ function isActive(path: string) {
 
       <!-- Collapse / Expand Toggle Button -->
       <button 
-        @click="adminStore.toggleSidebar"
         type="button"
         class="hidden md:flex p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-accent transition-colors"
         :title="adminStore.sidebarCollapsed ? t('admin.sidebar.expand') : t('admin.sidebar.collapse')"
+        @click="adminStore.toggleSidebar"
       >
         <ChevronRight v-if="adminStore.sidebarCollapsed" class="w-4 h-4" />
         <ChevronLeft v-else class="w-4 h-4" />

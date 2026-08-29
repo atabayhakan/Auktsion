@@ -95,7 +95,7 @@ function handleRejectSubmit() {
             <span class="text-xs text-text-muted">{{ t('admin.kyc.modal.innLabel') }} <strong class="font-mono text-text-primary">{{ application.inn }}</strong></span>
           </div>
         </div>
-        <button @click="emit('close')" class="text-text-muted hover:text-text-primary">
+        <button class="text-text-muted hover:text-text-primary" @click="emit('close')">
           <X class="w-5 h-5" />
         </button>
       </div>
@@ -110,32 +110,32 @@ function handleRejectSubmit() {
               <div class="flex gap-2">
                 <button
                   type="button"
-                  @click="selectedDoc = 'idFront'"
                   :class="[
                     'px-3 py-1.5 rounded-lg font-semibold border text-xs transition-colors',
                     selectedDoc === 'idFront' ? 'bg-primary text-text-primary border-primary' : 'bg-accent text-text-secondary border-border'
                   ]"
+                  @click="selectedDoc = 'idFront'"
                 >
                   {{ t('admin.kyc.modal.idFrontTab') }}
                 </button>
                 <button
                   v-if="application.idBackUrl"
                   type="button"
-                  @click="selectedDoc = 'idBack'"
                   :class="[
                     'px-3 py-1.5 rounded-lg font-semibold border text-xs transition-colors',
                     selectedDoc === 'idBack' ? 'bg-primary text-text-primary border-primary' : 'bg-accent text-text-secondary border-border'
                   ]"
+                  @click="selectedDoc = 'idBack'"
                 >
                   {{ t('admin.kyc.modal.idBackTab') }}
                 </button>
                 <button
                   type="button"
-                  @click="selectedDoc = 'selfie'"
                   :class="[
                     'px-3 py-1.5 rounded-lg font-semibold border text-xs transition-colors',
                     selectedDoc === 'selfie' ? 'bg-primary text-text-primary border-primary' : 'bg-accent text-text-secondary border-border'
                   ]"
+                  @click="selectedDoc = 'selfie'"
                 >
                   {{ t('admin.kyc.modal.selfieTab') }}
                 </button>
@@ -144,16 +144,16 @@ function handleRejectSubmit() {
               <!-- Controls -->
               <div class="flex gap-1.5">
                 <button
-                  @click="zoomImage"
                   class="p-1.5 rounded-lg bg-accent text-text-secondary hover:bg-accent-hover"
                   :title="t('admin.kyc.modal.zoomTitle')"
+                  @click="zoomImage"
                 >
                   <ZoomIn class="w-4 h-4" />
                 </button>
                 <button
-                  @click="rotateImage"
                   class="p-1.5 rounded-lg bg-accent text-text-secondary hover:bg-accent-hover"
                   :title="t('admin.kyc.modal.rotateTitle')"
+                  @click="rotateImage"
                 >
                   <RotateCw class="w-4 h-4" />
                 </button>
@@ -258,8 +258,8 @@ function handleRejectSubmit() {
             </div>
           </div>
           <div class="flex justify-end gap-2">
-            <button @click="showRejectForm = false" class="px-3 py-1.5 rounded-lg bg-accent text-text-secondary font-semibold hover:bg-accent-hover">{{ t('admin.actions.cancel') }}</button>
-            <button @click="handleRejectSubmit" class="px-3 py-1.5 rounded-lg bg-error text-white font-semibold hover:bg-error/90">{{ t('admin.kyc.modal.confirmReject') }}</button>
+            <button class="px-3 py-1.5 rounded-lg bg-accent text-text-secondary font-semibold hover:bg-accent-hover" @click="showRejectForm = false">{{ t('admin.actions.cancel') }}</button>
+            <button class="px-3 py-1.5 rounded-lg bg-error text-white font-semibold hover:bg-error/90" @click="handleRejectSubmit">{{ t('admin.kyc.modal.confirmReject') }}</button>
           </div>
         </div>
       </div>
@@ -268,8 +268,8 @@ function handleRejectSubmit() {
       <div class="p-5 border-t border-black/[0.06] flex items-center justify-between bg-accent/40">
         <button
           type="button"
-          @click="emit('close')"
           class="px-4 py-2 rounded-lg bg-accent text-text-secondary font-semibold hover:bg-accent-hover"
+          @click="emit('close')"
         >
           {{ t('admin.actions.close') }}
         </button>
@@ -277,18 +277,18 @@ function handleRejectSubmit() {
         <div class="flex items-center gap-2">
           <button
             v-if="application.status === 'pending'"
-            @click="showRejectForm = true"
             type="button"
             class="px-4 py-2 rounded-lg font-semibold bg-error/10 text-error hover:bg-error/20 border border-error/30"
+            @click="showRejectForm = true"
           >
             {{ t('admin.actions.reject') }}
           </button>
 
           <button
             v-if="application.status === 'pending'"
-            @click="handleApprove"
             type="button"
             class="px-5 py-2 rounded-xl font-bold text-white bg-success hover:bg-success/90 shadow-md shadow-success/30 flex items-center gap-2"
+            @click="handleApprove"
           >
             <UserCheck class="w-4 h-4" />
             <span>{{ t('admin.kyc.modal.confirmApprove') }}</span>

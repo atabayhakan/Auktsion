@@ -84,8 +84,8 @@ async function handleResolve(payload: {
       <div class="sm:max-w-xs">
         <select
           v-model="adminStore.disputeFilters.status"
-          @change="adminStore.fetchDisputes(1)"
           class="w-full px-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-text-primary font-medium"
+          @change="adminStore.fetchDisputes(1)"
         >
           <option value="all">{{ t('admin.disputes.filterAll') }}</option>
           <option value="open">{{ t('admin.disputes.statusLabels.open') }}</option>
@@ -162,8 +162,8 @@ async function handleResolve(payload: {
               <!-- Actions -->
               <td class="p-4 text-right">
                 <button
-                  @click="handleViewDispute(d)"
                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-error text-white hover:bg-error/90 font-bold transition-all shadow-xs"
+                  @click="handleViewDispute(d)"
                 >
                   <Scale class="w-3.5 h-3.5" />
                   <span>{{ t('admin.disputes.table.arbitration') }}</span>

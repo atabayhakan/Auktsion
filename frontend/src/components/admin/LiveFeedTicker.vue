@@ -58,9 +58,9 @@ const emit = defineEmits<{
           <div class="flex items-center justify-end gap-1.5 text-[10px] text-text-muted">
             <span>{{ new Date(b.placedAt).toLocaleTimeString('ru-RU') }}</span>
             <button
-              @click="emit('cancel-bid', b.id)"
               class="text-error hover:underline font-bold"
               :title="t('admin.monitoring.feedTicker.cancelBidTitle')"
+              @click="emit('cancel-bid', b.id)"
             >
               {{ t('admin.monitoring.feedTicker.cancelBidButton') }}
             </button>

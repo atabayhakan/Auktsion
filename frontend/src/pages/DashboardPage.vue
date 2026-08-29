@@ -217,7 +217,7 @@ onMounted(async () => {
         <div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6 lg:pt-6">
           <!-- Desktop Tabs -->
           <div class="hidden lg:block mb-8">
-            <Tabs v-model="activeTab" :tabs="tabs.map(tb => ({ id: tb.id, label: tb.label, icon: tb.icon }))" variant="gold" fullWidth />
+            <Tabs v-model="activeTab" :tabs="tabs.map(tb => ({ id: tb.id, label: tb.label, icon: tb.icon }))" variant="gold" full-width />
           </div>
 
           <!-- Tab Content - single root for v-if/v-else-if chain -->
@@ -261,9 +261,9 @@ onMounted(async () => {
                 <Card variant="glass">
                   <div class="flex items-center justify-between mb-4">
                     <h3 class="text-base font-bold text-text-primary">{{ t('dashboard.recentBids') }}</h3>
-                    <button @click="activeTab = 'bids'" class="text-sm text-primary hover:underline">{{ t('dashboard.viewAll') }}</button>
+                    <button class="text-sm text-primary hover:underline" @click="activeTab = 'bids'">{{ t('dashboard.viewAll') }}</button>
                   </div>
-                  <div class="space-y-3" v-if="activeBids.length > 0">
+                  <div v-if="activeBids.length > 0" class="space-y-3">
                     <ActivityItem
                       v-for="bid in activeBids.slice(0, 5)"
                       :key="bid.id"
@@ -273,7 +273,7 @@ onMounted(async () => {
                       :icon="bid.status === 'winning' ? 'CheckCircle' : bid.status === 'outbid' ? 'XCircle' : 'Gauge'"
                       :color="bid.status === 'winning' ? 'green' : bid.status === 'outbid' ? 'red' : 'blue'"
                       :status="bid.status === 'winning' ? t('status.bid.winning') : bid.status === 'outbid' ? t('status.bid.outbid') : t('status.bid.active')"
-                      :statusColor="bid.status === 'winning' ? 'green' : bid.status === 'outbid' ? 'red' : 'blue'"
+                      :status-color="bid.status === 'winning' ? 'green' : bid.status === 'outbid' ? 'red' : 'blue'"
                       :link="`/auctions/${bid.auctionId}`"
                     />
                   </div>
@@ -287,9 +287,9 @@ onMounted(async () => {
                 <Card variant="glass">
                   <div class="flex items-center justify-between mb-4">
                     <h3 class="text-base font-bold text-text-primary">{{ t('dashboard.myListings') }}</h3>
-                    <button @click="activeTab = 'listings'" class="text-sm text-primary hover:underline">{{ t('dashboard.viewAll') }}</button>
+                    <button class="text-sm text-primary hover:underline" @click="activeTab = 'listings'">{{ t('dashboard.viewAll') }}</button>
                   </div>
-                  <div class="space-y-3" v-if="myListings.length > 0">
+                  <div v-if="myListings.length > 0" class="space-y-3">
                     <ListingRow
                       v-for="listing in myListings.slice(0, 5)"
                       :key="listing.id"
@@ -317,7 +317,7 @@ onMounted(async () => {
                     </div>
                   </div>
                   <div class="flex flex-wrap gap-2">
-                    <Button v-if="userStore.kycStatus !== 'verified'" @click="activeTab = 'kyc'" variant="primary">
+                    <Button v-if="userStore.kycStatus !== 'verified'" variant="primary" @click="activeTab = 'kyc'">
                       {{ t('dashboard.kyc') }}
                     </Button>
                     <Button v-else variant="ghost">{{ t('status.kyc.verified') }}</Button>
@@ -330,7 +330,7 @@ onMounted(async () => {
             <div v-else-if="activeTab === 'listings'" class="animate-fade-in-up">
               <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-text-primary">{{ t('dashboard.myListings') }}</h2>
-                <Button @click="$router.push('/sell')" icon="Plus">
+                <Button icon="Plus" @click="$router.push('/sell')">
                   {{ t('dashboard.createAuction') }}
                 </Button>
               </div>
@@ -339,7 +339,7 @@ onMounted(async () => {
                   v-for="listing in myListings"
                   :key="listing.id"
                   :listing="listing"
-                  :showActions="true"
+                  :show-actions="true"
                 />
               </div>
               <div v-if="myListings.length === 0" class="text-center py-20">
@@ -406,7 +406,7 @@ onMounted(async () => {
             <div v-else-if="activeTab === 'payouts'" class="animate-fade-in-up">
               <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-text-primary">{{ t('dashboard.payoutsTitle') }}</h2>
-                <Button @click="openPayoutModal" icon="Plus">
+                <Button icon="Plus" @click="openPayoutModal">
                   {{ t('dashboard.requestPayout') }}
                 </Button>
               </div>
@@ -420,7 +420,7 @@ onMounted(async () => {
               <div v-if="payouts.length === 0" class="text-center py-12">
                 <FileText class="w-12 h-12 mx-auto text-text-muted mb-3" />
                 <p class="text-text-muted">{{ t('dashboard.noPayouts') }}</p>
-                <Button variant="outline" @click="openPayoutModal" class="mt-3">{{ t('dashboard.requestPayout') }}</Button>
+                <Button variant="outline" class="mt-3" @click="openPayoutModal">{{ t('dashboard.requestPayout') }}</Button>
               </div>
             </div>
 
@@ -428,7 +428,7 @@ onMounted(async () => {
             <div v-else-if="activeTab === 'payout-methods'" class="animate-fade-in-up">
               <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-text-primary">{{ t('dashboard.payoutMethods') }}</h2>
-                <Button @click="showAddPayoutMethodModal = true" icon="Plus">
+                <Button icon="Plus" @click="showAddPayoutMethodModal = true">
                   {{ t('dashboard.addPayoutMethod') }}
                 </Button>
               </div>
@@ -442,7 +442,7 @@ onMounted(async () => {
               <div v-if="payoutMethods.length === 0" class="text-center py-12">
                 <Building2 class="w-12 h-12 mx-auto text-text-muted mb-3" />
                 <p class="text-text-muted">{{ t('dashboard.noPayoutMethods') }}</p>
-                <Button variant="outline" @click="showAddPayoutMethodModal = true" class="mt-3">{{ t('dashboard.addPayoutMethod') }}</Button>
+                <Button variant="outline" class="mt-3" @click="showAddPayoutMethodModal = true">{{ t('dashboard.addPayoutMethod') }}</Button>
               </div>
             </div>
 
@@ -458,10 +458,10 @@ onMounted(async () => {
 
                 <!-- Stepper -->
                 <Stepper
-                  :modelValue="currentKycStep"
+                  :model-value="currentKycStep"
                   :steps="kycSteps.map(s => ({ id: s.id, label: s.label, description: s.description }))"
                   variant="vertical"
-                  showDescriptions
+                  show-descriptions
                 >
                 </Stepper>
 
@@ -473,26 +473,26 @@ onMounted(async () => {
                         :title="t('dashboard.kycPassport')"
                         description="JPEG, PNG or PDF"
                         accepted="image/*,.pdf"
-                        maxSize="10MB"
+                        max-size="10MB"
                         :uploaded="userStore.kycDocuments.idFront"
                       />
                       <DocumentUpload
                         :title="t('dashboard.kycSelfieDoc')"
                         description="JPEG or PNG"
                         accepted="image/*"
-                        maxSize="10MB"
+                        max-size="10MB"
                         :uploaded="userStore.kycDocuments.selfie"
                       />
                       <DocumentUpload
                         :title="t('dashboard.kycProofAddress')"
                         description="JPEG, PNG or PDF"
                         accepted="image/*,.pdf"
-                        maxSize="10MB"
+                        max-size="10MB"
                         :uploaded="userStore.kycDocuments.proofOfAddress"
                       />
                     </div>
                     <div class="mt-6 pt-6 border-t border-black/10">
-                      <Button @click="submitKyc" variant="primary" :disabled="userStore.kycStatus === 'verified'">
+                      <Button variant="primary" :disabled="userStore.kycStatus === 'verified'" @click="submitKyc">
                         {{ t('dashboard.submitKyc') }}
                       </Button>
                     </div>
@@ -601,33 +601,33 @@ onMounted(async () => {
     <!-- Modals -->
     <PayoutModal
       v-if="showPayoutModal"
-      :modelValue="showPayoutModal"
-      :auctionId="selectedAuctionId"
+      :model-value="showPayoutModal"
+      :auction-id="selectedAuctionId"
       :amount="selectedPayoutAmount"
       @success="onPayoutSuccess"
-      @update:modelValue="showPayoutModal = $event"
+      @update:model-value="showPayoutModal = $event"
       @cancel="showPayoutModal = false"
     />
 
     <AddPayoutMethodModal
       v-if="showAddPayoutMethodModal"
-      :modelValue="showAddPayoutMethodModal"
+      :model-value="showAddPayoutMethodModal"
       @success="onAddPayoutMethod"
-      @update:modelValue="showAddPayoutMethodModal = $event"
+      @update:model-value="showAddPayoutMethodModal = $event"
     />
 
     <DeleteProfileModal
       v-if="showDeleteModal"
-      :modelValue="showDeleteModal"
+      :model-value="showDeleteModal"
       @confirm="confirmDeleteProfile"
-      @update:modelValue="showDeleteModal = $event"
+      @update:model-value="showDeleteModal = $event"
     />
 
     <ChangePasswordModal
       v-if="showChangePasswordModal"
-      :modelValue="showChangePasswordModal"
+      :model-value="showChangePasswordModal"
       @success="onPasswordChanged"
-      @update:modelValue="showChangePasswordModal = $event"
+      @update:model-value="showChangePasswordModal = $event"
     />
   </div>
 </template>

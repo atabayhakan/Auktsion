@@ -177,7 +177,7 @@ async function submitPayout() {
         />
 
         <div class="flex gap-3">
-          <Button variant="primary" @click="verifyInn" :disabled="!inn || inn.length !== 14">
+          <Button variant="primary" :disabled="!inn || inn.length !== 14" @click="verifyInn">
             {{ t('payoutModal.verifyInn') }}
           </Button>
         </div>
@@ -235,7 +235,7 @@ async function submitPayout() {
         </div>
 
         <label class="flex items-center gap-2 p-3 rounded-xl bg-warning/10 border border-warning/30 cursor-pointer">
-          <input type="checkbox" v-model="amlAcknowledged" class="w-4 h-4 rounded border-border bg-white text-primary focus:ring-primary/30" />
+          <input v-model="amlAcknowledged" type="checkbox" class="w-4 h-4 rounded border-border bg-white text-primary focus:ring-primary/30" />
           <span class="text-sm text-text-secondary">{{ t('payoutModal.amlAgree') }}</span>
         </label>
       </div>
@@ -269,7 +269,7 @@ async function submitPayout() {
         </div>
 
         <label class="flex items-center gap-2 p-3 rounded-xl bg-warning/10 border border-warning/30 cursor-pointer">
-          <input type="checkbox" v-model="agreeTerms" class="w-4 h-4 rounded border-border bg-white text-primary focus:ring-primary/30" />
+          <input v-model="agreeTerms" type="checkbox" class="w-4 h-4 rounded border-border bg-white text-primary focus:ring-primary/30" />
           <span class="text-sm text-text-secondary">{{ t('payoutModal.amlAgree') }}</span>
         </label>
       </div>

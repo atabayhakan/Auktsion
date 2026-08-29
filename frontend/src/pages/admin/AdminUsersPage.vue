@@ -108,10 +108,10 @@ function onFilterChange() {
         <Search class="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
         <input
           v-model="adminStore.userFilters.search"
-          @input="onFilterChange"
           type="text"
           :placeholder="t('admin.users.searchPlaceholder')"
           class="w-full pl-9 pr-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 text-base text-text-primary"
+          @input="onFilterChange"
         />
       </div>
 
@@ -119,9 +119,9 @@ function onFilterChange() {
       <div>
         <select
           v-model="adminStore.userFilters.role"
-          @change="onFilterChange"
           :aria-label="t('admin.users.roleFilter')"
           class="w-full px-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 text-text-primary font-medium"
+          @change="onFilterChange"
         >
           <option value="all">{{ t('admin.users.roleOptions.all') }}</option>
           <option value="buyer">{{ t('admin.users.roleOptions.buyer') }}</option>
@@ -135,9 +135,9 @@ function onFilterChange() {
       <div>
         <select
           v-model="adminStore.userFilters.status"
-          @change="onFilterChange"
           :aria-label="t('admin.users.statusFilter')"
           class="w-full px-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 text-text-primary font-medium"
+          @change="onFilterChange"
         >
           <option value="all">{{ t('admin.users.statusOptions.all') }}</option>
           <option value="active">{{ t('admin.users.statusOptions.active') }}</option>
@@ -150,9 +150,9 @@ function onFilterChange() {
       <div>
         <select
           v-model="adminStore.userFilters.kycStatus"
-          @change="onFilterChange"
           :aria-label="t('admin.users.kycFilter')"
           class="w-full px-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 text-text-primary font-medium"
+          @change="onFilterChange"
         >
           <option value="all">{{ t('admin.users.kycOptions.all') }}</option>
           <option value="verified">{{ t('admin.users.kycOptions.verified') }}</option>
@@ -248,25 +248,25 @@ function onFilterChange() {
               <td class="p-4 text-right">
                 <div class="flex items-center justify-end gap-1.5">
                   <button
-                    @click="handleViewDetail(u)"
                     class="p-1.5 text-text-secondary hover:bg-accent rounded-lg transition-colors"
                     :title="t('admin.users.viewProfile')"
+                    @click="handleViewDetail(u)"
                   >
                     <Eye class="w-4 h-4" />
                   </button>
 
                   <button
-                    @click="handleOpenRole(u)"
                     class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors"
                     :title="t('admin.actions.changeRole')"
+                    @click="handleOpenRole(u)"
                   >
                     <ShieldCheck class="w-4 h-4" />
                   </button>
 
                   <button
-                    @click="handleOpenBan(u)"
                     class="p-1.5 text-error hover:bg-error/10 rounded-lg transition-colors"
                     :title="t('admin.users.toggleBan')"
+                    @click="handleOpenBan(u)"
                   >
                     <Ban class="w-4 h-4" />
                   </button>
@@ -283,8 +283,8 @@ function onFilterChange() {
         <div class="flex gap-2">
           <button
             :disabled="adminStore.usersMeta.currentPage <= 1"
-            @click="adminStore.fetchUsers(adminStore.usersMeta.currentPage - 1)"
             class="px-3 py-1.5 rounded-lg border border-border disabled:opacity-40 hover:bg-accent font-medium flex items-center gap-1"
+            @click="adminStore.fetchUsers(adminStore.usersMeta.currentPage - 1)"
           >
             <ChevronLeft class="w-3.5 h-3.5" />
             <span>{{ t('admin.pagination.prev') }}</span>
@@ -292,8 +292,8 @@ function onFilterChange() {
 
           <button
             :disabled="adminStore.usersMeta.currentPage >= adminStore.usersMeta.lastPage"
-            @click="adminStore.fetchUsers(adminStore.usersMeta.currentPage + 1)"
             class="px-3 py-1.5 rounded-lg border border-border disabled:opacity-40 hover:bg-accent font-medium flex items-center gap-1"
+            @click="adminStore.fetchUsers(adminStore.usersMeta.currentPage + 1)"
           >
             <span>{{ t('admin.pagination.next') }}</span>
             <ChevronRight class="w-3.5 h-3.5" />

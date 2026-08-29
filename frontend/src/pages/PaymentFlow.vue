@@ -117,21 +117,24 @@ function goToAuctions() {
         <!-- Step Indicator -->
         <div class="relative">
           <div class="absolute top-1/2 left-0 right-0 h-1 bg-[rgb(var(--color-border))] -translate-y-1/2" />
-          <div class="absolute top-1/2 left-0 right-0 h-1 -translate-y-1/2 bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-secondary))]"
+          <div
+class="absolute top-1/2 left-0 right-0 h-1 -translate-y-1/2 bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-secondary))]"
                :style="{ width: ((currentStep - 1) / (totalSteps - 1)) * 100 + '%' }" />
           
           <div class="flex items-center justify-between relative z-10">
             <div v-for="step in steps" :key="step.id" class="flex flex-col items-center">
-              <div class="relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300"
+              <div
+class="relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300"
                    :class="
                      step.id < currentStep ? 'bg-green-500 text-white' :
                      step.id === currentStep ? 'bg-[rgb(var(--color-primary))] text-[rgb(var(--color-text-primary))] shadow-[0_0_0_4px_rgb(var(--color-primary))/0.3]' :
                      'bg-[rgb(var(--color-accent))] text-[rgb(var(--color-text-muted))]'
                    ">
-                <component v-if="step.id < currentStep" :is="step.icon" class="w-6 h-6" />
+                <component :is="step.icon" v-if="step.id < currentStep" class="w-6 h-6" />
                 <span v-else class="font-bold text-lg">{{ step.id }}</span>
               </div>
-              <p class="text-xs text-center mt-2 font-medium"
+              <p
+class="text-xs text-center mt-2 font-medium"
                  :class="step.id <= currentStep ? 'text-[rgb(var(--color-text-primary))]' : 'text-[rgb(var(--color-text-muted))]'">
                 {{ t(`paymentFlow.step${step.id}`) }}
               </p>
@@ -163,16 +166,17 @@ function goToAuctions() {
           <button
             v-for="method in paymentMethods"
             :key="method.id"
-            @click="selectMethod(method.id)"
             :class="[
               'card-liquid-glow p-6 text-left h-full flex flex-col',
               selectedMethod === method.id
                 ? 'border-2 border-[rgb(var(--color-primary))] bg-[rgb(var(--color-primary))/0.05]'
                 : ''
             ]"
+            @click="selectMethod(method.id)"
           >
             <div class="flex items-center gap-4 mb-4">
-              <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
+              <div
+class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
                    :class="selectedMethod === method.id ? 'bg-[rgb(var(--color-primary))] text-white' : 'bg-[rgb(var(--color-accent))] text-[rgb(var(--color-text-secondary))]'">
                 <component :is="method.icon" class="w-7 h-7" />
               </div>
@@ -221,18 +225,18 @@ function goToAuctions() {
               v-model="cardForm.number"
               :label="t('paymentFlow.cardNumber')"
               :placeholder="t('paymentFlow.cardNumberPlaceholder')"
-              @input="cardForm.number = formatCardNumber($event.target.value)"
               :max-length="19"
               glass
+              @input="cardForm.number = formatCardNumber($event.target.value)"
             />
             <div class="grid grid-cols-2 gap-4">
               <LiquidInput
                 v-model="cardForm.expiry"
                 :label="t('paymentFlow.expiryDate')"
                 placeholder="MM/YY"
-                @input="cardForm.expiry = formatExpiry($event.target.value)"
                 :max-length="5"
                 glass
+                @input="cardForm.expiry = formatExpiry($event.target.value)"
               />
               <LiquidInput
                 v-model="cardForm.cvc"
@@ -244,7 +248,7 @@ function goToAuctions() {
               />
             </div>
             <label class="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" v-model="saveCard" class="w-5 h-5 rounded border-[rgb(var(--color-border))] text-[rgb(var(--color-primary))] focus:ring-[rgb(var(--color-primary))]" />
+              <input v-model="saveCard" type="checkbox" class="w-5 h-5 rounded border-[rgb(var(--color-border))] text-[rgb(var(--color-primary))] focus:ring-[rgb(var(--color-primary))]" />
               <span class="text-sm text-[rgb(var(--color-text-secondary))]">{{ t('paymentFlow.saveCard') }}</span>
             </label>
           </div>
@@ -289,17 +293,17 @@ function goToAuctions() {
             <component :is="paymentMethods.find(m => m.id === selectedMethod)?.icon" class="w-16 h-16 mx-auto text-[rgb(var(--color-text-muted))] mb-4" />
             <h3 class="text-xl font-semibold text-[rgb(var(--color-text-primary))] mb-2">{{ t('paymentFlow.redirecting') }}</h3>
             <p class="text-[rgb(var(--color-text-muted))] mb-6">{{ t('paymentFlow.redirectDesc') }}</p>
-            <LiquidButton variant="primary" @click="nextStep" icon="ArrowRight">
+            <LiquidButton variant="primary" icon="ArrowRight" @click="nextStep">
               {{ t('paymentFlow.continue') }}
             </LiquidButton>
           </div>
 
           <!-- Navigation -->
           <div class="flex justify-between mt-8 pt-6 border-t border-[rgb(var(--color-border))/0.3]">
-            <LiquidButton variant="ghost" @click="prevStep" icon="ChevronRight" class="rotate-180">
+            <LiquidButton variant="ghost" icon="ChevronRight" class="rotate-180" @click="prevStep">
               {{ t('paymentFlow.back') }}
             </LiquidButton>
-            <LiquidButton variant="primary" @click="nextStep" icon="ArrowRight">
+            <LiquidButton variant="primary" icon="ArrowRight" @click="nextStep">
               {{ t('paymentFlow.continue') }}
             </LiquidButton>
           </div>

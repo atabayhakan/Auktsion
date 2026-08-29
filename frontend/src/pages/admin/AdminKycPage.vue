@@ -73,8 +73,8 @@ async function handleReviewSubmit(payload: {
     <div class="bg-white border border-border rounded-2xl p-4 shadow-xs sm:max-w-xs text-xs">
       <select
         v-model="adminStore.kycFilters.status"
-        @change="adminStore.fetchKycRecords(1)"
         class="w-full px-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 text-text-primary font-medium"
+        @change="adminStore.fetchKycRecords(1)"
       >
         <option value="all">{{ t('admin.kyc.filters.all') }}</option>
         <option value="pending">{{ t('admin.kyc.filters.pending') }}</option>
@@ -166,8 +166,8 @@ async function handleReviewSubmit(payload: {
               <!-- Actions -->
               <td class="p-4 text-right">
                 <button
-                  @click="handleReview(k)"
                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-secondary-hover text-white font-bold transition-all shadow-xs"
+                  @click="handleReview(k)"
                 >
                   <UserCheck class="w-3.5 h-3.5" />
                   <span>{{ t('admin.kyc.table.review') }}</span>

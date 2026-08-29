@@ -348,11 +348,11 @@ onMounted(async () => {
             <button
               v-for="tab in filterTabs"
               :key="tab.id"
-              @click="activeFilterTab = tab.id"
               class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer"
               :class="activeFilterTab === tab.id
                 ? 'bg-primary text-text-primary shadow-md'
                 : 'bg-white border border-border text-text-secondary hover:bg-black/5'"
+              @click="activeFilterTab = tab.id"
             >
               <span>{{ tab.label }}</span>
             </button>

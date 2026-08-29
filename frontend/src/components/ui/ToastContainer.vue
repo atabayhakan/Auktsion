@@ -75,9 +75,9 @@ function removeToast(id: string) {
           </div>
           
           <button
-            @click="removeToast(toast.id)"
             class="p-1 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10 flex-shrink-0"
             aria-label="Close notification"
+            @click="removeToast(toast.id)"
           >
             <X class="w-4 h-4" />
           </button>

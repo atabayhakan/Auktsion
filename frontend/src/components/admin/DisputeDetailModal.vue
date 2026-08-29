@@ -76,7 +76,7 @@ function handleResolveSubmit() {
             <span class="text-xs text-text-secondary">{{ t('admin.disputes.detail.lotLabel') }} {{ dispute.auctionTitle }}</span>
           </div>
         </div>
-        <button @click="emit('close')" class="text-text-muted hover:text-text-primary">
+        <button class="text-text-muted hover:text-text-primary" @click="emit('close')">
           <X class="w-5 h-5" />
         </button>
       </div>
@@ -138,13 +138,13 @@ function handleResolveSubmit() {
           <div class="grid grid-cols-2 gap-3">
             <button
               type="button"
-              @click="activeDecision = 'refund_buyer'"
               :class="[
                 'p-3 rounded-xl border text-left transition-all',
                 activeDecision === 'refund_buyer'
                   ? 'border-secondary bg-secondary/10 ring-2 ring-secondary/20'
                   : 'border-border bg-white hover:border-black/20'
               ]"
+              @click="activeDecision = 'refund_buyer'"
             >
               <span class="font-bold text-secondary block mb-0.5">{{ t('admin.disputes.actions.refundBuyer') }}</span>
               <span class="text-[11px] text-text-muted">{{ t('admin.disputes.detail.refundBuyerHint') }}</span>
@@ -152,13 +152,13 @@ function handleResolveSubmit() {
 
             <button
               type="button"
-              @click="activeDecision = 'release_seller'"
               :class="[
                 'p-3 rounded-xl border text-left transition-all',
                 activeDecision === 'release_seller'
                   ? 'border-success bg-success/10 ring-2 ring-success/20'
                   : 'border-border bg-white hover:border-black/20'
               ]"
+              @click="activeDecision = 'release_seller'"
             >
               <span class="font-bold text-success block mb-0.5">{{ t('admin.disputes.detail.releaseSellerTitle') }}</span>
               <span class="text-[11px] text-text-muted">{{ t('admin.disputes.detail.releaseSellerHint') }}</span>
@@ -192,16 +192,16 @@ function handleResolveSubmit() {
       <div class="p-5 border-t border-black/[0.06] flex items-center justify-between bg-accent/40">
         <button
           type="button"
-          @click="emit('close')"
           class="px-4 py-2 rounded-lg bg-accent text-text-secondary font-semibold hover:bg-accent-hover"
+          @click="emit('close')"
         >
           {{ t('admin.actions.close') }}
         </button>
 
         <button
           type="button"
-          @click="handleResolveSubmit"
           class="px-5 py-2.5 rounded-xl font-bold text-text-primary bg-primary hover:bg-primary-hover shadow-md shadow-primary/30 transition-all flex items-center gap-2"
+          @click="handleResolveSubmit"
         >
           <CheckCircle class="w-4 h-4" />
           <span>{{ t('admin.disputes.detail.submitButton') }}</span>

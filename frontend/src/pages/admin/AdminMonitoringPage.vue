@@ -140,8 +140,8 @@ async function handleCancelBid(bidId: string) {
           <!-- Quick Action Buttons -->
           <div class="pt-2 border-t border-border flex items-center justify-between gap-2">
             <button
-              @click="handleTogglePause(auc.id)"
               class="flex-1 py-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-colors bg-warning/20 text-warning hover:bg-warning/30"
+              @click="handleTogglePause(auc.id)"
             >
               <Pause class="w-3.5 h-3.5" />
               <span>{{ t('admin.monitoring.actions.pauseAuction') }}</span>

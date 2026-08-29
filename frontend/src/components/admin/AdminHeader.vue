@@ -111,9 +111,9 @@ onUnmounted(() => {
     <!-- Left: Mobile Toggle & Breadcrumbs -->
     <div class="flex items-center gap-3 md:gap-4 overflow-hidden">
       <button
-        @click="adminStore.toggleSidebar"
         type="button"
         class="md:hidden p-2 rounded-lg text-text-secondary hover:bg-accent"
+        @click="adminStore.toggleSidebar"
       >
         <Menu class="w-5 h-5" />
       </button>
@@ -141,7 +141,7 @@ onUnmounted(() => {
 
     <!-- Center: Global Quick Search Bar -->
     <div class="flex-1 max-w-md mx-4 hidden lg:block">
-      <form @submit.prevent="handleGlobalSearch" class="relative">
+      <form class="relative" @submit.prevent="handleGlobalSearch">
         <Search class="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
         <input
           v-model="searchQuery"
@@ -156,10 +156,10 @@ onUnmounted(() => {
     <div class="flex items-center gap-2 md:gap-3">
       <!-- Dark / Light Mode Toggle -->
       <button
-        @click="toggleTheme"
         type="button"
         class="p-2 text-text-secondary hover:text-text-primary rounded-lg hover:bg-accent transition-colors"
         :title="isDark ? t('admin.header.lightMode') : t('admin.header.darkMode')"
+        @click="toggleTheme"
       >
         <Sun v-if="isDark" class="w-4 h-4 text-amber-400" />
         <Moon v-else class="w-4 h-4 text-text-secondary" />
@@ -169,10 +169,10 @@ onUnmounted(() => {
       <div class="relative">
         <button
           id="admin-notification-btn"
-          @click="showNotifications = !showNotifications"
           type="button"
           class="p-2 text-text-secondary hover:text-text-primary rounded-lg hover:bg-accent transition-colors relative"
           :title="t('admin.header.notifications')"
+          @click="showNotifications = !showNotifications"
         >
           <Bell class="w-4 h-4" />
           <span
@@ -192,8 +192,8 @@ onUnmounted(() => {
               {{ t('admin.header.notifications') }} ({{ adminStore.unreadNotificationsCount }})
             </h4>
             <button
-              @click="adminStore.markAllNotificationsRead"
               class="text-[11px] text-primary hover:underline font-medium"
+              @click="adminStore.markAllNotificationsRead"
             >
               {{ t('admin.header.markAllRead') }}
             </button>
@@ -203,11 +203,11 @@ onUnmounted(() => {
             <div
               v-for="item in adminStore.notifications"
               :key="item.id"
-              @click="adminStore.markNotificationRead(item.id)"
               :class="[
                 'p-3 hover:bg-accent transition-colors cursor-pointer flex gap-3',
                 !item.read ? 'bg-primary/10' : ''
               ]"
+              @click="adminStore.markNotificationRead(item.id)"
             >
               <div class="shrink-0 mt-0.5">
                 <AlertTriangle v-if="item.type === 'alert'" class="w-4 h-4 text-rose-500" />
@@ -230,9 +230,9 @@ onUnmounted(() => {
       <div class="relative">
         <button
           id="admin-user-btn"
-          @click="showUserMenu = !showUserMenu"
           type="button"
           class="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-accent transition-colors"
+          @click="showUserMenu = !showUserMenu"
         >
           <img
             :src="userStore.user?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80'"
@@ -279,9 +279,9 @@ onUnmounted(() => {
           <div class="my-1 border-t border-black/[0.06]" />
 
           <button
-            @click="handleLogout"
             type="button"
             class="w-full flex items-center gap-2 px-3 py-2 text-xs text-error hover:bg-error/10 transition-colors text-left"
+            @click="handleLogout"
           >
             <LogOut class="w-3.5 h-3.5" />
             <span>{{ t('admin.header.logout') }}</span>

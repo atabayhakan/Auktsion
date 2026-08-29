@@ -178,8 +178,8 @@ onMounted(() => {
         <!-- Search Bar -->
         <div class="w-full md:w-80 relative">
           <input
-            type="text"
             v-model="searchQuery"
+            type="text"
             placeholder="Лоттун аты же шаар боюнча издөө..."
             class="w-full pl-9 pr-4 py-2.5 rounded-2xl bg-white border border-border text-base focus:outline-none focus:border-secondary shadow-sm text-text-primary placeholder-text-muted"
           />
@@ -192,11 +192,11 @@ onMounted(() => {
         <button
           v-for="cat in categories"
           :key="cat.id"
-          @click="selectedCategory = cat.id"
           class="px-4 py-2.5 rounded-2xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer"
           :class="selectedCategory === cat.id
             ? 'bg-primary text-text-primary shadow-md'
             : 'bg-white border border-border text-text-secondary hover:bg-black/5'"
+          @click="selectedCategory = cat.id"
         >
           <span>{{ cat.icon }}</span>
           <span>{{ cat.name }}</span>
@@ -205,8 +205,8 @@ onMounted(() => {
 
       <!-- Mobile Filters Trigger -->
       <button
-        @click="showMobileFilters = true"
         class="lg:hidden w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-white border border-border text-sm font-bold text-text-primary shadow-sm"
+        @click="showMobileFilters = true"
       >
         <SlidersHorizontal class="w-4 h-4 text-primary" />
         <span>Фильтрлер</span>
@@ -231,7 +231,7 @@ onMounted(() => {
                 <SlidersHorizontal class="w-4 h-4 text-primary" />
                 <span>Фильтрлер</span>
               </div>
-              <button @click="showMobileFilters = false" class="p-2 rounded-xl hover:bg-black/5 text-text-secondary" aria-label="Жабуу">
+              <button class="p-2 rounded-xl hover:bg-black/5 text-text-secondary" aria-label="Жабуу" @click="showMobileFilters = false">
                 <X class="w-5 h-5" />
               </button>
             </div>
@@ -288,22 +288,22 @@ onMounted(() => {
             <!-- Blitz Only Checkbox -->
             <div class="pt-2 border-t border-black/5">
               <label class="flex items-center gap-2 text-sm font-bold text-error cursor-pointer">
-                <input type="checkbox" v-model="isBlitzOnly" class="w-4 h-4 rounded text-error" />
+                <input v-model="isBlitzOnly" type="checkbox" class="w-4 h-4 rounded text-error" />
                 <span>🔥 Флаш Аукциондор (1 Саат)</span>
               </label>
             </div>
 
             <div class="flex items-center gap-3 pt-2">
               <button
-                @click="resetFilters"
                 class="flex-1 py-3 rounded-xl border border-border text-sm font-bold text-text-secondary flex items-center justify-center gap-1.5"
+                @click="resetFilters"
               >
                 <RotateCcw class="w-3.5 h-3.5" />
                 <span>Тазалоо</span>
               </button>
               <button
-                @click="showMobileFilters = false"
                 class="flex-1 py-3 rounded-xl bg-primary text-text-primary font-bold text-sm shadow-md"
+                @click="showMobileFilters = false"
               >
                 {{ filteredAuctions.length }} натыйжаны көрүү
               </button>
@@ -323,7 +323,7 @@ onMounted(() => {
               <SlidersHorizontal class="w-4 h-4 text-primary" />
               <span>Фильтрлер</span>
             </div>
-            <button @click="resetFilters" class="text-[11px] text-text-muted hover:text-error transition-colors flex items-center gap-1 cursor-pointer">
+            <button class="text-[11px] text-text-muted hover:text-error transition-colors flex items-center gap-1 cursor-pointer" @click="resetFilters">
               <RotateCcw class="w-3 h-3" />
               <span>Тазалоо</span>
             </button>
@@ -381,7 +381,7 @@ onMounted(() => {
           <!-- Blitz Only Checkbox -->
           <div class="pt-2 border-t border-black/5">
             <label class="flex items-center gap-2 text-xs font-bold text-error cursor-pointer">
-              <input type="checkbox" v-model="isBlitzOnly" class="w-4 h-4 rounded text-error" />
+              <input v-model="isBlitzOnly" type="checkbox" class="w-4 h-4 rounded text-error" />
               <span>🔥 Флаш Аукциондор (1 Саат)</span>
             </label>
           </div>
@@ -402,7 +402,7 @@ onMounted(() => {
             <div class="text-4xl">🔍</div>
             <h3 class="text-lg font-bold text-text-primary">Бул фильтрлер боюнча лот табылган жок</h3>
             <p class="text-xs text-text-muted">Башка категорияны же аймакты тандап көрүңүз.</p>
-            <button @click="resetFilters" class="px-5 py-2.5 rounded-xl bg-primary text-text-primary font-bold text-xs">
+            <button class="px-5 py-2.5 rounded-xl bg-primary text-text-primary font-bold text-xs" @click="resetFilters">
               Фильтрлерди баштапкы абалга келтирүү
             </button>
           </div>

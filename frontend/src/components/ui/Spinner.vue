@@ -43,14 +43,16 @@ const variantClasses = computed(() => {
     :aria-busy="true"
   >
     <!-- Default / Gold spinner -->
-    <div v-if="variant !== 'dots' && variant !== 'pulse'" 
+    <div
+v-if="variant !== 'dots' && variant !== 'pulse'" 
          :class="['rounded-full', variantClasses]" 
          aria-hidden="true">
     </div>
     
     <!-- Dots spinner -->
     <div v-else-if="variant === 'dots'" class="flex items-center justify-center gap-1" aria-hidden="true">
-      <span v-for="i in 3" :key="i"
+      <span
+v-for="i in 3" :key="i"
         class="w-2 h-2 rounded-full bg-primary animate-bounce"
         :style="{ animationDelay: `${i * 150}ms` }"
         aria-hidden="true"
@@ -58,7 +60,8 @@ const variantClasses = computed(() => {
     </div>
 
     <!-- Pulse spinner -->
-    <div v-else-if="variant === 'pulse'"
+    <div
+v-else-if="variant === 'pulse'"
          :class="['rounded-full bg-primary', sizeClasses, variantClasses]"
          aria-hidden="true"
     />

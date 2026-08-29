@@ -83,10 +83,10 @@ function handleLogout() {
         <span class="text-base font-bold text-gray-900">iTorgo</span>
       </div>
       <button
-        @click="toggleCollapse"
         class="p-2 rounded-xl bg-gray-100 border border-black/5 text-gray-600 hover:text-gray-900 hover:border-primary/30 transition-all duration-200"
         :aria-label="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
         :aria-expanded="!isCollapsed"
+        @click="toggleCollapse"
       >
         <ChevronLeft v-if="!isCollapsed" class="w-4 h-4" />
         <ChevronRight v-else class="w-4 h-4" />
@@ -146,12 +146,12 @@ function handleLogout() {
         </div>
       </div>
       <button
-        @click="handleLogout"
         :class="[
           'w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-500/10 rounded-xl transition-colors',
           isCollapsed ? 'justify-center' : '',
         ]"
         :title="isCollapsed ? t('nav.logout') : undefined"
+        @click="handleLogout"
       >
         <LogOut class="w-4 h-4 flex-shrink-0" />
         <span v-if="!isCollapsed">{{ t('nav.logout') }}</span>

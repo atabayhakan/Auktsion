@@ -70,9 +70,9 @@ function handleClick(event: MouseEvent) {
     :class="classes"
     :type="type"
     :disabled="disabled || loading"
-    @click="handleClick"
     :aria-busy="loading"
     :aria-disabled="disabled || loading"
+    @click="handleClick"
   >
     <span v-if="loading" class="absolute inset-0 flex items-center justify-center" aria-hidden="true">
       <svg class="w-5 h-5 animate-spin text-current" fill="none" viewBox="0 0 24 24">

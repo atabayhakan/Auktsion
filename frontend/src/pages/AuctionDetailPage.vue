@@ -257,7 +257,8 @@ function copyShareLink() {
                   {{ categoryName }}
                 </span>
 
-                <span class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop-blur-md border border-primary-container/40 text-primary-container flex items-center gap-1.5 shadow-sm"
+                <span
+class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop-blur-md border border-primary-container/40 text-primary-container flex items-center gap-1.5 shadow-sm"
                   :class="{ '!border-red-400/60 !text-red-300 !bg-red-950/85': timeRemaining.isCritical && !timeRemaining.isEnded }">
                   <Clock class="w-3.5 h-3.5" />
                   {{ timeRemaining.text }}
@@ -267,16 +268,16 @@ function copyShareLink() {
               <!-- Navigation Arrows -->
               <div v-if="auction.images.length > 1" class="absolute inset-y-0 inset-x-3 flex items-center justify-between pointer-events-none">
                 <button
-                  @click="prevImage"
                   class="pointer-events-auto p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-sm transition-all hover:scale-105 active:scale-95 shadow-md"
                   aria-label="Previous"
+                  @click="prevImage"
                 >
                   <ChevronLeft class="w-5 h-5" />
                 </button>
                 <button
-                  @click="nextImage"
                   class="pointer-events-auto p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-sm transition-all hover:scale-105 active:scale-95 shadow-md"
                   aria-label="Next"
+                  @click="nextImage"
                 >
                   <ChevronRight class="w-5 h-5" />
                 </button>
@@ -288,9 +289,9 @@ function copyShareLink() {
               <button
                 v-for="(img, idx) in auction.images"
                 :key="idx"
-                @click="selectedImageIndex = idx"
                 class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all"
                 :class="selectedImageIndex === idx ? 'border-primary scale-95 ring-2 ring-primary/30' : 'border-transparent opacity-70 hover:opacity-100'"
+                @click="selectedImageIndex = idx"
               >
                 <img :src="img" class="w-full h-full object-cover" />
               </button>
@@ -321,16 +322,16 @@ function copyShareLink() {
               <!-- Action buttons -->
               <div class="flex items-center gap-2 flex-shrink-0">
                 <button
-                  @click="uiStore.toastSuccess(t('auction.watchlist'), t('auction.watchlistAdded'))"
                   class="p-2.5 rounded-xl border border-border bg-white/80 hover:bg-black/5 text-text-secondary transition-all shadow-sm flex items-center gap-1.5 text-xs font-semibold"
+                  @click="uiStore.toastSuccess(t('auction.watchlist'), t('auction.watchlistAdded'))"
                 >
                   <Heart class="w-4 h-4 text-error" />
                   <span>{{ t('auction.watchlist') }}</span>
                 </button>
 
                 <button
-                  @click="copyShareLink"
                   class="p-2.5 rounded-xl border border-border bg-white/80 hover:bg-black/5 text-text-secondary transition-all shadow-sm flex items-center gap-1.5 text-xs font-semibold"
+                  @click="copyShareLink"
                 >
                   <Share2 class="w-4 h-4 text-secondary" />
                   <span>{{ t('auction.share') }}</span>
@@ -469,8 +470,8 @@ function copyShareLink() {
             <div class="pt-4 border-t border-black/[0.06] flex flex-col sm:flex-row items-center gap-3">
               <button
                 v-if="canBid"
-                @click="openBidModal"
                 class="w-full sm:flex-1 py-3.5 px-6 rounded-2xl bg-primary text-text-primary font-extrabold text-sm sm:text-base hover:bg-primary-hover shadow-md transition-all flex items-center justify-center gap-2 active:scale-98"
+                @click="openBidModal"
               >
                 <Send class="w-4 h-4" />
                 <span>{{ t('home.placeBid') }} ({{ minimumNextBid?.formatted }})</span>
@@ -485,8 +486,8 @@ function copyShareLink() {
               </button>
 
               <button
-                @click="showPaymentModal = true"
                 class="w-full sm:w-auto py-3.5 px-5 rounded-2xl border border-success/40 bg-success/10 text-success font-bold text-xs sm:text-sm hover:bg-success/20 transition-all flex items-center justify-center gap-1.5"
+                @click="showPaymentModal = true"
               >
                 <CreditCard class="w-4 h-4" />
                 <span>{{ t('auction.mbankQR') }}</span>
@@ -549,24 +550,24 @@ function copyShareLink() {
 
             <div class="space-y-2">
               <button
-                @click="uiStore.toastInfo(t('contactPage.title'), t('auction.writeToSeller'))"
                 class="w-full py-2.5 px-3.5 rounded-xl border border-border bg-white/90 hover:bg-black/5 text-text-primary font-semibold text-xs transition-all flex items-center gap-2 shadow-sm"
+                @click="uiStore.toastInfo(t('contactPage.title'), t('auction.writeToSeller'))"
               >
                 <MessageSquare class="w-4 h-4 text-primary" />
                 <span>{{ t('auction.writeToSeller') }}</span>
               </button>
 
               <button
-                @click="copyShareLink"
                 class="w-full py-2.5 px-3.5 rounded-xl border border-border bg-white/90 hover:bg-black/5 text-text-primary font-semibold text-xs transition-all flex items-center gap-2 shadow-sm"
+                @click="copyShareLink"
               >
                 <Share2 class="w-4 h-4 text-secondary" />
                 <span>{{ t('auction.share') }}</span>
               </button>
 
               <button
-                @click="uiStore.toastInfo(t('auction.reportAuction'), t('auction.reportAuction'))"
                 class="w-full py-2.5 px-3.5 rounded-xl border border-border bg-white/90 hover:bg-black/5 text-text-primary font-semibold text-xs transition-all flex items-center gap-2 shadow-sm"
+                @click="uiStore.toastInfo(t('auction.reportAuction'), t('auction.reportAuction'))"
               >
                 <AlertCircle class="w-4 h-4 text-error" />
                 <span>{{ t('auction.reportAuction') }}</span>
@@ -685,9 +686,9 @@ function copyShareLink() {
       </div>
       <button
         v-if="canBid"
-        @click="openBidModal"
         class="flex-shrink-0 py-3 px-5 rounded-2xl bg-primary text-text-primary font-extrabold text-sm shadow-md active:scale-95 transition-transform flex items-center gap-1.5"
         :class="{ 'scale-105': timeRemaining.isCritical && !timeRemaining.isEnded }"
+        @click="openBidModal"
       >
         <Send class="w-4 h-4" />
         <span>{{ t('home.placeBid') }}</span>
@@ -721,7 +722,7 @@ function copyShareLink() {
         </div>
 
         <div class="flex items-center gap-2">
-          <input type="checkbox" id="bid-terms" class="w-4 h-4 rounded border-border text-primary focus:ring-primary" v-model="bidConfirmed" />
+          <input id="bid-terms" v-model="bidConfirmed" type="checkbox" class="w-4 h-4 rounded border-border text-primary focus:ring-primary" />
           <label for="bid-terms" class="text-xs text-text-secondary">
             <RouterLink to="/terms" class="text-primary hover:underline">{{ t('auction.agreeTermsEscrow') }}</RouterLink>
           </label>
@@ -735,15 +736,15 @@ function copyShareLink() {
       <template #footer>
         <div class="flex items-center justify-end gap-2 pt-2">
           <button
-            @click="showBidModal = false"
             class="px-4 py-2 rounded-xl text-xs font-semibold text-text-secondary hover:bg-black/5 transition-colors"
+            @click="showBidModal = false"
           >
             {{ t('common.cancel') }}
           </button>
           <button
-            @click="submitBid"
             :disabled="isPlacingBid || !bidConfirmed"
             class="px-5 py-2 rounded-xl bg-primary text-text-primary font-bold text-xs hover:bg-primary-hover shadow-md transition-all disabled:opacity-50"
+            @click="submitBid"
           >
             <span v-if="isPlacingBid">{{ t('auction.submitting') }}</span>
             <span v-else>{{ t('auction.confirmBid') }}</span>
@@ -756,7 +757,7 @@ function copyShareLink() {
     <PaymentModal
       v-model="showPaymentModal"
       :amount="Number(currentPrice.amount || 185000)"
-      :auctionTitle="auction?.title || t('paymentModal.title')"
+      :auction-title="auction?.title || t('paymentModal.title')"
       @payment-success="() => { showPaymentModal = false; uiStore.toastSuccess(t('toasts.paymentCompleted'), t('paymentModal.successDescription')); }"
     />
 

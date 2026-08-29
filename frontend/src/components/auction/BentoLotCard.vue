@@ -1,18 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue'
-import { motion } from 'framer-motion-vue'
+import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { 
-  Clock, Eye, TrendingUp, ShieldCheck, Zap, 
-  MapPin, Tag, Crown, Flame, CheckCircle2,
-  Heart, Share2, ExternalLink, AlertCircle
-} from 'lucide-vue-next'
+import { Clock, TrendingUp, ShieldCheck, Zap, Heart } from 'lucide-vue-next'
 import { currency } from '@/composables/useFormatters'
 import { useCountdown } from '@/composables/useCountdown'
 import { useI18n } from '@/composables/useI18n'
-import type { Auction, AuctionStatus } from '@/types'
-import Button from '@/components/ui/Button.vue'
-import Badge from '@/components/ui/Badge.vue'
+import type { Auction } from '@/types'
 
 interface Props {
   /** The auction data */
@@ -85,8 +78,8 @@ const categoryName = computed(() => {
   return map[slug || ''] || t('categories.electronics')
 })
 
-// Countdown timer
-const { countdown } = useCountdown({
+// Countdown timer (reactive, used via timeRemaining computed)
+useCountdown({
   endsAt: computed(() => props.auction.endsAt),
 })
 
@@ -111,25 +104,8 @@ const timeRemaining = computed(() => {
   }
 })
 
-// Status variant for badge
-const statusVariant = computed(() => {
-  if (timeRemaining.value.isEnded) return 'ended' as const
-  if (timeRemaining.value.isUrgent) return 'finalCall' as const
-  if (timeRemaining.value.isCritical) return 'outbid' as const
-  if (props.variant === 'live') return 'live' as const
-  if (props.variant === 'vip') return 'vip' as const
-  if (props.auction.isWatchlisted) return 'verified' as const
-  return 'default' as const
-})
-
 // Animation states
 const isHovered = ref(false)
-const isImageLoaded = ref(false)
-const priceUpdateTrigger = ref(0)
-const bidCount = ref(props.auction.bidCount || 0)
-const bidCountDisplay = ref(props.auction.bidCount || 0)
-const showOutbidToast = ref(false)
-const showWinningToast = ref(false)
 
 // Bento size classes
 const bentoSizeClasses = computed(() => {
@@ -165,25 +141,13 @@ const variantClasses = computed(() => {
 function handleWatchToggle() {
   emit('toggle-watch', props.auction.id)
 }
-
-function handleShare() {
-  emit('share', props.auction.id)
-}
-
-function handleQuickBid(multiplier: number = 1) {
-  const amount = (currentPrice.value?.minorUnits || 0) + bidIncrement.value * multiplier
-  emit('quick-bid', props.auction.id, amount)
-}
 </script>
 
 <template>
-  <motion.article
+  <article
     :class="[bentoSizeClasses, variantClasses]"
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay: index * 0.05, ease: [0.23, 1, 0.32, 1] }}
   >
     <!-- Top Image Media Container -->
     <div class="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-dark-950">
@@ -202,7 +166,8 @@ function handleQuickBid(multiplier: number = 1) {
           {{ categoryName }}
         </span>
 
-        <span class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-dark-950/85 backdrop-blur-md border border-gold-500/30 text-gold-300 flex items-center gap-1.5 shadow-sm"
+        <span
+class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-dark-950/85 backdrop-blur-md border border-gold-500/30 text-gold-300 flex items-center gap-1.5 shadow-sm"
               :class="{ '!border-red-500/50 !text-red-300 !bg-red-950/85': timeRemaining.isCritical && !timeRemaining.isEnded }">
           <Clock class="w-3.5 h-3.5" />
           {{ timeRemaining.text }}
@@ -279,9 +244,9 @@ function handleQuickBid(multiplier: number = 1) {
         <div class="flex items-center gap-2">
           <button
             v-if="showQuickActions"
-            @click="handleWatchToggle"
             class="p-2 rounded-xl bg-white/10 dark:bg-dark-900/60 border border-black/10 dark:border-white/10 text-gray-400 hover:text-red-500 hover:border-red-500/40 transition-all duration-200 active:scale-95"
             :title="t('auction.watchlist')"
+            @click="handleWatchToggle"
           >
             <Heart :class="auction.isWatchlisted ? 'fill-current text-red-500' : ''" class="w-4 h-4" />
           </button>
@@ -295,7 +260,7 @@ function handleQuickBid(multiplier: number = 1) {
         </div>
       </div>
     </div>
-  </motion.article>
+  </article>
 </template>
 
 <style scoped>

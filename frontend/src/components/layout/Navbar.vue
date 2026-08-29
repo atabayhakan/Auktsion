@@ -103,9 +103,9 @@ onUnmounted(() => {
         <!-- Logo & Mobile Menu -->
         <div class="flex items-center gap-4">
           <button
-            @click="isMobileMenuOpen = !isMobileMenuOpen"
             class="lg:hidden p-2 rounded-lg glass hover:bg-[rgb(var(--color-accent))/0.5] transition-all"
             aria-label="Menü"
+            @click="isMobileMenuOpen = !isMobileMenuOpen"
           >
             <Menu v-if="!isMobileMenuOpen" class="w-6 h-6 text-[rgb(var(--color-text-primary))]" />
             <X v-else class="w-6 h-6 text-[rgb(var(--color-text-primary))]" />
@@ -144,7 +144,7 @@ onUnmounted(() => {
 
         <!-- Search Bar -->
         <div class="flex-1 max-w-xl lg:max-w-md mx-4 hidden lg:block">
-          <form @submit.prevent="handleSearch" class="relative">
+          <form class="relative" @submit.prevent="handleSearch">
             <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[rgb(var(--color-text-muted))]" aria-hidden="true" />
             <input
               v-model="searchQuery"
@@ -161,10 +161,10 @@ onUnmounted(() => {
           <!-- Language Selector -->
           <div class="relative" data-dropdown-trigger>
             <button
-              @click="isLanguageOpen = !isLanguageOpen"
               class="flex items-center gap-1.5 px-3 py-2 rounded-lg glass hover:bg-[rgb(var(--color-accent))/0.5] transition-all"
               aria-expanded="isLanguageOpen"
               aria-haspopup="listbox"
+              @click="isLanguageOpen = !isLanguageOpen"
             >
               <span class="text-base">{{ currentLang.value.flag }}</span>
               <span class="text-sm font-medium text-[rgb(var(--color-text-primary))]">{{ currentLang.value.nativeName }}</span>
@@ -182,10 +182,10 @@ onUnmounted(() => {
                   <button
                     v-for="lang in languages"
                     :key="lang.code"
-                    @click="toggleLanguage(lang.code)"
                     class="w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-[rgb(var(--color-accent))/0.5] transition-colors"
                     role="option"
                     :aria-selected="lang.code === locale"
+                    @click="toggleLanguage(lang.code)"
                   >
                     <span class="text-base">{{ lang.flag }}</span>
                     <span>{{ lang.nativeName }}</span>
@@ -198,9 +198,9 @@ onUnmounted(() => {
 
           <!-- Theme Toggle -->
           <button
-            @click="document.documentElement.classList.toggle('dark')"
             class="p-2.5 rounded-lg glass hover:bg-[rgb(var(--color-accent))/0.5] transition-all"
             aria-label="Tema değiştir"
+            @click="document.documentElement.classList.toggle('dark')"
           >
             <Sun v-if="document.documentElement.classList.contains('dark')" class="w-5 h-5 text-[rgb(var(--color-primary))]" />
             <Moon v-else class="w-5 h-5 text-[rgb(var(--color-secondary))]" />
@@ -211,10 +211,10 @@ onUnmounted(() => {
             <div v-if="false" class="flex items-center gap-2">
               <!-- Authenticated user dropdown - placeholder for future auth integration -->
               <button
-                @click="isUserMenuOpen = !isUserMenuOpen"
                 class="flex items-center gap-2 px-3 py-2 rounded-lg glass hover:bg-[rgb(var(--color-accent))/0.5] transition-all"
                 aria-expanded="isUserMenuOpen"
                 aria-haspopup="menu"
+                @click="isUserMenuOpen = !isUserMenuOpen"
               >
                 <div class="w-8 h-8 rounded-full bg-gradient-hero flex items-center justify-center font-bold text-white text-sm">
                   U
@@ -239,16 +239,16 @@ onUnmounted(() => {
                       v-for="item in userMenuItems"
                       :key="item.path"
                       :to="item.path"
-                      @click="closeAllDropdowns"
                       class="flex items-center gap-3 px-3 py-2.5 text-sm text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] hover:bg-[rgb(var(--color-accent))/0.5] transition-colors"
+                      @click="closeAllDropdowns"
                     >
                       <component :is="item.icon" class="w-5 h-5" />
                       <span>{{ t(item.label) }}</span>
                     </router-link>
                     <hr class="my-1 border-[rgb(var(--color-border))/0.3]" />
                     <button
-                      @click="closeAllDropdowns"
                       class="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-[rgb(var(--color-error))] hover:bg-[rgb(var(--color-error))/0.1] transition-colors"
+                      @click="closeAllDropdowns"
                     >
                       <LogOut class="w-5 h-5" />
                       <span>{{ t('navbar.logout') }}</span>
@@ -277,9 +277,9 @@ onUnmounted(() => {
 
           <!-- Mobile Menu Trigger -->
           <button
-            @click="isMobileMenuOpen = !isMobileMenuOpen"
             class="lg:hidden p-2.5 rounded-lg glass hover:bg-[rgb(var(--color-accent))/0.5] transition-all"
             aria-label="Mobil menü"
+            @click="isMobileMenuOpen = !isMobileMenuOpen"
           >
             <Menu v-if="!isMobileMenuOpen" class="w-6 h-6 text-[rgb(var(--color-text-primary))]" />
             <X v-else class="w-6 h-6 text-[rgb(var(--color-text-primary))]" />
@@ -298,8 +298,8 @@ onUnmounted(() => {
               v-for="item in navItems"
               :key="item.path"
               :to="item.path"
-              @click="isMobileMenuOpen = false"
               class="block px-3 py-2.5 rounded-lg text-[rgb(var(--color-text-secondary))] hover:text-[rgb(var(--color-text-primary))] hover:bg-[rgb(var(--color-accent))/0.5] transition-colors"
+              @click="isMobileMenuOpen = false"
             >
               {{ t(item.label) }}
             </router-link>

@@ -103,10 +103,10 @@ onUnmounted(() => {
 <template>
   <Transition name="modal" appear>
     <Teleport to="body">
-      <div v-if="modelValue" class="modal-overlay fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" ref="overlayRef" @click="handleOverlayClick" @keydown="handleKeyDown" tabindex="-1">
+      <div v-if="modelValue" ref="overlayRef" class="modal-overlay fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" tabindex="-1" @click="handleOverlayClick" @keydown="handleKeyDown">
         <div
-          :class="['modal-content w-full bg-white rounded-2xl shadow-2xl border border-black/10 max-h-[90vh] flex flex-col', sizeClasses]"
           ref="contentRef"
+          :class="['modal-content w-full bg-white rounded-2xl shadow-2xl border border-black/10 max-h-[90vh] flex flex-col', sizeClasses]"
           role="dialog"
           aria-modal="true"
           :aria-labelledby="title ? 'modal-title' : undefined"
@@ -120,9 +120,9 @@ onUnmounted(() => {
 
             <button
               v-if="showCloseButton"
-              @click="close"
               class="p-2 text-text-muted hover:text-text-primary transition-colors rounded hover:bg-black/5"
               aria-label="Close modal"
+              @click="close"
             >
               <X class="w-5 h-5" />
             </button>

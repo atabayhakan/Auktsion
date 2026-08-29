@@ -173,8 +173,8 @@ async function handlePayoutProcess(payload: {
               <td class="p-4 text-right">
                 <button
                   v-if="p.status === 'pending'"
-                  @click="handleOpenPayoutModal(p)"
                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold transition-all shadow-xs"
+                  @click="handleOpenPayoutModal(p)"
                 >
                   <Wallet class="w-3.5 h-3.5" />
                   <span>{{ t('admin.financials.process') }}</span>

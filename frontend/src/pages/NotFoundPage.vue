@@ -40,10 +40,10 @@ function refreshPage() {
 
       <!-- Actions -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <Button size="lg" variant="primary" @click="goHome" icon="Home" iconRight>
+        <Button size="lg" variant="primary" icon="Home" icon-right @click="goHome">
           {{ t('notFoundPage.goHome') }}
         </Button>
-        <Button size="lg" variant="outline" @click="refreshPage" icon="RefreshCw">
+        <Button size="lg" variant="outline" icon="RefreshCw" @click="refreshPage">
           {{ t('notFoundPage.refresh') }}
         </Button>
       </div>

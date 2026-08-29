@@ -226,13 +226,13 @@ const hourlyChartOptions = {
               { id: 'year', label: t('admin.analytics.timeframes.year') }
             ]"
             :key="tf.id"
-            @click="handleTimeframeChange(tf.id as any)"
             :class="[
               'px-3 py-1.5 rounded-lg transition-all',
               timeframe === tf.id
                 ? 'bg-primary text-text-primary font-bold shadow-xs'
                 : 'text-text-secondary hover:text-text-primary'
             ]"
+            @click="handleTimeframeChange(tf.id as any)"
           >
             {{ tf.label }}
           </button>
@@ -240,8 +240,8 @@ const hourlyChartOptions = {
 
         <!-- Export CSV Button -->
         <button
-          @click="handleExportCSV"
           class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-secondary text-white font-bold text-xs shadow-xs hover:opacity-90 transition-opacity"
+          @click="handleExportCSV"
         >
           <Download class="w-3.5 h-3.5" />
           <span>{{ t('admin.analytics.exportCsv') }}</span>

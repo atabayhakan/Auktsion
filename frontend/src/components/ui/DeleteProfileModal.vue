@@ -31,7 +31,7 @@ function handleConfirm() {
 </script>
 
 <template>
-  <Modal :modelValue="modelValue" @update:modelValue="emit('update:modelValue', $event)" :title="t('dashboard.deleteAccount')">
+  <Modal :model-value="modelValue" :title="t('dashboard.deleteAccount')" @update:model-value="emit('update:modelValue', $event)">
     <div class="space-y-4">
       <div class="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-300">
         <AlertTriangle class="w-6 h-6 flex-shrink-0" />

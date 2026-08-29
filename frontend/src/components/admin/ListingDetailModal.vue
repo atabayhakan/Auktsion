@@ -64,7 +64,7 @@ function handleReject() {
             Лот #{{ listing.id }}: {{ listing.title }}
           </h3>
         </div>
-        <button @click="emit('close')" class="text-text-muted hover:text-text-primary">
+        <button class="text-text-muted hover:text-text-primary" @click="emit('close')">
           <X class="w-5 h-5" />
         </button>
       </div>
@@ -99,11 +99,11 @@ function handleReject() {
               <button
                 v-for="(img, idx) in listing.images"
                 :key="idx"
-                @click="activeImageIdx = idx"
                 :class="[
                   'w-16 h-12 rounded-lg overflow-hidden border-2 shrink-0 transition-all',
                   activeImageIdx === idx ? 'border-primary scale-95' : 'border-transparent opacity-70 hover:opacity-100'
                 ]"
+                @click="activeImageIdx = idx"
               >
                 <img :src="img" class="w-full h-full object-cover" />
               </button>
@@ -157,13 +157,13 @@ function handleReject() {
             <!-- Toggles for Featured and Blitz -->
             <div class="flex gap-2">
               <button
-                @click="emit('toggle-featured', listing.id)"
                 :class="[
                   'flex-1 py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 transition-colors border',
                   listing.isFeatured
                     ? 'bg-amber-500 text-white border-amber-600'
                     : 'bg-accent text-text-secondary border-border hover:bg-accent-hover'
                 ]"
+                @click="emit('toggle-featured', listing.id)"
               >
                 <Star class="w-3.5 h-3.5" />
                 <span>{{ listing.isFeatured ? t('admin.listings.detail.onHomepage') : t('admin.listings.detail.showOnHomepage') }}</span>
@@ -215,8 +215,8 @@ function handleReject() {
             class="w-full p-2.5 bg-white border border-border rounded-lg text-xs"
           ></textarea>
           <div class="flex justify-end gap-2">
-            <button @click="showRejectPrompt = false" class="px-3 py-1.5 rounded-lg bg-accent-hover text-text-primary font-semibold">{{ t('admin.actions.cancel') }}</button>
-            <button @click="handleReject" class="px-3 py-1.5 rounded-lg bg-error text-white font-semibold hover:bg-error/90">{{ t('admin.listings.detail.confirmReject') }}</button>
+            <button class="px-3 py-1.5 rounded-lg bg-accent-hover text-text-primary font-semibold" @click="showRejectPrompt = false">{{ t('admin.actions.cancel') }}</button>
+            <button class="px-3 py-1.5 rounded-lg bg-error text-white font-semibold hover:bg-error/90" @click="handleReject">{{ t('admin.listings.detail.confirmReject') }}</button>
           </div>
         </div>
       </div>
@@ -225,8 +225,8 @@ function handleReject() {
       <div class="p-5 border-t border-black/[0.06] flex items-center justify-between bg-accent/40">
         <button
           type="button"
-          @click="emit('close')"
           class="px-4 py-2 rounded-lg bg-accent text-text-secondary font-semibold hover:bg-accent-hover"
+          @click="emit('close')"
         >
           {{ t('admin.actions.close') }}
         </button>
@@ -234,18 +234,18 @@ function handleReject() {
         <div class="flex items-center gap-2">
           <button
             v-if="listing.status === 'pending_approval' || listing.status === 'flagged'"
-            @click="showRejectPrompt = true"
             type="button"
             class="px-4 py-2 rounded-lg font-semibold bg-error/10 text-error hover:bg-error/20 border border-error/30"
+            @click="showRejectPrompt = true"
           >
             {{ t('admin.actions.reject') }}
           </button>
 
           <button
             v-if="listing.status === 'pending_approval' || listing.status === 'flagged'"
-            @click="handleApprove"
             type="button"
             class="px-4 py-2 rounded-lg font-semibold text-white bg-success hover:bg-success/90 shadow-sm"
+            @click="handleApprove"
           >
             {{ t('admin.actions.approve') }}
           </button>

@@ -212,8 +212,8 @@ function toggleFaq(idx: number) {
             class="glass rounded-2xl border border-black/[0.08] bg-white/95 shadow-sm overflow-hidden transition-all"
           >
             <button 
-              @click="toggleFaq(idx)"
               class="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-bold text-xs sm:text-sm text-text-primary hover:text-primary transition-colors"
+              @click="toggleFaq(idx)"
             >
               <span>{{ faq.q }}</span>
               <ChevronDown 

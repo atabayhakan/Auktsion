@@ -157,9 +157,9 @@ function formatDate(iso: string) {
           v-for="f in filters"
           :key="f.id"
           type="button"
-          @click="activeFilter = f.id"
           class="relative z-10 flex-1 px-4 py-1.5 text-xs font-bold rounded-lg transition-colors whitespace-nowrap"
           :class="activeFilter === f.id ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary'"
+          @click="activeFilter = f.id"
         >
           {{ f.label }}
         </button>
@@ -177,11 +177,11 @@ function formatDate(iso: string) {
 
       <button
         type="button"
-        @click="toggleSelectMode"
         class="sm:ml-auto flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors"
         :class="isSelectMode
           ? 'bg-primary text-text-primary border-primary shadow-md'
           : 'bg-white text-text-secondary border-border hover:text-text-primary'"
+        @click="toggleSelectMode"
       >
         <ListChecks class="w-3.5 h-3.5" />
         <span>{{ isSelectMode ? t('admin.media.doneButton') : t('admin.media.selectButton') }}</span>
@@ -209,8 +209,8 @@ function formatDate(iso: string) {
             v-for="entry in group.entries"
             :key="entry.item.id"
             type="button"
-            @click="handleThumbClick(entry.item, entry.index)"
             class="relative aspect-square overflow-hidden rounded-lg bg-black/5 group"
+            @click="handleThumbClick(entry.item, entry.index)"
           >
             <img
               :src="entry.item.url"
@@ -249,8 +249,8 @@ function formatDate(iso: string) {
         <span class="text-xs font-semibold">{{ t('admin.media.selectedCount', { count: selectedIds.size }) }}</span>
         <button
           type="button"
-          @click="copySelectedLinks"
           class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-xs font-bold transition-colors"
+          @click="copySelectedLinks"
         >
           <Copy class="w-3.5 h-3.5" />
           <span>{{ t('admin.media.copyLinks') }}</span>
@@ -270,9 +270,9 @@ function formatDate(iso: string) {
           </span>
           <button
             type="button"
-            @click="closeLightbox"
             class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
             :aria-label="t('admin.media.lightbox.close')"
+            @click="closeLightbox"
           >
             <X class="w-5 h-5" />
           </button>
@@ -282,9 +282,9 @@ function formatDate(iso: string) {
           <button
             v-if="filteredMedia.length > 1"
             type="button"
-            @click="prevLightbox"
             class="absolute left-2 sm:left-6 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
             :aria-label="t('admin.media.lightbox.prev')"
+            @click="prevLightbox"
           >
             <ChevronLeft class="w-5 h-5" />
           </button>
@@ -294,9 +294,9 @@ function formatDate(iso: string) {
           <button
             v-if="filteredMedia.length > 1"
             type="button"
-            @click="nextLightbox"
             class="absolute right-2 sm:right-6 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
             :aria-label="t('admin.media.lightbox.next')"
+            @click="nextLightbox"
           >
             <ChevronRight class="w-5 h-5" />
           </button>

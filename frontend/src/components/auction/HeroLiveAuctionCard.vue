@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { 
-  Zap, Clock, TrendingUp, ShieldCheck, Eye, 
-  CreditCard, Smartphone, CheckCircle2, AlertCircle,
-  ChevronRight, Gavel, Crown, Lock, ExternalLink
+  Zap, Clock, TrendingUp, ShieldCheck, 
+  Smartphone, CheckCircle2, Gavel, Crown, Lock
 } from 'lucide-vue-next'
-import { useAuctionStore } from '@/stores/auction'
 import { currency } from '@/composables/useFormatters'
 import { useI18n } from '@/composables/useI18n'
 import type { Auction } from '@/types'
@@ -32,7 +30,6 @@ const emit = defineEmits<{
   'share': [auctionId: string]
 }>()
 
-const auctionStore = useAuctionStore()
 const { formatMoney } = currency
 const { t } = useI18n()
 
@@ -161,7 +158,6 @@ function updateCountdown() {
   const milliseconds = diff % 1000
   
   const isCritical = diff < 300000 // Less than 5 minutes
-  const isUrgent = diff < 60000 // Less than 1 minute
 
   timeRemaining.value = {
     days,
@@ -557,7 +553,8 @@ watch(() => props.auction.bidCount, (newCount) => {
               :class="bidder.isCurrentUser ? 'border-emerald-500/40 shadow-glow-emerald-sm' : ''"
             >
               <div class="relative">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-600 to-gray-400 flex items-center justify-center text-white font-bold text-lg"
+                <div
+class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-600 to-gray-400 flex items-center justify-center text-white font-bold text-lg"
                      :class="bidder.isCurrentUser ? 'ring-2 ring-emerald-500/50 ring-offset-2 ring-offset-dark-950' : ''">
                   {{ bidder.name.charAt(0).toUpperCase() }}
                 </div>
@@ -622,8 +619,8 @@ watch(() => props.auction.bidCount, (newCount) => {
             <span class="block text-caption-sm uppercase tracking-widest text-gray-500 font-medium">{{ t('home.currentPrice') }}</span>
             
             <div
+              :key="`price-${currentPrice.value.minorUnits}`"
               class="relative"
-              key={`price-${currentPrice.value.minorUnits}`}
             >
               <span
                 class="font-display font-extrabold text-4xl lg:text-5xl xl:text-6xl tabular-nums tracking-tight text-white"
@@ -730,10 +727,10 @@ watch(() => props.auction.bidCount, (newCount) => {
             <button
               v-for="bid in quickBidAmounts"
               :key="bid.multiplier"
-              @click="handleQuickBid(bid.minor)"
               :disabled="isPriceAnimating || timeRemaining.isEnded"
               class="relative group px-4 py-3 rounded-2xl bg-white/5 dark:bg-dark-900/60 border border-white/10 dark:border-white/10 hover:border-gold-500/40 hover:shadow-glow-gold-sm transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center gap-1"
               style="--delay: 0.1"
+              @click="handleQuickBid(bid.minor)"
             >
               <span class="text-caption-xs font-bold text-gray-400 group-hover:text-gold-400 transition-colors">{{ bid.label }}</span>
               <span
@@ -751,9 +748,9 @@ watch(() => props.auction.bidCount, (newCount) => {
             variant="secondary"
             size="lg"
             class="w-full"
-            @click="handleCustomBid"
             :disabled="isPriceAnimating || timeRemaining.isEnded"
             icon="ExternalLink"
+            @click="handleCustomBid"
           >
             {{ t('home.placeBid') }}
           </Button>
@@ -792,10 +789,10 @@ watch(() => props.auction.bidCount, (newCount) => {
           </RouterLink>
           
           <div class="flex items-center gap-3">
-            <Button variant="ghost" size="md" class="flex-1" @click="$emit('watch', auction.id)" icon="Eye">
+            <Button variant="ghost" size="md" class="flex-1" icon="Eye" @click="$emit('watch', auction.id)">
               {{ t('auction.watchlist') }}
             </Button>
-            <Button variant="ghost" size="md" class="flex-1" @click="$emit('share', auction.id)" icon="ExternalLink">
+            <Button variant="ghost" size="md" class="flex-1" icon="ExternalLink" @click="$emit('share', auction.id)">
               {{ t('auction.share') }}
             </Button>
           </div>

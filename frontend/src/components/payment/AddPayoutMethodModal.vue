@@ -44,8 +44,8 @@ function handleSubmit() {
 </script>
 
 <template>
-  <Modal :modelValue="modelValue" @update:modelValue="emit('update:modelValue', $event)" :title="t('dashboard.addPayoutMethod')">
-    <form @submit.prevent="handleSubmit" class="space-y-4">
+  <Modal :model-value="modelValue" :title="t('dashboard.addPayoutMethod')" @update:model-value="emit('update:modelValue', $event)">
+    <form class="space-y-4" @submit.prevent="handleSubmit">
       <div>
         <label class="block text-sm font-medium text-text-secondary mb-1.5">{{ t('payoutModal.selectBank') }}</label>
         <select v-model="bank" class="w-full bg-white border border-border rounded-xl px-4 py-2.5 text-text-primary focus:outline-none focus:border-secondary">

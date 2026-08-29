@@ -149,10 +149,10 @@ function triggerFileInput() {
         ref="fileInput"
         type="file"
         :accept="props.accepted"
-        @change="handleFileInput"
         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
         multiple
         disabled
+        @change="handleFileInput"
       />
       
       <div 
@@ -172,9 +172,9 @@ function triggerFileInput() {
           
           <button 
             type="button"
-            @click="removeFile"
             class="absolute top-2 right-2 p-1 rounded-full bg-red-500/80 text-white hover:bg-red-500 transition-colors"
             aria-label="Remove"
+            @click="removeFile"
           >
             <X class="w-4 h-4" />
           </button>
@@ -187,7 +187,7 @@ function triggerFileInput() {
 
           <p class="text-text-primary font-medium">{{ t('sell.dragDrop') }}</p>
           <p class="text-text-muted text-sm text-center max-w-xs">
-            <button type="button" @click="triggerFileInput" class="text-primary hover:underline font-medium">{{ t('sell.browseFiles') }}</button>
+            <button type="button" class="text-primary hover:underline font-medium" @click="triggerFileInput">{{ t('sell.browseFiles') }}</button>
           </p>
 
           <p class="text-text-muted text-xs mt-2">

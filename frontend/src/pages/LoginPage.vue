@@ -107,7 +107,7 @@ function switchMode() {
       <!-- Auth Form Card -->
       <div class="glass p-6 sm:p-8 rounded-3xl border border-black/[0.08] bg-white/95 shadow-sm space-y-5">
         
-        <form @submit.prevent="handleSubmit" class="space-y-4" novalidate>
+        <form class="space-y-4" novalidate @submit.prevent="handleSubmit">
           
           <div v-if="error" class="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 text-xs flex items-center gap-2">
             <AlertCircle class="w-4 h-4 flex-shrink-0" />
@@ -168,10 +168,10 @@ function switchMode() {
 
             <div class="flex items-start gap-2 pt-1">
               <input
-                type="checkbox"
                 id="terms"
-                class="w-4 h-4 mt-0.5 rounded border-gray-300 text-primary focus:ring-primary"
                 v-model="agreeTerms"
+                type="checkbox"
+                class="w-4 h-4 mt-0.5 rounded border-gray-300 text-primary focus:ring-primary"
               />
               <label for="terms" class="text-xs text-text-secondary">
                 {{ t('auth.agreeTerms') }} <RouterLink to="/terms" class="text-primary hover:underline font-semibold">{{ t('termsPage.title') }}</RouterLink> & <RouterLink to="/privacy" class="text-primary hover:underline font-semibold">{{ t('privacyPage.title') }}</RouterLink>
@@ -193,8 +193,8 @@ function switchMode() {
             <span>{{ isLogin ? t('auth.noAccount') : t('auth.haveAccount') }}</span>
             <button 
               type="button"
-              @click="switchMode"
               class="text-amber-700 font-bold hover:underline ml-1.5"
+              @click="switchMode"
             >
               {{ isLogin ? t('auth.goToRegister') : t('auth.goToLogin') }}
             </button>

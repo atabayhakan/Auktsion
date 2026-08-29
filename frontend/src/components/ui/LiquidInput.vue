@@ -193,9 +193,9 @@ function handleKeyDown(event: KeyboardEvent) {
       <button
         v-else-if="showClear"
         type="button"
-        @click="handleClear"
         class="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-[rgb(var(--color-text-muted))] hover:text-[rgb(var(--color-error))] hover:bg-[rgb(var(--color-error))/0.1] transition-all duration-200"
         aria-label="Temizle"
+        @click="handleClear"
       >
         <X class="w-4 h-4" />
       </button>
@@ -204,10 +204,10 @@ function handleKeyDown(event: KeyboardEvent) {
       <button
         v-else-if="showPasswordToggle"
         type="button"
-        @click="togglePassword"
         class="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-[rgb(var(--color-text-muted))] hover:text-[rgb(var(--color-text-primary))] hover:bg-[rgb(var(--color-accent))] transition-all duration-200"
         :aria-label="showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'"
         :aria-pressed="showPassword"
+        @click="togglePassword"
       >
         <Eye v-if="!showPassword" class="w-5 h-5" />
         <EyeOff v-else class="w-5 h-5" />

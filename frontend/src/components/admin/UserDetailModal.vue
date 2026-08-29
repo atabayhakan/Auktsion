@@ -77,8 +77,8 @@ const activeTab = ref<'profile' | 'activity' | 'financials' | 'kyc'>('profile')
         </div>
 
         <button
-          @click="emit('close')"
           class="p-2 text-text-muted hover:text-text-primary rounded-lg hover:bg-accent"
+          @click="emit('close')"
         >
           <X class="w-5 h-5" />
         </button>
@@ -87,24 +87,24 @@ const activeTab = ref<'profile' | 'activity' | 'financials' | 'kyc'>('profile')
       <!-- Quick Action Buttons Bar -->
       <div class="px-6 py-3 border-b border-border bg-white flex items-center gap-2 overflow-x-auto">
         <button
-          @click="emit('ban', user)"
           class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-error/10 text-error hover:bg-error/20 transition-colors border border-error/30"
+          @click="emit('ban', user)"
         >
           <Ban class="w-3.5 h-3.5" />
           <span>{{ user.status === 'banned' ? t('admin.actions.unban') : t('admin.actions.ban') }}</span>
         </button>
 
         <button
-          @click="emit('change-role', user)"
           class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors border border-primary/30"
+          @click="emit('change-role', user)"
         >
           <ShieldCheck class="w-3.5 h-3.5" />
           <span>{{ t('admin.actions.changeRole') }}</span>
         </button>
 
         <button
-          @click="emit('reset-password', user)"
           class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-black/5 text-text-secondary hover:bg-black/10 transition-colors"
+          @click="emit('reset-password', user)"
         >
           <Key class="w-3.5 h-3.5" />
           <span>{{ t('admin.actions.resetPassword') }}</span>
@@ -121,13 +121,13 @@ const activeTab = ref<'profile' | 'activity' | 'financials' | 'kyc'>('profile')
             { id: 'kyc', label: t('admin.users.detail.kycTab') }
           ]"
           :key="tab.id"
-          @click="activeTab = tab.id as any"
           :class="[
             'py-3 border-b-2 transition-colors',
             activeTab === tab.id
               ? 'border-primary text-primary font-bold'
               : 'border-transparent text-text-muted hover:text-text-secondary'
           ]"
+          @click="activeTab = tab.id as any"
         >
           {{ tab.label }}
         </button>

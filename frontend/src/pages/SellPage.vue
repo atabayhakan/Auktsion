@@ -281,8 +281,8 @@ async function submitAuction() {
               <button
                 type="button"
                 :disabled="isAiGenerating || !aiPromptInput.trim()"
-                @click="handleAiMagicGenerate"
                 class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md flex items-center gap-2 disabled:opacity-50 transition-all cursor-pointer"
+                @click="handleAiMagicGenerate"
               >
                 <Loader2 v-if="isAiGenerating" class="w-4 h-4 animate-spin" />
                 <Sparkles v-else class="w-4 h-4 text-primary" />
@@ -299,11 +299,11 @@ async function submitAuction() {
                 v-for="cat in platformCategories"
                 :key="cat.slug"
                 type="button"
-                @click="formData.category = cat.slug"
                 class="p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all cursor-pointer"
                 :class="formData.category === cat.slug
                   ? 'bg-amber-500/10 border-amber-500 ring-2 ring-amber-500/20 text-amber-900 font-bold'
                   : 'bg-white border-black/10 text-text-secondary hover:bg-black/5'"
+                @click="formData.category = cat.slug"
               >
                 <span class="text-2xl">{{ cat.icon }}</span>
                 <div class="min-w-0">
@@ -415,15 +415,15 @@ async function submitAuction() {
 
             <div class="flex flex-wrap gap-4 pt-2">
               <label class="flex items-center gap-2 text-xs font-semibold cursor-pointer">
-                <input type="checkbox" v-model="formData.livestock.isVaccinated" class="w-4 h-4 rounded text-amber-500" />
+                <input v-model="formData.livestock.isVaccinated" type="checkbox" class="w-4 h-4 rounded text-amber-500" />
                 <span>Ветеринардык эмдөөлөрү бар</span>
               </label>
               <label class="flex items-center gap-2 text-xs font-semibold cursor-pointer">
-                <input type="checkbox" v-model="formData.livestock.hasVetPassport" class="w-4 h-4 rounded text-amber-500" />
+                <input v-model="formData.livestock.hasVetPassport" type="checkbox" class="w-4 h-4 rounded text-amber-500" />
                 <span>Ветеринардык паспорту бар</span>
               </label>
               <label class="flex items-center gap-2 text-xs font-semibold cursor-pointer">
-                <input type="checkbox" v-model="formData.livestock.deliveryAvailable" class="w-4 h-4 rounded text-amber-500" />
+                <input v-model="formData.livestock.deliveryAvailable" type="checkbox" class="w-4 h-4 rounded text-amber-500" />
                 <span>Жеткирүү (мал ташуу) каралган</span>
               </label>
             </div>
@@ -481,7 +481,7 @@ async function submitAuction() {
 
             <div class="pt-2">
               <label class="flex items-center gap-2 text-xs font-semibold cursor-pointer">
-                <input type="checkbox" v-model="formData.vehicle.isCustomsCleared" class="w-4 h-4 rounded text-amber-500" />
+                <input v-model="formData.vehicle.isCustomsCleared" type="checkbox" class="w-4 h-4 rounded text-amber-500" />
                 <span>Бажы төлөмдөрү (Растаможка) 100% төлөнгөн, юридикалык жактан таза</span>
               </label>
             </div>
@@ -601,7 +601,7 @@ async function submitAuction() {
 
             <div class="pt-2 border-t border-black/5 flex items-center justify-between">
               <label class="flex items-center gap-2 text-xs font-bold text-red-600 cursor-pointer">
-                <input type="checkbox" v-model="formData.isBlitz" class="w-4 h-4 rounded text-red-500" />
+                <input v-model="formData.isBlitz" type="checkbox" class="w-4 h-4 rounded text-red-500" />
                 <span>🔥 Флагман / Флаш Аукцион (1 Сааттык Тез Сатуу)</span>
               </label>
             </div>
@@ -661,8 +661,8 @@ async function submitAuction() {
           <button
             v-if="currentStep > 1"
             type="button"
-            @click="prevStep"
             class="px-6 py-3 rounded-2xl bg-gray-100 text-xs font-bold text-text-secondary hover:bg-gray-200 transition-all flex items-center gap-1.5 cursor-pointer"
+            @click="prevStep"
           >
             <ChevronLeft class="w-4 h-4" />
             <span>Артка</span>
@@ -672,8 +672,8 @@ async function submitAuction() {
           <button
             v-if="currentStep < 4"
             type="button"
-            @click="nextStep"
             class="px-8 py-3.5 rounded-2xl bg-primary text-text-primary font-extrabold text-xs shadow-md hover:bg-primary-hover transition-all flex items-center gap-2 cursor-pointer"
+            @click="nextStep"
           >
             <span>Кийинки Кадам</span>
             <ChevronRight class="w-4 h-4" />
@@ -683,8 +683,8 @@ async function submitAuction() {
             v-else
             type="button"
             :disabled="isSubmitting"
-            @click="submitAuction"
             class="px-10 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-400 text-white font-extrabold text-xs shadow-md hover:from-emerald-400 hover:to-emerald-300 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            @click="submitAuction"
           >
             <Loader2 v-if="isSubmitting" class="w-4 h-4 animate-spin" />
             <Gavel v-else class="w-4 h-4" />

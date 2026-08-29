@@ -209,13 +209,13 @@ onUnmounted(() => {
     <!-- Trigger Slot -->
     <div
       ref="triggerRef"
-      @click="handleTriggerClick"
-      @mouseenter="handleTriggerMouseEnter"
-      @mouseleave="handleTriggerMouseLeave"
       class="cursor-pointer inline-flex items-center"
       :aria-expanded="isOpen"
       :aria-haspopup="true"
       :aria-controls="isOpen ? 'dropdown-content' : undefined"
+      @click="handleTriggerClick"
+      @mouseenter="handleTriggerMouseEnter"
+      @mouseleave="handleTriggerMouseLeave"
     >
       <slot name="trigger">
         <button
@@ -235,8 +235,8 @@ onUnmounted(() => {
     <Teleport v-if="isOpen && props.teleport" :to="props.teleport === true ? 'body' : props.teleport">
       <Transition name="dropdown">
         <div
-          ref="contentRef"
           id="dropdown-content"
+          ref="contentRef"
           :class="['dropdown-menu absolute z-50 rounded-2xl shadow-xl border border-black/10 bg-white', placementClasses, alignClasses]"
           role="menu"
           @mouseenter="handleContentMouseEnter"
@@ -248,10 +248,10 @@ onUnmounted(() => {
     </Teleport>
     
     <!-- Non-teleported fallback (Default, perfect for inline components) -->
-    <Transition name="dropdown" v-else-if="isOpen">
+    <Transition v-else-if="isOpen" name="dropdown">
       <div
-        ref="contentRef"
         id="dropdown-content"
+        ref="contentRef"
         :class="['dropdown-menu absolute z-50 rounded-2xl shadow-xl border border-black/10 bg-white', placementClasses, alignClasses]"
         role="menu"
         @mouseenter="handleContentMouseEnter"
