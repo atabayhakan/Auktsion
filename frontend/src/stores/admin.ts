@@ -83,7 +83,8 @@ export const useAdminStore = defineStore('admin', () => {
   })
   const selectedKyc = ref<AdminKycApplication | null>(null)
   const kycFilters = ref({
-    status: 'all'
+    status: 'all',
+    search: ''
   })
 
   // 6. Financials State

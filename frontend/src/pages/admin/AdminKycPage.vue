@@ -69,11 +69,27 @@ async function handleReviewSubmit(payload: {
       </div>
     </div>
 
+    <!-- Error Banner -->
+    <div v-if="adminStore.error" class="bg-red-500/10 border border-red-500/20 text-red-600 px-4 py-3 rounded-xl text-xs flex items-center gap-2">
+      <AlertTriangle class="w-4 h-4" />
+      <span>{{ adminStore.error }}</span>
+      <button class="ml-auto text-red-600 hover:underline font-medium" @click="adminStore.error = null">{{ t('common.close') }}</button>
+    </div>
+
     <!-- Filters Bar -->
-    <div class="bg-white border border-border rounded-2xl p-4 shadow-xs sm:max-w-xs text-xs">
+    <div class="bg-white border border-border rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row gap-3 text-xs">
+      <div class="flex-1 relative">
+        <input
+          v-model="adminStore.kycFilters.search"
+          :placeholder="t('admin.kyc.searchPlaceholder') || 'INN, имя, телефон...'"
+          class="w-full pl-9 pr-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 text-text-primary placeholder-text-muted"
+          @input="adminStore.fetchKycRecords(1)"
+        />
+        <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </div>
       <select
         v-model="adminStore.kycFilters.status"
-        class="w-full px-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 text-text-primary font-medium"
+        class="sm:w-48 px-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 text-text-primary font-medium"
         @change="adminStore.fetchKycRecords(1)"
       >
         <option value="all">{{ t('admin.kyc.filters.all') }}</option>
@@ -174,8 +190,34 @@ async function handleReviewSubmit(payload: {
                 </button>
               </td>
             </tr>
+            <tr v-if="!adminStore.isLoading && adminStore.kycRecords.length === 0">
+              <td colspan="6" class="p-12 text-center text-text-muted">
+                <ShieldCheck class="w-8 h-8 mx-auto mb-2 opacity-40" />
+                <p class="text-sm font-medium">{{ t('admin.kyc.empty') || 'KYC başvurusu bulunamadı' }}</p>
+              </td>
+            </tr>
           </tbody>
         </table>
+      </div>
+      <!-- Pagination -->
+      <div class="p-4 border-t border-border flex items-center justify-between text-xs text-text-muted">
+        <span>{{ t('admin.pagination.page', { current: adminStore.kycMeta.currentPage, last: adminStore.kycMeta.lastPage }) }}</span>
+        <div class="flex gap-2">
+          <button
+            :disabled="adminStore.kycMeta.currentPage <= 1"
+            class="px-3 py-1.5 rounded-lg border border-border disabled:opacity-40 hover:bg-accent font-medium flex items-center gap-1"
+            @click="adminStore.fetchKycRecords(adminStore.kycMeta.currentPage - 1)"
+          >
+            <span>{{ t('admin.pagination.prev') }}</span>
+          </button>
+          <button
+            :disabled="adminStore.kycMeta.currentPage >= adminStore.kycMeta.lastPage"
+            class="px-3 py-1.5 rounded-lg border border-border disabled:opacity-40 hover:bg-accent font-medium flex items-center gap-1"
+            @click="adminStore.fetchKycRecords(adminStore.kycMeta.currentPage + 1)"
+          >
+            <span>{{ t('admin.pagination.next') }}</span>
+          </button>
+        </div>
       </div>
     </div>
 

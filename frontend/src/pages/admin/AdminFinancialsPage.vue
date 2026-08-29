@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import {
   Wallet,
   ShieldCheck,
@@ -19,6 +19,15 @@ const { t } = useI18n()
 const showProcessModal = ref(false)
 const targetPayout = ref<AdminPayoutRequest | null>(null)
 const toastMessage = ref<string | null>(null)
+
+const filteredPayouts = computed(() => {
+  let list = adminStore.payouts
+  const g = adminStore.payoutFilters.gateway
+  const s = adminStore.payoutFilters.status
+  if (g !== 'all') list = list.filter(p => p.bankCode === g)
+  if (s !== 'all') list = list.filter(p => p.status === s)
+  return list
+})
 
 onMounted(async () => {
   await adminStore.fetchFinancials()
@@ -101,6 +110,30 @@ async function handlePayoutProcess(payload: {
       />
     </div>
 
+    <!-- Error Banner -->
+    <div v-if="adminStore.error" class="bg-red-500/10 border border-red-500/20 text-red-600 px-4 py-3 rounded-xl text-xs flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+      <span>{{ adminStore.error }}</span>
+      <button class="ml-auto text-red-600 hover:underline font-medium" @click="adminStore.error = null">{{ t('common.close') }}</button>
+    </div>
+
+    <!-- Filters Bar -->
+    <div class="bg-white border border-border rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row gap-3 text-xs">
+      <select v-model="adminStore.payoutFilters.gateway" class="flex-1 px-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 text-text-primary font-medium">
+        <option value="all">All gateways</option>
+        <option value="mbank">MBank</option>
+        <option value="optima">Optima</option>
+        <option value="demirbank">DemirBank</option>
+      </select>
+      <select v-model="adminStore.payoutFilters.status" class="flex-1 px-3 py-2 bg-accent border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 text-text-primary font-medium">
+        <option value="all">All statuses</option>
+        <option value="pending">Pending</option>
+        <option value="processing">Processing</option>
+        <option value="completed">Completed</option>
+        <option value="failed">Failed</option>
+      </select>
+    </div>
+
     <!-- Payouts Queue Table -->
     <div class="bg-white border border-border rounded-2xl overflow-hidden shadow-xs">
       <div class="overflow-x-auto">
@@ -118,7 +151,7 @@ async function handlePayoutProcess(payload: {
 
           <tbody class="divide-y divide-border">
             <tr
-              v-for="p in adminStore.payouts"
+              v-for="p in filteredPayouts"
               :key="p.id"
               class="hover:bg-accent/60 transition-colors"
             >
@@ -180,6 +213,12 @@ async function handlePayoutProcess(payload: {
                   <span>{{ t('admin.financials.process') }}</span>
                 </button>
                 <span v-else class="text-[10px] text-text-muted italic">{{ t('admin.financials.completed') }}</span>
+              </td>
+            </tr>
+            <tr v-if="!adminStore.isLoading && filteredPayouts.length === 0">
+              <td colspan="6" class="p-12 text-center text-text-muted">
+                <Wallet class="w-8 h-8 mx-auto mb-2 opacity-40" />
+                <p class="text-sm font-medium">No payout requests</p>
               </td>
             </tr>
           </tbody>

@@ -79,6 +79,13 @@ async function handleResolve(payload: {
       </div>
     </div>
 
+    <!-- Error Banner -->
+    <div v-if="adminStore.error" class="bg-red-500/10 border border-red-500/20 text-red-600 px-4 py-3 rounded-xl text-xs flex items-center gap-2">
+      <AlertCircle class="w-4 h-4" />
+      <span>{{ adminStore.error }}</span>
+      <button class="ml-auto text-red-600 hover:underline font-medium" @click="adminStore.error = null">{{ t('common.close') }}</button>
+    </div>
+
     <!-- Filters Bar -->
     <div class="bg-white border border-border rounded-2xl p-4 shadow-xs text-xs">
       <div class="sm:max-w-xs">
@@ -170,8 +177,38 @@ async function handleResolve(payload: {
                 </button>
               </td>
             </tr>
+            <tr v-if="!adminStore.isLoading && adminStore.disputes.length === 0">
+              <td colspan="7" class="p-12 text-center text-text-muted">
+                <AlertCircle class="w-8 h-8 mx-auto mb-2 opacity-40" />
+                <p class="text-sm font-medium">{{ t('admin.disputes.empty') || 'Талаштар табылган жок' }}</p>
+              </td>
+            </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="p-4 border-t border-border flex items-center justify-between text-xs text-text-muted">
+        <span>{{ t('admin.pagination.page', { current: adminStore.disputesMeta.currentPage, last: adminStore.disputesMeta.lastPage }) }}</span>
+        <div class="flex gap-2">
+          <button
+            :disabled="adminStore.disputesMeta.currentPage <= 1"
+            class="px-3 py-1.5 rounded-lg border border-border disabled:opacity-40 hover:bg-accent font-medium flex items-center gap-1"
+            @click="adminStore.fetchDisputes(adminStore.disputesMeta.currentPage - 1)"
+          >
+            <ChevronLeft class="w-3.5 h-3.5" />
+            <span>{{ t('admin.pagination.prev') }}</span>
+          </button>
+
+          <button
+            :disabled="adminStore.disputesMeta.currentPage >= adminStore.disputesMeta.lastPage"
+            class="px-3 py-1.5 rounded-lg border border-border disabled:opacity-40 hover:bg-accent font-medium flex items-center gap-1"
+            @click="adminStore.fetchDisputes(adminStore.disputesMeta.currentPage + 1)"
+          >
+            <span>{{ t('admin.pagination.next') }}</span>
+            <ChevronRight class="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
     </div>
 
