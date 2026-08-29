@@ -7,11 +7,12 @@ import { useUserStore } from '@/stores/user'
 import { useUIStore } from '@/stores/ui'
 import { useI18n } from '@/composables/useI18n'
 import { useFormatters } from '@/composables/useFormatters'
+import { auctionService } from '@/services/auctionService'
 import type { Auction, Money } from '@/types'
 import {
   Heart, Share2, Clock, AlertCircle, ChevronLeft,
   ChevronRight, MessageSquare, Flame, Send, CreditCard,
-  Loader2, Gauge, MapPin
+  Loader2, Gauge, MapPin, Zap
 } from 'lucide-vue-next'
 import Input from '@/components/ui/Input.vue'
 import Modal from '@/components/ui/Modal.vue'
@@ -145,6 +146,32 @@ const minimumNextBid = computed(() => {
 const canBid = computed(() => {
   return auction.value?.status === 'active' && !timeRemaining.value.isEnded
 })
+
+const buyNowPrice = computed(() => (auction.value as any)?.buyNowPrice || (auction.value as any)?.buy_now_price || null)
+const canBuyNow = computed(() => !!buyNowPrice.value && canBid.value)
+const isBuyingNow = ref(false)
+
+async function handleBuyNow() {
+  if (!userStore.isAuthenticated) {
+    uiStore.toastWarning(t('toasts.warning'), t('toasts.loginRequired'))
+    router.push({ path: '/login', query: { redirect: route.fullPath } })
+    return
+  }
+  if (!auction.value) return
+  isBuyingNow.value = true
+  try {
+    const res: any = await auctionService.buyNow(auctionId.value)
+    const updated = res?.data || res?.auction
+    if (updated) auction.value = updated
+    uiStore.toastSuccess(t('toasts.success'), t('auctionDetail.buyNow') + ' — ' + t('paymentModal.successDescription'))
+    router.push('/dashboard?tab=payouts')
+  } catch (err: any) {
+    const msg = err?.response?.data?.error || err?.data?.error || err?.message || t('common.error')
+    uiStore.toastWarning(t('toasts.warning'), msg)
+  } finally {
+    isBuyingNow.value = false
+  }
+}
 
 const categoryName = computed(() => {
   const cat = auction.value?.category
@@ -483,6 +510,17 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
                 class="w-full sm:flex-1 py-3.5 px-6 rounded-2xl bg-black/10 text-text-muted font-bold text-sm cursor-not-allowed"
               >
                 {{ t('auction.auctionEnded') }}
+              </button>
+
+              <button
+                v-if="canBuyNow"
+                :disabled="isBuyingNow"
+                class="w-full sm:w-auto py-3.5 px-5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 text-white font-bold text-xs sm:text-sm hover:from-amber-400 hover:to-amber-300 shadow-md transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+                @click="handleBuyNow"
+              >
+                <Zap v-if="!isBuyingNow" class="w-4 h-4" />
+                <Loader2 v-else class="w-4 h-4 animate-spin" />
+                <span>{{ isBuyingNow ? t('auction.submitting') : `${t('auctionDetail.buyNow')} — ${buyNowPrice?.formatted || ''}` }}</span>
               </button>
 
               <button

@@ -40,6 +40,11 @@ export const auctionService = {
     return res.data
   },
 
+  async buyNow(auctionId: string): Promise<{ success: boolean; data: Auction; paymentId: string }> {
+    const res = await apiClient.post<{ success: boolean; data: Auction; paymentId: string }>(`/api/auctions/${auctionId}/buy-now`)
+    return res.data
+  },
+
   async getCategories(): Promise<{ success: boolean; data: Category[] }> {
     const res = await apiClient.get<{ success: boolean; data: Category[] }>('/api/categories')
     return res.data

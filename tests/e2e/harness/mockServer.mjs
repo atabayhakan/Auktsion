@@ -913,6 +913,24 @@ export class MockAuctionServer {
         });
       }
 
+      if (pathname.match(/^\/api\/auctions\/([a-zA-Z0-9_-]+)\/buy-now$/) && method === 'POST') {
+        if (!currentUser) return this.sendJson(res, 401, { success: false, message: 'Unauthorized' });
+        const auctionId = pathname.match(/^\/api\/auctions\/([a-zA-Z0-9_-]+)\/buy-now$/)[1];
+        const auction = this.state.auctions.find(a => a.id === auctionId);
+        if (!auction) return this.sendJson(res, 404, { success: false, message: 'Auction not found' });
+        if (auction.status !== 'active') return this.sendJson(res, 400, { success: false, message: 'Auction not active' });
+        if (new Date(auction.ends_at).getTime() <= Date.now()) return this.sendJson(res, 400, { success: false, message: 'Auction has ended' });
+        if (auction.seller_id === currentUser.id) return this.sendJson(res, 400, { success: false, message: 'Sellers cannot buy their own listing' });
+        const buyNowMinor = auction.buy_now_price_minor || auction.buyNowPrice?.minorUnits || auction.buyNowPrice?.minor_units || null;
+        if (!buyNowMinor) return this.sendJson(res, 400, { success: false, message: 'Buy now not available' });
+        auction.status = 'ended_sold';
+        auction.current_price_minor = buyNowMinor;
+        auction.buyer_id = currentUser.id;
+        auction.ended_at = new Date().toISOString();
+        const paymentId = `pay-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+        return this.sendJson(res, 200, { success: true, data: { ...auction }, paymentId });
+      }
+
       if (pathname.match(/^\/api\/auctions\/([a-zA-Z0-9_-]+)\/bids$/) && method === 'GET') {
         const auctionId = pathname.match(/^\/api\/auctions\/([a-zA-Z0-9_-]+)\/bids$/)[1];
         const bids = this.state.bids.filter(b => b.auction_id === auctionId);
