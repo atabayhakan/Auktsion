@@ -108,6 +108,15 @@ const filteredAuctions = computed(() => {
     })
   }
 
+  // SubCategory filter (from MegaMenu ?subCategory=)
+  const subCatQuery = route.query.subCategory as string | undefined
+  if (subCatQuery) {
+    list = list.filter(a => {
+      const sub = (a as any).subCategory || (a as any).sub_category
+      return sub === subCatQuery
+    })
+  }
+
   // Region filter
   if (selectedRegion.value !== 'all') {
     list = list.filter(a => a.regionId === selectedRegion.value || a.city.toLowerCase().includes(selectedRegion.value.toLowerCase()))

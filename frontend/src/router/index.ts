@@ -46,7 +46,7 @@ const routes: RouteRecordRaw[] = [
     path: '/auctions',
     name: 'LiveAuctions',
     component: LiveAuctionsPage,
-    alias: ['/canli-acik-artirmalar', '/canlı-açık-artırmalar'],
+    alias: ['/canli-acik-artirmalar', '/canlı-açık-artırmalar', '/аукциондор', '/аукционы'],
     meta: { titleKey: 'nav.auctions', requiresAuth: false }
   },
   {
@@ -61,14 +61,14 @@ const routes: RouteRecordRaw[] = [
     path: '/categories',
     name: 'Categories',
     component: CategoriesPage,
-    alias: ['/kategoriler'],
+    alias: ['/kategoriler', '/категориялар', '/категории'],
     meta: { titleKey: 'categoriesPage.title', requiresAuth: false }
   },
   {
     path: '/sell',
     name: 'Sell',
     component: SellPage,
-    alias: ['/sat', '/ilan-ver'],
+    alias: ['/sat', '/ilan-ver', '/сатуу', '/продать'],
     meta: { titleKey: 'sell.title', requiresAuth: true }
   },
   {
