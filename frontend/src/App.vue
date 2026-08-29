@@ -18,7 +18,7 @@ const showMobileNav = computed(() => !isAdminRoute.value && route.name !== 'Auct
     <Header v-if="!isAdminRoute" />
     
     <!-- Main Content -->
-    <main class="flex-1" :class="{ 'pb-16 lg:pb-0': showMobileNav }" id="main-content" role="main">
+    <main id="main-content" role="main" class="flex-1" :class="{ 'pb-16 lg:pb-0': showMobileNav }">
       <RouterView v-slot="{ Component }">
         <transition name="page" :duration="300">
           <component :is="Component" />

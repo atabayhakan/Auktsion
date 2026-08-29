@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
-import { motion } from 'framer-motion-vue'
 import { 
   Zap, Clock, TrendingUp, ShieldCheck, Eye, 
   CreditCard, Smartphone, CheckCircle2, AlertCircle,
@@ -410,7 +409,7 @@ watch(() => props.auction.bidCount, (newCount) => {
 
     <!-- Live Indicator Badge -->
     <div class="absolute top-4 left-4 z-10 flex items-center gap-2">
-      <motion.div
+      <div
         :class="['flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-xl border text-caption-sm font-semibold', 
           connectionStatus === 'connected' 
             ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' 
@@ -418,33 +417,25 @@ watch(() => props.auction.bidCount, (newCount) => {
               ? 'bg-amber-500/15 border-amber-500/30 text-amber-400 animate-pulse'
               : 'bg-red-500/15 border-red-500/30 text-red-400'
         ]"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
       >
-        <motion.span
+        <span
           class="w-2 h-2 rounded-full"
           :class="connectionStatus === 'connected' ? 'bg-emerald-400' : connectionStatus === 'connecting' ? 'bg-amber-400' : 'bg-red-400'"
-          animate={{ scale: connectionStatus === 'connected' ? [1, 1.2, 1] : 1 }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
         />
         <span>{{ connectionStatus === 'connected' ? 'LIVE' : connectionStatus === 'connecting' ? t('common.loading') : 'OFFLINE' }}</span>
         <span class="text-[10px] font-mono text-emerald-400/70">WEBSOCKET</span>
-      </motion.div>
+      </div>
     </div>
 
     <!-- VIP / Featured Badge -->
     <div class="absolute top-4 right-4 z-10">
-      <motion.div
-        initial={{ opacity: 0, x: 10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.4, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
+      <div
       >
         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-gold-500/20 to-amber-500/10 border border-gold-500/30 text-gold-300 text-caption-sm font-bold backdrop-blur-xl">
           <Crown class="w-3.5 h-3.5" />
           {{ t('home.heroBadge') }}
         </span>
-      </motion.div>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
@@ -452,13 +443,10 @@ watch(() => props.auction.bidCount, (newCount) => {
       <div class="lg:col-span-2 space-y-6">
         <!-- Main Image with Overlays -->
         <div class="relative aspect-[16/9] rounded-3xl overflow-hidden bg-dark-950">
-          <motion.img
+          <img
             :src="auction.images[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&auto=format&fit=crop&q=80'"
             :alt="auction.title"
             class="w-full h-full object-cover transition-transform duration-1000"
-            initial={{ scale: 1.05, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
           />
           
           <!-- Gradient Overlay -->
@@ -466,20 +454,14 @@ watch(() => props.auction.bidCount, (newCount) => {
           
           <!-- Top Badges -->
           <div class="absolute top-4 left-4 right-4 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
+            <div
               class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-dark-950/90 backdrop-blur-xl border border-white/10 text-white text-caption-sm font-medium shadow-lg"
             >
               <Zap class="w-3.5 h-3.5 text-emerald-400" />
               <span>{{ categoryName }}</span>
-            </motion.div>
+            </div>
             
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
+            <div
               class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-dark-950/90 backdrop-blur-xl border text-caption-sm font-mono font-bold shadow-lg"
               :class="timeRemaining.isCritical && !timeRemaining.isEnded
                 ? 'border-red-500/50 text-red-300 bg-red-950/30'
@@ -487,23 +469,18 @@ watch(() => props.auction.bidCount, (newCount) => {
             >
               <Clock class="w-3.5 h-3.5" :class="timeRemaining.isCritical && !timeRemaining.isEnded ? 'text-red-400 animate-pulse' : 'text-gold-400'" />
               <span class="tabular-nums">{{ timeRemaining.formatted }}</span>
-              <motion.span
+              <span
                 v-if="timeRemaining.isCritical && !timeRemaining.isEnded"
                 class="ml-1 text-red-400 font-extrabold"
-                animate={{ opacity: [1, 0.3, 1] }}
-                transition={{ duration: 0.5, repeat: Infinity }}
               >
                 ⚠
-              </motion.span>
-            </motion.div>
+              </span>
+            </div>
           </div>
 
           <!-- Bottom Info Bar -->
           <div class="absolute bottom-4 left-4 right-4 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.5 }}
+            <div
               class="flex items-center gap-2 px-3 py-2 rounded-xl bg-black/80 backdrop-blur-xl border border-white/10 text-white text-caption-md shadow-lg"
             >
               <span class="flex items-center gap-1.5">
@@ -516,45 +493,33 @@ watch(() => props.auction.bidCount, (newCount) => {
                 <ShieldCheck class="w-3 h-3" />
                 KYC
               </span>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.6 }}
+            <div
               class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-black/80 backdrop-blur-xl border border-white/10 text-white text-caption-md shadow-lg"
             >
               <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gold-500/20 text-gold-300 border border-gold-500/30">MBank</span>
               <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">Optima</span>
               <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">DemirBank</span>
-            </motion.div>
+            </div>
           </div>
 
           <!-- Price Flash Overlay -->
-          <motion.div
+          <div
             v-if="isPriceAnimating"
             class="absolute inset-0 pointer-events-none z-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.15 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
             style="background: radial-gradient(circle at center, rgba(251,191,36,0.3) 0%, transparent 70%)"
           />
         </div>
 
         <!-- LIVE BIDDER STREAM -->
-        <motion.div
+        <div
           class="glass-panel p-4 rounded-2xl border border-white/10 backdrop-blur-xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.7 }}
         >
           <div class="flex items-center justify-between mb-4">
             <h4 class="flex items-center gap-2 text-body-sm font-semibold text-white">
-              <motion.span
+              <span
                 class="w-2 h-2 rounded-full bg-emerald-400"
-                animate={{ scale: [1, 1.3, 1], opacity: [1, 0.5, 1] }}
-                transition={{ duration: 1.2, repeat: Infinity }}
               />
               {{ t('auction.realtimeKafka') }}
             </h4>
@@ -566,38 +531,29 @@ watch(() => props.auction.bidCount, (newCount) => {
 
           <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
             <!-- Current User (if winning) -->
-            <motion.div
+            <div
               v-if="isWinning"
               key="current-user-winning"
               class="flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-3 rounded-2xl bg-gradient-to-br from-gold-500/20 to-amber-500/10 border border-gold-500/40 shadow-glow-gold-sm"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
             >
               <div class="relative">
                 <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-gold-500 to-gold-400 flex items-center justify-center text-dark-950 font-bold text-xl ring-2 ring-gold-500/50 ring-offset-2 ring-offset-dark-950">
                   {{ auction.seller?.fullName?.charAt(0) || 'S' }}
                 </div>
-                <motion.div
+                <div
                   class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-gold-500 border-2 border-dark-950 flex items-center justify-center"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 1, repeat: Infinity }}
                 >
                   <CheckCircle2 class="w-3.5 h-3.5 text-dark-950" />
-                </motion.div>
+                </div>
               </div>
               <span class="text-caption-sm font-bold text-gold-300 text-center">{{ t('auction.you') }}<br><span class="font-mono tabular-nums">{{ formatMoney({ ...currentPrice.value, minorUnits: currentPrice.value.minorUnits }) }}</span></span>
-            </motion.div>
+            </div>
 
             <!-- Live Bidders Stream -->
-            <motion.div
+            <div
               v-for="bidder in liveBidders"
               :key="bidder.id"
               class="flex-shrink-0 flex flex-col items-center gap-1.5 px-3 py-3 rounded-2xl bg-white/5 dark:bg-dark-900/60 border border-white/10 dark:border-white/10 transition-all duration-300 hover:border-gold-500/30 hover:shadow-glow-gold-sm"
-              initial={{ opacity: 0, x: 50, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: -50, scale: 0.9 }}
-              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
               :class="bidder.isCurrentUser ? 'border-emerald-500/40 shadow-glow-emerald-sm' : ''"
             >
               <div class="relative">
@@ -605,19 +561,17 @@ watch(() => props.auction.bidCount, (newCount) => {
                      :class="bidder.isCurrentUser ? 'ring-2 ring-emerald-500/50 ring-offset-2 ring-offset-dark-950' : ''">
                   {{ bidder.name.charAt(0).toUpperCase() }}
                 </div>
-                <motion.div
+                <div
                   v-if="bidder.isCurrentUser"
                   class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-dark-950 flex items-center justify-center"
-                  animate={{ scale: [1, 1.3, 1] }}
-                  transition={{ duration: 0.8, repeat: Infinity }}
                 >
                   <CheckCircle2 class="w-2.5 h-2.5 text-white" />
-                </motion.div>
+                </div>
               </div>
               <span class="text-caption-xs font-medium text-gray-300 truncate max-w-[60px] text-center">{{ bidder.name }}</span>
               <span class="text-caption-xs font-mono tabular-nums text-gold-400">{{ formatMoney({ ...currentPrice.value, minorUnits: bidder.amount }) }}</span>
               <span class="text-[9px] text-gray-500">{{ formatRelativeTime(bidder.timestamp) }}</span>
-            </motion.div>
+            </div>
 
             <!-- Empty State -->
             <div v-if="liveBidders.length === 0" class="flex items-center gap-2 px-4 py-3 text-gray-500 text-caption-sm">
@@ -625,17 +579,14 @@ watch(() => props.auction.bidCount, (newCount) => {
               {{ t('auction.loading') }}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       <!-- RIGHT: BID PANEL & INFO (1/3) -->
       <div class="lg:col-span-1 space-y-4">
         <!-- CURRENT PRICE - KINETIC TYPOGRAPHY -->
-        <motion.div
+        <div
           class="relative glass-panel p-6 rounded-3xl border border-white/10 backdrop-blur-xl"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
           :class="{
             'ring-1 ring-emerald-500/40 shadow-glow-emerald-md': isPriceAnimating,
             'ring-1 ring-gold-500/50 shadow-glow-gold-lg': isWinning,
@@ -643,7 +594,7 @@ watch(() => props.auction.bidCount, (newCount) => {
           }"
         >
           <!-- Status Badge -->
-          <motion.div
+          <div
             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full mb-4"
             :class="[
               'text-caption-sm font-semibold backdrop-blur-xl border',
@@ -653,79 +604,59 @@ watch(() => props.auction.bidCount, (newCount) => {
               isOutbid ? 'bg-red-500/15 border-red-500/40 text-red-400' :
               'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
             ]"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.4 }}
           >
-            <motion.span
+            <span
               v-if="!timeRemaining.isEnded"
               class="w-2 h-2 rounded-full"
               :class="timeRemaining.isCritical ? 'bg-red-400' : isWinning ? 'bg-gold-400' : isOutbid ? 'bg-red-400' : 'bg-emerald-400'"
-              animate={{ 
-                scale: timeRemaining.isCritical || isOutbid ? [1, 0.5, 1] : isWinning ? [1, 1.3, 1] : [1, 1.1, 1],
-                opacity: timeRemaining.isCritical || isOutbid ? [1, 0.3, 1] : [1, 0.6, 1]
-              }}
-              transition={{ duration: timeRemaining.isCritical ? 0.4 : 0.8, repeat: Infinity, ease: 'easeInOut' }}
             />
             <span v-if="timeRemaining.isEnded">{{ t('auction.auctionEnded') }}</span>
             <span v-else-if="timeRemaining.isCritical">{{ t('home.endingSoon') }}</span>
             <span v-else-if="isWinning">{{ t('status.bid.winning') }}</span>
             <span v-else-if="isOutbid">{{ t('status.bid.outbid') }}</span>
             <span v-else>{{ t('status.auction.active') }}</span>
-          </motion.div>
+          </div>
 
           <!-- Current Price Display -->
           <div class="space-y-2">
             <span class="block text-caption-sm uppercase tracking-widest text-gray-500 font-medium">{{ t('home.currentPrice') }}</span>
             
-            <motion.div
+            <div
               class="relative"
               key={`price-${currentPrice.value.minorUnits}`}
             >
-              <motion.span
+              <span
                 class="font-display font-extrabold text-4xl lg:text-5xl xl:text-6xl tabular-nums tracking-tight text-white"
                 :class="isPriceAnimating ? 'text-gold-400' : isWinning ? 'text-gold-400' : isOutbid ? 'text-red-400' : ''"
-                initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -20, scale: 1.1 }}
-                transition={{ duration: 0.3, ease: [0.34, 1.56, 0.64, 1] }}
               >
                 {{ formatMoney(currentPrice) }}
-              </motion.span>
+              </span>
               
               <!-- Price change indicator -->
-              <motion.div
+              <div
                 v-if="hasPriceUpdate"
                 class="absolute -top-3 right-0 flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-caption-xs font-bold"
-                initial={{ opacity: 0, scale: 0.5, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.5, y: -10 }}
               >
                 <TrendingUp class="w-3 h-3" />
                 +{{ formatBidIncrement(bidIncrement.value) }}
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
 
             <!-- Next Minimum Bid -->
             <div class="pt-3 border-t border-white/10 flex items-center justify-between text-caption-sm">
               <span class="text-gray-500">{{ t('auction.minimumBid') }}:</span>
-              <motion.span
+              <span
                 class="font-mono font-semibold tabular-nums text-gold-400"
                 :class="isPriceAnimating ? 'text-amber-400' : ''"
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
               >
                 {{ minimumNextBid.formatted }}
-              </motion.span>
+              </span>
             </div>
           </div>
 
           <!-- Countdown Timer - MILLISECOND PRECISION -->
-          <motion.div
+          <div
             class="mt-6 pt-6 border-t border-white/10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
           >
             <div class="flex items-center justify-between mb-3">
               <span class="text-caption-sm uppercase tracking-widest text-gray-500 font-medium">{{ t('auction.timeRemaining') }}</span>
@@ -733,7 +664,7 @@ watch(() => props.auction.bidCount, (newCount) => {
             </div>
             
             <div class="flex items-center justify-center gap-1.5">
-              <motion.div
+              <div
                 v-if="timeRemaining.days > 0"
                 class="flex items-center gap-1.5"
               >
@@ -749,9 +680,9 @@ watch(() => props.auction.bidCount, (newCount) => {
                   :is-critical="timeRemaining.isCritical"
                   :is-ended="timeRemaining.isEnded"
                 />
-              </motion.div>
+              </div>
               
-              <motion.div
+              <div
                 v-else
                 class="flex items-center gap-1.5"
               >
@@ -780,18 +711,15 @@ watch(() => props.auction.bidCount, (newCount) => {
                   :is-ended="timeRemaining.isEnded"
                   :show-milliseconds="true"
                 />
-              </motion.div>
+              </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         <!-- QUICK BID BUTTONS -->
-        <motion.div
+        <div
           v-if="showQuickBid && !timeRemaining.isEnded"
           class="space-y-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.6 }}
         >
           <div class="flex items-center justify-between">
             <span class="text-caption-sm uppercase tracking-widest text-gray-500 font-medium">{{ t('home.placeBid') }}</span>
@@ -799,30 +727,24 @@ watch(() => props.auction.bidCount, (newCount) => {
           </div>
           
           <div class="grid grid-cols-2 gap-2">
-            <motion.button
+            <button
               v-for="bid in quickBidAmounts"
               :key="bid.multiplier"
               @click="handleQuickBid(bid.minor)"
               :disabled="isPriceAnimating || timeRemaining.isEnded"
               class="relative group px-4 py-3 rounded-2xl bg-white/5 dark:bg-dark-900/60 border border-white/10 dark:border-white/10 hover:border-gold-500/40 hover:shadow-glow-gold-sm transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-center gap-1"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.7 }}
               style="--delay: 0.1"
             >
               <span class="text-caption-xs font-bold text-gray-400 group-hover:text-gold-400 transition-colors">{{ bid.label }}</span>
-              <motion.span
+              <span
                 class="font-display font-bold text-lg tabular-nums text-gold-400"
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
               >
                 {{ bid.formatted }}
-              </motion.span>
-              <motion.div
+              </span>
+              <div
                 class="absolute inset-0 rounded-2xl bg-gradient-to-r from-gold-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               />
-            </motion.button>
+            </button>
           </div>
           
           <Button
@@ -835,14 +757,11 @@ watch(() => props.auction.bidCount, (newCount) => {
           >
             {{ t('home.placeBid') }}
           </Button>
-        </motion.div>
+        </div>
 
         <!-- TRUST BADGES -->
-        <motion.div
+        <div
           class="space-y-3 pt-4 border-t border-white/10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.8 }}
         >
           <div class="flex items-center gap-2 text-caption-xs text-gray-500">
             <Lock class="w-3.5 h-3.5 text-emerald-400" />
@@ -860,14 +779,11 @@ watch(() => props.auction.bidCount, (newCount) => {
             <Gavel class="w-3.5 h-3.5 text-amber-400" />
             <span>Transparent Live Auction</span>
           </div>
-        </motion.div>
+        </div>
 
         <!-- ACTION BUTTONS -->
-        <motion.div
+        <div
           class="space-y-3 pt-4 border-t border-white/10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.9 }}
         >
           <RouterLink :to="`/auctions/${auction.id}`">
             <Button variant="primary" size="xl" class="w-full justify-center gap-2" icon="ExternalLink">
@@ -883,7 +799,7 @@ watch(() => props.auction.bidCount, (newCount) => {
               {{ t('auction.share') }}
             </Button>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
 
@@ -896,8 +812,6 @@ watch(() => props.auction.bidCount, (newCount) => {
      COUNTDOWN SEGMENT SUB-COMPONENT
      ============================================================================ -->
 <script setup lang="ts">
-import { motion } from 'framer-motion-vue'
-
 interface CountdownSegmentProps {
   value: number
   label: string
@@ -916,37 +830,28 @@ const formattedValue = computed(() =>
 </script>
 
 <template>
-  <motion.div
+  <div
     class="flex flex-col items-center gap-1 px-2 py-2 rounded-xl bg-dark-950/60 backdrop-blur-xl border"
     :class="[
       'transition-all duration-200',
       props.isCritical && !props.isEnded ? 'border-red-500/40 shadow-glow-alive-sm' : 'border-white/10',
       props.isEnded ? 'border-gray-500/20' : ''
     ]"
-    :animate="{
-      borderColor: props.isCritical && !props.isEnded ? 'rgba(239,68,68,0.6)' : 'rgba(255,255,255,0.1)',
-      boxShadow: props.isCritical && !props.isEnded ? '0 0 16px rgba(239,68,68,0.3)' : 'none'
-    }"
-    :transition="{ duration: 0.3 }"
   >
-    <motion.span
+    <span
       class="font-mono font-extrabold tabular-nums text-xl lg:text-2xl"
       :class="[
         'transition-colors duration-200',
         props.isCritical && !props.isEnded ? 'text-red-400' : props.isEnded ? 'text-gray-500' : 'text-white'
       ]"
       :key="formattedValue"
-      initial={{ opacity: 0, y: 20, scale: 0.8 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20, scale: 1.2 }}
-      transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
     >
       {{ formattedValue }}
-    </motion.span>
+    </span>
     <span class="text-[9px] uppercase tracking-wider font-medium text-gray-500">
       {{ label }}
     </span>
-  </motion.div>
+  </div>
 </template>
 
 <!-- ============================================================================

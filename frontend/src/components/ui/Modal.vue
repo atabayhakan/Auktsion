@@ -17,6 +17,8 @@ interface Props extends BaseComponentProps {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  title: '',
+  description: '',
   size: 'md',
   closeOnOverlayClick: true,
   closeOnEscape: true,

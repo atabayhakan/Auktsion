@@ -13,9 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowLeft,
-  ExternalLink,
   Shield,
-  Radio,
   Image
 } from 'lucide-vue-next'
 import { useAdminStore } from '@/stores/admin'

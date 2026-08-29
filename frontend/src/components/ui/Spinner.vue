@@ -11,6 +11,7 @@ interface Props extends BaseComponentProps {
 const props = withDefaults(defineProps<Props>(), {
   size: 'md',
   variant: 'default',
+  label: '',
 })
 
 const sizeClasses = computed(() => {

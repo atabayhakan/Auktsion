@@ -10,8 +10,6 @@ import {
   LogOut, 
   User, 
   ChevronRight, 
-  Check, 
-  ShieldCheck,
   AlertTriangle,
   Info,
   ExternalLink
