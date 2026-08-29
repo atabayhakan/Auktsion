@@ -6,6 +6,7 @@ import { useUserStore } from './user'
 
 import { useUIStore } from './ui'
 import { useI18n } from '@/composables/useI18n'
+import apiClient from '@/services/api'
 import type { Bid, Money, BidFormData, BidPlacedEvent } from '@/types'
 
 export const useBiddingStore = defineStore('bidding', () => {
@@ -103,7 +104,7 @@ export const useBiddingStore = defineStore('bidding', () => {
       // Make API call — the backend converts to minor units itself
       // (auctionController.ts: amountMinor = Math.round(Number(amount) * 100)),
       // so this must send the plain major-unit amount, not pre-multiplied.
-      const response = await window.axios?.post(`/api/auctions/${currentAuctionId.value}/bids`, {
+      const response = await apiClient.post(`/api/auctions/${currentAuctionId.value}/bids`, {
         amount,
       })
 
@@ -141,6 +142,13 @@ export const useBiddingStore = defineStore('bidding', () => {
     const bidCount = event.auctionState?.bidCount ?? event.auction_state?.bid_count ?? 0
     // Update auction price
     auctionStore.updateAuctionPrice(auctionId, bid.amount, bidCount)
+    // Anti-sniping: sync endsAt if server extended it
+    const newEndsAt = (event as any).auctionState?.endsAt || (event as any).auction_state?.ends_at || (event as any).endsAt
+    if (newEndsAt) {
+      const auction = auctionStore.auctions.find(a => a.id === auctionId)
+      if (auction) (auction as any).endsAt = newEndsAt
+      if (auctionStore.currentAuction?.id === auctionId) (auctionStore.currentAuction as any).endsAt = newEndsAt
+    }
 
     // Add to bid history if it's for current auction
     if (currentAuctionId.value === auctionId) {

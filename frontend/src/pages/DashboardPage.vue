@@ -481,6 +481,7 @@ onMounted(async () => {
                         description="JPEG, PNG or PDF"
                         accepted="image/*,.pdf"
                         max-size="10MB"
+                        document-type="idFront"
                         :uploaded="userStore.kycDocuments.idFront"
                       />
                       <DocumentUpload
@@ -488,6 +489,7 @@ onMounted(async () => {
                         description="JPEG or PNG"
                         accepted="image/*"
                         max-size="10MB"
+                        document-type="selfie"
                         :uploaded="userStore.kycDocuments.selfie"
                       />
                       <DocumentUpload
@@ -495,6 +497,7 @@ onMounted(async () => {
                         description="JPEG, PNG or PDF"
                         accepted="image/*,.pdf"
                         max-size="10MB"
+                        document-type="proofOfAddress"
                         :uploaded="userStore.kycDocuments.proofOfAddress"
                       />
                     </div>

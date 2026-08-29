@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from '@/composables/useI18n'
+import { useUserStore } from '@/stores/user'
 import Modal from '@/components/ui/Modal.vue'
 import Input from '@/components/ui/Input.vue'
 import Button from '@/components/ui/Button.vue'
@@ -15,6 +16,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const userStore = useUserStore()
 
 const currentPassword = ref('')
 const newPassword = ref('')
@@ -22,7 +24,7 @@ const confirmPassword = ref('')
 const isLoading = ref(false)
 const error = ref('')
 
-function handleSubmit() {
+async function handleSubmit() {
   if (newPassword.value !== confirmPassword.value) {
     error.value = t('auth.passwordsDoNotMatch')
     return
@@ -33,14 +35,18 @@ function handleSubmit() {
   }
   error.value = ''
   isLoading.value = true
-  setTimeout(() => {
-    isLoading.value = false
+  try {
+    await userStore.changePassword(currentPassword.value, newPassword.value)
     emit('success')
     emit('update:modelValue', false)
     currentPassword.value = ''
     newPassword.value = ''
     confirmPassword.value = ''
-  }, 500)
+  } catch (err: any) {
+    error.value = err?.response?.data?.error || err?.data?.error || err?.message || t('common.error')
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 

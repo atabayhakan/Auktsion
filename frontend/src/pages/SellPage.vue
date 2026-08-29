@@ -5,7 +5,7 @@ import {
   Sparkles, Upload, Image as ImageIcon, CheckCircle2, 
   AlertCircle, ChevronRight, ChevronLeft, DollarSign,
   Calendar, MapPin, Tag, ShieldCheck, Zap, Info, Loader2,
-  Car, Home as HomeIcon, Smartphone, Gem, Palette, Tractor, Eye, Gavel
+  Car, Home as HomeIcon, Smartphone, Gem, Palette, Tractor, Eye, Gavel, X
 } from 'lucide-vue-next'
 import Button from '@/components/ui/Button.vue'
 import Input from '@/components/ui/Input.vue'
@@ -16,6 +16,7 @@ import { kyrgyzstanRegions } from '@/data/regions'
 import { platformCategories } from '@/data/categories'
 import { generateListingWithAI } from '@/services/aiService'
 import { auctionService } from '@/services/auctionService'
+import apiClient from '@/services/api'
 
 const router = useRouter()
 const auctionStore = useAuctionStore()
@@ -27,6 +28,8 @@ const currentStep = ref(1)
 const isSubmitting = ref(false)
 const isAiGenerating = ref(false)
 const aiPromptInput = ref('')
+const isUploadingImages = ref(false)
+const imageUploadError = ref('')
 
 // Form State
 const formData = ref({
@@ -141,6 +144,41 @@ function prevStep() {
   }
 }
 
+async function handleImageFiles(event: Event) {
+  const input = event.target as HTMLInputElement
+  const files = input.files
+  if (!files || files.length === 0) return
+  isUploadingImages.value = true
+  imageUploadError.value = ''
+  try {
+    for (const file of Array.from(files)) {
+      if (file.size > 10 * 1024 * 1024) {
+        imageUploadError.value = `${file.name} çok büyük (max 10MB)`
+        continue
+      }
+      if (!file.type.startsWith('image/')) {
+        imageUploadError.value = `${file.name} sadece resim olabilir`
+        continue
+      }
+      const fd = new FormData()
+      fd.append('file', file)
+      const res: any = await apiClient.post('/api/upload', fd)
+      const url = res?.data?.url || (res as any)?.url || ''
+      if (url) formData.value.images.push(url)
+    }
+  } catch (err: any) {
+    const msg = err?.response?.data?.error || err?.data?.error || err?.message || 'Yükleme başarısız'
+    imageUploadError.value = msg
+  } finally {
+    isUploadingImages.value = false
+    if (input) input.value = ''
+  }
+}
+
+function removeImage(idx: number) {
+  formData.value.images.splice(idx, 1)
+}
+
 // Publish Auction — now via real API (P1)
 async function submitAuction() {
   if (!userStore.isAuthenticated) {
@@ -149,6 +187,10 @@ async function submitAuction() {
   }
   if (!formData.value.title.trim() || !formData.value.description.trim()) {
     alert(t('sell.validation.required') || 'Бардык милдеттүү талааларды толтуруңуз')
+    return
+  }
+  if (formData.value.images.length === 0) {
+    alert('En az 1 sүрөт жүктөңүз')
     return
   }
 
@@ -341,6 +383,26 @@ async function submitAuction() {
               placeholder="Буюмдун абалы, өзгөчөлүктөрү жана кепилдиги тууралуу жазыңыз..."
               class="w-full px-4 py-3 rounded-2xl bg-white border border-black/10 text-base font-medium focus:outline-none focus:ring-2 focus:ring-amber-500 text-text-primary resize-none"
             ></textarea>
+          </div>
+
+          <!-- Images Upload -->
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-text-secondary">Сүрөттөр * (min 1)</label>
+            <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+              <div v-for="(img, idx) in formData.images" :key="idx" class="relative aspect-square rounded-xl overflow-hidden border border-black/10 group">
+                <img :src="img" class="w-full h-full object-cover" />
+                <button type="button" class="absolute top-1 right-1 p-1 rounded-full bg-red-500/80 text-white opacity-0 group-hover:opacity-100 transition" @click="removeImage(idx)">
+                  <X class="w-3 h-3" />
+                </button>
+              </div>
+              <label class="aspect-square rounded-xl border-2 border-dashed border-black/10 hover:border-amber-500/50 bg-white flex flex-col items-center justify-center gap-1 cursor-pointer transition">
+                <Upload class="w-5 h-5 text-text-muted" />
+                <span class="text-[10px] font-bold text-text-muted">{{ isUploadingImages ? 'Жүктөлүүдө...' : 'Сүрөт кош' }}</span>
+                <input type="file" accept="image/*" multiple class="hidden" :disabled="isUploadingImages" @change="handleImageFiles" />
+              </label>
+            </div>
+            <p v-if="imageUploadError" class="text-xs text-red-500">{{ imageUploadError }}</p>
+            <p class="text-[10px] text-text-muted">JPEG/PNG/WebP, her biri max 10MB. En az 1 сүрөт.</p>
           </div>
 
         </div>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from '@/composables/useI18n'
 import Modal from '@/components/ui/Modal.vue'
 import Button from '@/components/ui/Button.vue'
 import { AlertTriangle } from 'lucide-vue-next'
+import apiClient from '@/services/api'
 
 const props = defineProps<{
   modelValue: boolean
@@ -18,15 +19,27 @@ const { t } = useI18n()
 
 const confirmationText = ref('')
 const isLoading = ref(false)
+const error = ref('')
 
-function handleConfirm() {
-  if (confirmationText.value !== 'DELETE' && confirmationText.value !== 'ӨЧҮРҮҮ' && confirmationText.value !== 'УДАЛИТЬ' && confirmationText.value !== 'SİL') return
+const isConfirmed = computed(() => {
+  const normalized = confirmationText.value.trim().toUpperCase()
+  return ['DELETE', 'ӨЧҮРҮҮ', 'УДАЛИТЬ', 'SİL'].includes(normalized)
+})
+
+async function handleConfirm() {
+  if (!isConfirmed.value) return
   isLoading.value = true
-  setTimeout(() => {
-    isLoading.value = false
+  error.value = ''
+  try {
+    await apiClient.delete('/api/user/profile')
     emit('confirm')
     emit('update:modelValue', false)
-  }, 500)
+    confirmationText.value = ''
+  } catch (err: any) {
+    error.value = err?.response?.data?.error || err?.data?.error || err?.message || 'Failed to delete account'
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 
@@ -50,12 +63,13 @@ function handleConfirm() {
         placeholder="DELETE"
         class="w-full bg-white border border-border rounded-xl px-4 py-2.5 text-base text-text-primary focus:outline-none focus:border-red-500 font-bold tracking-widest uppercase"
       />
+      <p v-if="error" class="text-sm text-red-500">{{ error }}</p>
 
       <div class="flex justify-end gap-3 pt-4 border-t border-black/[0.06]">
         <Button variant="outline" @click="emit('update:modelValue', false)">
           {{ t('common.cancel') }}
         </Button>
-        <Button variant="danger" :disabled="!confirmationText" :loading="isLoading" @click="handleConfirm">
+        <Button variant="danger" :disabled="!isConfirmed" :loading="isLoading" @click="handleConfirm">
           {{ t('dashboard.deleteAccount') }}
         </Button>
       </div>

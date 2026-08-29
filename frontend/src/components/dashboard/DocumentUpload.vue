@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { CheckCircle, Clock, XCircle, Upload, Image, FileText, Shield, X } from 'lucide-vue-next'
 import { useUIStore } from '@/stores/ui'
+import { useUserStore } from '@/stores/user'
 import { useI18n } from '@/composables/useI18n'
 import Card from '@/components/ui/Card.vue'
 
@@ -11,12 +12,17 @@ interface Props {
   accepted: string
   maxSize: string
   uploaded?: string | null
+  documentType?: string
 }
 
 const props = defineProps<Props>()
 
 const uiStore = useUIStore()
+const userStore = useUserStore()
 const { t } = useI18n()
+const emit = defineEmits<{
+  'update:uploaded': [url: string]
+}>()
 
 const isDragging = ref(false)
 const uploadProgress = ref(0)
@@ -72,7 +78,7 @@ function handleFileSelect(selectedFile: File) {
   // Validate file type
   const acceptedTypes = props.accepted.split(',').map(t => t.trim())
   const isValidType = acceptedTypes.some(type => {
-    if (type.startsWith('.')) return selectedFile.name.endsWith(type)
+    if (type.startsWith('.')) return selectedFile.name.toLowerCase().endsWith(type.toLowerCase())
     return selectedFile.type.match(type.replace('*', '.*'))
   })
   
@@ -81,8 +87,8 @@ function handleFileSelect(selectedFile: File) {
     return
   }
   
-  // Validate file size
-  const maxSizeMB = parseInt(props.maxSize)
+  // Validate file size (supports "10MB", "5MB" etc)
+  const maxSizeMB = parseInt(props.maxSize) || 10
   if (selectedFile.size > maxSizeMB * 1024 * 1024) {
     uiStore.toastError(t('common.error'), `${t('toasts.errorOccurred')}: max ${props.maxSize}`)
     return
@@ -91,20 +97,36 @@ function handleFileSelect(selectedFile: File) {
   file.value = selectedFile
   preview.value = URL.createObjectURL(selectedFile)
   
-  // Simulate upload
-  simulateUpload()
+  void handleUpload(selectedFile)
 }
 
-async function simulateUpload() {
-  uploadProgress.value = 0
-  const interval = setInterval(() => {
-    uploadProgress.value += Math.random() * 15
-    if (uploadProgress.value >= 100) {
-      uploadProgress.value = 100
-      clearInterval(interval)
-      uiStore.toastSuccess(t('toasts.uploaded'), `${file.value?.name}`)
-    }
-  }, 200)
+function inferDocumentType(): string {
+  if (props.documentType) return props.documentType
+  const titleLower = (props.title || '').toLowerCase()
+  if (titleLower.includes('selfie')) return 'selfie'
+  if (titleLower.includes('address') || titleLower.includes('proof')) return 'proofOfAddress'
+  if (titleLower.includes('back')) return 'idBack'
+  return 'idFront'
+}
+
+async function handleUpload(selectedFile: File) {
+  uploadProgress.value = 10
+  try {
+    const type = inferDocumentType()
+    const res: any = await userStore.uploadKycDocument(type, selectedFile)
+    const url = res?.url || (res?.data as any)?.url || preview.value || ''
+    uploadProgress.value = 100
+    uiStore.toastSuccess(t('toasts.success'), `${selectedFile.name} — ${t('toasts.uploaded')}`)
+    emit('update:uploaded', url)
+  } catch (err: any) {
+    uploadProgress.value = 0
+    const msg = err?.response?.data?.error || err?.data?.error || err?.message || 'Upload failed'
+    uiStore.toastError(t('common.error'), msg)
+    file.value = null
+    if (preview.value) URL.revokeObjectURL(preview.value)
+    preview.value = null
+    if (fileInput.value) fileInput.value.value = ''
+  }
 }
 
 function removeFile() {
@@ -150,8 +172,6 @@ function triggerFileInput() {
         type="file"
         :accept="props.accepted"
         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-        multiple
-        disabled
         @change="handleFileInput"
       />
       

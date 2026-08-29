@@ -61,7 +61,7 @@ export const userService = {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('type', type)
-    const res = await apiClient.post<{ success: boolean; url: string }>('/api/upload', formData)
+    const res = await apiClient.post<{ success: boolean; url: string }>('/api/upload/kyc', formData)
     return res.data
   },
 
