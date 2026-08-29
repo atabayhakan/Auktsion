@@ -108,8 +108,14 @@ function onPasswordChanged() {
   uiStore.toastSuccess(t('toasts.passwordChanged'), t('auth.passwordChangedDesc'))
 }
 
-function updateProfile() {
-  uiStore.toastSuccess(t('toasts.profileUpdated'), t('toasts.profileSaved'))
+async function updateProfile() {
+  try {
+    await userStore.updateProfile(profileForm.value as any)
+    uiStore.toastSuccess(t('toasts.profileUpdated'), t('toasts.profileSaved'))
+  } catch (err: any) {
+    const msg = err?.response?.data?.error || err?.data?.error || err?.message || t('common.error')
+    uiStore.toastError(t('common.error'), msg)
+  }
 }
 
 function changePassword() {

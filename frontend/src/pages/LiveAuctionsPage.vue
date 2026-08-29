@@ -18,7 +18,7 @@ const router = useRouter()
 const auctionStore = useAuctionStore()
 const { t, locale } = useI18n()
 
-const searchQuery = ref('')
+const searchQuery = ref((route.query.search as string) || '')
 const selectedCategory = ref((route.query.category as string) || 'all')
 const selectedRegion = ref((route.query.region as string) || 'all')
 const selectedSort = ref((route.query.sort as string) || 'ending_soon')
@@ -37,6 +37,37 @@ watch(() => route.query.region, (newReg) => {
 
 watch(() => route.query.sort, (newSort) => {
   if (newSort) selectedSort.value = newSort as string
+})
+
+watch(() => route.query.search, (newSearch) => {
+  searchQuery.value = (newSearch as string) || ''
+})
+
+// Sync state -> URL (shareable filters)
+function updateRouteQuery() {
+  const query: Record<string, string> = {}
+  if (selectedCategory.value !== 'all') query.category = selectedCategory.value
+  if (selectedRegion.value !== 'all') query.region = selectedRegion.value
+  if (selectedSort.value !== 'ending_soon') query.sort = selectedSort.value
+  if (searchQuery.value.trim()) query.search = searchQuery.value.trim()
+  if (minPrice.value) query.minPrice = String(minPrice.value)
+  if (maxPrice.value) query.maxPrice = String(maxPrice.value)
+  if (isBlitzOnly.value) query.blitz = '1'
+  const current = route.query as Record<string, string>
+  const same = Object.keys({ ...query, ...current }).every(k => (query[k] || '') === (current[k] || ''))
+  if (!same) router.replace({ query })
+}
+
+watch(selectedCategory, updateRouteQuery)
+watch(selectedRegion, updateRouteQuery)
+watch(selectedSort, updateRouteQuery)
+watch(isBlitzOnly, updateRouteQuery)
+watch(minPrice, updateRouteQuery)
+watch(maxPrice, updateRouteQuery)
+let searchDebounce: ReturnType<typeof setTimeout> | null = null
+watch(searchQuery, () => {
+  if (searchDebounce) clearTimeout(searchDebounce)
+  searchDebounce = setTimeout(updateRouteQuery, 400)
 })
 
 const categories = computed(() => {
@@ -390,7 +421,16 @@ onMounted(() => {
 
         <!-- Product Grid -->
         <main class="lg:col-span-9 space-y-6">
-          <div v-if="filteredAuctions.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div v-if="auctionStore.isLoading" class="flex flex-col items-center justify-center py-12 gap-3">
+            <div class="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <p class="text-xs font-medium text-text-muted">{{ t('common.loading') }}</p>
+          </div>
+          <div v-else-if="auctionStore.error" class="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 text-xs flex items-center gap-2">
+            <AlertCircle class="w-4 h-4" />
+            <span>{{ auctionStore.error }}</span>
+            <button class="ml-auto underline font-medium" @click="auctionStore.fetchAuctions()">{{ t('common.retry') }}</button>
+          </div>
+          <div v-else-if="filteredAuctions.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <AuctionCard
               v-for="auction in filteredAuctions"
               :key="auction.id"

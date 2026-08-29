@@ -130,8 +130,51 @@ async function handleAiMagicGenerate() {
   }
 }
 
-// Next Step
+// Next Step with validation
+function validateStep(step: number): boolean {
+  if (step === 1) {
+    if (!formData.value.title.trim() || !formData.value.description.trim()) {
+      alert('Аталышы жана сыпаттамасы милдеттүү')
+      return false
+    }
+    if (formData.value.images.length === 0) {
+      alert('En az 1 сүрөт жүктөңүз')
+      return false
+    }
+  }
+  if (step === 2) {
+    if (formData.value.category === 'livestock') {
+      if (!formData.value.livestock.breed.trim() || formData.value.livestock.ageYears <= 0 || formData.value.livestock.weightKg <= 0) {
+        alert('Мал мүнөздөмөлөрүн толук толтуруңуз')
+        return false
+      }
+    } else if (formData.value.category === 'vehicles') {
+      if (!formData.value.vehicle.model.trim() || formData.value.vehicle.year < 1900) {
+        alert('Автоунаа маалыматтарын толук толтуруңуз')
+        return false
+      }
+    } else if (formData.value.category === 'real-estate') {
+      if (formData.value.realEstate.areaSqm <= 0) {
+        alert('Аянты туура эмес')
+        return false
+      }
+    }
+  }
+  if (step === 3) {
+    if (formData.value.startingPrice <= 0 || formData.value.bidIncrement <= 0) {
+      alert('Баа жана кадам туура эмес')
+      return false
+    }
+    if (formData.value.reservePrice > 0 && formData.value.reservePrice < formData.value.startingPrice) {
+      alert('Резерв баасы баштапкыдан кичине болбошу керек')
+      return false
+    }
+  }
+  return true
+}
+
 function nextStep() {
+  if (!validateStep(currentStep.value)) return
   if (currentStep.value < 4) {
     currentStep.value++
   }
