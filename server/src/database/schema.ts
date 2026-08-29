@@ -15,6 +15,9 @@ export function initializeSchema(db: Database): void {
       district TEXT,
       role TEXT DEFAULT 'buyer' CHECK(role IN ('buyer', 'seller', 'admin', 'moderator')),
       status TEXT DEFAULT 'active' CHECK(status IN ('active', 'suspended', 'banned')),
+      ban_reason TEXT,
+      banned_by TEXT,
+      banned_at DATETIME,
       kyc_status TEXT DEFAULT 'not_started' CHECK(kyc_status IN ('not_started', 'phone_verified', 'id_uploaded', 'ocr_passed', 'verified', 'rejected')),
       inn TEXT,
       balance_minor BIGINT DEFAULT 2500000,
@@ -227,4 +230,9 @@ export function initializeSchema(db: Database): void {
     CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
     CREATE INDEX IF NOT EXISTS idx_watchlists_auction_id ON watchlists(auction_id);
   `);
+
+  // Migration for existing DBs: add ban audit columns if missing
+  try { db.exec(`ALTER TABLE users ADD COLUMN ban_reason TEXT`); } catch {}
+  try { db.exec(`ALTER TABLE users ADD COLUMN banned_by TEXT`); } catch {}
+  try { db.exec(`ALTER TABLE users ADD COLUMN banned_at DATETIME`); } catch {}
 }

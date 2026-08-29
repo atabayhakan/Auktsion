@@ -5,6 +5,7 @@ import {
   getUserDetail,
   updateUserStatus,
   updateUserRole,
+  resetUserPassword,
   getListings,
   updateListingStatus,
   updateListingFeatured,
@@ -40,6 +41,7 @@ adminRoutes.get('/users', staffOnly, getUsers);
 adminRoutes.get('/users/:id', staffOnly, getUserDetail);
 adminRoutes.put('/users/:id/status', staffOnly, updateUserStatus);
 adminRoutes.put('/users/:id/role', staffOnly, updateUserRole);
+adminRoutes.post('/users/:id/reset-password', staffOnly, resetUserPassword);
 
 // Module 3: Listings Management
 adminRoutes.get('/listings', staffOrEditor, getListings);

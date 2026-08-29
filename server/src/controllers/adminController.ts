@@ -10,6 +10,7 @@ import {
   getLiveMonitoringData,
   getAnalyticsData,
   getMediaLibrary,
+  resetUserPassword as resetUserPasswordModel,
 } from '../models/adminModel.js';
 import { getAuctions, getAuctionById } from '../models/auctionModel.js';
 import { getAllKycRecords, reviewKycRecord } from '../models/kycModel.js';
@@ -70,13 +71,17 @@ export async function getUserDetail(req: Request, res: Response): Promise<void> 
 
 export async function updateUserStatus(req: Request, res: Response): Promise<void> {
   try {
-    const { status } = req.body;
+    const { status, reason } = req.body;
     if (!['active', 'suspended', 'banned'].includes(status)) {
       res.status(400).json({ success: false, error: 'Жараксыз статус (Invalid status)' });
       return;
     }
+    if (req.params.id === (req.user as any)?.id && status !== 'active') {
+      res.status(400).json({ success: false, error: 'Өз аккаунтуңузду бөгөттөй албайсыз (Cannot ban yourself)' });
+      return;
+    }
 
-    const updated = updateUserStatusModel(req.params.id, status);
+    const updated = updateUserStatusModel(req.params.id, status, reason, (req.user as any)?.id);
     res.json({
       success: true,
       data: updated,
@@ -352,5 +357,19 @@ export async function getAnalytics(req: Request, res: Response): Promise<void> {
     });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+export async function resetUserPassword(req: Request, res: Response): Promise<void> {
+  try {
+    const { temporaryPassword } = resetUserPasswordModel(req.params.id);
+    res.json({
+      success: true,
+      data: { temporaryPassword },
+      message: 'Убактылуу сыр сөз түзүлдү (Temporary password generated). Колдонуучуга жөнөтүңүз.',
+    });
+  } catch (err: any) {
+    const status = err.message === 'User not found' ? 404 : 500;
+    res.status(status).json({ success: false, error: err.message });
   }
 }

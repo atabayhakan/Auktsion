@@ -16,6 +16,17 @@ import type {
   AdminAnalyticsData,
   AdminMediaItem
 } from '@/types/admin'
+function shouldUseMockFallback(err: any): boolean {
+  // Only fallback on network errors or 5xx, not on 4xx client errors (401/403/404 etc. must surface)
+  if (!err) return true
+  const status = err.status || err?.response?.status || err?.data?.status
+  if (status && status >= 400 && status < 500) return false
+  if (err?.code === 'ERR_NETWORK' || err?.message === 'Failed to fetch') return true
+  // If no status (network failure), fallback
+  if (!status) return true
+  return status >= 500
+}
+
 import {
   mockKPIStats,
   mockAdminUsers,
@@ -61,7 +72,8 @@ export const adminService = {
           }
         }
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (!shouldUseMockFallback(err)) throw err
       console.warn('[adminService] Using mock fallback for getOverview:', err)
     }
     return { success: true, data: { ...mockKPIStats } }
@@ -89,7 +101,8 @@ export const adminService = {
           }
         }
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (!shouldUseMockFallback(err)) throw err
       console.warn('[adminService] Using mock fallback for getUsers:', err)
     }
 
@@ -206,7 +219,8 @@ export const adminService = {
           }
         }
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (!shouldUseMockFallback(err)) throw err
       console.warn('[adminService] Using mock fallback for getListings:', err)
     }
 
@@ -285,7 +299,8 @@ export const adminService = {
           }
         }
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (!shouldUseMockFallback(err)) throw err
       console.warn('[adminService] Using mock fallback for getDisputes:', err)
     }
 
@@ -356,7 +371,8 @@ export const adminService = {
           }
         }
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (!shouldUseMockFallback(err)) throw err
       console.warn('[adminService] Using mock fallback for getKycRecords:', err)
     }
 
@@ -416,7 +432,8 @@ export const adminService = {
       if (res.data && res.data.data) {
         return { success: true, data: res.data.data }
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (!shouldUseMockFallback(err)) throw err
       console.warn('[adminService] Using mock fallback for getFinancials:', err)
     }
 
@@ -473,7 +490,8 @@ export const adminService = {
           }
         }
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (!shouldUseMockFallback(err)) throw err
       console.warn('[adminService] Using mock fallback for getMonitoring:', err)
     }
 
@@ -520,7 +538,8 @@ export const adminService = {
       if (res.data && res.data.data) {
         return { success: true, data: res.data.data }
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (!shouldUseMockFallback(err)) throw err
       console.warn('[adminService] Using mock fallback for getAnalytics:', err)
     }
 
@@ -540,7 +559,8 @@ export const adminService = {
       if (res.data && res.data.data) {
         return { success: true, data: res.data.data }
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (!shouldUseMockFallback(err)) throw err
       console.warn('[adminService] Using mock fallback for getMedia:', err)
     }
 

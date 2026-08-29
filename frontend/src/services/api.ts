@@ -64,13 +64,18 @@ export class ApiClient {
       const response = await fetch(url, config);
 
       if (response.status === 401) {
-        // Token expired or invalid
         if (typeof window !== 'undefined') {
-          // Do not redirect on public checks, but clean token
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
           const path = window.location.pathname;
-          if (path.includes('/dashboard') || path.includes('/admin')) {
-            // Can notify store
+          if (path.includes('/dashboard') || path.includes('/admin') || path.includes('/sell')) {
+            window.location.href = `/login?redirect=${encodeURIComponent(path)}`;
           }
+        }
+      }
+      if (response.status === 403) {
+        if (typeof window !== 'undefined') {
+          console.warn('Forbidden: insufficient permissions for', url);
         }
       }
 

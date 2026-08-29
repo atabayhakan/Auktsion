@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { getDatabase } from '../config/database.js';
 import { formatUser, UserRow } from './userModel.js';
 import { formatAuction, AuctionRow } from './auctionModel.js';
@@ -261,11 +262,28 @@ export function getAdminUserDetail(id: string) {
   };
 }
 
-export function updateUserStatus(userId: string, status: 'active' | 'suspended' | 'banned') {
+export function updateUserStatus(userId: string, status: 'active' | 'suspended' | 'banned', reason?: string, bannedBy?: string) {
   const db = getDatabase();
-  db.prepare("UPDATE users SET status = ?, updated_at = datetime('now') WHERE id = ?").run(status, userId);
+  if (status === 'banned' || status === 'suspended') {
+    db.prepare("UPDATE users SET status = ?, ban_reason = ?, banned_by = ?, banned_at = datetime('now'), updated_at = datetime('now') WHERE id = ?").run(status, reason || null, bannedBy || null, userId);
+  } else {
+    db.prepare("UPDATE users SET status = ?, ban_reason = NULL, banned_by = NULL, banned_at = NULL, updated_at = datetime('now') WHERE id = ?").run(status, userId);
+  }
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as UserRow;
   return formatUser(user);
+}
+
+export function resetUserPassword(userId: string): { temporaryPassword: string } {
+  const db = getDatabase();
+  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as UserRow | undefined;
+  if (!user) throw new Error('User not found');
+  // Generate secure temp password: 12 chars alphanumeric + symbols
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
+  let temp = '';
+  for (let i = 0; i < 12; i++) temp += chars[Math.floor(Math.random() * chars.length)];
+  const hash = bcrypt.hashSync(temp, 10);
+  db.prepare("UPDATE users SET password_hash = ?, updated_at = datetime('now') WHERE id = ?").run(hash, userId);
+  return { temporaryPassword: temp };
 }
 
 export function updateUserRole(userId: string, role: 'buyer' | 'seller' | 'admin' | 'moderator') {
