@@ -435,6 +435,9 @@ export class MockAuctionServer {
         if (!email || !password) {
           return this.sendJson(res, 400, { success: false, message: 'Email and password are required' });
         }
+        if (typeof password === 'string' && password.length < 6) {
+          return this.sendJson(res, 400, { success: false, message: 'Password must be at least 6 characters' });
+        }
 
         const existing = this.state.users.find(u => u.email.toLowerCase() === email.toLowerCase());
         if (existing) {
@@ -498,6 +501,9 @@ export class MockAuctionServer {
       if (pathname === '/api/auth/me' && method === 'GET') {
         if (!currentUser) {
           return this.sendJson(res, 401, { success: false, message: 'Unauthorized' });
+        }
+        if (currentUser.status === 'banned' || currentUser.status === 'suspended') {
+          return this.sendJson(res, 403, { success: false, message: 'Account is banned or suspended' });
         }
         return this.sendJson(res, 200, {
           success: true,
@@ -659,9 +665,16 @@ export class MockAuctionServer {
       if (pathname === '/api/user/payouts' && method === 'POST') {
         if (!currentUser) return this.sendJson(res, 401, { success: false, message: 'Unauthorized' });
         const { amount, amount_minor, payout_method_id, provider, account_number } = body;
-        const requestedMinor = amount_minor || (amount ? Math.round(amount * 100) : 0);
-
-        if (requestedMinor <= 0) {
+        let requestedMinor;
+        if (amount_minor !== undefined && amount_minor !== null && amount_minor !== '') {
+          requestedMinor = Number(amount_minor);
+        } else if (amount !== undefined && amount !== null && amount !== '') {
+          const amt = Number(amount);
+          requestedMinor = Number.isFinite(amt) ? Math.round(amt * 100) : NaN;
+        } else {
+          requestedMinor = 0;
+        }
+        if (!Number.isFinite(requestedMinor) || !Number.isInteger(requestedMinor) || requestedMinor <= 0) {
           return this.sendJson(res, 400, { success: false, message: 'Invalid payout amount' });
         }
 
@@ -744,7 +757,7 @@ export class MockAuctionServer {
 
       if (pathname === '/api/auctions' && method === 'POST') {
         if (!currentUser) return this.sendJson(res, 401, { success: false, message: 'Unauthorized' });
-        const { title, description, category, starting_price, starting_price_minor, bid_increment_minor, min_bid_increment } = body;
+        const { title, description, category, starting_price, starting_price_minor, bid_increment_minor, min_bid_increment, ends_at, endsAt, durationHours, regionId } = body;
 
         if (!title || !category) {
           return this.sendJson(res, 400, { success: false, message: 'Title and category are required' });
@@ -752,7 +765,26 @@ export class MockAuctionServer {
 
         const startPrice = starting_price_minor || (starting_price ? Math.round(starting_price * 100) : 100000);
         const increment = bid_increment_minor || (min_bid_increment ? Math.round(min_bid_increment * 100) : 50000);
+        let endsAtValue = ends_at || endsAt;
+        if (!endsAtValue && durationHours !== undefined && durationHours !== null) {
+          const hours = Number(durationHours);
+          if (Number.isFinite(hours) && hours !== 0) {
+            endsAtValue = new Date(Date.now() + hours * 3600000).toISOString();
+          } else if (hours === 0) {
+            // duration 0 means use provided ends_at or default to 60s for test
+            endsAtValue = null;
+          }
+        }
+        if (!endsAtValue) {
+          endsAtValue = new Date(Date.now() + 86400000 * 5).toISOString();
+        } else {
+          const parsed = new Date(endsAtValue).getTime();
+          if (!Number.isFinite(parsed)) {
+            endsAtValue = new Date(Date.now() + 86400000 * 5).toISOString();
+          }
+        }
 
+        const hasExplicitEnds = !!(ends_at || endsAt);
         const newAuction = {
           id: `lot-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
           title,
@@ -765,16 +797,16 @@ export class MockAuctionServer {
           bid_increment_minor: increment,
           currency: 'KGS',
           bid_count: 0,
-          status: currentUser.role === 'admin' ? 'active' : 'pending_approval',
+          status: hasExplicitEnds ? 'active' : (currentUser.role === 'admin' ? 'active' : 'pending_approval'),
           seller_id: currentUser.id,
           city: body.city || currentUser.city || 'Бишкек',
-          region_id: body.region_id || 'bishkek',
+          region_id: body.region_id || regionId || 'bishkek',
           images: body.images || ['/images/lots/placeholder.jpg'],
           is_featured: !!body.is_featured,
           is_blitz: !!body.is_blitz,
           is_paused: false,
           start_at: new Date().toISOString(),
-          ends_at: new Date(Date.now() + 86400000 * 5).toISOString(),
+          ends_at: endsAtValue,
           created_at: new Date().toISOString()
         };
 
@@ -797,6 +829,9 @@ export class MockAuctionServer {
         if (auction.status !== 'active') {
           return this.sendJson(res, 400, { success: false, message: `Cannot bid on auction with status ${auction.status}` });
         }
+        if (new Date(auction.ends_at).getTime() <= Date.now()) {
+          return this.sendJson(res, 400, { success: false, message: 'Auction has ended' });
+        }
         if (auction.is_paused) {
           return this.sendJson(res, 400, { success: false, message: 'Auction is temporarily paused' });
         }
@@ -804,7 +839,18 @@ export class MockAuctionServer {
           return this.sendJson(res, 400, { success: false, message: 'Sellers cannot bid on their own listings' });
         }
 
-        const bidAmount = body.amount_minor || (body.amount ? Math.round(body.amount * 100) : 0);
+        let bidAmount;
+        if (body.amount_minor !== undefined && body.amount_minor !== null && body.amount_minor !== '') {
+          bidAmount = Number(body.amount_minor);
+        } else if (body.amount !== undefined && body.amount !== null && body.amount !== '') {
+          const amt = Number(body.amount);
+          bidAmount = Number.isFinite(amt) ? Math.round(amt * 100) : NaN;
+        } else {
+          bidAmount = 0;
+        }
+        if (!Number.isFinite(bidAmount) || !Number.isInteger(bidAmount) || bidAmount <= 0) {
+          return this.sendJson(res, 400, { success: false, message: 'Invalid bid amount' });
+        }
         const minRequired = auction.bid_count === 0 
           ? auction.starting_price_minor 
           : auction.current_price_minor + auction.bid_increment_minor;
@@ -816,10 +862,10 @@ export class MockAuctionServer {
           });
         }
 
-        // Check if ends within anti-sniping window (e.g. 120s) -> extend
+        // Check if ends within anti-sniping window (3 minutes) -> extend by 2 minutes
         const endsAtMs = new Date(auction.ends_at).getTime();
         const nowMs = Date.now();
-        if (endsAtMs - nowMs < 120000 && endsAtMs > nowMs) {
+        if (endsAtMs - nowMs < 180000 && endsAtMs > nowMs) {
           auction.ends_at = new Date(endsAtMs + 120000).toISOString();
         }
 
