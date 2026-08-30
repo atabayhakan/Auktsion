@@ -221,10 +221,7 @@ const router = createRouter({
   }
 })
 
-// Admin panel must be entered via the admin. subdomain (e.g. admin.itorgo.kg),
-// never via /admin on the main domain — this SPA ships one bundle for both hosts,
-// so the split is enforced here at the router level (server-side JWT role checks
-// in server/src/routes/adminRoutes.ts remain the real authorization boundary).
+// Admin route protection & domain routing
 router.beforeEach((to, _from, next) => {
   const isAdminHost = typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
@@ -237,30 +234,23 @@ router.beforeEach((to, _from, next) => {
   const isAdminRoute = to.matched.some(record => record.meta.requiresAdmin)
   const isLoginRoute = to.name === 'Login'
 
-  // Host/route split: admin subdomain only ever serves /admin* (+ /login, so staff
-  // can actually authenticate); main domain never serves /admin*.
+  // Admin host auto-routing: redirect root to /admin
   if (isAdminHost) {
-    // Login's own post-submit redirect defaults to /dashboard when no ?redirect=
-    // is set; on the admin host that must be /admin instead, or the subsequent
-    // client-side bounce races the lazy-loaded admin chunk (URL/title update but
-    // the view stays on Login). Inject it before Login ever renders.
     if (isLoginRoute && !to.query.redirect) {
       return next({ path: '/login', query: { ...to.query, redirect: '/admin' } })
     }
     if (!isAdminRoute && !isLoginRoute) {
       return next({ path: '/admin' })
     }
-  } else if (isAdminRoute) {
-    return next({ path: '/', query: { unauthorized: '1' } })
   }
 
   // Admin route check
   if (isAdminRoute) {
-    // If not logged in and no token in localStorage, redirect to login
+    // If not logged in, redirect to login with return redirect
     if (!token || !user) {
       return next({ path: '/login', query: { redirect: to.fullPath } })
     }
-    // If user exists and has a non-staff role (e.g. standard buyer/seller)
+    // If user is not staff (neither admin nor moderator)
     if (user && user.role && !['admin', 'moderator'].includes(user.role)) {
       return next(isAdminHost
         ? { path: '/login', query: { unauthorized: '1' } }

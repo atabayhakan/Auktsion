@@ -15,8 +15,8 @@ const uiStore = useUIStore()
 const { t } = useI18n()
 
 const isLogin = ref(true)
-const email = ref('ulan@itorgo.kg')
-const password = ref('DemoPass123!')
+const email = ref('admin@itorgo.kg')
+const password = ref('AdminPass123!')
 const fullName = ref('')
 const phone = ref('')
 const confirmPassword = ref('')
@@ -50,7 +50,8 @@ async function handleSubmit() {
       uiStore.toastSuccess(t('auth.registerSuccess'), t('auth.registerSuccessDesc'))
     }
     
-    const redirect = (router.currentRoute.value.query.redirect as string) || '/dashboard'
+    const queryRedirect = router.currentRoute.value.query.redirect as string | undefined
+    const redirect = queryRedirect || (userStore.isAdmin ? '/admin' : '/dashboard')
     await router.push(redirect)
     if (router.currentRoute.value.name === 'Login') {
       // Navigation was bounced back to Login by a guard; surface it instead of
@@ -72,8 +73,8 @@ function switchMode() {
     email.value = ''
     password.value = ''
   } else {
-    email.value = 'ulan@itorgo.kg'
-    password.value = 'DemoPass123!'
+    email.value = 'admin@itorgo.kg'
+    password.value = 'AdminPass123!'
   }
 }
 </script>
