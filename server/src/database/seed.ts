@@ -280,7 +280,12 @@ export function seedDatabase(db: Database): void {
     insertCategory.run(c.id, c.slug, c.name_ky, c.name_ru, c.name_tr, c.icon, JSON.stringify(c.sub_categories), c.order);
   }
 
-  // 7. Auctions
+  // 7. Auctions (Only seeded if explicitly requested with SEED_DEMO_AUCTIONS=true)
+  if (process.env.SEED_DEMO_AUCTIONS !== 'true') {
+    console.log('ℹ️ Clean mode: Demo auctions skipped.');
+    return;
+  }
+
   const auctions = [
     {
       id: '1',
