@@ -1602,8 +1602,10 @@ export default {
       "searchPlaceholder": "İlan başlığı veya açıklamasında ara...",
       "bidsCount": "{count} teklif",
       "hiddenMinimum": "Gizli minimum",
-      "toggleFeaturedTitle": "Ana sayfada gösterimi değiştir",
-      "viewDetail": "İlan hakkında ayrıntılı bilgi",
+      "emptyTitle": "İlan Moderasyon Kataloğu Temiz",
+      "emptyDesc": "Şu anda bu kriterlere uygun veya onay bekleyen ilan bulunmuyor. Yeni bir ilan oluşturulduğunda moderasyon kuyruğunda anında listelenecektir.",
+      "createListing": "Yeni İlan Ekle",
+      "clearFilters": "Filtreleri Sıfırla",
       "toast": {
         "approved": "#{id} numaralı ilan başarıyla onaylandı ve yayınlandı",
         "rejected": "#{id} numaralı ilan reddedildi",
