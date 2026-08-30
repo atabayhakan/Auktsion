@@ -6,17 +6,22 @@ export function cleanAuctions(): void {
 
   db.pragma('foreign_keys = OFF');
 
+  const safeRun = (sql: string) => {
+    try {
+      return db.prepare(sql).run().changes;
+    } catch (e) {
+      return 0;
+    }
+  };
+
   try {
-    const delBids = db.prepare('DELETE FROM bids').run();
-    const delWatchlists = db.prepare('DELETE FROM watchlists').run();
-    const delDisputes = db.prepare('DELETE FROM disputes').run();
-    const delPayments = db.prepare('DELETE FROM payments').run();
-    const delEscrow = db.prepare('DELETE FROM escrow_transactions').run();
-    const delAuctions = db.prepare('DELETE FROM auctions').run();
+    const bids = safeRun('DELETE FROM bids');
+    const watchlists = safeRun('DELETE FROM watchlists');
+    const notifications = safeRun('DELETE FROM notifications');
+    const activity = safeRun('DELETE FROM activity_logs');
+    const auctions = safeRun('DELETE FROM auctions');
 
-    try { db.prepare('DELETE FROM notifications').run(); } catch (e) {}
-
-    console.log('✅ Cleanup complete: Deleted ' + delAuctions.changes + ' auctions, ' + delBids.changes + ' bids, ' + delWatchlists.changes + ' watchlist items.');
+    console.log(`✅ Cleanup complete: Deleted ${auctions} auctions, ${bids} bids, ${watchlists} watchlists, ${notifications} notifications, ${activity} activity logs.`);
   } finally {
     db.pragma('foreign_keys = ON');
   }
