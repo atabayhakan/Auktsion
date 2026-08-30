@@ -423,7 +423,7 @@ watch(() => userStore.isAuthenticated, (val) => {
       class="fixed inset-0 top-16 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
       @click="closeMobileMenu"
     >
-      <div class="h-full w-4/5 max-w-sm bg-white border-r border-black/10 p-6 flex flex-col justify-between shadow-2xl" @click.stop>
+      <div class="h-[calc(100vh-4rem)] max-h-screen w-4/5 max-w-sm bg-white border-r border-black/10 p-5 sm:p-6 flex flex-col justify-between shadow-2xl overflow-y-auto custom-scrollbar" @click.stop>
         <div class="space-y-4">
           <RouterLink to="/sell" class="block" @click="closeMobileMenu">
             <button class="w-full py-3 rounded bg-primary text-text-primary font-bold text-sm shadow-md flex items-center justify-center gap-2">
@@ -489,7 +489,7 @@ watch(() => userStore.isAuthenticated, (val) => {
           </nav>
         </div>
 
-        <div class="pt-6 border-t border-black/10">
+        <div class="pt-6 pb-2 border-t border-black/10 mt-4">
           <p class="text-xs text-text-muted text-center">iTorgo • MBank / Optima / DemirBank</p>
         </div>
       </div>

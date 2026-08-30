@@ -209,18 +209,19 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-text-primary pt-16 lg:pt-20 font-sans">
-    <!-- Mobile Header -->
-    <header class="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-b border-black/[0.08]">
-      <div class="max-w-7xl mx-auto px-4 py-3 space-y-2">
-        <h1 class="text-lg font-bold text-text-primary">{{ t('nav.dashboard') }}</h1>
-        <div class="overflow-x-auto">
-          <Tabs v-model="activeTab" :tabs="tabs.map(tb => ({ id: tb.id, label: tb.label, icon: tb.icon }))" variant="pills" class="text-xs" />
-        </div>
+  <div class="min-h-screen bg-background text-text-primary pt-16 sm:pt-20 font-sans">
+    <!-- Mobile Tabs (Inline with horizontal scroll) -->
+    <div class="lg:hidden px-4 pt-4 pb-2 border-b border-black/[0.06] bg-white/60 backdrop-blur-md">
+      <div class="flex items-center justify-between mb-2.5">
+        <h1 class="text-lg font-extrabold text-text-primary">{{ t('nav.dashboard') }}</h1>
+        <span class="text-xs font-bold text-primary px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 truncate max-w-[160px]">
+          {{ userStore.fullName }}
+        </span>
       </div>
-    </header>
-
-    <div class="lg:hidden h-36" />
+      <div class="overflow-x-auto pb-1.5 custom-scrollbar">
+        <Tabs v-model="activeTab" :tabs="tabs.map(tb => ({ id: tb.id, label: tb.label, icon: tb.icon }))" variant="pills" class="text-xs min-w-max" />
+      </div>
+    </div>
 
     <div class="flex">
       <!-- Sidebar -->
@@ -228,7 +229,7 @@ onMounted(async () => {
 
       <!-- Main Content -->
       <main class="flex-1 min-w-0 min-h-screen" style="margin-top: 0;">
-        <div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6 lg:pt-6">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:pt-6">
           <!-- Desktop Tabs -->
           <div class="hidden lg:block mb-8">
             <Tabs v-model="activeTab" :tabs="tabs.map(tb => ({ id: tb.id, label: tb.label, icon: tb.icon }))" variant="gold" full-width />

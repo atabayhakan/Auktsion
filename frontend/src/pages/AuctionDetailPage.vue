@@ -464,30 +464,30 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
               </div>
 
               <!-- Right: Live Countdown -->
-              <div class="bg-white/90 rounded-2xl p-4 border border-border shadow-sm flex flex-col items-center">
-                <span class="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+              <div class="bg-white/90 rounded-2xl p-3 sm:p-4 border border-border shadow-sm flex flex-col items-center">
+                <span class="text-[11px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
                   {{ timeRemaining.isEnded ? t('auction.auctionEnded') : t('auction.timeRemaining') }}
                 </span>
 
-                <div class="flex items-center gap-2 font-mono">
-                  <div class="flex flex-col items-center bg-black/[0.04] px-3 py-2 rounded-xl min-w-[52px]">
-                    <span class="text-xl font-bold text-text-primary">{{ timeRemaining.days }}</span>
-                    <span class="text-[9px] font-bold text-text-muted uppercase">{{ t('common.days') }}</span>
+                <div class="flex items-center gap-1 sm:gap-2 font-mono">
+                  <div class="flex flex-col items-center bg-black/[0.04] px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl min-w-[42px] sm:min-w-[52px]">
+                    <span class="text-base sm:text-xl font-bold text-text-primary">{{ timeRemaining.days }}</span>
+                    <span class="text-[8px] sm:text-[9px] font-bold text-text-muted uppercase">{{ t('common.days') }}</span>
                   </div>
                   <span class="text-text-muted font-bold">:</span>
-                  <div class="flex flex-col items-center bg-black/[0.04] px-3 py-2 rounded-xl min-w-[52px]">
-                    <span class="text-xl font-bold text-text-primary">{{ String(timeRemaining.hours).padStart(2, '0') }}</span>
-                    <span class="text-[9px] font-bold text-text-muted uppercase">{{ t('common.hours') }}</span>
+                  <div class="flex flex-col items-center bg-black/[0.04] px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl min-w-[42px] sm:min-w-[52px]">
+                    <span class="text-base sm:text-xl font-bold text-text-primary">{{ String(timeRemaining.hours).padStart(2, '0') }}</span>
+                    <span class="text-[8px] sm:text-[9px] font-bold text-text-muted uppercase">{{ t('common.hours') }}</span>
                   </div>
                   <span class="text-text-muted font-bold">:</span>
-                  <div class="flex flex-col items-center bg-black/[0.04] px-3 py-2 rounded-xl min-w-[52px]">
-                    <span class="text-xl font-bold text-text-primary">{{ String(timeRemaining.minutes).padStart(2, '0') }}</span>
-                    <span class="text-[9px] font-bold text-text-muted uppercase">{{ t('common.minutes') }}</span>
+                  <div class="flex flex-col items-center bg-black/[0.04] px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl min-w-[42px] sm:min-w-[52px]">
+                    <span class="text-base sm:text-xl font-bold text-text-primary">{{ String(timeRemaining.minutes).padStart(2, '0') }}</span>
+                    <span class="text-[8px] sm:text-[9px] font-bold text-text-muted uppercase">{{ t('common.minutes') }}</span>
                   </div>
                   <span class="text-text-muted font-bold">:</span>
-                  <div class="flex flex-col items-center bg-black/[0.04] px-3 py-2 rounded-xl min-w-[52px]">
-                    <span class="text-xl font-bold text-primary animate-pulse">{{ String(timeRemaining.seconds).padStart(2, '0') }}</span>
-                    <span class="text-[9px] font-bold text-text-muted uppercase">{{ t('common.seconds') }}</span>
+                  <div class="flex flex-col items-center bg-black/[0.04] px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl min-w-[42px] sm:min-w-[52px]">
+                    <span class="text-base sm:text-xl font-bold text-primary animate-pulse">{{ String(timeRemaining.seconds).padStart(2, '0') }}</span>
+                    <span class="text-[8px] sm:text-[9px] font-bold text-text-muted uppercase">{{ t('common.seconds') }}</span>
                   </div>
                 </div>
               </div>

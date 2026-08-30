@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AdminSidebar from './AdminSidebar.vue'
 import AdminHeader from './AdminHeader.vue'
@@ -8,19 +8,37 @@ import { useAdminStore } from '@/stores/admin'
 const adminStore = useAdminStore()
 const route = useRoute()
 
+onMounted(() => {
+  if (window.innerWidth < 768) {
+    adminStore.sidebarCollapsed = true
+  }
+})
+
 // This layout mounts once per session (Vue Router layouts don't remount on
 // child-route navigation), so a plain onMounted fetch would leave the
 // sidebar badges and live-monitoring feed stale for the rest of the
 // session. Watching the route path instead refreshes them on every page
 // change; `immediate: true` covers the initial load too.
 watch(() => route.path, () => {
+  if (window.innerWidth < 768) {
+    adminStore.sidebarCollapsed = true
+  }
   adminStore.fetchOverview()
   adminStore.fetchMonitoring()
 }, { immediate: true })
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-text-primary flex flex-row antialiased font-sans">
+  <div class="min-h-screen bg-background text-text-primary flex flex-row antialiased font-sans relative">
+    <!-- Mobile Backdrop Overlay -->
+    <transition name="fade">
+      <div 
+        v-if="!adminStore.sidebarCollapsed" 
+        class="fixed inset-0 bg-black/50 backdrop-blur-xs z-30 md:hidden"
+        @click="adminStore.sidebarCollapsed = true"
+      />
+    </transition>
+
     <!-- Admin Sidebar -->
     <AdminSidebar />
 

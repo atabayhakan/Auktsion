@@ -118,13 +118,24 @@ function isActive(path: string) {
   }
   return route.path.startsWith(path)
 }
+
+function handleNavClick() {
+  if (window.innerWidth < 768) {
+    adminStore.sidebarCollapsed = true
+  }
+}
 </script>
 
 <template>
   <aside 
     :class="[
-      'bg-white/95 backdrop-blur-xl text-text-secondary flex flex-col transition-all duration-300 ease-in-out border-r border-black/[0.08] z-30 select-none shrink-0 min-h-screen sticky top-0 h-screen shadow-sm',
-      adminStore.sidebarCollapsed ? 'w-20' : 'w-64 lg:w-72'
+      'bg-white/95 backdrop-blur-xl text-text-secondary flex flex-col transition-all duration-300 ease-in-out border-r border-black/[0.08] select-none shrink-0 shadow-sm',
+      // Mobile (< md): Fixed off-canvas drawer
+      'fixed inset-y-0 left-0 z-40 w-72 h-full',
+      adminStore.sidebarCollapsed ? '-translate-x-full md:translate-x-0' : 'translate-x-0',
+      // Desktop (>= md): Sticky sidebar
+      'md:static md:z-30 md:min-h-screen md:sticky md:top-0 md:h-screen',
+      adminStore.sidebarCollapsed ? 'md:w-20' : 'md:w-64 lg:md:w-72'
     ]"
   >
     <!-- Brand Header -->
@@ -193,6 +204,7 @@ function isActive(path: string) {
               : 'text-text-secondary hover:text-text-primary hover:bg-black/5'
           ]"
           :title="item.name"
+          @click="handleNavClick"
         >
           <!-- Icon -->
           <component :is="item.icon" class="w-4 h-4 shrink-0" />
@@ -237,6 +249,7 @@ function isActive(path: string) {
             : 'text-text-secondary hover:text-text-primary hover:bg-black/5'
         ]"
         :title="'Site Genel Ayarları'"
+        @click="handleNavClick"
       >
         <Settings class="w-4 h-4 shrink-0 text-text-primary" />
         <span v-if="!adminStore.sidebarCollapsed" class="truncate flex-1 text-xs font-bold text-text-primary">
