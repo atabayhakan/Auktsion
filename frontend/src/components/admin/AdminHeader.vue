@@ -37,22 +37,32 @@ const breadcrumbs = computed(() => {
   const parts = path.split('/').filter(Boolean)
   
   const map: Record<string, string> = {
-    admin: t('admin.overview.label'),
-    overview: t('admin.overview.label'),
-    users: t('admin.nav.users'),
-    listings: t('admin.nav.listings'),
-    disputes: t('admin.nav.disputes'),
-    kyc: t('admin.nav.kyc'),
-    financials: t('admin.nav.financials'),
-    monitoring: t('admin.nav.monitoring'),
-    analytics: t('admin.nav.analytics'),
-    media: t('admin.nav.media')
+    overview: t('admin.nav.overview') || 'Genel Bakış',
+    users: t('admin.nav.users') || 'Kullanıcılar',
+    listings: t('admin.nav.listings') || 'İlan Moderasyonu',
+    disputes: t('admin.nav.disputes') || 'Uyuşmazlıklar',
+    kyc: t('admin.nav.kyc') || 'KYC Doğrulama',
+    financials: t('admin.nav.financials') || 'Finanslar & Ödemeler',
+    monitoring: t('admin.nav.monitoring') || 'Canlı İzleme (War Room)',
+    analytics: t('admin.nav.analytics') || 'Analitik & Raporlar',
+    media: t('admin.nav.media') || 'Medya Kütüphanesi',
+    design: 'Site Tasarımı & Stüdyo',
+    settings: t('nav.settings') || 'Ayarlar'
   }
 
-  return parts.map((p, idx) => ({
-    label: map[p] || p,
-    path: '/' + parts.slice(0, idx + 1).join('/')
-  }))
+  const result = [{ label: 'iTorgo Admin', path: '/admin/overview' }]
+  const subParts = parts.filter(p => p !== 'admin')
+  if (subParts.length === 0 || (subParts.length === 1 && subParts[0] === 'overview')) {
+    result.push({ label: map.overview, path: '/admin/overview' })
+  } else {
+    subParts.forEach((p, idx) => {
+      result.push({
+        label: map[p] || p,
+        path: '/admin/' + subParts.slice(0, idx + 1).join('/')
+      })
+    })
+  }
+  return result
 })
 
 function toggleTheme() {
@@ -265,10 +275,10 @@ onUnmounted(() => {
           />
           <div class="hidden md:flex flex-col text-left">
             <span class="text-xs font-bold text-text-primary leading-none">
-              {{ userStore.user?.fullName || 'Улан Асанов' }}
+              {{ userStore.user?.fullName || userStore.user?.name || userStore.user?.email || 'Sistem Yöneticisi' }}
             </span>
-            <span class="text-[10px] font-semibold text-primary uppercase mt-0.5">
-              {{ t('admin.header.profile') }}
+            <span class="text-[10px] font-bold text-amber-600 uppercase mt-0.5 tracking-wide">
+              {{ userStore.user?.role === 'admin' ? 'ADMIN' : (t('admin.header.profile') || 'YÖNETİCİ') }}
             </span>
           </div>
         </button>

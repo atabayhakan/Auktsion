@@ -29,16 +29,16 @@ const trendDirection = computed(() => {
 </script>
 
 <template>
-  <div class="glass rounded-xl p-5 hover:shadow-lg transition-shadow relative overflow-hidden group">
-    <!-- Top Row: Title & Icon -->
-    <div class="flex items-center justify-between gap-3 mb-3">
-      <span class="text-xs font-semibold uppercase tracking-wider text-text-muted truncate">
+  <div class="bg-white rounded-2xl p-5 border border-black/[0.08] shadow-xs hover:shadow-md hover:border-black/15 transition-all relative overflow-hidden group flex flex-col justify-between">
+    <!-- Top Row: Title & Icon Badge -->
+    <div class="flex items-start justify-between gap-3 mb-3">
+      <span class="text-[11px] font-extrabold uppercase tracking-wider text-gray-500 leading-tight">
         {{ title }}
       </span>
       <div
         v-if="icon"
         :class="[
-          'w-10 h-10 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105',
+          'w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-transform group-hover:scale-105',
           iconBg,
           iconColor
         ]"
@@ -48,33 +48,35 @@ const trendDirection = computed(() => {
     </div>
 
     <!-- Main Metric Value -->
-    <div class="flex items-baseline gap-2 mb-2">
-      <h3 class="text-2xl font-bold text-text-primary tracking-tight">
-        {{ value }}
-      </h3>
-      <span v-if="subValue" class="text-xs font-medium text-text-muted">
+    <div>
+      <div class="flex items-baseline gap-2 mb-1">
+        <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight">
+          {{ value }}
+        </h3>
+      </div>
+      <span v-if="subValue" class="text-xs font-semibold text-gray-400 block">
         {{ subValue }}
       </span>
     </div>
 
     <!-- Bottom Row: Trend & Subtitle -->
-    <div v-if="trendPct !== undefined || trendLabel" class="flex items-center gap-2 text-xs">
+    <div v-if="trendPct !== undefined || trendLabel" class="mt-3 pt-2.5 border-t border-black/[0.05] flex items-center gap-2 text-xs">
       <div
         v-if="trendPct !== undefined"
         :class="[
-          'inline-flex items-center gap-1 font-semibold px-2 py-0.5 rounded-full',
-          trendDirection === 'up' ? 'bg-emerald-50 text-emerald-600' : '',
-          trendDirection === 'down' ? 'bg-rose-50 text-rose-600' : '',
-          trendDirection === 'neutral' ? 'bg-accent text-text-secondary' : ''
+          'inline-flex items-center gap-1 font-bold px-2 py-0.5 rounded-full text-[11px]',
+          trendDirection === 'up' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : '',
+          trendDirection === 'down' ? 'bg-rose-50 text-rose-700 border border-rose-200/60' : '',
+          trendDirection === 'neutral' ? 'bg-gray-100 text-gray-600' : ''
         ]"
       >
-        <TrendingUp v-if="trendDirection === 'up'" class="w-3.5 h-3.5" />
-        <TrendingDown v-if="trendDirection === 'down'" class="w-3.5 h-3.5" />
-        <Minus v-if="trendDirection === 'neutral'" class="w-3.5 h-3.5" />
+        <TrendingUp v-if="trendDirection === 'up'" class="w-3 h-3" />
+        <TrendingDown v-if="trendDirection === 'down'" class="w-3 h-3" />
+        <Minus v-if="trendDirection === 'neutral'" class="w-3 h-3" />
         <span>{{ Math.abs(trendPct) }}%</span>
       </div>
 
-      <span v-if="trendLabel" class="text-text-muted truncate">
+      <span v-if="trendLabel" class="text-gray-400 text-[11px] truncate">
         {{ trendLabel }}
       </span>
     </div>
