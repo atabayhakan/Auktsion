@@ -8,12 +8,6 @@ export function seedDatabase(db: Database): void {
   // Initialize schema first
   initializeSchema(db);
 
-  // Production safety: demo seeding must be explicitly opted in with
-  // SEED_DATABASE=true; otherwise a fresh production DB starts empty.
-  if (config.nodeEnv === 'production' && process.env.SEED_DATABASE !== 'true') {
-    console.log('ℹ️ Production mode: skipping demo seed (set SEED_DATABASE=true to force).');
-    return;
-  }
   if (process.env.SEED_DATABASE === 'false') {
     console.log('ℹ️ SEED_DATABASE=false: skipping seed.');
     return;
