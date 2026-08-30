@@ -15,10 +15,9 @@ export function seedDatabase(db: Database): void {
 
   // Check if already seeded
   const userCount = (db.prepare('SELECT count(*) as count FROM users').get() as { count: number })?.count || 0;
-  const auctionCount = (db.prepare('SELECT count(*) as count FROM auctions').get() as { count: number })?.count || 0;
 
-  if (userCount > 0 && auctionCount > 0) {
-    console.log('Database already has users and auctions.');
+  if (userCount > 0) {
+    console.log('Database already has users, skipping seed.');
     return;
   }
 
