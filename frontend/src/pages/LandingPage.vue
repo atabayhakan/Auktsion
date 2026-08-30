@@ -462,6 +462,44 @@ onMounted(async () => {
         </div>
       </section>
 
+      <!-- ================================================================
+           SECTION 11: SEO KNOWLEDGE & MARKET GUIDE
+           ================================================================ -->
+      <section class="mt-8 pt-8 border-t border-black/[0.08] space-y-6 bg-black/[0.015] rounded-3xl p-6 sm:p-8">
+        <div class="space-y-2 max-w-4xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-extrabold text-text-primary">
+            <ShieldCheck class="w-3.5 h-3.5 text-primary" />
+            <span>{{ t('home.escrowBadge') }}</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-black text-text-primary tracking-tight">
+            {{ t('home.seoTitle') }}
+          </h2>
+          <p class="text-xs sm:text-sm text-text-secondary leading-relaxed">
+            {{ t('home.seoDesc1') }}
+          </p>
+        </div>
+
+        <!-- 4-Pillar Pillars Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t border-black/[0.06]">
+          <div class="space-y-1.5 p-4 rounded-2xl bg-white/80 border border-black/[0.06] shadow-xs">
+            <h3 class="text-sm font-extrabold text-text-primary">{{ t('home.seoCol1Title') }}</h3>
+            <p class="text-xs text-text-muted leading-relaxed">{{ t('home.seoCol1Desc') }}</p>
+          </div>
+          <div class="space-y-1.5 p-4 rounded-2xl bg-white/80 border border-black/[0.06] shadow-xs">
+            <h3 class="text-sm font-extrabold text-text-primary">{{ t('home.seoCol2Title') }}</h3>
+            <p class="text-xs text-text-muted leading-relaxed">{{ t('home.seoCol2Desc') }}</p>
+          </div>
+          <div class="space-y-1.5 p-4 rounded-2xl bg-white/80 border border-black/[0.06] shadow-xs">
+            <h3 class="text-sm font-extrabold text-text-primary">{{ t('home.seoCol3Title') }}</h3>
+            <p class="text-xs text-text-muted leading-relaxed">{{ t('home.seoCol3Desc') }}</p>
+          </div>
+          <div class="space-y-1.5 p-4 rounded-2xl bg-white/80 border border-black/[0.06] shadow-xs">
+            <h3 class="text-sm font-extrabold text-text-primary">{{ t('home.seoCol4Title') }}</h3>
+            <p class="text-xs text-text-muted leading-relaxed">{{ t('home.seoCol4Desc') }}</p>
+          </div>
+        </div>
+      </section>
+
     </div>
   </div>
 </template>

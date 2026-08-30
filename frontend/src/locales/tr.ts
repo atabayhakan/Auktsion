@@ -714,7 +714,18 @@ export default {
     "shelfVehiclesTitle": "Otomobil ve Ulaşım",
     "shelfViewAll": "Tümünü Gör",
     "tabLivestock": "🐄 Hayvan Pazarı",
-    "tabRealEstate": "🏢 Dordoy ve Emlak"
+    "tabRealEstate": "🏢 Dordoy ve Emlak",
+    "seoTitle": "iTorgo — Kırgızistan'ın Güvenilir Gerçek Zamanlı Açık Artırma Platformu",
+    "seoTagline": "Araç, canlı hayvan pazarı, gayrimenkul ve elektronik kategorilerinde güvenli ticaret ekosistemi",
+    "seoDesc1": "iTorgo, Kırgızistan genelinde (Bişkek, Oş, Celalabad, Çüy, Isık-Göl, Narın, Talas, Batken) alıcı ve satıcıları şeffaf ve güvenli bir dijital açık artırma platformunda buluşturan lider ticaret merkezidir. Güvenli banka emaneti (Escrow), yerel ödeme sistemleri (MBank, Optima, DemirBank) ve kimlik doğrulamalı (KYC) satıcı yapısıyla en avantajlı alışveriş deneyimini sunar.",
+    "seoCol1Title": "🔒 %100 Banka Emanet Güvencesi",
+    "seoCol1Desc": "Ödeme, ürün teslim alınıp doğrulanana kadar güvenli banka emanet (Escrow) hesabında korunur.",
+    "seoCol2Title": "⚡ MBank ve Optima ile Anında Ödeme",
+    "seoCol2Desc": "MBank QR, DemirBank ve Optima Bank ile KGS para biriminde anında ve masrafsız işlem kolaylığı.",
+    "seoCol3Title": "🎯 Şeffaf ve Gerçek Zamanlı Teklifler",
+    "seoCol3Desc": "WebSocket altyapısıyla her teklif anlık güncellenir; botlar veya gizli komisyonlar olmadan adil yarış.",
+    "seoCol4Title": "🐄 Dordoy ve Canlı Hayvan Pazarı",
+    "seoCol4Desc": "Araşan koçlarından lüks araçlara ve Dordoy toptan ticaret ürünlerine kadar zengin ilan yelpazesi."
   },
   "howItWorks": {
     "ctaBtn": "Açık Artırmaları Gör",
