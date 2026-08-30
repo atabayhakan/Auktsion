@@ -158,7 +158,7 @@ function isActive(path: string) {
     <!-- Main Navigation Items -->
     <nav class="flex-1 px-3 py-2 space-y-1 overflow-y-auto custom-scrollbar">
       <div v-if="!adminStore.sidebarCollapsed" class="px-3 py-1.5 text-[11px] font-semibold text-text-muted uppercase tracking-wider">
-        {{ t('admin.sidebar.collapse') }} (9)
+        {{ t('admin.sidebar.collapse') }} ({{ navItems.length }})
       </div>
 
       <router-link

@@ -113,6 +113,7 @@ onUnmounted(stopAutoplay)
       v-for="(auction, i) in featuredAuctions"
       v-show="i === activeIndex"
       :key="auction.id"
+      :aria-hidden="i !== activeIndex"
       class="absolute inset-0 p-6 sm:p-8 lg:p-10"
     >
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center h-full">
@@ -179,6 +180,7 @@ onUnmounted(stopAutoplay)
       v-for="(slide, i) in promoSlides"
       v-show="(featuredAuctions.length + i) === activeIndex"
       :key="slide.id"
+      :aria-hidden="(featuredAuctions.length + i) !== activeIndex"
       class="absolute inset-0 p-8 sm:p-10 lg:p-14 bg-gradient-to-br flex items-center"
       :class="slide.gradient"
     >
@@ -212,6 +214,7 @@ onUnmounted(stopAutoplay)
 
     <!-- Arrow navigation -->
     <button
+      type="button"
       class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/80 hover:bg-white shadow-md backdrop-blur-md flex items-center justify-center text-text-primary transition-all hover:scale-105"
       aria-label="Previous slide"
       @click="prev"
@@ -219,6 +222,7 @@ onUnmounted(stopAutoplay)
       <ChevronLeft class="w-5 h-5" />
     </button>
     <button
+      type="button"
       class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/80 hover:bg-white shadow-md backdrop-blur-md flex items-center justify-center text-text-primary transition-all hover:scale-105"
       aria-label="Next slide"
       @click="next"
@@ -231,6 +235,7 @@ onUnmounted(stopAutoplay)
       <button
         v-for="i in slideCount"
         :key="i"
+        type="button"
         class="h-1.5 rounded-full transition-all duration-300"
         :class="activeIndex === i - 1 ? 'w-6 bg-primary' : 'w-1.5 bg-black/20 hover:bg-black/30'"
         :aria-label="`Go to slide ${i}`"
