@@ -6,6 +6,7 @@ import {
   PlusCircle, ArrowRight, Check, Radio, Gauge
 } from 'lucide-vue-next'
 import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'
 import { useI18n } from '@/composables/useI18n'
 import { useRouter, RouterLink } from 'vue-router'
 import Dropdown from '@/components/ui/Dropdown.vue'
@@ -14,6 +15,7 @@ import MegaMenu from '@/components/layout/MegaMenu.vue'
 import IlbirsIcon from '@/components/icons/IlbirsIcon.vue'
 
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 const router = useRouter()
 const { t, currentLocale, supportedLocales, setLocale } = useI18n()
 
@@ -136,16 +138,47 @@ watch(() => userStore.isAuthenticated, (val) => {
       <div class="flex items-center justify-between h-16 md:h-18 gap-3 lg:gap-4">
         <!-- Brand & Logo -->
         <div class="flex items-center gap-4 flex-shrink-0">
-          <RouterLink to="/" class="flex items-center gap-2 group" aria-label="iTorgo">
-            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded bg-primary p-1.5 shadow-md group-hover:scale-105 transition-transform flex items-center justify-center">
-              <IlbirsIcon class="w-full h-full text-text-primary" />
-            </div>
-            <div class="flex flex-col">
-              <span class="font-sans font-bold text-base sm:text-lg text-text-primary tracking-tight flex items-center gap-1">
-                iTorgo
-              </span>
-              <span class="text-[9px] text-text-muted tracking-wider uppercase font-medium hidden sm:block leading-none">Real-Time Platform</span>
-            </div>
+          <RouterLink to="/" class="flex items-center gap-2 group" :aria-label="themeStore.theme.logoText || 'iTorgo'">
+            <!-- Custom Image Logo -->
+            <img
+              v-if="themeStore.theme.logoType === 'image' && themeStore.theme.logoUrl"
+              :src="themeStore.theme.logoUrl"
+              :alt="themeStore.theme.logoText"
+              :style="{ height: (themeStore.theme.logoHeightPx || 40) + 'px' }"
+              class="w-auto object-contain transition-transform group-hover:scale-105"
+            />
+
+            <!-- Text Only Logo -->
+            <span
+              v-else-if="themeStore.theme.logoType === 'text_only'"
+              class="font-bold text-xl text-text-primary tracking-tight"
+            >
+              {{ themeStore.theme.logoText }}
+            </span>
+
+            <!-- Icon + Text (Default) -->
+            <template v-else>
+              <div
+                class="w-9 h-9 sm:w-10 sm:h-10 p-1.5 shadow-md group-hover:scale-105 transition-transform flex items-center justify-center"
+                :class="[
+                  themeStore.theme.logoBadgeShape === 'circle' ? 'rounded-full' :
+                  themeStore.theme.logoBadgeShape === 'square' ? 'rounded-none' :
+                  themeStore.theme.logoBadgeShape === 'transparent' ? 'bg-transparent shadow-none' :
+                  'rounded-xl'
+                ]"
+                :style="{ backgroundColor: themeStore.theme.logoBadgeColor || '#F2B138' }"
+              >
+                <IlbirsIcon class="w-full h-full text-text-primary" />
+              </div>
+              <div class="flex flex-col">
+                <span class="font-sans font-extrabold text-base sm:text-lg text-text-primary tracking-tight flex items-center gap-1">
+                  {{ themeStore.theme.logoText || 'iTorgo' }}
+                </span>
+                <span v-if="themeStore.theme.logoTagline" class="text-[9px] text-text-muted tracking-wider uppercase font-medium hidden sm:block leading-none">
+                  {{ themeStore.theme.logoTagline }}
+                </span>
+              </div>
+            </template>
           </RouterLink>
         </div>
 

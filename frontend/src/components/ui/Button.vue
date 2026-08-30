@@ -72,6 +72,7 @@ function handleClick(event: MouseEvent) {
     :disabled="disabled || loading"
     :aria-busy="loading"
     :aria-disabled="disabled || loading"
+    :style="{ borderRadius: 'var(--btn-radius, 0.625rem)' }"
     @click="handleClick"
   >
     <span v-if="loading" class="absolute inset-0 flex items-center justify-center" aria-hidden="true">

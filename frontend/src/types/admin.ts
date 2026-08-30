@@ -333,3 +333,49 @@ export interface MediaExplorerData {
   }
 }
 
+export interface ThemeSettings {
+  logoType: 'icon_text' | 'image' | 'text_only'
+  logoUrl: string
+  logoText: string
+  logoTagline: string
+  logoHeightPx: number
+  logoBadgeShape: 'rounded' | 'square' | 'circle' | 'transparent'
+  logoBadgeColor: string
+  faviconUrl: string
+
+  primaryColor: string
+  primaryHoverColor: string
+  secondaryColor: string
+  secondaryHoverColor: string
+  accentColor: string
+  backgroundColor: string
+  surfaceColor: string
+  surfaceElevatedColor: string
+  textPrimaryColor: string
+  textSecondaryColor: string
+  textMutedColor: string
+  borderColor: string
+
+  buttonRadius: '0px' | '6px' | '10px' | '16px' | '9999px'
+  buttonShadow: 'none' | 'sm' | 'md' | 'lg' | 'glow'
+  buttonHoverEffect: 'scale' | 'lift' | 'glow' | 'none'
+
+  cardRadius: '8px' | '16px' | '24px'
+  cardGlassBlur: 'none' | '10px' | '20px' | '40px'
+  cardBorder: 'none' | 'subtle' | 'solid'
+  cardShadow: 'none' | 'sm' | 'md' | 'lg'
+
+  fontFamily: 'Poppins' | 'Inter' | 'Plus Jakarta Sans' | 'Montserrat' | 'Rubik'
+  titleFontWeight: '600' | '700' | '800' | '900'
+
+  activePreset: string
+  updatedAt: string
+}
+
+export interface ThemePresetItem {
+  name: string
+  description: string
+  theme: Partial<ThemeSettings>
+}
+
+

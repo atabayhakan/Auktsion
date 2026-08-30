@@ -6,6 +6,7 @@ import { router } from '@/router'
 import { setupDirectives } from '@/directives'
 import apiClient from '@/services/api'
 import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'
 import { useEcho } from '@/composables/useEcho'
 
 import './styles/tailwind.css'
@@ -23,9 +24,12 @@ app.use(pinia)
 app.use(router)
 setupDirectives(app)
 
-// Initialize user session
+// Initialize user session & live theme tokens
 const userStore = useUserStore()
 userStore.fetchUser().catch(() => {})
+
+const themeStore = useThemeStore()
+themeStore.initTheme().catch(() => {})
 
 // Connect to the real-time WebSocket server (public, unauthenticated feed —
 // bid counts and prices update live for every visitor, logged in or not)

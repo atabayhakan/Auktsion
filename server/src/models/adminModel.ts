@@ -1017,3 +1017,228 @@ export function addMediaFile(name: string, url: string, folderId: string = 'root
   };
 }
 
+// ============================================================================
+// Module 11: Site Design & Live Theme Customizer
+// ============================================================================
+
+export interface ThemeSettings {
+  logoType: 'icon_text' | 'image' | 'text_only';
+  logoUrl: string;
+  logoText: string;
+  logoTagline: string;
+  logoHeightPx: number;
+  logoBadgeShape: 'rounded' | 'square' | 'circle' | 'transparent';
+  logoBadgeColor: string;
+  faviconUrl: string;
+
+  primaryColor: string;
+  primaryHoverColor: string;
+  secondaryColor: string;
+  secondaryHoverColor: string;
+  accentColor: string;
+  backgroundColor: string;
+  surfaceColor: string;
+  surfaceElevatedColor: string;
+  textPrimaryColor: string;
+  textSecondaryColor: string;
+  textMutedColor: string;
+  borderColor: string;
+
+  buttonRadius: '0px' | '6px' | '10px' | '16px' | '9999px';
+  buttonShadow: 'none' | 'sm' | 'md' | 'lg' | 'glow';
+  buttonHoverEffect: 'scale' | 'lift' | 'glow' | 'none';
+
+  cardRadius: '8px' | '16px' | '24px';
+  cardGlassBlur: 'none' | '10px' | '20px' | '40px';
+  cardBorder: 'none' | 'subtle' | 'solid';
+  cardShadow: 'none' | 'sm' | 'md' | 'lg';
+
+  fontFamily: 'Poppins' | 'Inter' | 'Plus Jakarta Sans' | 'Montserrat' | 'Rubik';
+  titleFontWeight: '600' | '700' | '800' | '900';
+
+  activePreset: string;
+  updatedAt: string;
+}
+
+export const DEFAULT_THEME: ThemeSettings = {
+  logoType: 'icon_text',
+  logoUrl: '',
+  logoText: 'iTorgo',
+  logoTagline: 'Real-Time Platform',
+  logoHeightPx: 40,
+  logoBadgeShape: 'rounded',
+  logoBadgeColor: '#F2B138',
+  faviconUrl: '/favicon.ico',
+
+  primaryColor: '#F2B138',
+  primaryHoverColor: '#E09E22',
+  secondaryColor: '#5B9BD5',
+  secondaryHoverColor: '#4787C4',
+  accentColor: '#F4F4F5',
+  backgroundColor: '#FFFFFF',
+  surfaceColor: '#FFFFFF',
+  surfaceElevatedColor: '#FFFFFF',
+  textPrimaryColor: '#18181B',
+  textSecondaryColor: '#52525B',
+  textMutedColor: '#71717A',
+  borderColor: '#E4E4E7',
+
+  buttonRadius: '10px',
+  buttonShadow: 'md',
+  buttonHoverEffect: 'lift',
+
+  cardRadius: '16px',
+  cardGlassBlur: '20px',
+  cardBorder: 'subtle',
+  cardShadow: 'md',
+
+  fontFamily: 'Poppins',
+  titleFontWeight: '800',
+
+  activePreset: 'sunlit_gold',
+  updatedAt: new Date().toISOString(),
+};
+
+export const THEME_PRESETS: Record<string, { name: string; description: string; theme: Partial<ThemeSettings> }> = {
+  sunlit_gold: {
+    name: '☀️ Sunlit Gold (Orijinal iTorgo)',
+    description: 'Kırgızistan güneşi ve altın sarısı, dengeli açık tema',
+    theme: {
+      primaryColor: '#F2B138',
+      primaryHoverColor: '#E09E22',
+      secondaryColor: '#5B9BD5',
+      secondaryHoverColor: '#4787C4',
+      accentColor: '#F4F4F5',
+      backgroundColor: '#FFFFFF',
+      surfaceColor: '#FFFFFF',
+      textPrimaryColor: '#18181B',
+      textSecondaryColor: '#52525B',
+      buttonRadius: '10px',
+      buttonShadow: 'md',
+      cardRadius: '16px',
+      cardGlassBlur: '20px',
+      fontFamily: 'Poppins',
+      logoBadgeColor: '#F2B138',
+    },
+  },
+  sapphire_elite: {
+    name: '💎 Sapphire Elite',
+    description: 'Kurumsal finans ve güven hissi veren safir mavisi ve platin tonlar',
+    theme: {
+      primaryColor: '#2563EB',
+      primaryHoverColor: '#1D4ED8',
+      secondaryColor: '#0EA5E9',
+      secondaryHoverColor: '#0284C7',
+      accentColor: '#F0F9FF',
+      backgroundColor: '#F8FAFC',
+      surfaceColor: '#FFFFFF',
+      textPrimaryColor: '#0F172A',
+      textSecondaryColor: '#475569',
+      buttonRadius: '16px',
+      buttonShadow: 'lg',
+      cardRadius: '16px',
+      cardGlassBlur: '40px',
+      fontFamily: 'Plus Jakarta Sans',
+      logoBadgeColor: '#2563EB',
+    },
+  },
+  tian_shan_emerald: {
+    name: '🌲 Tian Shan Emerald',
+    description: 'Tanrı Dağları ve doğayı yansıtan lüks zümrüt yeşili palet',
+    theme: {
+      primaryColor: '#059669',
+      primaryHoverColor: '#047857',
+      secondaryColor: '#10B981',
+      secondaryHoverColor: '#059669',
+      accentColor: '#ECFDF5',
+      backgroundColor: '#FAFAF9',
+      surfaceColor: '#FFFFFF',
+      textPrimaryColor: '#1C1917',
+      textSecondaryColor: '#57534E',
+      buttonRadius: '16px',
+      buttonShadow: 'md',
+      cardRadius: '24px',
+      cardGlassBlur: '20px',
+      fontFamily: 'Inter',
+      logoBadgeColor: '#059669',
+    },
+  },
+  midnight_luxury: {
+    name: '🌌 Midnight Luxury (Koyu Mod)',
+    description: 'Derin antrasit zemin üzerinde parlayan lüks altın açık artırma teması',
+    theme: {
+      primaryColor: '#F59E0B',
+      primaryHoverColor: '#D97706',
+      secondaryColor: '#6366F1',
+      secondaryHoverColor: '#4F46E5',
+      accentColor: '#1E293B',
+      backgroundColor: '#0F172A',
+      surfaceColor: '#1E293B',
+      textPrimaryColor: '#F8FAFC',
+      textSecondaryColor: '#CBD5E1',
+      buttonRadius: '9999px',
+      buttonShadow: 'glow',
+      cardRadius: '24px',
+      cardGlassBlur: '40px',
+      fontFamily: 'Montserrat',
+      logoBadgeColor: '#F59E0B',
+    },
+  },
+  ruby_crimson: {
+    name: '⚡ Ruby Crimson (Canlı İhale)',
+    description: 'Yüksek adrenalin ve heyecan uyandıran yakut kırmızısı açık artırma teması',
+    theme: {
+      primaryColor: '#DC2626',
+      primaryHoverColor: '#B91C1C',
+      secondaryColor: '#F97316',
+      secondaryHoverColor: '#EA580C',
+      accentColor: '#FEF2F2',
+      backgroundColor: '#FFFFFF',
+      surfaceColor: '#FFFFFF',
+      textPrimaryColor: '#18181B',
+      textSecondaryColor: '#52525B',
+      buttonRadius: '6px',
+      buttonShadow: 'md',
+      cardRadius: '16px',
+      cardGlassBlur: '20px',
+      fontFamily: 'Rubik',
+      logoBadgeColor: '#DC2626',
+    },
+  },
+};
+
+export function getThemeSettings(): ThemeSettings {
+  const db = getDatabase();
+  try {
+    const row = db.prepare("SELECT value, updated_at FROM platform_settings WHERE key = 'theme_config'").get() as { value: string; updated_at: string } | undefined;
+    if (row) {
+      const parsed = JSON.parse(row.value);
+      return {
+        ...DEFAULT_THEME,
+        ...parsed,
+        updatedAt: row.updated_at || new Date().toISOString(),
+      };
+    }
+  } catch {}
+  return DEFAULT_THEME;
+}
+
+export function updateThemeSettings(newTheme: Partial<ThemeSettings>): ThemeSettings {
+  const db = getDatabase();
+  const current = getThemeSettings();
+  const merged: ThemeSettings = {
+    ...current,
+    ...newTheme,
+    updatedAt: new Date().toISOString(),
+  };
+
+  db.prepare(`
+    INSERT INTO platform_settings (key, value, updated_at)
+    VALUES ('theme_config', ?, datetime('now'))
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = datetime('now')
+  `).run(JSON.stringify(merged));
+
+  return getThemeSettings();
+}
+
+

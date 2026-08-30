@@ -26,6 +26,9 @@ import {
   addMediaFileDirect,
   getSettings,
   updateSettings,
+  getTheme,
+  updateTheme,
+  getThemePresets,
 } from '../controllers/adminController.js';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
 
@@ -84,3 +87,8 @@ adminRoutes.post('/media/file', staffOrEditor, addMediaFileDirect);
 // Module 10: Platform Settings — Admin-only
 adminRoutes.get('/settings', staffOnly, getSettings);
 adminRoutes.put('/settings', staffOnly, updateSettings);
+
+// Module 11: Site Design & Live Theme Customizer
+adminRoutes.get('/theme', getTheme); // Publicly viewable for storefront sync
+adminRoutes.get('/theme/presets', getThemePresets);
+adminRoutes.put('/theme', staffOnly, updateTheme);

@@ -35,6 +35,7 @@ const AdminMonitoringPage = () => import('@/pages/admin/AdminMonitoringPage.vue'
 const AdminAnalyticsPage = () => import('@/pages/admin/AdminAnalyticsPage.vue')
 const AdminMediaPage = () => import('@/pages/admin/AdminMediaPage.vue')
 const AdminSettingsPage = () => import('@/pages/admin/AdminSettingsPage.vue')
+const AdminDesignPage = () => import('@/pages/admin/AdminDesignPage.vue')
 
 const routes: RouteRecordRaw[] = [
   {
@@ -207,6 +208,12 @@ const routes: RouteRecordRaw[] = [
         name: 'AdminSettings',
         component: AdminSettingsPage,
         meta: { title: 'iTorgo Admin - Общие настройки (Settings)', requiresAuth: true, requiresAdmin: true }
+      },
+      {
+        path: 'design',
+        name: 'AdminDesign',
+        component: AdminDesignPage,
+        meta: { title: 'iTorgo Admin - Дизайн и тема (Theme Studio)', requiresAuth: true, requiresAdmin: true }
       }
     ]
   },

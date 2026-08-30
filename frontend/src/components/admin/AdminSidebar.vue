@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import {
@@ -16,7 +16,8 @@ import {
   Globe,
   ExternalLink,
   Shield,
-  FolderOpen
+  FolderOpen,
+  Palette
 } from 'lucide-vue-next'
 import { useAdminStore } from '@/stores/admin'
 import IlbirsIcon from '@/components/icons/IlbirsIcon.vue'
@@ -85,7 +86,7 @@ const navSections = computed(() => [
     ]
   },
   {
-    title: 'FİNANS & MEDYA',
+    title: 'FİNANS, MEDYA & TASARIM',
     items: [
       {
         name: 'Finanslar & Ödemeler',
@@ -99,6 +100,13 @@ const navSections = computed(() => [
         path: '/admin/media',
         icon: FolderOpen,
         badge: null
+      },
+      {
+        name: 'Site Tasarımı & Stüdyo',
+        path: '/admin/design',
+        icon: Palette,
+        badge: 'YENİ',
+        badgeColor: 'bg-primary text-text-primary font-black'
       }
     ]
   }

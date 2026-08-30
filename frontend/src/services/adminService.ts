@@ -18,7 +18,9 @@ import type {
   PlatformSettings,
   MediaExplorerData,
   MediaFolderItem,
-  MediaExplorerFile
+  MediaExplorerFile,
+  ThemeSettings,
+  ThemePresetItem
 } from '@/types/admin'
 function shouldUseMockFallback(err: any): boolean {
   // Only fallback on network errors or 5xx, not on 4xx client errors (401/403/404 etc. must surface)
@@ -693,6 +695,89 @@ export const adminService = {
     } catch (err: any) {
       console.error('Failed to update settings:', err)
       throw err
+    }
+  },
+
+  // 11. Theme & Design Customizer
+  async getTheme(): Promise<{ success: boolean; data: ThemeSettings }> {
+    try {
+      const res = await apiClient.get<any>('/api/admin/theme')
+      return res.data
+    } catch (err: any) {
+      console.warn('[adminService] Using fallback for getTheme:', err)
+      return {
+        success: true,
+        data: {
+          logoType: 'icon_text',
+          logoUrl: '',
+          logoText: 'iTorgo',
+          logoTagline: 'Real-Time Platform',
+          logoHeightPx: 40,
+          logoBadgeShape: 'rounded',
+          logoBadgeColor: '#F2B138',
+          faviconUrl: '/favicon.ico',
+          primaryColor: '#F2B138',
+          primaryHoverColor: '#E09E22',
+          secondaryColor: '#5B9BD5',
+          secondaryHoverColor: '#4787C4',
+          accentColor: '#F4F4F5',
+          backgroundColor: '#FFFFFF',
+          surfaceColor: '#FFFFFF',
+          surfaceElevatedColor: '#FFFFFF',
+          textPrimaryColor: '#18181B',
+          textSecondaryColor: '#52525B',
+          textMutedColor: '#71717A',
+          borderColor: '#E4E4E7',
+          buttonRadius: '10px',
+          buttonShadow: 'md',
+          buttonHoverEffect: 'lift',
+          cardRadius: '16px',
+          cardGlassBlur: '20px',
+          cardBorder: 'subtle',
+          cardShadow: 'md',
+          fontFamily: 'Poppins',
+          titleFontWeight: '800',
+          activePreset: 'sunlit_gold',
+          updatedAt: new Date().toISOString()
+        }
+      }
+    }
+  },
+
+  async updateTheme(theme: Partial<ThemeSettings>): Promise<{ success: boolean; data: ThemeSettings; message?: string }> {
+    try {
+      const res = await apiClient.put<any>('/api/admin/theme', theme)
+      return res.data
+    } catch (err: any) {
+      console.error('Failed to update theme:', err)
+      throw err
+    }
+  },
+
+  async getThemePresets(): Promise<{ success: boolean; data: Record<string, ThemePresetItem> }> {
+    try {
+      const res = await apiClient.get<any>('/api/admin/theme/presets')
+      return res.data
+    } catch (err: any) {
+      console.warn('[adminService] Using fallback for getThemePresets:', err)
+      return {
+        success: true,
+        data: {
+          sunlit_gold: {
+            name: '☀️ Sunlit Gold (Orijinal iTorgo)',
+            description: 'Kırgızistan güneşi ve altın sarısı, dengeli açık tema',
+            theme: {
+              primaryColor: '#F2B138',
+              primaryHoverColor: '#E09E22',
+              secondaryColor: '#5B9BD5',
+              backgroundColor: '#FFFFFF',
+              buttonRadius: '10px',
+              fontFamily: 'Poppins',
+              logoBadgeColor: '#F2B138'
+            }
+          }
+        }
+      }
     }
   }
 }

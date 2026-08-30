@@ -17,6 +17,9 @@ import {
   deleteMediaFolder as deleteMediaFolderModel,
   deleteMediaFile as deleteMediaFileModel,
   addMediaFile as addMediaFileModel,
+  getThemeSettings,
+  updateThemeSettings as updateThemeSettingsModel,
+  THEME_PRESETS,
   resetUserPassword as resetUserPasswordModel,
 } from '../models/adminModel.js';
 import { getAuctions, getAuctionById } from '../models/auctionModel.js';
@@ -435,7 +438,48 @@ export async function updateSettings(req: Request, res: Response): Promise<void>
   }
 }
 
+export async function getTheme(req: Request, res: Response): Promise<void> {
+  try {
+    const theme = getThemeSettings();
+    res.json({
+      success: true,
+      data: theme,
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+export async function updateTheme(req: Request, res: Response): Promise<void> {
+  try {
+    const updated = updateThemeSettingsModel(req.body);
+    // Broadcast theme update to all active WebSockets so open browser sessions update live
+    try {
+      broadcastEvent('theme:updated', { theme: updated });
+    } catch {}
+    res.json({
+      success: true,
+      data: updated,
+      message: 'Сайттын дизайны жана темасы жаңыртылды (Design & Theme updated)',
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+export async function getThemePresets(req: Request, res: Response): Promise<void> {
+  try {
+    res.json({
+      success: true,
+      data: THEME_PRESETS,
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
 export async function getAnalytics(req: Request, res: Response): Promise<void> {
+
   try {
     const { timeframe } = req.query;
     const data = getAnalyticsData(timeframe ? String(timeframe) : '30d');
