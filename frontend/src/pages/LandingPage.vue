@@ -285,46 +285,7 @@ onMounted(async () => {
       </section>
 
       <!-- ================================================================
-           SECTION 6: BANK ESCROW & SECURITY GUARANTEE — moved up from the
-           bottom of the page (was Section 7) for more visibility, right
-           after the new discovery rails.
-           ================================================================ -->
-      <section class="glass p-6 sm:p-10 rounded-3xl shadow-sm space-y-8">
-        <div class="text-center max-w-2xl mx-auto space-y-2">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success text-xs font-bold border border-success/20">
-            <ShieldCheck class="w-4 h-4" />
-            <span>{{ t('home.escrowBadge') }}</span>
-          </div>
-          <h3 class="text-2xl sm:text-3xl font-extrabold text-text-primary">
-            {{ t('home.escrowTitle') }}
-          </h3>
-          <p class="text-xs sm:text-sm text-text-secondary">
-            {{ t('home.escrowSubtitle') }}
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div
-            v-for="bank in bankPartners"
-            :key="bank.name"
-            class="p-6 rounded-2xl bg-black/[0.02] border border-black/[0.06] space-y-3"
-          >
-            <div class="flex items-center justify-between">
-              <div class="w-10 h-10 rounded-xl bg-white border border-border flex items-center justify-center shadow-sm" :class="bank.color">
-                <component :is="bank.icon" class="w-5 h-5" />
-              </div>
-              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary">
-                {{ bank.badge }}
-              </span>
-            </div>
-            <h4 class="text-base font-bold text-text-primary">{{ bank.name }}</h4>
-            <p class="text-xs text-text-secondary leading-relaxed">{{ bank.desc }}</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================================================================
-           SECTION 7: IMMEDIATE LIVE LOTS (Explore Directly)
+           SECTION 6: IMMEDIATE LIVE LOTS (Explore Directly)
            ================================================================ -->
       <section class="space-y-6" aria-labelledby="live-lots-title">
 
@@ -369,25 +330,25 @@ onMounted(async () => {
         </div>
 
         <!-- View All Link -->
-        <div class="text-center pt-4">
+        <div class="text-center pt-2">
           <RouterLink
             to="/auctions"
-            class="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-white border border-border text-text-primary font-bold text-xs sm:text-sm hover:border-primary/40 hover:shadow-md transition-all group"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-border text-text-primary font-bold text-sm hover:bg-black/5 transition-all shadow-xs"
           >
             <span>{{ t('home.allLotsCount', { n: allAuctions.length }) }}</span>
-            <ArrowRight class="w-4 h-4 text-primary group-hover:translate-x-1 transition-transform" />
+            <ArrowRight class="w-4 h-4" />
           </RouterLink>
         </div>
 
       </section>
 
       <!-- ================================================================
-           SECTION 8: LIVESTOCK (Мал Базары) SHELF
+           SECTION 7: LIVESTOCK (Мал Базары) SHELF
            ================================================================ -->
       <section v-if="livestockAuctions.length > 0" class="space-y-6">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2.5">
-            <span class="text-2xl">🐄</span>
+            <span class="text-2xl">🐎</span>
             <div>
               <h3 class="text-xl font-extrabold text-text-primary">{{ t('home.shelfLivestockTitle') }}</h3>
               <p class="text-xs text-text-secondary">{{ t('home.shelfLivestockDesc') }}</p>
@@ -409,7 +370,7 @@ onMounted(async () => {
       </section>
 
       <!-- ================================================================
-           SECTION 9: VEHICLES (Автоунаалар) SHELF
+           SECTION 8: VEHICLES (Автоунаалар) SHELF
            ================================================================ -->
       <section v-if="vehicleAuctions.length > 0" class="space-y-6">
         <div class="flex items-center justify-between">
@@ -436,7 +397,7 @@ onMounted(async () => {
       </section>
 
       <!-- ================================================================
-           SECTION 10: REAL ESTATE & DORDOY SHOPS SHELF
+           SECTION 9: REAL ESTATE & DORDOY SHOPS SHELF
            ================================================================ -->
       <section v-if="realEstateAuctions.length > 0" class="space-y-6">
         <div class="flex items-center justify-between">
@@ -459,6 +420,43 @@ onMounted(async () => {
             :key="auction.id"
             :auction="auction as any"
           />
+        </div>
+      </section>
+
+      <!-- ================================================================
+           SECTION 10: BANK ESCROW & SECURITY GUARANTEE
+           ================================================================ -->
+      <section class="glass p-6 sm:p-8 rounded-3xl shadow-sm space-y-6">
+        <div class="text-center max-w-2xl mx-auto space-y-1.5">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success text-xs font-bold border border-success/20">
+            <ShieldCheck class="w-4 h-4" />
+            <span>{{ t('home.escrowBadge') }}</span>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-extrabold text-text-primary">
+            {{ t('home.escrowTitle') }}
+          </h3>
+          <p class="text-xs sm:text-sm text-text-secondary">
+            {{ t('home.escrowSubtitle') }}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div
+            v-for="bank in bankPartners"
+            :key="bank.name"
+            class="p-5 rounded-2xl bg-black/[0.02] border border-black/[0.06] space-y-2.5 hover:bg-black/[0.04] transition-colors"
+          >
+            <div class="flex items-center justify-between">
+              <div class="w-9 h-9 rounded-xl bg-white border border-border flex items-center justify-center shadow-xs" :class="bank.color">
+                <component :is="bank.icon" class="w-4 h-4" />
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                {{ bank.badge }}
+              </span>
+            </div>
+            <h4 class="text-sm font-bold text-text-primary">{{ bank.name }}</h4>
+            <p class="text-xs text-text-secondary leading-relaxed">{{ bank.desc }}</p>
+          </div>
         </div>
       </section>
 

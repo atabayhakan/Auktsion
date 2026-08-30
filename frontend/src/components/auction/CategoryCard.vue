@@ -22,54 +22,43 @@ const imgFailed = ref(false)
 <template>
   <RouterLink
     :to="`/auctions?category=${props.category.slug}`"
-    class="category-card group relative block rounded-2xl overflow-hidden aspect-square"
+    class="group relative block rounded-2xl overflow-hidden h-28 sm:h-36 lg:h-40 border border-black/10 shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 select-none"
     :aria-label="`${props.category.name}, ${props.category.count}`"
   >
     <template v-if="!imgFailed">
       <img
         :src="props.category.coverImage"
         :alt="props.category.name"
-        class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
         loading="lazy"
         @error="imgFailed = true"
       />
-      <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+      <!-- Rich contrast overlay -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10 group-hover:from-black/90 transition-colors" />
     </template>
-    <div v-else class="absolute inset-0 flex items-center justify-center bg-accent">
-      <span class="text-5xl" aria-hidden="true">{{ props.category.icon }}</span>
+    <div v-else class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-amber-500/20 to-primary/20">
+      <span class="text-4xl" aria-hidden="true">{{ props.category.icon }}</span>
     </div>
 
-    <div class="absolute inset-x-0 bottom-0 p-4 text-white">
-      <h3 class="font-bold text-sm sm:text-base leading-tight drop-shadow-sm">{{ props.category.name }}</h3>
-      <p class="text-xs opacity-90 drop-shadow-sm">{{ props.category.count }}</p>
+    <!-- Icon Badge (Top Left) -->
+    <div class="absolute top-2.5 left-2.5 w-7 h-7 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-sm shadow-xs">
+      <span>{{ props.category.icon }}</span>
     </div>
 
-    <!-- Hover indicator -->
-    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-secondary transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out" />
+    <!-- Title & Lot Count (Bottom) -->
+    <div class="absolute inset-x-0 bottom-0 p-3 sm:p-3.5 text-white flex flex-col justify-end">
+      <h3 class="font-extrabold text-xs sm:text-sm leading-tight text-white drop-shadow-md group-hover:text-primary transition-colors line-clamp-1">
+        {{ props.category.name }}
+      </h3>
+      <p class="text-[11px] font-semibold text-white/80 drop-shadow-sm mt-0.5">
+        {{ props.category.count }} lot
+      </p>
+    </div>
+
+    <!-- Gold Accent Line on Hover -->
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-primary transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out" />
   </RouterLink>
 </template>
 
 <style scoped>
-.category-card {
-  animation: slideUp 0.5s ease-out forwards;
-  opacity: 0;
-}
-
-.category-card:nth-child(1) { animation-delay: 0.05s; }
-.category-card:nth-child(2) { animation-delay: 0.1s; }
-.category-card:nth-child(3) { animation-delay: 0.15s; }
-.category-card:nth-child(4) { animation-delay: 0.2s; }
-.category-card:nth-child(5) { animation-delay: 0.25s; }
-.category-card:nth-child(6) { animation-delay: 0.3s; }
-.category-card:nth-child(7) { animation-delay: 0.35s; }
-
-.category-card:focus-visible {
-  outline: 2px solid rgb(var(--color-secondary));
-  outline-offset: 2px;
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 </style>

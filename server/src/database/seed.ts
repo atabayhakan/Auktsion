@@ -20,9 +20,11 @@ export function seedDatabase(db: Database): void {
   }
 
   // Check if already seeded
-  const userCount = db.prepare('SELECT count(*) as count FROM users').get() as { count: number };
-  if (userCount.count > 0) {
-    console.log('Database already has users, skipping full seed (or updating admin).');
+  const userCount = (db.prepare('SELECT count(*) as count FROM users').get() as { count: number })?.count || 0;
+  const auctionCount = (db.prepare('SELECT count(*) as count FROM auctions').get() as { count: number })?.count || 0;
+
+  if (userCount > 0 && auctionCount > 0) {
+    console.log('Database already has users and auctions.');
     return;
   }
 
@@ -35,12 +37,12 @@ export function seedDatabase(db: Database): void {
   const sellerPasswordHash = bcrypt.hashSync('SellerPass123!', salt);
 
   const insertUser = db.prepare(`
-    INSERT INTO users (id, username, email, password_hash, full_name, phone, avatar, city, district, role, status, kyc_status, inn, balance_minor, created_at)
+    INSERT OR IGNORE INTO users (id, username, email, password_hash, full_name, phone, avatar, city, district, role, status, kyc_status, inn, balance_minor, created_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   const insertUserSettings = db.prepare(`
-    INSERT INTO user_settings (user_id, email_bids, email_outbid, email_won, push_bids, push_live, marketing, two_factor_enabled)
+    INSERT OR IGNORE INTO user_settings (user_id, email_bids, email_outbid, email_won, push_bids, push_live, marketing, two_factor_enabled)
     VALUES (?, 1, 1, 1, 1, 1, 0, 0)
   `);
 
@@ -276,7 +278,7 @@ export function seedDatabase(db: Database): void {
   ];
 
   const insertCategory = db.prepare(`
-    INSERT INTO categories (id, slug, name_ky, name_ru, name_tr, icon, sub_categories_json, display_order)
+    INSERT OR IGNORE INTO categories (id, slug, name_ky, name_ru, name_tr, icon, sub_categories_json, display_order)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
@@ -463,7 +465,7 @@ export function seedDatabase(db: Database): void {
   ];
 
   const insertAuction = db.prepare(`
-    INSERT INTO auctions (
+    INSERT OR IGNORE INTO auctions (
       id, title, description, category, sub_category, images_json,
       starting_price_minor, current_price_minor, reserve_price_minor, buy_now_price_minor, bid_increment_minor,
       currency, bid_count, status, seller_id, city, region_id, district,
@@ -505,7 +507,7 @@ export function seedDatabase(db: Database): void {
 
   // 8. Bids for Auction 1 and Auction 5
   const insertBid = db.prepare(`
-    INSERT INTO bids (id, auction_id, bidder_id, amount_minor, currency, status, is_winning, sequence_num, ip_address, placed_at)
+    INSERT OR IGNORE INTO bids (id, auction_id, bidder_id, amount_minor, currency, status, is_winning, sequence_num, ip_address, placed_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
@@ -537,7 +539,7 @@ export function seedDatabase(db: Database): void {
 
   // 9. Watchlist for user-001
   const insertWatchlist = db.prepare(`
-    INSERT INTO watchlists (id, user_id, auction_id, created_at)
+    INSERT OR IGNORE INTO watchlists (id, user_id, auction_id, created_at)
     VALUES (?, ?, ?, ?)
   `);
   insertWatchlist.run('wl-001', 'user-001', '1', new Date().toISOString());
@@ -545,7 +547,7 @@ export function seedDatabase(db: Database): void {
 
   // 10. Sample Payout Request
   const insertPayoutRequest = db.prepare(`
-    INSERT INTO payout_requests (id, user_id, payout_method_id, amount_minor, currency, bank_code, bank_name, account_number, account_holder_name, inn, status, requested_at)
+    INSERT OR IGNORE INTO payout_requests (id, user_id, payout_method_id, amount_minor, currency, bank_code, bank_name, account_number, account_holder_name, inn, status, requested_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   insertPayoutRequest.run(

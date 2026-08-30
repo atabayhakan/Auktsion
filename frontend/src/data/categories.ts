@@ -47,7 +47,7 @@ export const platformCategories: CategoryItem[] = [
       tr: 'Akıllı telefonlar, dizüstü bilgisayarlar ve elektronik eşyalar'
     },
     icon: '📱',
-    coverImage: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=85',
     count: '4.8k',
     popularTags: ['iPhone', 'MacBook', 'IMEI катталган', 'Samsung', 'Sony'],
     subCategories: [
@@ -70,7 +70,7 @@ export const platformCategories: CategoryItem[] = [
       tr: 'Binek araçlar, SUV, ticari araçlar ve motosikletler'
     },
     icon: '🚗',
-    coverImage: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=800&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1200&q=85',
     count: '5.2k',
     popularTags: ['Toyota', 'Lexus', 'Оң руль', 'Бажы төлөнгөн', 'Электромобиль'],
     subCategories: [
@@ -94,7 +94,7 @@ export const platformCategories: CategoryItem[] = [
       tr: 'Altın, gümüş, geleneksel takılar ve lüks saatler'
     },
     icon: '💎',
-    coverImage: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1200&q=85',
     count: '1.1k',
     popularTags: ['585 Алтын', 'Улуттук билерик', 'Rolex', 'Бриллиант'],
     subCategories: [
@@ -117,7 +117,7 @@ export const platformCategories: CategoryItem[] = [
       tr: 'Geleneksel Kırgız keçe halıları (şırdak), antika paralar ve sanat eserleri'
     },
     icon: '🎨',
-    coverImage: 'https://images.unsplash.com/photo-1531913764164-f85c52e6e654?auto=format&fit=crop&w=800&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
     count: '640',
     popularTags: ['Шырдак', 'Боз үй жабдыктары', 'Антиквариат', 'Кол өнөрчүлүк'],
     subCategories: [
@@ -140,7 +140,7 @@ export const platformCategories: CategoryItem[] = [
       tr: 'Dordoy konteynerleri, daireler, arsalar ve İssık-Göl yazlıkları'
     },
     icon: '🏢',
-    coverImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=85',
     count: '1.8k',
     popularTags: ['Дордой', 'Кызыл китеп', 'Жаңы конуш', 'Ысык-Көл коттедж', 'Элитка'],
     subCategories: [
@@ -164,7 +164,7 @@ export const platformCategories: CategoryItem[] = [
       tr: 'Traktörler, biçerdöverler, kazıcılar ve tarım ekipmanları'
     },
     icon: '🚜',
-    coverImage: 'https://images.unsplash.com/photo-1684677806708-f528f4950ad4?auto=format&fit=crop&w=800&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1592878904946-b3cd8ae243d0?auto=format&fit=crop&w=1200&q=85',
     count: '890',
     popularTags: ['МТЗ-82', 'Экскаватор', 'Соко', 'Комбайн'],
     subCategories: [
@@ -186,8 +186,8 @@ export const platformCategories: CategoryItem[] = [
       ru: 'Дойные коровы, племенные быки, скаковые лошади, породистые бараны и корма',
       tr: 'Sağmal inekler, damızlık boğalar, atlar, koçlar, yem ve köy ürünleri'
     },
-    icon: '🐄',
-    coverImage: 'https://images.unsplash.com/photo-1597119275334-359a0ccb6ae4?auto=format&fit=crop&w=800&q=80',
+    icon: '🐎',
+    coverImage: 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=1200&q=85',
     count: '3.4k',
     popularTags: ['Саан уй', 'Жылкы', 'Арашан кочкор', 'Бука', 'Тоют'],
     subCategories: [
