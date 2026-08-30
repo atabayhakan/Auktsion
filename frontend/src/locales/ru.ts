@@ -814,9 +814,11 @@ export default {
     "title": "Как работает iTorgo?"
   },
   "megaMenu": {
-    "browseAll": "Смотреть все категории",
+    "activeLots": "активных лотов",
+    "allSectors": "7 ключевых секторов, 30+ категорий • Онлайн-торги",
+    "browseAll": "Смотреть весь каталог категорий",
     "popularSearches": "Популярные запросы",
-    "viewAllIn": "Все лоты в категории «{category}»"
+    "viewAllIn": "Смотреть все лоты в «{category}»"
   },
   "modals": {
     "cancel": "Отмена",

@@ -814,9 +814,11 @@ export default {
     "title": "iTorgo кантип иштейт?"
   },
   "megaMenu": {
-    "browseAll": "Бардык категорияларды көрүү",
+    "activeLots": "активдүү лот",
+    "allSectors": "7 негизги тармак, 30+ чакан категория • Түз аукциондор",
+    "browseAll": "Бардык категориялар каталогун көрүү",
     "popularSearches": "Популярдуу издөөлөр",
-    "viewAllIn": "«{category}» категориясындагы бардык лоттор"
+    "viewAllIn": "«{category}» боюнча бардык лоттор"
   },
   "modals": {
     "cancel": "Жокко чыгаруу",

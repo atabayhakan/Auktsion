@@ -814,9 +814,11 @@ export default {
     "title": "iTorgo Nasıl Çalışır?"
   },
   "megaMenu": {
-    "browseAll": "Tüm kategorileri gör",
-    "popularSearches": "Popüler aramalar",
-    "viewAllIn": "«{category}» kategorisindeki tüm ilanlar"
+    "activeLots": "aktif lot",
+    "allSectors": "7 Ana Sektör, 30+ Alt Kategori • Canlı Açık Artırma",
+    "browseAll": "Tüm Kategorileri Gör (Katalog)",
+    "popularSearches": "Popüler Aramalar",
+    "viewAllIn": "«{category}» Tüm İlanlarını İncele"
   },
   "modals": {
     "cancel": "İptal",

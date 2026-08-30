@@ -16,7 +16,11 @@ export interface CategoryItem {
   icon: string
   coverImage: string
   count: string
-  popularTags: string[]
+  popularTags: {
+    ky: string[]
+    ru: string[]
+    tr: string[]
+  }
   subCategories: Array<{
     id: string
     slug: string
@@ -49,11 +53,15 @@ export const platformCategories: CategoryItem[] = [
     icon: '📱',
     coverImage: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=85',
     count: '4.8k',
-    popularTags: ['iPhone', 'MacBook', 'IMEI катталган', 'Samsung', 'Sony'],
+    popularTags: {
+      ky: ['iPhone 15', 'MacBook Pro', 'IMEI катталган', 'Samsung S24', 'Sony PlayStation'],
+      ru: ['iPhone 15', 'MacBook Pro', 'IMEI зарегистрирован', 'Samsung S24', 'Sony PlayStation'],
+      tr: ['iPhone 15', 'MacBook Pro', 'IMEI Kayıtlı', 'Samsung S24', 'Sony PlayStation']
+    },
     subCategories: [
       { id: 'phones', slug: 'phones', name: { ky: 'Смартфондор жана Планшеттер', ru: 'Смартфоны и Планшеты', tr: 'Telefon ve Tablet' } },
-      { id: 'laptops', slug: 'laptops', name: { ky: 'Ноутбуктар жана Компьютерлер', ru: 'Ноутбуки и ПК', tr: 'Bilgisayar' } },
-      { id: 'appliances', slug: 'appliances', name: { ky: 'Тиричилик техникасы', ru: 'Бытовая техника', tr: 'Ev Aletleri' } },
+      { id: 'laptops', slug: 'laptops', name: { ky: 'Ноутбуктар жана Компьютерлер', ru: 'Ноутбуки и ПК', tr: 'Bilgisayar ve Donanım' } },
+      { id: 'appliances', slug: 'appliances', name: { ky: 'Тиричилик техникасы', ru: 'Бытовая техника', tr: 'Ev Aletleri ve TV' } },
     ]
   },
   {
@@ -72,12 +80,16 @@ export const platformCategories: CategoryItem[] = [
     icon: '🚗',
     coverImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1200&q=85',
     count: '5.2k',
-    popularTags: ['Toyota', 'Lexus', 'Оң руль', 'Бажы төлөнгөн', 'Электромобиль'],
+    popularTags: {
+      ky: ['Toyota Camry', 'Lexus GX', 'Оң руль', 'Бажы төлөнгөн', 'Электромобиль'],
+      ru: ['Toyota Camry', 'Lexus GX', 'Правый руль', 'Растаможен', 'Электромобиль'],
+      tr: ['Toyota Camry', 'Lexus GX', 'Sağ Direksiyon', 'Gümrük Ödendi', 'Elektrikli Araç']
+    },
     subCategories: [
       { id: 'sedans', slug: 'sedans', name: { ky: 'Седандар жана Хэтчбектер', ru: 'Седаны и Хэтчбеки', tr: 'Sedan ve Hatchback' } },
       { id: 'suvs', slug: 'suvs', name: { ky: 'Жолтандабастар жана Кроссоверлер', ru: 'Внедорожники и Кроссоверы', tr: 'SUV ve Crossover' } },
       { id: 'commercial_transport', slug: 'commercial_transport', name: { ky: 'Микроавтобустар жана Жүк ташуучулар', ru: 'Бусы и Грузовики', tr: 'Ticari ve Kamyonet' } },
-      { id: 'moto', slug: 'moto', name: { ky: 'Мотоциклдер жана Скутерлер', ru: 'Мотоциклы и Скутеры', tr: 'Motosiklet ve Scooter' } },
+      { id: 'moto', slug: 'moto', name: { ky: 'Мотоциклдер жана Скутерлер', ru: 'Мотоциклы и Скутеры', tr: 'Motosiklet ve ATV' } },
     ]
   },
   {
@@ -96,10 +108,14 @@ export const platformCategories: CategoryItem[] = [
     icon: '💎',
     coverImage: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1200&q=85',
     count: '1.1k',
-    popularTags: ['585 Алтын', 'Улуттук билерик', 'Rolex', 'Бриллиант'],
+    popularTags: {
+      ky: ['585 Алтын', 'Улуттук билерик', 'Rolex', 'Бриллиант шакек'],
+      ru: ['585 Золото', 'Национальный браслет', 'Rolex', 'Бриллиант'],
+      tr: ['585 Altın', 'Geleneksel Bilezik', 'Rolex', 'Pırlanta Yüzük']
+    },
     subCategories: [
-      { id: 'gold', slug: 'gold', name: { ky: 'Алтын жана Бриллианттар', ru: 'Золото и Бриллианты', tr: 'Altın ve Mücevher' } },
-      { id: 'watches', slug: 'watches', name: { ky: 'Эркектер жана Аялдар сааттары', ru: 'Наручные часы', tr: 'Kol Saatleri' } },
+      { id: 'gold', slug: 'gold', name: { ky: 'Алтын жана Бриллианттар', ru: 'Золото и Бриллианты', tr: 'Altın ve Pırlanta' } },
+      { id: 'watches', slug: 'watches', name: { ky: 'Эркектер жана Аялдар сааттары', ru: 'Наручные часы', tr: 'Lüks Kol Saatleri' } },
       { id: 'national', slug: 'national', name: { ky: 'Улуттук кыргыз зер буюмдары', ru: 'Национальные украшения', tr: 'Geleneksel Takılar' } },
     ]
   },
@@ -119,11 +135,15 @@ export const platformCategories: CategoryItem[] = [
     icon: '🎨',
     coverImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
     count: '640',
-    popularTags: ['Шырдак', 'Боз үй жабдыктары', 'Антиквариат', 'Кол өнөрчүлүк'],
+    popularTags: {
+      ky: ['Шырдак', 'Боз үй жабдыктары', 'Антиквариат', 'Кол өнөрчүлүк'],
+      ru: ['Шырдак', 'Юрта', 'Антиквариат', 'Ручная работа'],
+      tr: ['Şırdak Halısı', 'Kırgız Çadırı', 'Antika Para', 'El Sanatları']
+    },
     subCategories: [
-      { id: 'shyrdak', slug: 'shyrdak', name: { ky: 'Шырдактар жана Кийиз буюмдары', ru: 'Шырдаки и Войлок', tr: 'Şırdak ve Keçe Ürünleri' } },
-      { id: 'coins', slug: 'coins', name: { ky: 'Нумизматика жана Тыйындар', ru: 'Монеты и Банкноты', tr: 'Madeni Paralar' } },
-      { id: 'paintings', slug: 'paintings', name: { ky: 'Картиналар жана Сүрөттөр', ru: 'Картины', tr: 'Tablolar' } },
+      { id: 'shyrdak', slug: 'shyrdak', name: { ky: 'Шырдактар жана Кийиз буюмдары', ru: 'Шырдаки и Войлок', tr: 'Şırdak ve Keçe Halılar' } },
+      { id: 'coins', slug: 'coins', name: { ky: 'Нумизматика жана Тыйындар', ru: 'Монеты и Банкноты', tr: 'Madeni Paralar ve Pullar' } },
+      { id: 'paintings', slug: 'paintings', name: { ky: 'Картиналар жана Сүрөттөр', ru: 'Картины', tr: 'Tablolar ve Çizimler' } },
     ]
   },
   {
@@ -142,11 +162,15 @@ export const platformCategories: CategoryItem[] = [
     icon: '🏢',
     coverImage: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=85',
     count: '1.8k',
-    popularTags: ['Дордой', 'Кызыл китеп', 'Жаңы конуш', 'Ысык-Көл коттедж', 'Элитка'],
+    popularTags: {
+      ky: ['Дордой', 'Кызыл китеп', 'Жаңы конуш', 'Ысык-Көл коттедж', 'Элитка'],
+      ru: ['Дордой', 'Красная книга', 'Новостройка', 'Иссык-Куль коттедж', 'Элитка'],
+      tr: ['Dordoy Pazarı', 'Kırmızı Tapu', 'Yeni Konut', 'İssık-Göl Yazlık', 'Lüks Rezidans']
+    },
     subCategories: [
-      { id: 'commercial', slug: 'commercial', name: { ky: 'Дордой/Орто-Сай соода түйүндөрү', ru: 'Торговые точки и Контейнеры', tr: 'Pazar Konteyner ve Dükkanlar' } },
-      { id: 'apartments', slug: 'apartments', name: { ky: 'Батирлер (Элитка жана Эски)', ru: 'Квартиры (Новостройки и Вторичка)', tr: 'Daireler' } },
-      { id: 'houses', slug: 'houses', name: { ky: 'Жеке үйлөр жана Коттедждер', ru: 'Дома и Коттеджи', tr: 'Müstakil Evler' } },
+      { id: 'commercial', slug: 'commercial', name: { ky: 'Дордой/Орто-Сай соода түйүндөрү', ru: 'Торговые точки и Контейнеры', tr: 'Pazar Konteyner ve Dükkan' } },
+      { id: 'apartments', slug: 'apartments', name: { ky: 'Батирлер (Элитка жана Эски)', ru: 'Квартиры (Новостройки и Вторичка)', tr: 'Daireler ve Rezidanslar' } },
+      { id: 'houses', slug: 'houses', name: { ky: 'Жеке үйлөр жана Коттедждер', ru: 'Дома и Коттеджи', tr: 'Müstakil Ev ve Villalar' } },
       { id: 'lands', slug: 'lands', name: { ky: 'Жер тилкелери жана Фермалар', ru: 'Земельные участки и Фермы', tr: 'Arsa ve Tarım Arazileri' } },
     ]
   },
@@ -166,11 +190,15 @@ export const platformCategories: CategoryItem[] = [
     icon: '🚜',
     coverImage: 'https://images.unsplash.com/photo-1592878904946-b3cd8ae243d0?auto=format&fit=crop&w=1200&q=85',
     count: '890',
-    popularTags: ['МТЗ-82', 'Экскаватор', 'Соко', 'Комбайн'],
+    popularTags: {
+      ky: ['МТЗ-82', 'Экскаватор', 'Соко', 'Комбайн Клаас'],
+      ru: ['МТЗ-82', 'Экскаватор', 'Плуг', 'Комбайн Claas'],
+      tr: ['MTZ-82 Traktör', 'Ekskavatör', 'Saban ve Pulluk', 'Claas Biçerdöver']
+    },
     subCategories: [
-      { id: 'tractors', slug: 'tractors', name: { ky: 'Тракторлор (Беларус, ЮМЗ)', ru: 'Тракторы (МТЗ, ЮМЗ)', tr: 'Traktörler' } },
-      { id: 'construction', slug: 'construction', name: { ky: 'Курулуш техникасы', ru: 'Строительная техника', tr: 'İnşaat Makineleri' } },
-      { id: 'attachments', slug: 'attachments', name: { ky: 'Агрегаттар (Соко, Пресс)', ru: 'Навесное оборудование', tr: 'Tarım Aletleri' } },
+      { id: 'tractors', slug: 'tractors', name: { ky: 'Тракторлор (Беларус, ЮМЗ)', ru: 'Тракторы (МТЗ, ЮМЗ)', tr: 'Traktörler (Belarus, MTZ)' } },
+      { id: 'construction', slug: 'construction', name: { ky: 'Курулуш техникасы', ru: 'Строительная техника', tr: 'İnşaat ve İş Makineleri' } },
+      { id: 'attachments', slug: 'attachments', name: { ky: 'Агрегаттар (Соко, Пресс)', ru: 'Навесное оборудование', tr: 'Tarım Aletleri ve Ekipman' } },
     ]
   },
   {
@@ -188,12 +216,15 @@ export const platformCategories: CategoryItem[] = [
     },
     icon: '🐎',
     coverImage: 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=1200&q=85',
-    count: '3.4k',
-    popularTags: ['Саан уй', 'Жылкы', 'Арашан кочкор', 'Бука', 'Тоют'],
+    popularTags: {
+      ky: ['Саан уй', 'Күлүк жылкы', 'Арашан кочкор', 'Бука', 'Тоют чөп'],
+      ru: ['Дойная корова', 'Скаковая лошадь', 'Арашан баран', 'Племенной бык', 'Сено и корма'],
+      tr: ['Sağmal İnek', 'Yarış Atı', 'Araşan Koç', 'Damızlık Boğa', 'Yem ve Saman']
+    },
     subCategories: [
-      { id: 'cows', slug: 'cows', name: { ky: 'Саан уйлар жана Букалар', ru: 'Коровы и Быки', tr: 'İnek ve Boğalar' } },
-      { id: 'horses', slug: 'horses', name: { ky: 'Күлүк жылкылар жана Тайлар', ru: 'Лошади и Жеребята', tr: 'Atlar ve Taylar' } },
-      { id: 'sheep', slug: 'sheep', name: { ky: 'Койлор жана Кочкорлор (Арашан)', ru: 'Бараны и Овцы', tr: 'Koyun ve Koçlar' } },
+      { id: 'cows', slug: 'cows', name: { ky: 'Саан уйлар жана Букалар', ru: 'Коровы и Быки', tr: 'İnek ve Damızlık Boğalar' } },
+      { id: 'horses', slug: 'horses', name: { ky: 'Күлүк жылкылар жана Тайлар', ru: 'Лошади и Жеребята', tr: 'Atlar ve Yarış Tayları' } },
+      { id: 'sheep', slug: 'sheep', name: { ky: 'Койлор жана Кочкорлор (Арашан)', ru: 'Бараны и Овцы (Арашан)', tr: 'Koyun ve Koçlar (Araşan)' } },
       { id: 'poultry', slug: 'poultry', name: { ky: 'Үй канаттуулары (Тоок, Каз)', ru: 'Домашняя птица', tr: 'Kümes Hayvanları' } },
       { id: 'feed', slug: 'feed', name: { ky: 'Тоют, Чөп жана Жем', ru: 'Корма, Сено и Зерно', tr: 'Yem, Saman ve Tahıl' } },
     ]

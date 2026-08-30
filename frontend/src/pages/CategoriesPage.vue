@@ -10,19 +10,29 @@ const { t, locale } = useI18n()
 const searchQuery = ref('')
 
 const localizedCategories = computed(() => {
-  const currentLang = (locale.value as 'ky' | 'ru' | 'tr') || 'ky'
-  return platformCategories.map(cat => ({
-    id: cat.slug,
-    name: cat.name[currentLang] || cat.name.ky,
-    desc: cat.description[currentLang] || cat.description.ky,
-    icon: cat.icon,
-    count: cat.count,
-    popularTags: cat.popularTags,
-    subCategories: cat.subCategories.map(sub => ({
-      id: sub.slug,
-      name: sub.name[currentLang] || sub.name.ky
-    }))
-  }))
+  const currentLang = (locale.value as 'ky' | 'ru' | 'tr') || 'ru'
+  return platformCategories.map(cat => {
+    let tags: string[] = []
+    if (cat.popularTags && typeof cat.popularTags === 'object') {
+      if (Array.isArray(cat.popularTags)) {
+        tags = cat.popularTags
+      } else if (currentLang in cat.popularTags) {
+        tags = (cat.popularTags as any)[currentLang] || []
+      }
+    }
+    return {
+      id: cat.slug,
+      name: cat.name[currentLang] || cat.name.ky,
+      desc: cat.description[currentLang] || cat.description.ky,
+      icon: cat.icon,
+      count: cat.count,
+      popularTags: tags,
+      subCategories: cat.subCategories.map(sub => ({
+        id: sub.slug,
+        name: sub.name[currentLang] || sub.name.ky
+      }))
+    }
+  })
 })
 
 const filteredCategories = computed(() => {
