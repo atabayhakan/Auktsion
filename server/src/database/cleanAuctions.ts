@@ -1,4 +1,4 @@
-﻿import { getDatabase } from '../config/database.js';
+import { getDatabase } from '../config/database.js';
 
 export function cleanAuctions(): void {
   const db = getDatabase();
@@ -12,7 +12,7 @@ export function cleanAuctions(): void {
     db.prepare('DELETE FROM notifications').run();
   } catch (e) {}
 
-  console.log(\✅ Cleanup complete: Deleted \ auctions, \ bids, \ watchlist items.\);
+  console.log('✅ Cleanup complete: Deleted ' + delAuctions.changes + ' auctions, ' + delBids.changes + ' bids, ' + delWatchlists.changes + ' watchlist items.');
 }
 
 cleanAuctions();
