@@ -1832,10 +1832,23 @@ export default {
       "bidsPlaced": "Коюлган текептер",
       "countdownEnded": "Аякталды",
       "feedTicker": {
-        "heading": "Текептердин реалдуу убакыт агымы",
+        "heading": "Коюмдардын реалдуу убакыт агымы",
         "realtime": "Real-time",
-        "cancelBidTitle": "Текепти жокко чыгаруу",
-        "cancelBidButton": "Жокко чыгаруу"
+        "cancelBidTitle": "Коюмду жокко чыгаруу",
+        "cancelBidButton": "Жокко чыгаруу",
+        "emptyTitle": "Түз коюм агымы даяр",
+        "emptyDesc": "Система WebSocket жана Kafka аркылуу реалдуу убакытта коюмдарды угууда. Жаңы коюмдар дароо бул жерде көрсөтүлөт."
+      },
+      "emptyLiveAuctionsTitle": "Учурда активдүү түз аукциондор жок",
+      "emptyLiveAuctionsDesc": "Жаңы аукцион башталганда таймерлер жана коопсуздук көзөмөлү реалдуу убакытта бул жерде иштей баштайт.",
+      "vitals": {
+        "wsConnected": "WebSocket түз туташуусу активдүү",
+        "antiFraud": "Anti-Fraud коргоосу",
+        "antiFraudActive": "Активдүү (0 коркунуч)",
+        "eventRate": "Kafka окуялар агымы",
+        "latency": "P99 кечигүү",
+        "safeMode": "Коопсуз режим",
+        "safeModeNormal": "Штаттык режим"
       },
       "toast": {
         "pauseSuccess": "Лот #{id} токтотулду жана соодадан алынды",

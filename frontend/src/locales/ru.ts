@@ -1835,7 +1835,20 @@ export default {
         "heading": "Живой поток ставок",
         "realtime": "Real-time",
         "cancelBidTitle": "Отменить ставку",
-        "cancelBidButton": "Отменить"
+        "cancelBidButton": "Отменить",
+        "emptyTitle": "Лента ставок активна",
+        "emptyDesc": "Система слушает поток ставок в реальном времени через WebSocket и Kafka. Новые ставки появятся здесь мгновенно."
+      },
+      "emptyLiveAuctionsTitle": "Нет активных прямых аукционов",
+      "emptyLiveAuctionsDesc": "При старте новых торгов таймеры и мониторинг мошенничества запустятся здесь автоматически в реальном времени.",
+      "vitals": {
+        "wsConnected": "WebSocket подключен (Live)",
+        "antiFraud": "Защита Anti-Fraud",
+        "antiFraudActive": "Активно (0 угроз)",
+        "eventRate": "Поток событий Kafka",
+        "latency": "P99 задержка",
+        "safeMode": "Безопасный режим",
+        "safeModeNormal": "Штатный режим"
       },
       "toast": {
         "pauseSuccess": "Лот #{id} приостановлен и снят с торгов",

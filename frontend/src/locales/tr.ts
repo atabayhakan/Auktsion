@@ -1835,7 +1835,20 @@ export default {
         "heading": "Canlı Teklif Akışı",
         "realtime": "Real-time",
         "cancelBidTitle": "Teklifi İptal Et",
-        "cancelBidButton": "İptal Et"
+        "cancelBidButton": "İptal Et",
+        "emptyTitle": "Canlı Teklif Akışı Hazır",
+        "emptyDesc": "Sistem WebSocket & Kafka üzerinden gerçek zamanlı teklifleri dinliyor. Yeni teklifler anında burada listelenecektir."
+      },
+      "emptyLiveAuctionsTitle": "Şu Anda Aktif Canlı Açık Artırma Yok",
+      "emptyLiveAuctionsDesc": "Yeni bir açık artırma başladığında sayaçlar ve anti-fraud kontrolleri gerçek zamanlı olarak bu alanda aktif olacaktır.",
+      "vitals": {
+        "wsConnected": "WebSocket Canlı Ticker Aktif",
+        "antiFraud": "Anti-Fraud Koruması",
+        "antiFraudActive": "Aktif & İzleniyor",
+        "eventRate": "Kafka Olay Hızı",
+        "latency": "P99 Gecikme",
+        "safeMode": "Güvenli Mod",
+        "safeModeNormal": "Normal Çalışma"
       },
       "toast": {
         "pauseSuccess": "İlan #{id} duraklatıldı ve açık artırmadan kaldırıldı",
