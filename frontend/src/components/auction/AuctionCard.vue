@@ -77,9 +77,9 @@ const specificBadge = computed(() => {
     class="glass rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group flex flex-col h-full relative"
     :class="{ 'ring-2 ring-[rgb(var(--color-secondary))] ring-offset-2': justFlashed }"
   >
-    <!-- Top-light streak (Liquid Luster signature) -->
-    <div class="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-10">
-      <div class="absolute -inset-y-full -left-1/2 w-1/3 bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 animate-shimmer-sweep" />
+    <!-- Top-light streak (Smooth shine on hover only) -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div class="shimmer-streak absolute -inset-y-full -left-1/2 w-1/3 bg-gradient-to-r from-transparent via-white/35 to-transparent -skew-x-12" />
     </div>
 
     <!-- Image & Badges -->
@@ -166,10 +166,10 @@ const specificBadge = computed(() => {
 <style scoped>
 @keyframes shimmer-sweep {
   0% { transform: translateX(0) skewX(-12deg); }
-  100% { transform: translateX(600%) skewX(-12deg); }
+  100% { transform: translateX(500%) skewX(-12deg); }
 }
-.animate-shimmer-sweep {
-  animation: shimmer-sweep 5s ease-in-out infinite;
+.group:hover .shimmer-streak {
+  animation: shimmer-sweep 0.9s ease-out forwards;
 }
 
 @keyframes price-flash {
