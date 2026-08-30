@@ -15,7 +15,11 @@ import type {
   AdminLiveAuctionState,
   AdminLiveBidEvent,
   AdminAnalyticsData,
-  AdminMediaItem
+  AdminMediaItem,
+  PlatformSettings,
+  MediaExplorerData,
+  MediaFolderItem,
+  MediaExplorerFile
 } from '@/types/admin'
 import { adminService } from '@/services/adminService'
 
@@ -498,7 +502,7 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  // 9. Fetch Media Library
+  // 9. Fetch Media Library (Legacy)
   async function fetchMedia(source?: 'auction' | 'avatar') {
     isLoading.value = true
     error.value = null
@@ -511,6 +515,116 @@ export const useAdminStore = defineStore('admin', () => {
       error.value = err.message || 'Медианы жүктөөдө ката кетти'
     } finally {
       isLoading.value = false
+    }
+  }
+
+  // 10. iOS / Finder Style Media Explorer
+  const mediaExplorer = ref<MediaExplorerData | null>(null)
+  const activeMediaFolderId = ref<string>('root')
+
+  async function fetchMediaExplorer(folderId: string = 'root') {
+    isLoading.value = true
+    error.value = null
+    activeMediaFolderId.value = folderId
+    try {
+      const res = await adminService.getMediaExplorer(folderId)
+      if (res.success) {
+        mediaExplorer.value = res.data
+      }
+    } catch (err: any) {
+      error.value = err.message || 'Папка мазмунун жүктөөдө ката кетти'
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function createMediaFolder(name: string, parentId?: string | null, color?: string, icon?: string) {
+    isActionLoading.value = true
+    try {
+      const res = await adminService.createMediaFolder(name, parentId || activeMediaFolderId.value, color, icon)
+      await fetchMediaExplorer(activeMediaFolderId.value)
+      return res
+    } catch (err: any) {
+      error.value = err.message || 'Папка түзүүдө ката кетти'
+      throw err
+    } finally {
+      isActionLoading.value = false
+    }
+  }
+
+  async function deleteMediaFolder(folderId: string) {
+    isActionLoading.value = true
+    try {
+      const res = await adminService.deleteMediaFolder(folderId)
+      await fetchMediaExplorer(activeMediaFolderId.value)
+      return res
+    } catch (err: any) {
+      error.value = err.message || 'Папканы өчүрүүдө ката кетти'
+      throw err
+    } finally {
+      isActionLoading.value = false
+    }
+  }
+
+  async function deleteMediaFile(fileId: string) {
+    isActionLoading.value = true
+    try {
+      const res = await adminService.deleteMediaFile(fileId)
+      await fetchMediaExplorer(activeMediaFolderId.value)
+      return res
+    } catch (err: any) {
+      error.value = err.message || 'Файлды өчүрүүдө ката кетти'
+      throw err
+    } finally {
+      isActionLoading.value = false
+    }
+  }
+
+  async function addMediaFile(data: { name: string; url: string; folderId: string; sizeBytes?: number; mimeType?: string; dimensions?: string }) {
+    isActionLoading.value = true
+    try {
+      const res = await adminService.addMediaFile(data)
+      await fetchMediaExplorer(activeMediaFolderId.value)
+      return res
+    } catch (err: any) {
+      error.value = err.message || 'Файлды кошууда ката кетти'
+      throw err
+    } finally {
+      isActionLoading.value = false
+    }
+  }
+
+  // 11. Platform Settings
+  const settings = ref<PlatformSettings | null>(null)
+
+  async function fetchSettings() {
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = await adminService.getSettings()
+      if (res.success) {
+        settings.value = res.data
+      }
+    } catch (err: any) {
+      error.value = err.message || 'Жөндөөлөрдү жүктөөдө ката кетти'
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function updateSettings(newSettings: Partial<PlatformSettings>) {
+    isActionLoading.value = true
+    try {
+      const res = await adminService.updateSettings(newSettings)
+      if (res.success) {
+        settings.value = res.data
+      }
+      return res
+    } catch (err: any) {
+      error.value = err.message || 'Жөндөөлөрдү сактоодо ката кетти'
+      throw err
+    } finally {
+      isActionLoading.value = false
     }
   }
 
@@ -547,6 +661,9 @@ export const useAdminStore = defineStore('admin', () => {
     analyticsTimeframe,
     notifications,
     media,
+    mediaExplorer,
+    activeMediaFolderId,
+    settings,
 
     // Getters
     pendingKycCount,
@@ -579,8 +696,16 @@ export const useAdminStore = defineStore('admin', () => {
     cancelSuspiciousBid,
     addLiveBid,
     fetchAnalytics,
-    fetchMedia
+    fetchMedia,
+    fetchMediaExplorer,
+    createMediaFolder,
+    deleteMediaFolder,
+    deleteMediaFile,
+    addMediaFile,
+    fetchSettings,
+    updateSettings
   }
 })
 
 export default useAdminStore
+

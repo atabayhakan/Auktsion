@@ -10,6 +10,13 @@ import {
   getLiveMonitoringData,
   getAnalyticsData,
   getMediaLibrary,
+  getPlatformSettings,
+  updatePlatformSettings as updatePlatformSettingsModel,
+  getMediaExplorer,
+  createMediaFolder as createMediaFolderModel,
+  deleteMediaFolder as deleteMediaFolderModel,
+  deleteMediaFile as deleteMediaFileModel,
+  addMediaFile as addMediaFileModel,
   resetUserPassword as resetUserPasswordModel,
 } from '../models/adminModel.js';
 import { getAuctions, getAuctionById } from '../models/auctionModel.js';
@@ -330,13 +337,98 @@ export async function cancelBid(req: Request, res: Response): Promise<void> {
 
 export async function getMedia(req: Request, res: Response): Promise<void> {
   try {
-    const { source } = req.query;
-    const media = getMediaLibrary({
-      source: source === 'auction' || source === 'avatar' ? source : undefined,
-    });
+    const { folderId } = req.query;
+    const explorer = getMediaExplorer(folderId ? String(folderId) : 'root');
     res.json({
       success: true,
-      data: media,
+      data: explorer,
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+export async function createMediaFolder(req: Request, res: Response): Promise<void> {
+  try {
+    const { name, parentId, color, icon } = req.body;
+    if (!name || !name.trim()) {
+      res.status(400).json({ success: false, error: 'Кластер же папканын аталышын жазыңыз (Folder name required)' });
+      return;
+    }
+    const folder = createMediaFolderModel(name, parentId, color, icon);
+    res.status(201).json({
+      success: true,
+      data: folder,
+      message: 'Папка ийгиликтүү түзүлдү (Folder created)',
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+export async function deleteMediaFolder(req: Request, res: Response): Promise<void> {
+  try {
+    const folderId = req.params.id;
+    deleteMediaFolderModel(folderId);
+    res.json({
+      success: true,
+      message: 'Папка өчүрүлдү (Folder deleted)',
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+export async function deleteMediaFile(req: Request, res: Response): Promise<void> {
+  try {
+    const fileId = req.params.id;
+    deleteMediaFileModel(fileId);
+    res.json({
+      success: true,
+      message: 'Файл өчүрүлдү (File deleted)',
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+export async function addMediaFileDirect(req: Request, res: Response): Promise<void> {
+  try {
+    const { name, url, folderId, sizeBytes, mimeType, dimensions } = req.body;
+    if (!url) {
+      res.status(400).json({ success: false, error: 'Файлдын URL дареги талап кылынат' });
+      return;
+    }
+    const file = addMediaFileModel(name || 'Uploaded File', url, folderId || 'root', sizeBytes || 0, mimeType || 'image/jpeg', dimensions || '');
+    res.status(201).json({
+      success: true,
+      data: file,
+      message: 'Файл кошулду',
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+export async function getSettings(req: Request, res: Response): Promise<void> {
+  try {
+    const settings = getPlatformSettings();
+    res.json({
+      success: true,
+      data: settings,
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+export async function updateSettings(req: Request, res: Response): Promise<void> {
+  try {
+    const updated = updatePlatformSettingsModel(req.body);
+    res.json({
+      success: true,
+      data: updated,
+      message: 'Системанын жөндөөлөрү жаңыртылды (Platform settings updated)',
     });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
@@ -373,3 +465,4 @@ export async function resetUserPassword(req: Request, res: Response): Promise<vo
     res.status(status).json({ success: false, error: err.message });
   }
 }
+

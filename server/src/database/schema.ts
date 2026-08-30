@@ -214,6 +214,37 @@ export function initializeSchema(db: Database): void {
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
+    -- 13. Platform Settings Table
+    CREATE TABLE IF NOT EXISTS platform_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- 14. Media Folders Table (iOS Files Style Hierarchy)
+    CREATE TABLE IF NOT EXISTS media_folders (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      parent_id TEXT DEFAULT NULL,
+      color TEXT DEFAULT '#3B82F6',
+      icon TEXT DEFAULT 'Folder',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (parent_id) REFERENCES media_folders(id) ON DELETE CASCADE
+    );
+
+    -- 15. Custom Media Files Table
+    CREATE TABLE IF NOT EXISTS media_files (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      url TEXT NOT NULL,
+      folder_id TEXT DEFAULT 'root',
+      size_bytes INTEGER DEFAULT 0,
+      mime_type TEXT DEFAULT 'image/jpeg',
+      dimensions TEXT DEFAULT '',
+      source TEXT DEFAULT 'upload',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
     -- Indexes for performance
     CREATE INDEX IF NOT EXISTS idx_auctions_status ON auctions(status);
     CREATE INDEX IF NOT EXISTS idx_auctions_category ON auctions(category);
@@ -229,6 +260,8 @@ export function initializeSchema(db: Database): void {
     CREATE INDEX IF NOT EXISTS idx_payout_requests_status ON payout_requests(status);
     CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
     CREATE INDEX IF NOT EXISTS idx_watchlists_auction_id ON watchlists(auction_id);
+    CREATE INDEX IF NOT EXISTS idx_media_folders_parent ON media_folders(parent_id);
+    CREATE INDEX IF NOT EXISTS idx_media_files_folder ON media_files(folder_id);
   `);
 
   // Migration for existing DBs: add ban audit columns if missing

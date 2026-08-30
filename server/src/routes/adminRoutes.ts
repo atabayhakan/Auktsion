@@ -20,6 +20,12 @@ import {
   cancelBid,
   getAnalytics,
   getMedia,
+  createMediaFolder,
+  deleteMediaFolder,
+  deleteMediaFile,
+  addMediaFileDirect,
+  getSettings,
+  updateSettings,
 } from '../controllers/adminController.js';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
 
@@ -68,5 +74,13 @@ adminRoutes.post('/bids/:id/cancel', staffOrEditor, cancelBid);
 // Module 8: Analytics
 adminRoutes.get('/analytics', staffOrEditor, getAnalytics);
 
-// Module 9: Media Library
+// Module 9: iOS / Finder Style Media Library
 adminRoutes.get('/media', staffOrEditor, getMedia);
+adminRoutes.post('/media/folder', staffOrEditor, createMediaFolder);
+adminRoutes.delete('/media/folder/:id', staffOrEditor, deleteMediaFolder);
+adminRoutes.delete('/media/file/:id', staffOrEditor, deleteMediaFile);
+adminRoutes.post('/media/file', staffOrEditor, addMediaFileDirect);
+
+// Module 10: Platform Settings — Admin-only
+adminRoutes.get('/settings', staffOnly, getSettings);
+adminRoutes.put('/settings', staffOnly, updateSettings);

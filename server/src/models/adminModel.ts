@@ -506,3 +506,514 @@ export function getAnalyticsData(timeframe: string = '30d') {
     hourlyBiddingDistribution,
   };
 }
+
+// ============================================================================
+// Module 9: Platform Settings
+// ============================================================================
+
+export interface PlatformSettings {
+  siteName: string;
+  siteTitle: string;
+  siteDescription: string;
+  commissionRatePct: number;
+  antiSnipingMinutes: number;
+  antiSnipingTriggerMinutes: number;
+  minDepositKgs: number;
+  currency: string;
+  supportPhone: string;
+  supportEmail: string;
+  whatsappNumber: string;
+  address: string;
+  maintenanceMode: boolean;
+  autoApproveAuctions: boolean;
+  kycRequiredToBid: boolean;
+  twoFactorRequired: boolean;
+  updatedAt: string;
+}
+
+const DEFAULT_SETTINGS: PlatformSettings = {
+  siteName: 'iTorgo',
+  siteTitle: 'iTorgo — Кыргызстандын №1 Онлайн Аукцион Платформасы',
+  siteDescription: 'Кыргызстандагы реалдуу убакыттагы биринчи ачык аукцион жана соода платформасы.',
+  commissionRatePct: 8.0,
+  antiSnipingMinutes: 2,
+  antiSnipingTriggerMinutes: 2,
+  minDepositKgs: 500,
+  currency: 'KGS',
+  supportPhone: '+996 555 999888',
+  supportEmail: 'support@itorgo.kg',
+  whatsappNumber: '+996 555 999888',
+  address: 'Бишкек ш., Чүй проспекти 114, 3-кабат',
+  maintenanceMode: false,
+  autoApproveAuctions: false,
+  kycRequiredToBid: true,
+  twoFactorRequired: false,
+  updatedAt: new Date().toISOString(),
+};
+
+export function getPlatformSettings(): PlatformSettings {
+  const db = getDatabase();
+  try {
+    const row = db.prepare("SELECT value, updated_at FROM platform_settings WHERE key = 'site_config'").get() as { value: string; updated_at: string } | undefined;
+    if (row) {
+      const parsed = JSON.parse(row.value);
+      return {
+        ...DEFAULT_SETTINGS,
+        ...parsed,
+        updatedAt: row.updated_at || new Date().toISOString(),
+      };
+    }
+  } catch {}
+  return DEFAULT_SETTINGS;
+}
+
+export function updatePlatformSettings(newSettings: Partial<PlatformSettings>): PlatformSettings {
+  const db = getDatabase();
+  const current = getPlatformSettings();
+  const merged: PlatformSettings = {
+    ...current,
+    ...newSettings,
+    updatedAt: new Date().toISOString(),
+  };
+
+  db.prepare(`
+    INSERT INTO platform_settings (key, value, updated_at)
+    VALUES ('site_config', ?, datetime('now'))
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = datetime('now')
+  `).run(JSON.stringify(merged));
+
+  return getPlatformSettings();
+}
+
+// ============================================================================
+// Module 10: iOS / Finder Style Advanced Media Explorer
+// ============================================================================
+
+export interface MediaFolderItem {
+  id: string;
+  name: string;
+  parentId: string | null;
+  color: string;
+  icon: string;
+  itemCount: number;
+  createdAt: string;
+}
+
+export interface MediaExplorerFile {
+  id: string;
+  name: string;
+  url: string;
+  folderId: string;
+  sizeBytes: number;
+  mimeType: string;
+  dimensions: string;
+  source: 'auction' | 'avatar' | 'kyc' | 'asset' | 'upload';
+  entityId?: string;
+  entityTitle?: string;
+  ownerName?: string;
+  createdAt: string;
+}
+
+export interface MediaExplorerBreadcrumb {
+  id: string;
+  name: string;
+}
+
+export function getMediaExplorer(folderId: string = 'root') {
+  const db = getDatabase();
+
+  // 1. Root Built-in System Folders
+  const rootSystemFolders: MediaFolderItem[] = [
+    {
+      id: 'auctions',
+      name: 'İlan Görselleri (Auctions)',
+      parentId: null,
+      color: '#3B82F6',
+      icon: 'Gavel',
+      itemCount: 0,
+      createdAt: '2026-01-01T00:00:00Z',
+    },
+    {
+      id: 'avatars',
+      name: 'Kullanıcı Avatarları (Avatars)',
+      parentId: null,
+      color: '#10B981',
+      icon: 'User',
+      itemCount: 0,
+      createdAt: '2026-01-01T00:00:00Z',
+    },
+    {
+      id: 'kyc',
+      name: 'KYC & Kimlik Belgeleri',
+      parentId: null,
+      color: '#F59E0B',
+      icon: 'ShieldCheck',
+      itemCount: 0,
+      createdAt: '2026-01-01T00:00:00Z',
+    },
+    {
+      id: 'assets',
+      name: 'Platform Bannerları & Varlıklar',
+      parentId: null,
+      color: '#8B5CF6',
+      icon: 'Sparkles',
+      itemCount: 0,
+      createdAt: '2026-01-01T00:00:00Z',
+    },
+  ];
+
+  // 2. Fetch custom subfolders from media_folders table
+  let customFolders: Array<{ id: string; name: string; parent_id: string | null; color: string; icon: string; created_at: string }> = [];
+  try {
+    customFolders = db.prepare('SELECT * FROM media_folders ORDER BY name ASC').all() as any;
+  } catch {}
+
+  // 3. Collect all system files from entities
+  const allAuctionFiles: MediaExplorerFile[] = [];
+  try {
+    const auctions = db.prepare(`
+      SELECT a.id, a.title, a.images_json, a.created_at, u.full_name as seller_name
+      FROM auctions a LEFT JOIN users u ON a.seller_id = u.id
+      ORDER BY a.created_at DESC
+    `).all() as any[];
+
+    for (const a of auctions) {
+      let imgs: string[] = [];
+      try { imgs = JSON.parse(a.images_json || '[]'); } catch {}
+      imgs.forEach((url, idx) => {
+        const filename = url.split('/').pop() || `auction_${a.id}_${idx + 1}.jpg`;
+        allAuctionFiles.push({
+          id: `auction_${a.id}_${idx}`,
+          name: filename,
+          url,
+          folderId: 'auctions',
+          sizeBytes: 1024 * 1024 * 1.5, // ~1.5MB estimated if remote
+          mimeType: 'image/jpeg',
+          dimensions: '1600x1200',
+          source: 'auction',
+          entityId: a.id,
+          entityTitle: a.title,
+          ownerName: a.seller_name || 'Satıcı',
+          createdAt: a.created_at || new Date().toISOString(),
+        });
+      });
+    }
+  } catch {}
+
+  const allAvatarFiles: MediaExplorerFile[] = [];
+  try {
+    const users = db.prepare("SELECT id, full_name, avatar, created_at FROM users WHERE avatar IS NOT NULL AND avatar != ''").all() as any[];
+    for (const u of users) {
+      const filename = u.avatar.split('/').pop() || `avatar_${u.id}.jpg`;
+      allAvatarFiles.push({
+        id: `avatar_${u.id}`,
+        name: filename,
+        url: u.avatar,
+        folderId: 'avatars',
+        sizeBytes: 1024 * 350,
+        mimeType: 'image/jpeg',
+        dimensions: '400x400',
+        source: 'avatar',
+        entityId: u.id,
+        entityTitle: u.full_name,
+        ownerName: u.full_name,
+        createdAt: u.created_at || new Date().toISOString(),
+      });
+    }
+  } catch {}
+
+  const allKycFiles: MediaExplorerFile[] = [];
+  try {
+    const kycDocs = db.prepare(`
+      SELECT k.id, k.user_id, k.id_front_url, k.id_back_url, k.selfie_url, k.created_at, u.full_name
+      FROM kyc_verifications k LEFT JOIN users u ON k.user_id = u.id
+    `).all() as any[];
+
+    for (const k of kycDocs) {
+      const docs = [
+        { type: 'ID Ön Yüz', url: k.id_front_url },
+        { type: 'ID Arka Yüz', url: k.id_back_url },
+        { type: 'Selfie', url: k.selfie_url },
+      ];
+      docs.forEach((doc, idx) => {
+        if (doc.url) {
+          const filename = doc.url.split('/').pop()?.split('?')[0] || `kyc_${k.id}_${idx}.jpg`;
+          allKycFiles.push({
+            id: `kyc_${k.id}_${idx}`,
+            name: `${doc.type} - ${k.full_name || k.user_id}`,
+            url: doc.url,
+            folderId: 'kyc',
+            sizeBytes: 1024 * 800,
+            mimeType: 'image/jpeg',
+            dimensions: '1920x1080',
+            source: 'kyc',
+            entityId: k.id,
+            entityTitle: `KYC: ${k.full_name}`,
+            ownerName: k.full_name,
+            createdAt: k.created_at || new Date().toISOString(),
+          });
+        }
+      });
+    }
+  } catch {}
+
+  // 4. Custom media_files uploaded to custom folders
+  let customFiles: MediaExplorerFile[] = [];
+  try {
+    const rows = db.prepare('SELECT * FROM media_files ORDER BY created_at DESC').all() as any[];
+    customFiles = rows.map(r => ({
+      id: r.id,
+      name: r.name,
+      url: r.url,
+      folderId: r.folder_id || 'assets',
+      sizeBytes: r.size_bytes || 0,
+      mimeType: r.mime_type || 'image/jpeg',
+      dimensions: r.dimensions || '1200x800',
+      source: (r.source as any) || 'upload',
+      createdAt: r.created_at,
+    }));
+  } catch {}
+
+  // Update counts for root folders
+  rootSystemFolders[0].itemCount = allAuctionFiles.length;
+  rootSystemFolders[1].itemCount = allAvatarFiles.length;
+  rootSystemFolders[2].itemCount = allKycFiles.length;
+  rootSystemFolders[3].itemCount = customFiles.filter(f => f.folderId === 'assets').length;
+
+  // Build breadcrumbs
+  const breadcrumbs: MediaExplorerBreadcrumb[] = [{ id: 'root', name: 'Medya Kütüphanesi' }];
+  let currentFolderObj: MediaFolderItem | null = null;
+
+  if (folderId !== 'root') {
+    const sysFolder = rootSystemFolders.find(f => f.id === folderId);
+    if (sysFolder) {
+      currentFolderObj = sysFolder;
+      breadcrumbs.push({ id: sysFolder.id, name: sysFolder.name });
+    } else {
+      // Traverse up hierarchy
+      let currId: string | null = folderId;
+      const pathArr: MediaExplorerBreadcrumb[] = [];
+      while (currId && currId !== 'root') {
+        const found = customFolders.find(f => f.id === currId);
+        if (found) {
+          pathArr.unshift({ id: found.id, name: found.name });
+          if (found.id === folderId) {
+            currentFolderObj = {
+              id: found.id,
+              name: found.name,
+              parentId: found.parent_id,
+              color: found.color || '#3B82F6',
+              icon: found.icon || 'Folder',
+              itemCount: 0,
+              createdAt: found.created_at,
+            };
+          }
+          currId = found.parent_id;
+        } else {
+          break;
+        }
+      }
+      breadcrumbs.push(...pathArr);
+    }
+  }
+
+  // Filter items in active folder
+  let subfolders: MediaFolderItem[] = [];
+  let files: MediaExplorerFile[] = [];
+
+  if (folderId === 'root') {
+    subfolders = [
+      ...rootSystemFolders,
+      ...customFolders
+        .filter(f => !f.parent_id || f.parent_id === 'root')
+        .map(f => ({
+          id: f.id,
+          name: f.name,
+          parentId: null,
+          color: f.color || '#3B82F6',
+          icon: f.icon || 'Folder',
+          itemCount: customFiles.filter(file => file.folderId === f.id).length,
+          createdAt: f.created_at,
+        })),
+    ];
+    files = customFiles.filter(f => f.folderId === 'root');
+  } else if (folderId === 'auctions') {
+    subfolders = customFolders
+      .filter(f => f.parent_id === 'auctions')
+      .map(f => ({
+        id: f.id,
+        name: f.name,
+        parentId: 'auctions',
+        color: f.color || '#3B82F6',
+        icon: f.icon || 'Folder',
+        itemCount: customFiles.filter(file => file.folderId === f.id).length,
+        createdAt: f.created_at,
+      }));
+    files = [
+      ...allAuctionFiles,
+      ...customFiles.filter(f => f.folderId === 'auctions'),
+    ];
+  } else if (folderId === 'avatars') {
+    subfolders = customFolders
+      .filter(f => f.parent_id === 'avatars')
+      .map(f => ({
+        id: f.id,
+        name: f.name,
+        parentId: 'avatars',
+        color: f.color || '#10B981',
+        icon: f.icon || 'Folder',
+        itemCount: customFiles.filter(file => file.folderId === f.id).length,
+        createdAt: f.created_at,
+      }));
+    files = [
+      ...allAvatarFiles,
+      ...customFiles.filter(f => f.folderId === 'avatars'),
+    ];
+  } else if (folderId === 'kyc') {
+    subfolders = customFolders
+      .filter(f => f.parent_id === 'kyc')
+      .map(f => ({
+        id: f.id,
+        name: f.name,
+        parentId: 'kyc',
+        color: f.color || '#F59E0B',
+        icon: f.icon || 'Folder',
+        itemCount: customFiles.filter(file => file.folderId === f.id).length,
+        createdAt: f.created_at,
+      }));
+    files = [
+      ...allKycFiles,
+      ...customFiles.filter(f => f.folderId === 'kyc'),
+    ];
+  } else if (folderId === 'assets') {
+    subfolders = customFolders
+      .filter(f => f.parent_id === 'assets')
+      .map(f => ({
+        id: f.id,
+        name: f.name,
+        parentId: 'assets',
+        color: f.color || '#8B5CF6',
+        icon: f.icon || 'Folder',
+        itemCount: customFiles.filter(file => file.folderId === f.id).length,
+        createdAt: f.created_at,
+      }));
+    files = customFiles.filter(f => f.folderId === 'assets');
+  } else {
+    // Custom folder
+    subfolders = customFolders
+      .filter(f => f.parent_id === folderId)
+      .map(f => ({
+        id: f.id,
+        name: f.name,
+        parentId: folderId,
+        color: f.color || '#3B82F6',
+        icon: f.icon || 'Folder',
+        itemCount: customFiles.filter(file => file.folderId === f.id).length,
+        createdAt: f.created_at,
+      }));
+    files = customFiles.filter(f => f.folderId === folderId);
+  }
+
+  const totalFilesCount = allAuctionFiles.length + allAvatarFiles.length + allKycFiles.length + customFiles.length;
+  const totalSizeBytes = [...allAuctionFiles, ...allAvatarFiles, ...allKycFiles, ...customFiles].reduce((acc, cur) => acc + (cur.sizeBytes || 0), 0);
+
+  return {
+    currentFolderId: folderId,
+    currentFolder: currentFolderObj,
+    breadcrumbs,
+    subfolders,
+    files,
+    stats: {
+      totalFiles: totalFilesCount,
+      totalFolders: rootSystemFolders.length + customFolders.length,
+      totalSizeBytes,
+      formattedTotalSize: `${(totalSizeBytes / (1024 * 1024)).toFixed(1)} MB`,
+    },
+  };
+}
+
+export function createMediaFolder(name: string, parentId: string | null = null, color: string = '#3B82F6', icon: string = 'Folder') {
+  const db = getDatabase();
+  const id = `folder_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+  db.prepare(`
+    INSERT INTO media_folders (id, name, parent_id, color, icon, created_at)
+    VALUES (?, ?, ?, ?, ?, datetime('now'))
+  `).run(id, name.trim(), parentId === 'root' ? null : parentId, color, icon);
+
+  return {
+    id,
+    name: name.trim(),
+    parentId: parentId === 'root' ? null : parentId,
+    color,
+    icon,
+    itemCount: 0,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+export function deleteMediaFolder(folderId: string) {
+  const db = getDatabase();
+  // Delete all files inside this folder
+  db.prepare('DELETE FROM media_files WHERE folder_id = ?').run(folderId);
+  // Delete folder
+  db.prepare('DELETE FROM media_folders WHERE id = ?').run(folderId);
+  return { success: true };
+}
+
+export function deleteMediaFile(fileId: string) {
+  const db = getDatabase();
+
+  if (fileId.startsWith('auction_')) {
+    // Auction image format: auction_{auctionId}_{index}
+    const parts = fileId.split('_');
+    const auctionId = parts[1];
+    const imgIndex = parseInt(parts[2], 10);
+    const auction = db.prepare('SELECT id, images_json FROM auctions WHERE id = ?').get(auctionId) as any;
+    if (auction) {
+      let images: string[] = [];
+      try { images = JSON.parse(auction.images_json || '[]'); } catch {}
+      if (images.length > imgIndex) {
+        images.splice(imgIndex, 1);
+        db.prepare("UPDATE auctions SET images_json = ?, updated_at = datetime('now') WHERE id = ?").run(JSON.stringify(images), auctionId);
+      }
+    }
+  } else if (fileId.startsWith('avatar_')) {
+    const userId = fileId.replace('avatar_', '');
+    db.prepare("UPDATE users SET avatar = NULL, updated_at = datetime('now') WHERE id = ?").run(userId);
+  } else if (fileId.startsWith('kyc_')) {
+    // kyc_{id}_{index}
+    const parts = fileId.split('_');
+    const kycId = parts[1];
+    const docIdx = parts[2];
+    if (docIdx === '0') db.prepare("UPDATE kyc_verifications SET id_front_url = NULL WHERE id = ?").run(kycId);
+    else if (docIdx === '1') db.prepare("UPDATE kyc_verifications SET id_back_url = NULL WHERE id = ?").run(kycId);
+    else if (docIdx === '2') db.prepare("UPDATE kyc_verifications SET selfie_url = NULL WHERE id = ?").run(kycId);
+  } else {
+    // Custom media_files table
+    db.prepare('DELETE FROM media_files WHERE id = ?').run(fileId);
+  }
+
+  return { success: true };
+}
+
+export function addMediaFile(name: string, url: string, folderId: string = 'root', sizeBytes: number = 0, mimeType: string = 'image/jpeg', dimensions: string = '') {
+  const db = getDatabase();
+  const id = `file_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+  db.prepare(`
+    INSERT INTO media_files (id, name, url, folder_id, size_bytes, mime_type, dimensions, source, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 'upload', datetime('now'))
+  `).run(id, name, url, folderId, sizeBytes, mimeType, dimensions);
+
+  return {
+    id,
+    name,
+    url,
+    folderId,
+    sizeBytes,
+    mimeType,
+    dimensions,
+    source: 'upload',
+    createdAt: new Date().toISOString(),
+  };
+}
+

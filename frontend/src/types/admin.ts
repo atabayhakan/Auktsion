@@ -262,9 +262,74 @@ export interface AdminAnalyticsData {
 export interface AdminMediaItem {
   id: string
   url: string
-  source: 'auction' | 'avatar'
+  source: 'auction' | 'avatar' | 'kyc' | 'asset' | 'upload'
   title: string
   ownerId: string
   ownerLabel: string
   createdAt: string
 }
+
+export interface PlatformSettings {
+  siteName: string
+  siteTitle: string
+  siteDescription: string
+  commissionRatePct: number
+  antiSnipingMinutes: number
+  antiSnipingTriggerMinutes: number
+  minDepositKgs: number
+  currency: string
+  supportPhone: string
+  supportEmail: string
+  whatsappNumber: string
+  address: string
+  maintenanceMode: boolean
+  autoApproveAuctions: boolean
+  kycRequiredToBid: boolean
+  twoFactorRequired: boolean
+  updatedAt: string
+}
+
+export interface MediaFolderItem {
+  id: string
+  name: string
+  parentId: string | null
+  color: string
+  icon: string
+  itemCount: number
+  createdAt: string
+}
+
+export interface MediaExplorerFile {
+  id: string
+  name: string
+  url: string
+  folderId: string
+  sizeBytes: number
+  mimeType: string
+  dimensions: string
+  source: 'auction' | 'avatar' | 'kyc' | 'asset' | 'upload'
+  entityId?: string
+  entityTitle?: string
+  ownerName?: string
+  createdAt: string
+}
+
+export interface MediaExplorerBreadcrumb {
+  id: string
+  name: string
+}
+
+export interface MediaExplorerData {
+  currentFolderId: string
+  currentFolder: MediaFolderItem | null
+  breadcrumbs: MediaExplorerBreadcrumb[]
+  subfolders: MediaFolderItem[]
+  files: MediaExplorerFile[]
+  stats: {
+    totalFiles: number
+    totalFolders: number
+    totalSizeBytes: number
+    formattedTotalSize: string
+  }
+}
+

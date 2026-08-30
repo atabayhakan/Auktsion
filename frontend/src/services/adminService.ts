@@ -14,7 +14,11 @@ import type {
   AdminLiveAuctionState,
   AdminLiveBidEvent,
   AdminAnalyticsData,
-  AdminMediaItem
+  AdminMediaItem,
+  PlatformSettings,
+  MediaExplorerData,
+  MediaFolderItem,
+  MediaExplorerFile
 } from '@/types/admin'
 function shouldUseMockFallback(err: any): boolean {
   // Only fallback on network errors or 5xx, not on 4xx client errors (401/403/404 etc. must surface)
@@ -552,7 +556,82 @@ export const adminService = {
     }
   },
 
-  // 9. Media Library
+  // 9. Media Explorer (iOS / Finder Style)
+  async getMediaExplorer(folderId?: string): Promise<{ success: boolean; data: MediaExplorerData }> {
+    try {
+      const res = await apiClient.get<any>('/api/admin/media', folderId ? { folderId } : undefined)
+      if (res.data && res.data.data) {
+        return { success: true, data: res.data.data }
+      }
+    } catch (err: any) {
+      if (!shouldUseMockFallback(err)) throw err
+      console.warn('[adminService] Using fallback for getMediaExplorer:', err)
+    }
+
+    return {
+      success: true,
+      data: {
+        currentFolderId: folderId || 'root',
+        currentFolder: null,
+        breadcrumbs: [{ id: 'root', name: 'Medya Kütüphanesi' }],
+        subfolders: [
+          { id: 'auctions', name: 'İlan Görselleri (Auctions)', parentId: null, color: '#3B82F6', icon: 'Gavel', itemCount: 0, createdAt: '2026-01-01' },
+          { id: 'avatars', name: 'Kullanıcı Avatarları', parentId: null, color: '#10B981', icon: 'User', itemCount: 0, createdAt: '2026-01-01' },
+          { id: 'kyc', name: 'KYC & Belgeler', parentId: null, color: '#F59E0B', icon: 'ShieldCheck', itemCount: 0, createdAt: '2026-01-01' },
+          { id: 'assets', name: 'Banner & Varlıklar', parentId: null, color: '#8B5CF6', icon: 'Sparkles', itemCount: 0, createdAt: '2026-01-01' },
+        ],
+        files: [],
+        stats: {
+          totalFiles: 0,
+          totalFolders: 4,
+          totalSizeBytes: 0,
+          formattedTotalSize: '0.0 MB'
+        }
+      }
+    }
+  },
+
+  async createMediaFolder(name: string, parentId?: string | null, color?: string, icon?: string): Promise<{ success: boolean; data?: MediaFolderItem; message?: string }> {
+    try {
+      const res = await apiClient.post<any>('/api/admin/media/folder', { name, parentId, color, icon })
+      return res.data
+    } catch (err: any) {
+      console.error('Failed to create media folder:', err)
+      throw err
+    }
+  },
+
+  async deleteMediaFolder(folderId: string): Promise<{ success: boolean; message?: string }> {
+    try {
+      const res = await apiClient.delete<any>(`/api/admin/media/folder/${folderId}`)
+      return res.data
+    } catch (err: any) {
+      console.error('Failed to delete media folder:', err)
+      throw err
+    }
+  },
+
+  async deleteMediaFile(fileId: string): Promise<{ success: boolean; message?: string }> {
+    try {
+      const res = await apiClient.delete<any>(`/api/admin/media/file/${fileId}`)
+      return res.data
+    } catch (err: any) {
+      console.error('Failed to delete media file:', err)
+      throw err
+    }
+  },
+
+  async addMediaFile(data: { name: string; url: string; folderId: string; sizeBytes?: number; mimeType?: string; dimensions?: string }): Promise<{ success: boolean; data?: MediaExplorerFile }> {
+    try {
+      const res = await apiClient.post<any>('/api/admin/media/file', data)
+      return res.data
+    } catch (err: any) {
+      console.error('Failed to add media file:', err)
+      throw err
+    }
+  },
+
+  // Legacy media getter
   async getMedia(source?: 'auction' | 'avatar'): Promise<{ success: boolean; data: AdminMediaItem[] }> {
     try {
       const res = await apiClient.get<any>('/api/admin/media', source ? { source } : undefined)
@@ -569,7 +648,53 @@ export const adminService = {
       list = list.filter(m => m.source === source)
     }
     return { success: true, data: list }
+  },
+
+  // 10. Platform Settings
+  async getSettings(): Promise<{ success: boolean; data: PlatformSettings }> {
+    try {
+      const res = await apiClient.get<any>('/api/admin/settings')
+      if (res.data && res.data.data) {
+        return { success: true, data: res.data.data }
+      }
+    } catch (err: any) {
+      if (!shouldUseMockFallback(err)) throw err
+      console.warn('[adminService] Using fallback for getSettings:', err)
+    }
+
+    return {
+      success: true,
+      data: {
+        siteName: 'iTorgo',
+        siteTitle: 'iTorgo — Кыргызстандын №1 Онлайн Аукцион Платформасы',
+        siteDescription: 'Кыргызстандагы реалдуу убакыттагы биринчи ачык аукцион жана соода платформасы.',
+        commissionRatePct: 8.0,
+        antiSnipingMinutes: 2,
+        antiSnipingTriggerMinutes: 2,
+        minDepositKgs: 500,
+        currency: 'KGS',
+        supportPhone: '+996 555 999888',
+        supportEmail: 'support@itorgo.kg',
+        whatsappNumber: '+996 555 999888',
+        address: 'Бишкек ш., Чүй проспекти 114, 3-кабат',
+        maintenanceMode: false,
+        autoApproveAuctions: false,
+        kycRequiredToBid: true,
+        twoFactorRequired: false,
+        updatedAt: new Date().toISOString()
+      }
+    }
+  },
+
+  async updateSettings(settings: Partial<PlatformSettings>): Promise<{ success: boolean; data: PlatformSettings; message?: string }> {
+    try {
+      const res = await apiClient.put<any>('/api/admin/settings', settings)
+      return res.data
+    } catch (err: any) {
+      console.error('Failed to update settings:', err)
+      throw err
+    }
   }
 }
 
-export default adminService
+export default adminService
