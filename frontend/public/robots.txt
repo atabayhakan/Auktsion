@@ -1,0 +1,22 @@
+# iTorgo Robots.txt — Search Engine Crawling Policy
+User-agent: *
+Allow: /
+Allow: /auctions
+Allow: /categories
+Allow: /how-it-works
+Allow: /about
+Allow: /contact
+Allow: /privacy
+Allow: /terms
+Allow: /uploads/auctions/
+
+# Disallow private and administrative areas
+Disallow: /admin/
+Disallow: /admin
+Disallow: /dashboard/
+Disallow: /dashboard
+Disallow: /api/
+Disallow: /uploads/kyc/
+
+# Sitemap Location
+Sitemap: https://www.itorgo.kg/sitemap.xml

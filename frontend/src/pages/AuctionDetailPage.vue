@@ -94,12 +94,48 @@ function updateCountdown() {
   }
 }
 
+function injectAuctionJsonLd(item: Auction) {
+  let script = document.getElementById('auction-jsonld') as HTMLScriptElement | null
+  if (!script) {
+    script = document.createElement('script')
+    script.id = 'auction-jsonld'
+    script.type = 'application/ld+json'
+    document.head.appendChild(script)
+  }
+
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    'name': item.title,
+    'description': item.description,
+    'image': item.images || [],
+    'sku': item.id,
+    'offers': {
+      '@type': 'Offer',
+      'url': `https://www.itorgo.kg/auctions/${item.id}`,
+      'priceCurrency': item.currency || 'KGS',
+      'price': item.currentPrice?.amount || item.startingPrice?.amount || '0',
+      'availability': item.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
+      'validThrough': item.endsAt,
+      'seller': {
+        '@type': 'Person',
+        'name': (item as any).sellerName || (item as any).seller?.fullName || 'iTorgo Колдонуучусу'
+      }
+    }
+  }
+
+  script.textContent = JSON.stringify(structuredData)
+}
+
 onMounted(async () => {
   isLoading.value = true
   try {
     const fetched = await auctionStore.fetchAuction(auctionId.value)
     auction.value = fetched
     if (!fetched) return
+
+    document.title = `${fetched.title} — iTorgo Аукцион`
+    injectAuctionJsonLd(fetched)
 
     biddingStore.setCurrentAuction(fetched.id)
     biddingStore.setMinBidIncrement(fetched.bidIncrement)
@@ -122,6 +158,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval)
+  document.getElementById('auction-jsonld')?.remove()
   biddingStore.clearHistory()
 })
 

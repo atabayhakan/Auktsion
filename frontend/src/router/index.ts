@@ -285,12 +285,39 @@ router.beforeEach((to, _from, next) => {
 const { t, locale } = useI18n()
 
 function applyDocumentTitle() {
-  const meta = router.currentRoute.value.meta
+  const current = router.currentRoute.value
+  const meta = current.meta
   if (typeof meta?.titleKey === 'string') {
-    document.title = `iTorgo - ${t(meta.titleKey)}`
+    document.title = `iTorgo — ${t(meta.titleKey)}`
   } else if (typeof meta?.title === 'string') {
-    document.title = meta.title
+    document.title = `iTorgo — ${meta.title}`
+  } else {
+    document.title = 'iTorgo — Кыргызстандагы Реалдуу Убакыттагы Онлайн Аукцион'
   }
+
+  // Dynamic Robots Meta (Noindex for admin & dashboard, index for public)
+  let robotsMeta = document.querySelector('meta[name="robots"]')
+  if (!robotsMeta) {
+    robotsMeta = document.createElement('meta')
+    robotsMeta.setAttribute('name', 'robots')
+    document.head.appendChild(robotsMeta)
+  }
+
+  const isPrivate = current.path.startsWith('/admin') || current.path.startsWith('/dashboard')
+  if (isPrivate) {
+    robotsMeta.setAttribute('content', 'noindex, nofollow')
+  } else {
+    robotsMeta.setAttribute('content', 'index, follow, max-image-preview:large')
+  }
+
+  // Dynamic Canonical Link
+  let canonicalLink = document.querySelector('link[rel="canonical"]')
+  if (!canonicalLink) {
+    canonicalLink = document.createElement('link')
+    canonicalLink.setAttribute('rel', 'canonical')
+    document.head.appendChild(canonicalLink)
+  }
+  canonicalLink.setAttribute('href', `https://www.itorgo.kg${current.path}`)
 }
 
 router.afterEach(() => {

@@ -1,12 +1,96 @@
 <!DOCTYPE html>
-<html lang="ky">
+<html lang="ky" prefix="og: https://ogp.me/ns#">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#f8f9fa" />
-    <meta name="description" content="iTorgo — Kırgızistan'ın Önde Gelen Gerçek Zamanlı Açık Artırma Platformu. MBank, Optima Bank, DemirBank entegrasyonlu. KGS para birimi." />
-    <title>iTorgo — Real-Time Auction Platform</title>
+    <title>iTorgo — Кыргызстандагы Реалдуу Убакыттагы Онлайн Аукцион Платформасы</title>
+
+    <!-- Meta Description & Keywords -->
+    <meta name="description" content="iTorgo — Кыргызстандагы №1 онлайн аукцион жана соода платформасы. Автоунаалар, мал чарбасы, кыймылсыз мүлк жана электроника. MBank, Optima Bank, DemirBank Escrow коопсуз төлөм кепилдиги." />
+    <meta name="keywords" content="аукцион кыргызстан, онлайн соода бишкек, машина сатуу, мал базар, авто аукцион, кыймылсыз мүлк, дордой, mbank төлөм, auction kyrgyzstan" />
+    <meta name="author" content="iTorgo Team" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Canonical & Alternate Hreflang URLs -->
+    <link rel="canonical" href="https://www.itorgo.kg/" />
+    <link rel="alternate" hreflang="ky" href="https://www.itorgo.kg/?lang=ky" />
+    <link rel="alternate" hreflang="ru" href="https://www.itorgo.kg/?lang=ru" />
+    <link rel="alternate" hreflang="tr" href="https://www.itorgo.kg/?lang=tr" />
+    <link rel="alternate" hreflang="x-default" href="https://www.itorgo.kg/" />
+
+    <!-- Open Graph / Facebook / WhatsApp / Telegram Preview -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.itorgo.kg/" />
+    <meta property="og:site_name" content="iTorgo" />
+    <meta property="og:title" content="iTorgo — Кыргызстандагы Реалдуу Убакыттагы Онлайн Аукцион Платформасы" />
+    <meta property="og:description" content="Автоунаалар, мал чарбасы, кыймылсыз мүлк жана электроника боюнча онлайн аукциондор. Эскроу коопсуздук кепилдиги жана MBank / Optima интеграциясы." />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&h=630&q=80" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ky_KG" />
+    <meta property="og:locale:alternate" content="ru_RU" />
+    <meta property="og:locale:alternate" content="tr_TR" />
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@iTorgoKG" />
+    <meta name="twitter:title" content="iTorgo — Реалдуу Убакыттагы Онлайн Аукцион Платформасы" />
+    <meta name="twitter:description" content="Кыргызстандагы №1 онлайн аукцион. MBank, Optima жана DemirBank менен коопсуз соода." />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&h=630&q=80" />
+
+    <!-- Theme & Icons -->
+    <meta name="theme-color" content="#F2B138" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="iTorgo" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Structured Data (Schema.org JSON-LD): Organization & WebSite -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.itorgo.kg/#organization",
+          "name": "iTorgo",
+          "url": "https://www.itorgo.kg",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.itorgo.kg/favicon.svg"
+          },
+          "description": "Кыргызстандагы №1 реалдуу убакыттагы онлайн аукцион жана соода платформасы.",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Бишкек",
+            "addressCountry": "KG"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Support",
+            "email": "support@itorgo.kg",
+            "availableLanguage": ["Kyrgyz", "Russian", "Turkish"]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.itorgo.kg/#website",
+          "url": "https://www.itorgo.kg",
+          "name": "iTorgo Auction Platform",
+          "publisher": {
+            "@id": "https://www.itorgo.kg/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://www.itorgo.kg/auctions?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Typography (Google Fonts Preload) -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap&subset=cyrillic,cyrillic-ext,latin">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap&subset=cyrillic,cyrillic-ext,latin" media="print" onload="this.media='all'">
