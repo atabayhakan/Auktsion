@@ -779,6 +779,41 @@ export const adminService = {
         }
       }
     }
+  },
+
+  // 12. Real-time Admin Notifications
+  async getNotifications(): Promise<{ success: boolean; data: any[]; unreadCount: number }> {
+    try {
+      const res = await apiClient.get<any>('/api/admin/notifications')
+      return res.data
+    } catch (err: any) {
+      console.warn('[adminService] Using fallback for getNotifications:', err)
+      return {
+        success: true,
+        data: [],
+        unreadCount: 0
+      }
+    }
+  },
+
+  async markNotificationRead(id: string): Promise<{ success: boolean }> {
+    try {
+      const res = await apiClient.put<any>(`/api/admin/notifications/${id}/read`)
+      return res.data
+    } catch (err: any) {
+      console.warn('[adminService] Failed to mark notification read:', err)
+      return { success: true }
+    }
+  },
+
+  async markAllNotificationsRead(): Promise<{ success: boolean }> {
+    try {
+      const res = await apiClient.put<any>('/api/admin/notifications/read-all')
+      return res.data
+    } catch (err: any) {
+      console.warn('[adminService] Failed to mark all notifications read:', err)
+      return { success: true }
+    }
   }
 }
 

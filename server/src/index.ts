@@ -17,6 +17,7 @@ import { authRoutes } from './routes/authRoutes.js';
 import { userRoutes } from './routes/userRoutes.js';
 import { auctionRoutes } from './routes/auctionRoutes.js';
 import { adminRoutes } from './routes/adminRoutes.js';
+import { notificationRoutes } from './routes/notificationRoutes.js';
 import { uploadRoutes, serveKycFile } from './routes/uploadRoutes.js';
 import { metaRoutes } from './routes/metaRoutes.js';
 import { authenticateToken } from './middleware/auth.js';
@@ -81,6 +82,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/auctions', auctionRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api', metaRoutes);
 

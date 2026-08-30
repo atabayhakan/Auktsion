@@ -97,9 +97,26 @@ function handleClickOutside(e: MouseEvent) {
   }
 }
 
+function handleNotificationClick(item: any) {
+  adminStore.markNotificationRead(item.id)
+  showNotifications.value = false
+  if (item.link) {
+    router.push(item.link)
+  } else if (item.title?.toLowerCase().includes('kyc') || item.message?.toLowerCase().includes('паспорт')) {
+    router.push('/admin/kyc')
+  } else if (item.title?.toLowerCase().includes('чыгаруу') || item.message?.toLowerCase().includes('mbank')) {
+    router.push('/admin/financials')
+  } else if (item.title?.toLowerCase().includes('арыз') || item.title?.toLowerCase().includes('кооптуулук') || item.message?.toLowerCase().includes('талаш')) {
+    router.push('/admin/disputes')
+  } else if (item.title?.toLowerCase().includes('илан') || item.title?.toLowerCase().includes('аукцион')) {
+    router.push('/admin/listings')
+  }
+}
+
 onMounted(() => {
   isDark.value = document.documentElement.classList.contains('dark') || localStorage.getItem('theme') === 'dark'
   window.addEventListener('click', handleClickOutside)
+  adminStore.fetchNotifications()
 })
 
 onUnmounted(() => {
@@ -200,7 +217,13 @@ onUnmounted(() => {
             </button>
           </div>
 
-          <div class="max-h-72 overflow-y-auto divide-y divide-black/[0.06]">
+          <div v-if="adminStore.notifications.length === 0" class="py-8 text-center text-xs text-text-muted">
+            <Bell class="w-7 h-7 mx-auto mb-2 opacity-30 stroke-1" />
+            <p class="font-semibold text-text-secondary">Азырынча жаңы билдирме жок</p>
+            <p class="text-[11px] text-text-muted mt-0.5">Бардык өтүнмөлөр жана арыздар каралган</p>
+          </div>
+
+          <div v-else class="max-h-72 overflow-y-auto divide-y divide-black/[0.06]">
             <div
               v-for="item in adminStore.notifications"
               :key="item.id"
@@ -208,7 +231,7 @@ onUnmounted(() => {
                 'p-3 hover:bg-accent transition-colors cursor-pointer flex gap-3',
                 !item.read ? 'bg-primary/10' : ''
               ]"
-              @click="adminStore.markNotificationRead(item.id)"
+              @click="handleNotificationClick(item)"
             >
               <div class="shrink-0 mt-0.5">
                 <AlertTriangle v-if="item.type === 'alert'" class="w-4 h-4 text-rose-500" />

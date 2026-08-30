@@ -118,12 +118,10 @@ export const useAdminStore = defineStore('admin', () => {
     message: string
     time: string
     read: boolean
-    type: 'info' | 'warning' | 'alert'
-  }>>([
-    { id: 'notif-1', title: 'Жаңы KYC билдирмеси', message: 'Гүлзада Мамытова паспорт жүктөдү', time: '10 мүн мурун', read: false, type: 'info' },
-    { id: 'notif-2', title: 'Кооптуулук эскертүүсү', message: 'Rolex сааты боюнча бот активдүүлүгү байкалды', time: '25 мүн мурун', read: false, type: 'alert' },
-    { id: 'notif-3', title: 'Чыгаруу билдирмеси', message: 'Бакыт Токтосунов 450,000 сом MBank чыгаруу сурады', time: '1 саат мурун', read: false, type: 'warning' }
-  ])
+    type: 'info' | 'warning' | 'alert' | 'success'
+    link?: string
+    createdAt?: string
+  }>>([])
 
   // Getters
   const pendingKycCount = computed(() => {
@@ -150,13 +148,30 @@ export const useAdminStore = defineStore('admin', () => {
     sidebarCollapsed.value = !sidebarCollapsed.value
   }
 
-  function markNotificationRead(id: string) {
-    const item = notifications.value.find(n => n.id === id)
-    if (item) item.read = true
+  async function fetchNotifications() {
+    try {
+      const res = await adminService.getNotifications()
+      if (res.success && Array.isArray(res.data)) {
+        notifications.value = res.data
+      }
+    } catch (err) {
+      console.warn('[adminStore] Failed to fetch notifications:', err)
+    }
   }
 
-  function markAllNotificationsRead() {
+  async function markNotificationRead(id: string) {
+    const item = notifications.value.find(n => n.id === id)
+    if (item) item.read = true
+    try {
+      await adminService.markNotificationRead(id)
+    } catch {}
+  }
+
+  async function markAllNotificationsRead() {
     notifications.value.forEach(n => { n.read = true })
+    try {
+      await adminService.markAllNotificationsRead()
+    } catch {}
   }
 
   // 1. Fetch Overview

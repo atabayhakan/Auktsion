@@ -30,6 +30,11 @@ import {
   updateTheme,
   getThemePresets,
 } from '../controllers/adminController.js';
+import {
+  getAdminNotificationsController,
+  markAdminNotificationReadController,
+  markAllAdminNotificationsReadController,
+} from '../controllers/notificationController.js';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
 
 export const adminRoutes = Router();
@@ -92,3 +97,8 @@ adminRoutes.put('/settings', staffOnly, updateSettings);
 adminRoutes.get('/theme', getTheme); // Publicly viewable for storefront sync
 adminRoutes.get('/theme/presets', getThemePresets);
 adminRoutes.put('/theme', staffOnly, updateTheme);
+
+// Module 12: Real-time Admin Notifications Center
+adminRoutes.get('/notifications', staffOrEditor, getAdminNotificationsController);
+adminRoutes.put('/notifications/:id/read', staffOrEditor, markAdminNotificationReadController);
+adminRoutes.put('/notifications/read-all', staffOrEditor, markAllAdminNotificationsReadController);

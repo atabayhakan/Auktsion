@@ -268,4 +268,6 @@ export function initializeSchema(db: Database): void {
   try { db.exec(`ALTER TABLE users ADD COLUMN ban_reason TEXT`); } catch {}
   try { db.exec(`ALTER TABLE users ADD COLUMN banned_by TEXT`); } catch {}
   try { db.exec(`ALTER TABLE users ADD COLUMN banned_at DATETIME`); } catch {}
+  try { db.exec(`ALTER TABLE notifications ADD COLUMN link TEXT`); } catch {}
+  try { db.exec(`ALTER TABLE notifications ADD COLUMN metadata_json TEXT DEFAULT '{}'`); } catch {}
 }
