@@ -321,12 +321,21 @@ export default {
     "vehicles": "Araçlar & Vasıta"
   },
   "categoriesPage": {
-    "allCategoriesSubtitle": "Kırgızistan'ın en geniş açık artırma kataloğu",
-    "lotsCount": "{n} aktif lot",
+    "allCategoriesSubtitle": "Kırgızistan'ın En Büyük Açık Artırma ve Ticaret Kataloğu",
+    "badge": "Kırgızistan Geneli Açık Artırma Kataloğu",
+    "breadcrumb": "Tüm Kategoriler",
+    "clearSearch": "Aramayı Temizle",
+    "liveAuctions": "Canlı Açık Artırma",
+    "noResults": "Aradığınız kriterlere uygun kategori bulunamadı",
+    "noResultsDesc": "Farklı bir arama terimi deneyebilir veya tüm kategorilere göz atabilirsiniz.",
     "popularCategories": "Popüler Kategoriler",
-    "searchPlaceholder": "Kategorilerde ara...",
-    "subtitle": "İhtiyacınız olan ürünleri ve lotları kolayca bulun",
-    "title": "Tüm Kategoriler",
+    "popularSearches": "Popüler Aramalar",
+    "resetFilter": "Tümünü Göster",
+    "searchPlaceholder": "Kategori, alt kategori veya ürün ara (örn. iPhone, Camry, Şırdak)...",
+    "subcategories": "Alt Kategoriler",
+    "subtitle": "Hayvancılıktan otomotive, Dordoy konteynerlerinden elektroniğe aradığınız tüm ürünler",
+    "title": "Tüm Kategoriler & Sektörler",
+    "viewAllLots": "Tüm İlanları İncele",
     "viewAuctions": "Açık Artırmaları Gör"
   },
   "categoryCard": {
