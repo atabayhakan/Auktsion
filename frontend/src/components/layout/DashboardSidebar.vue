@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Home, Store, CreditCard, LayoutDashboard, User, Settings, LogOut, Bell, ShieldCheck, BarChart2, Wallet, FileText, Heart, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { Home, Store, CreditCard, LayoutDashboard, User, Settings, LogOut, Bell, ShieldCheck, BarChart2, Wallet, FileText, Heart, ChevronLeft, ChevronRight, Gauge } from 'lucide-vue-next'
 import { useRouter, RouterLink } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useUIStore } from '@/stores/ui'
@@ -27,6 +27,14 @@ function isRouteActive(routePath: string): boolean {
 }
 
 const navSections = computed(() => [
+  ...(userStore.isAdmin ? [
+    {
+      label: '👑 Admin',
+      items: [
+        { path: '/admin', label: '👑 Admin Paneli (eBay Suite)', icon: Gauge, badge: 'ADMIN', badgeVariant: 'primary' },
+      ],
+    }
+  ] : []),
   {
     label: t('nav.navigation'),
     items: [

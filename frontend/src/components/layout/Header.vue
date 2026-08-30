@@ -3,7 +3,7 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import {
   Menu, X, ChevronDown, Search, User, LogOut,
   Store, CreditCard, ShieldCheck, Settings,
-  PlusCircle, ArrowRight, Check, Radio
+  PlusCircle, ArrowRight, Check, Radio, Gauge
 } from 'lucide-vue-next'
 import { useUserStore } from '@/stores/user'
 import { useI18n } from '@/composables/useI18n'
@@ -32,6 +32,13 @@ const navLinks = computed(() => [
 ])
 
 const userMenuItems = computed(() => [
+  ...(userStore.isAdmin ? [{
+    label: '👑 Admin Paneli (eBay Suite)',
+    path: '/admin',
+    icon: Gauge,
+    badge: 'ADMIN',
+    isVerified: true
+  }] : []),
   { label: t('nav.myProfile'), path: '/dashboard', icon: User },
   { label: t('nav.myListings'), path: '/dashboard/listings', icon: Store },
   { label: t('nav.myBids'), path: '/dashboard/bids', icon: CreditCard },

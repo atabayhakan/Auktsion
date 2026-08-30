@@ -40,6 +40,7 @@ const { t } = useI18n()
 const { currency, date, status: statusLabels } = useFormatters()
 
 const tabs = computed(() => [
+  ...(userStore.isAdmin ? [{ id: 'admin', label: '👑 Admin Paneli', icon: Gauge, path: '/admin' }] : []),
   { id: 'overview', label: t('dashboard.overview'), icon: LayoutDashboard, path: '/dashboard/overview' },
   { id: 'listings', label: t('dashboard.myListings'), icon: Store, path: '/dashboard/listings' },
   { id: 'bids', label: t('dashboard.myBids'), icon: CreditCard, path: '/dashboard/bids' },
