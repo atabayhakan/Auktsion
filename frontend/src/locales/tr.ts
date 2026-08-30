@@ -824,13 +824,14 @@ export default {
     "confirm": "Onayla"
   },
   "nav": {
+    "adminPanel": "👑 Yönetim Paneli",
     "allCategories": "Tüm Kategoriler",
     "art": "Sanat & Koleksiyon",
     "auctions": "Açık Artırmalar",
-    "balance": "Bakiye:",
+    "balance": "Bakiye",
     "categories": "Kategoriler",
     "darkMode": "Koyu Tema",
-    "dashboard": "Yönetim Paneli",
+    "dashboard": "Kullanıcı Paneli",
     "electronics": "Elektronik",
     "home": "Ana Sayfa",
     "howItWorks": "Nasıl Çalışır?",

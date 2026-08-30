@@ -88,6 +88,23 @@ export const useUserStore = defineStore('user', () => {
   const defaultCard = computed(() => savedCards.value.find(c => c.isDefault))
   const defaultPayoutMethod = computed(() => payoutMethods.value.find(p => p.isDefault))
   const activeBidsCount = computed(() => activeBids.value.length)
+  const isAdmin = computed(() => {
+    const r = user.value?.role
+    return r === 'admin' || r === 'moderator' || user.value?.email === 'admin@itorgo.kg'
+  })
+  const isSeller = computed(() => {
+    return user.value?.role === 'seller' || user.value?.isSeller === true || isAdmin.value
+  })
+  const formattedBalance = computed(() => {
+    const b: any = user.value?.balance
+    if (!b) return '0 сом'
+    if (typeof b === 'object') {
+      if (b.formatted) return b.formatted
+      if (b.amount !== undefined) return `${Number(b.amount).toLocaleString('ru-RU')} сом`
+    }
+    if (typeof b === 'number') return `${b.toLocaleString('ru-RU')} сом`
+    return `${b} сом`
+  })
 
   function applyUser(next: User) {
     user.value = next
@@ -372,6 +389,9 @@ export const useUserStore = defineStore('user', () => {
     defaultCard,
     defaultPayoutMethod,
     activeBidsCount,
+    isAdmin,
+    isSeller,
+    formattedBalance,
     
     // Actions
     fetchUser,

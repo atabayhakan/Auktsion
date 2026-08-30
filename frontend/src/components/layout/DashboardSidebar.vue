@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Home, Store, CreditCard, LayoutDashboard, User, Settings, LogOut, Bell, ShieldCheck, BarChart2, Wallet, FileText, Heart, ChevronLeft, ChevronRight, Gauge } from 'lucide-vue-next'
+import { Home, Store, CreditCard, LayoutDashboard, User, Settings, LogOut, Bell, ShieldCheck, BarChart2, Wallet, FileText, Heart, ChevronLeft, ChevronRight, Gauge, Gavel, Landmark } from 'lucide-vue-next'
 import { useRouter, RouterLink } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useUIStore } from '@/stores/ui'
@@ -31,7 +31,7 @@ const navSections = computed(() => [
     {
       label: '👑 Admin',
       items: [
-        { path: '/admin', label: '👑 Admin Paneli (eBay Suite)', icon: Gauge, badge: 'ADMIN', badgeVariant: 'primary' },
+        { path: '/admin', label: t('nav.adminPanel'), icon: Gauge, badge: 'ADMIN', badgeVariant: 'primary' },
       ],
     }
   ] : []),
@@ -40,7 +40,7 @@ const navSections = computed(() => [
     items: [
       { path: '/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard, exact: true },
       { path: '/dashboard/listings', label: t('dashboard.myListings'), icon: Store },
-      { path: '/dashboard/bids', label: t('dashboard.myBids'), icon: CreditCard, badge: userStore.activeBidsCount },
+      { path: '/dashboard/bids', label: t('dashboard.myBids'), icon: Gavel, badge: userStore.activeBidsCount },
       { path: '/dashboard/watchlist', label: t('dashboard.watchlist'), icon: Heart, badge: 0 },
     ],
   },
@@ -49,7 +49,7 @@ const navSections = computed(() => [
     items: [
       { path: '/dashboard/payments', label: t('dashboard.payments'), icon: CreditCard, badge: 0 },
       { path: '/dashboard/payouts', label: t('dashboard.payouts'), icon: Wallet, badge: 0 },
-      { path: '/dashboard/payout-methods', label: t('dashboard.payoutMethods'), icon: CreditCard },
+      { path: '/dashboard/payout-methods', label: t('dashboard.payoutMethods'), icon: Landmark },
     ],
   },
   {

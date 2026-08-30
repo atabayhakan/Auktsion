@@ -3,7 +3,8 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import {
   Menu, X, ChevronDown, Search, User, LogOut,
   Store, CreditCard, ShieldCheck, Settings,
-  PlusCircle, ArrowRight, Check, Radio, Gauge
+  PlusCircle, ArrowRight, Check, Radio, Gauge,
+  Gavel, Landmark
 } from 'lucide-vue-next'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
@@ -13,6 +14,7 @@ import Dropdown from '@/components/ui/Dropdown.vue'
 import Badge from '@/components/ui/Badge.vue'
 import MegaMenu from '@/components/layout/MegaMenu.vue'
 import IlbirsIcon from '@/components/icons/IlbirsIcon.vue'
+import FlagIcon from '@/components/icons/FlagIcon.vue'
 
 const userStore = useUserStore()
 const themeStore = useThemeStore()
@@ -35,7 +37,7 @@ const navLinks = computed(() => [
 
 const userMenuItems = computed(() => [
   ...(userStore.isAdmin ? [{
-    label: '👑 Admin Paneli (eBay Suite)',
+    label: t('nav.adminPanel'),
     path: '/admin',
     icon: Gauge,
     badge: 'ADMIN',
@@ -43,9 +45,9 @@ const userMenuItems = computed(() => [
   }] : []),
   { label: t('nav.myProfile'), path: '/dashboard', icon: User },
   { label: t('nav.myListings'), path: '/dashboard/listings', icon: Store },
-  { label: t('nav.myBids'), path: '/dashboard/bids', icon: CreditCard },
+  { label: t('nav.myBids'), path: '/dashboard/bids', icon: Gavel },
   { label: t('nav.payments'), path: '/dashboard/payments', icon: CreditCard },
-  { label: t('nav.payouts'), path: '/dashboard/payouts', icon: CreditCard },
+  { label: t('nav.payouts'), path: '/dashboard/payouts', icon: Landmark },
   {
     label: t('nav.kycStatus'),
     path: '/dashboard/kyc',
@@ -277,11 +279,11 @@ watch(() => userStore.isAuthenticated, (val) => {
               <template #trigger>
                 <button
                   type="button"
-                  class="px-2 py-1.5 sm:px-2.5 rounded glass hover:bg-black/5 text-text-primary transition-all text-xs font-bold flex items-center gap-1"
+                  class="px-2 py-1.5 sm:px-2.5 rounded glass hover:bg-black/5 text-text-primary transition-all text-xs font-bold flex items-center gap-1.5"
                   :title="t('nav.language')"
                 >
-                  <span class="text-sm">{{ currentLocale.flag }}</span>
-                  <span class="hidden sm:inline uppercase text-[11px] font-bold">{{ currentLocale.code }}</span>
+                  <FlagIcon :code="currentLocale.code" custom-class="w-4 h-3 rounded-[2px]" />
+                  <span class="uppercase text-[11px] font-bold text-text-secondary">{{ currentLocale.code }}</span>
                   <ChevronDown class="w-3 h-3 text-text-muted transition-transform" :class="{ 'rotate-180': langMenuOpen }" />
                 </button>
               </template>
@@ -296,8 +298,8 @@ watch(() => userStore.isAuthenticated, (val) => {
                     : 'text-text-secondary hover:bg-black/5'"
                   @click="handleLanguageChange(loc.code)"
                 >
-                  <div class="flex items-center gap-2">
-                    <span class="text-base">{{ loc.flag }}</span>
+                  <div class="flex items-center gap-2.5">
+                    <FlagIcon :code="loc.code" custom-class="w-4 h-3 rounded-[2px]" />
                     <span>{{ loc.nativeName }}</span>
                   </div>
                   <Check v-if="loc.code === currentLocale.code" class="w-3.5 h-3.5 text-primary" />
@@ -333,7 +335,7 @@ watch(() => userStore.isAuthenticated, (val) => {
                   <p class="text-xs text-text-muted truncate">{{ userStore.user?.email }}</p>
                   <div class="mt-2 flex items-center justify-between text-xs">
                     <span class="text-text-muted">{{ t('nav.balance') }}</span>
-                    <span class="font-bold text-primary">{{ (userStore.user?.balance || 25000).toLocaleString() }} KGS</span>
+                    <span class="font-bold text-primary">{{ userStore.formattedBalance }}</span>
                   </div>
                 </div>
 
