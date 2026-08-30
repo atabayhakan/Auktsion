@@ -61,3 +61,7 @@ coverage/
 *.tsbuildinfo
 .eslintcache
 .stylelintcache
+graphify-out/
+*.sqlite-shm
+*.sqlite-wal
+
