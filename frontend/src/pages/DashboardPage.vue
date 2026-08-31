@@ -231,15 +231,18 @@ onMounted(async () => {
       <!-- Main Content -->
       <main class="flex-1 min-w-0 min-h-screen" style="margin-top: 0;">
         <div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:pt-6">
-          <!-- Desktop Tabs -->
-          <div class="hidden lg:block mb-8">
-            <Tabs v-model="activeTab" :tabs="tabs.map(tb => ({ id: tb.id, label: tb.label, icon: tb.icon }))" variant="gold" full-width />
-          </div>
-
           <!-- Tab Content - single root for v-if/v-else-if chain -->
           <div>
             <!-- Overview Tab -->
             <div v-if="activeTab === 'overview'" class="space-y-6 animate-fade-in-up">
+              <!-- Overview Header -->
+              <div class="flex items-center justify-between pb-2">
+                <div>
+                  <h2 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">{{ t('dashboard.overview') }}</h2>
+                  <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Hoş geldiniz, {{ userStore.fullName }}</p>
+                </div>
+              </div>
+
               <!-- Stats Grid -->
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
@@ -369,8 +372,14 @@ onMounted(async () => {
             </div>
 
             <!-- Bids Tab -->
-            <div v-else-if="activeTab === 'bids'" class="animate-fade-in-up">
-              <Tabs v-model="bidTab" :tabs="bidTabs" variant="pills" class="mb-6" />
+            <div v-else-if="activeTab === 'bids'" class="animate-fade-in-up space-y-6">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+                <div>
+                  <h2 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">{{ t('dashboard.myBids') }}</h2>
+                  <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Katıldığınız açık artırma ve teklif geçmişiniz</p>
+                </div>
+                <Tabs v-model="bidTab" :tabs="bidTabs" variant="pills" />
+              </div>
               <div class="space-y-3">
                 <BidRow
                   v-for="bid in filteredBids"
