@@ -3,8 +3,8 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import {
   Menu, X, ChevronDown, Search, User, LogOut,
   Store, CreditCard, ShieldCheck, Settings,
-  PlusCircle, ArrowRight, Check, Radio, Gauge,
-  Gavel, Landmark
+  Plus, PlusCircle, ArrowRight, Check, Radio, Gauge,
+  Gavel, Landmark, Heart, HelpCircle, Wallet, LayoutGrid
 } from 'lucide-vue-next'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
@@ -30,9 +30,9 @@ const searchQuery = ref('')
 const isSearchOpen = ref(false)
 
 const navLinks = computed(() => [
-  { path: '/auctions', label: t('nav.auctions'), icon: Store },
+  { path: '/auctions', label: t('nav.auctions'), icon: Gavel },
   { path: '/auctions?status=live', label: t('nav.liveAuctions'), icon: Radio, badge: t('common.live') },
-  { path: '/how-it-works', label: t('nav.howItWorks'), icon: ShieldCheck },
+  { path: '/how-it-works', label: t('nav.howItWorks'), icon: HelpCircle },
 ])
 
 const userMenuItems = computed(() => [
@@ -43,25 +43,20 @@ const userMenuItems = computed(() => [
     badge: 'ADMIN',
     isVerified: true
   }] : []),
-  { label: t('nav.myProfile'), path: '/dashboard', icon: User },
+  { label: t('dashboard.overview') || 'Genel Bakış', path: '/dashboard/overview', icon: User },
   { label: t('nav.myListings'), path: '/dashboard/listings', icon: Store },
   { label: t('nav.myBids'), path: '/dashboard/bids', icon: Gavel },
+  { label: t('dashboard.watchlist') || 'Takip Listem', path: '/dashboard/watchlist', icon: Heart },
   { label: t('nav.payments'), path: '/dashboard/payments', icon: CreditCard },
   { label: t('nav.payouts'), path: '/dashboard/payouts', icon: Landmark },
   {
     label: t('nav.kycStatus'),
     path: '/dashboard/kyc',
     icon: ShieldCheck,
-    badge: userStore.kycStatus !== 'verified' ? t('status.kyc.pending') : t('status.kyc.verified'),
+    badge: userStore.kycStatus === 'verified' ? (t('status.kyc.verified') || 'Doğrulandı') : (t('status.kyc.pending') || 'Bekliyor'),
     isVerified: userStore.kycStatus === 'verified'
   },
   { label: t('nav.settings'), path: '/dashboard/settings', icon: Settings, divider: true },
-  {
-    label: userStore.isAuthenticated ? t('nav.logout') : `${t('nav.login')} / ${t('nav.register')}`,
-    action: userStore.isAuthenticated ? 'logout' : 'login',
-    icon: LogOut,
-    variant: userStore.isAuthenticated ? 'danger' : 'primary'
-  },
 ])
 
 function toggleMobileMenu() {
@@ -90,11 +85,13 @@ function closeSearch() {
   searchQuery.value = ''
 }
 
-function handleSearch(event: Event) {
-  event.preventDefault()
-  if (searchQuery.value.trim()) {
-    router.push({ path: '/auctions', query: { search: searchQuery.value.trim() } })
+function handleSearch(event?: Event) {
+  if (event) event.preventDefault()
+  const q = searchQuery.value.trim()
+  if (q) {
+    router.push({ path: '/auctions', query: { search: q } })
     closeSearch()
+    closeMobileMenu()
   }
 }
 
@@ -102,6 +99,7 @@ async function handleLogout() {
   await userStore.logout()
   router.push('/')
   closeUserMenu()
+  closeMobileMenu()
 }
 
 function handleScroll() {
@@ -131,16 +129,17 @@ watch(() => userStore.isAuthenticated, (val) => {
     :class="[
       'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
       isScrolled
-        ? 'bg-white/85 backdrop-blur-2xl border-b border-black/[0.08] shadow-md'
-        : 'bg-white/60 backdrop-blur-md border-b border-black/[0.05]'
+        ? 'bg-white/95 backdrop-blur-2xl border-b border-black/[0.08] shadow-sm'
+        : 'bg-white/85 backdrop-blur-md border-b border-black/[0.06]'
     ]"
   >
     <!-- Top Navigation Bar -->
     <div class="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16 md:h-18 gap-3 lg:gap-4">
-        <!-- Brand & Logo -->
-        <div class="flex items-center gap-4 flex-shrink-0">
-          <RouterLink to="/" class="flex items-center gap-2 group" :aria-label="themeStore.theme.logoText || 'iTorgo'">
+      <div class="flex items-center justify-between h-16 sm:h-18 gap-2.5 sm:gap-4">
+        
+        <!-- Left: Brand & Logo -->
+        <div class="flex items-center gap-3 lg:gap-4 flex-shrink-0">
+          <RouterLink to="/" class="flex items-center gap-2.5 group" :aria-label="themeStore.theme.logoText || 'iTorgo'">
             <!-- Custom Image Logo -->
             <img
               v-if="themeStore.theme.logoType === 'image' && themeStore.theme.logoUrl"
@@ -153,7 +152,7 @@ watch(() => userStore.isAuthenticated, (val) => {
             <!-- Text Only Logo -->
             <span
               v-else-if="themeStore.theme.logoType === 'text_only'"
-              class="font-bold text-xl text-text-primary tracking-tight"
+              class="font-black text-xl text-gray-950 tracking-tight"
             >
               {{ themeStore.theme.logoText }}
             </span>
@@ -161,109 +160,118 @@ watch(() => userStore.isAuthenticated, (val) => {
             <!-- Icon + Text (Default) -->
             <template v-else>
               <div
-                class="w-9 h-9 sm:w-10 sm:h-10 p-1.5 shadow-md group-hover:scale-105 transition-transform flex items-center justify-center"
+                class="w-9 h-9 sm:w-10 sm:h-10 p-1.5 shadow-sm group-hover:scale-105 transition-transform flex items-center justify-center shrink-0"
                 :class="[
                   themeStore.theme.logoBadgeShape === 'circle' ? 'rounded-full' :
                   themeStore.theme.logoBadgeShape === 'square' ? 'rounded-none' :
                   themeStore.theme.logoBadgeShape === 'transparent' ? 'bg-transparent shadow-none' :
-                  'rounded-xl'
+                  'rounded-2xl'
                 ]"
                 :style="{ backgroundColor: themeStore.theme.logoBadgeColor || '#F2B138' }"
               >
-                <IlbirsIcon class="w-full h-full text-text-primary" />
+                <IlbirsIcon class="w-full h-full text-gray-950" />
               </div>
               <div class="flex flex-col">
-                <span class="font-sans font-extrabold text-base sm:text-lg text-text-primary tracking-tight flex items-center gap-1">
+                <span class="font-sans font-black text-base sm:text-lg text-gray-950 tracking-tight flex items-center gap-1 leading-none">
                   {{ themeStore.theme.logoText || 'iTorgo' }}
                 </span>
-                <span v-if="themeStore.theme.logoTagline" class="text-[9px] text-text-muted tracking-wider uppercase font-medium hidden sm:block leading-none">
-                  {{ themeStore.theme.logoTagline }}
+                <span class="text-[9px] text-gray-400 tracking-wider uppercase font-bold hidden sm:block mt-1 leading-none">
+                  {{ themeStore.theme.logoTagline || 'REAL-TIME PLATFORM' }}
                 </span>
               </div>
             </template>
           </RouterLink>
+
+          <!-- Categories Mega-Menu Trigger (Desktop) -->
+          <div class="hidden lg:block relative flex-shrink-0">
+            <Dropdown
+              v-model="categoryMenuOpen"
+              trigger="hover"
+              placement="bottom"
+              align="start"
+            >
+              <template #trigger>
+                <button
+                  type="button"
+                  class="px-3.5 py-2 rounded-xl bg-slate-100/90 hover:bg-slate-200/80 text-gray-800 hover:text-gray-950 font-extrabold text-xs border border-black/5 transition-all flex items-center gap-2 shadow-2xs group cursor-pointer"
+                >
+                  <LayoutGrid class="w-3.5 h-3.5 text-gray-600 group-hover:text-amber-800 transition-colors" />
+                  <span>{{ t('nav.allCategories') }}</span>
+                  <ChevronDown class="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-700 transition-transform duration-200" :class="{ 'rotate-180': categoryMenuOpen }" />
+                </button>
+              </template>
+
+              <div class="bg-white rounded-3xl shadow-2xl border border-black/10 overflow-hidden">
+                <MegaMenu @navigate="categoryMenuOpen = false" />
+              </div>
+            </Dropdown>
+          </div>
         </div>
 
-        <!-- Categories Mega-Menu (Desktop) -->
-        <div class="hidden lg:block relative flex-shrink-0">
-          <Dropdown
-            v-model="categoryMenuOpen"
-            trigger="hover"
-            placement="bottom"
-            align="start"
-          >
-            <template #trigger>
-              <button
-                type="button"
-                class="px-3 py-1.5 rounded text-xs font-bold text-text-secondary hover:text-text-primary hover:bg-black/5 transition-all flex items-center gap-1.5"
-              >
-                <Menu class="w-3.5 h-3.5" />
-                <span>{{ t('nav.allCategories') }}</span>
-                <ChevronDown class="w-3 h-3 text-text-muted transition-transform" :class="{ 'rotate-180': categoryMenuOpen }" />
-              </button>
-            </template>
-
-            <div class="bg-white rounded-2xl shadow-xl border border-black/10 overflow-hidden">
-              <MegaMenu @navigate="categoryMenuOpen = false" />
-            </div>
-          </Dropdown>
-        </div>
-
-        <!-- Search Bar (Desktop) -->
-        <div class="hidden lg:flex flex-1 min-w-[180px] max-w-sm xl:max-w-md mx-2">
-          <form class="w-full relative group" @submit="handleSearch">
-            <div class="glass rounded-full flex items-center pl-3.5 pr-1.5 py-1.5 focus-within:border-secondary transition-all duration-300">
-              <Search class="w-4 h-4 text-text-muted group-focus-within:text-secondary transition-colors flex-shrink-0" />
+        <!-- Center: Search Bar (Desktop) -->
+        <div class="hidden md:flex flex-1 min-w-[200px] max-w-sm xl:max-w-md mx-2">
+          <form class="w-full relative group" @submit.prevent="handleSearch">
+            <div class="relative flex items-center w-full bg-slate-100/90 hover:bg-slate-100 focus-within:bg-white rounded-full border border-black/[0.08] focus-within:border-primary/80 focus-within:ring-4 focus-within:ring-primary/20 transition-all duration-200 pl-3.5 pr-1.5 py-1">
+              <Search class="w-4 h-4 text-gray-400 group-focus-within:text-amber-600 transition-colors flex-shrink-0" />
               <input
                 v-model="searchQuery"
                 type="text"
-                :placeholder="t('nav.searchPlaceholder')"
-                class="bg-transparent border-none focus:ring-0 w-full text-base text-text-primary placeholder-text-muted outline-none ml-2 font-sans min-w-0"
+                :placeholder="t('nav.searchPlaceholder') || 'MacBook, Camry, Bişkek...'"
+                class="bg-transparent border-none focus:ring-0 w-full text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 outline-none ml-2 min-w-0"
               />
               <button
+                v-if="searchQuery"
+                type="button"
+                class="p-1 text-gray-400 hover:text-gray-700 transition-colors mr-1 cursor-pointer"
+                aria-label="Clear"
+                @click="searchQuery = ''"
+              >
+                <X class="w-3.5 h-3.5" />
+              </button>
+              <button
                 type="submit"
-                class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center hover:bg-secondary-hover transition-all hover:scale-105 ml-1 flex-shrink-0"
+                class="w-7 h-7 rounded-full bg-gray-950 text-white flex items-center justify-center hover:bg-primary hover:text-gray-950 transition-all hover:scale-105 flex-shrink-0 cursor-pointer shadow-xs"
                 aria-label="Search"
               >
-                <ArrowRight class="w-3 h-3" />
+                <ArrowRight class="w-3.5 h-3.5" />
               </button>
             </div>
           </form>
         </div>
 
-        <!-- Navigation Links (Desktop) -->
-        <nav class="hidden xl:flex items-center gap-1.5 flex-shrink-0">
+        <!-- Center-Right: Navigation Links (Desktop) -->
+        <nav class="hidden xl:flex items-center gap-1 flex-shrink-0">
           <RouterLink
             v-for="link in navLinks"
             :key="link.path"
             :to="link.path"
-            class="relative px-2.5 py-1.5 rounded text-xs font-medium text-text-secondary hover:text-text-primary hover:bg-black/5 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap"
-            active-class="!text-secondary !bg-secondary/10 border border-secondary/20 font-semibold"
+            class="relative px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:text-gray-950 hover:bg-slate-100 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap"
+            active-class="!text-amber-950 !bg-amber-500/15 !border-amber-500/30 border font-extrabold"
           >
-            <component :is="link.icon" class="w-3.5 h-3.5 flex-shrink-0" />
+            <component :is="link.icon" class="w-4 h-4 flex-shrink-0 text-gray-500 group-hover:text-gray-900" />
             <span>{{ link.label }}</span>
-            <span v-if="link.badge" class="px-1.5 py-0.2 text-[9px] font-bold rounded-full bg-error/15 text-error animate-pulse">
+            <span v-if="link.badge" class="px-1.5 py-0.5 text-[9px] font-black rounded-full bg-rose-500 text-white uppercase tracking-wider animate-pulse ml-0.5">
               {{ link.badge }}
             </span>
           </RouterLink>
         </nav>
 
-        <!-- Right Side Actions -->
+        <!-- Right Side: CTA Actions & Profiles -->
         <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
 
           <!-- Mobile Search Toggle -->
           <button
-            class="lg:hidden p-2 rounded glass hover:bg-black/5 text-text-secondary hover:text-text-primary transition-colors"
+            class="md:hidden p-2 rounded-xl bg-slate-100 text-gray-600 hover:text-gray-950 transition-colors cursor-pointer"
             aria-label="Search"
             @click="toggleSearch"
           >
             <Search class="w-4 h-4" />
           </button>
 
-          <!-- Sell / Сатуу Button -->
+          <!-- Sell / Lot Sat Button -->
           <RouterLink to="/sell" class="hidden sm:inline-flex">
-            <button class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded bg-primary text-text-primary font-bold text-xs hover:bg-primary-hover shadow-md transition-all flex items-center gap-1.5 active:scale-95 whitespace-nowrap">
-              <PlusCircle class="w-3.5 h-3.5" />
+            <button class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs shadow-sm hover:shadow hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
+              <PlusCircle class="w-3.5 h-3.5 stroke-[2.5]" />
               <span>{{ t('nav.sell') }}</span>
             </button>
           </RouterLink>
@@ -279,30 +287,30 @@ watch(() => userStore.isAuthenticated, (val) => {
               <template #trigger>
                 <button
                   type="button"
-                  class="px-2 py-1.5 sm:px-2.5 rounded glass hover:bg-black/5 text-text-primary transition-all text-xs font-bold flex items-center gap-1.5"
+                  class="px-2.5 py-2 rounded-xl bg-slate-100/90 hover:bg-slate-200/80 border border-black/5 text-gray-800 transition-all text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs"
                   :title="t('nav.language')"
                 >
                   <FlagIcon :code="currentLocale.code" custom-class="w-4 h-3 rounded-[2px]" />
-                  <span class="uppercase text-[11px] font-bold text-text-secondary">{{ currentLocale.code }}</span>
-                  <ChevronDown class="w-3 h-3 text-text-muted transition-transform" :class="{ 'rotate-180': langMenuOpen }" />
+                  <span class="uppercase text-[11px] font-extrabold text-gray-700">{{ currentLocale.code }}</span>
+                  <ChevronDown class="w-3 h-3 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': langMenuOpen }" />
                 </button>
               </template>
 
-              <div class="w-44 p-1.5 bg-white rounded-2xl shadow-xl border border-black/10 space-y-1">
+              <div class="w-48 p-1.5 bg-white rounded-2xl shadow-xl border border-black/10 space-y-1">
                 <button
                   v-for="loc in supportedLocales"
                   :key="loc.code"
-                  class="w-full flex items-center justify-between px-3 py-2 text-xs font-medium rounded-xl transition-colors text-left"
+                  class="w-full flex items-center justify-between px-3 py-2 text-xs font-bold rounded-xl transition-colors text-left cursor-pointer"
                   :class="loc.code === currentLocale.code
-                    ? 'bg-primary/10 text-primary font-bold border border-primary/20'
-                    : 'text-text-secondary hover:bg-black/5'"
+                    ? 'bg-amber-50 text-amber-900 font-extrabold border border-amber-200'
+                    : 'text-gray-600 hover:bg-slate-50 hover:text-gray-950'"
                   @click="handleLanguageChange(loc.code)"
                 >
                   <div class="flex items-center gap-2.5">
                     <FlagIcon :code="loc.code" custom-class="w-4 h-3 rounded-[2px]" />
                     <span>{{ loc.nativeName }}</span>
                   </div>
-                  <Check v-if="loc.code === currentLocale.code" class="w-3.5 h-3.5 text-primary" />
+                  <Check v-if="loc.code === currentLocale.code" class="w-3.5 h-3.5 text-amber-600 stroke-[2.5]" />
                 </button>
               </div>
             </Dropdown>
@@ -318,98 +326,102 @@ watch(() => userStore.isAuthenticated, (val) => {
               align="end"
             >
               <template #trigger>
-                <div class="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 rounded glass hover:bg-black/5 transition-colors">
-                  <div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center font-bold text-xs text-text-primary flex-shrink-0">
+                <div class="flex items-center gap-2 px-2.5 py-1.5 sm:py-2 rounded-xl bg-slate-100/90 hover:bg-slate-200/80 border border-black/5 transition-all cursor-pointer shadow-2xs">
+                  <div class="w-6 h-6 rounded-lg bg-primary flex items-center justify-center font-black text-xs text-gray-950 flex-shrink-0 shadow-2xs">
                     {{ userStore.fullName?.charAt(0) || 'U' }}
                   </div>
-                  <span class="hidden sm:inline-block text-xs font-medium text-text-primary max-w-[85px] md:max-w-[105px] truncate">
+                  <span class="hidden sm:inline-block text-xs font-bold text-gray-900 max-w-[90px] md:max-w-[120px] truncate">
                     {{ userStore.fullName }}
                   </span>
-                  <ChevronDown class="hidden sm:block w-3.5 h-3.5 text-text-muted transition-transform flex-shrink-0" :class="{ 'rotate-180': userMenuOpen }" />
+                  <ChevronDown class="hidden sm:block w-3.5 h-3.5 text-gray-400 transition-transform duration-200 flex-shrink-0" :class="{ 'rotate-180': userMenuOpen }" />
                 </div>
               </template>
 
-              <div class="w-60 p-1 bg-white rounded-2xl shadow-xl border border-black/10">
-                <div class="px-3.5 py-2.5 border-b border-black/[0.06] mb-1">
-                  <p class="text-sm font-semibold text-text-primary">{{ userStore.fullName }}</p>
-                  <p class="text-xs text-text-muted truncate">{{ userStore.user?.email }}</p>
-                  <div class="mt-2 flex items-center justify-between text-xs">
-                    <span class="text-text-muted">{{ t('nav.balance') }}</span>
-                    <span class="font-bold text-primary">{{ userStore.formattedBalance }}</span>
+              <div class="w-64 p-1.5 bg-white rounded-3xl shadow-2xl border border-black/10">
+                <!-- User Header Info -->
+                <div class="px-3.5 py-3 rounded-2xl bg-slate-50 border border-black/[0.04] mb-1.5">
+                  <p class="text-xs font-black text-gray-950 truncate">{{ userStore.fullName }}</p>
+                  <p class="text-[11px] text-gray-400 truncate">{{ userStore.user?.email }}</p>
+                  <div class="mt-2.5 pt-2 border-t border-black/[0.06] flex items-center justify-between text-xs">
+                    <span class="text-gray-500 font-medium">{{ t('nav.balance') || 'Bakiye' }}</span>
+                    <span class="font-black text-amber-700 font-mono">{{ userStore.formattedBalance }}</span>
                   </div>
                 </div>
 
-                <RouterLink
-                  v-for="item in userMenuItems.slice(0, -1)"
-                  :key="item.label"
-                  :to="item.path"
-                  class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-text-secondary hover:text-text-primary hover:bg-black/5 rounded-lg transition-colors"
-                  @click="closeUserMenu"
-                >
-                  <component :is="item.icon" class="w-4 h-4 text-text-muted" />
-                  <span>{{ item.label }}</span>
-                  <Badge v-if="item.badge" :variant="(item as any).isVerified ? 'success' : 'warning'" size="sm" class="ml-auto">
-                    {{ item.badge }}
-                  </Badge>
-                </RouterLink>
+                <!-- Navigation List -->
+                <div class="space-y-0.5">
+                  <RouterLink
+                    v-for="item in userMenuItems"
+                    :key="item.label"
+                    :to="item.path"
+                    class="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-gray-700 hover:text-gray-950 hover:bg-slate-50 rounded-xl transition-colors"
+                    @click="closeUserMenu"
+                  >
+                    <component :is="item.icon" class="w-4 h-4 text-gray-400 group-hover:text-gray-800" />
+                    <span class="truncate">{{ item.label }}</span>
+                    <Badge v-if="item.badge" :variant="(item as any).isVerified ? 'success' : 'warning'" size="sm" class="ml-auto">
+                      {{ item.badge }}
+                    </Badge>
+                  </RouterLink>
+                </div>
 
                 <div class="border-t border-black/[0.06] my-1" />
 
+                <!-- Logout Button -->
                 <button
-                  class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-error hover:bg-error/10 rounded-lg transition-colors"
+                  class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
                   @click="handleLogout"
                 >
-                  <LogOut class="w-4 h-4" />
+                  <LogOut class="w-4 h-4 text-rose-500" />
                   <span>{{ t('nav.logout') }}</span>
                 </button>
               </div>
             </Dropdown>
 
-            <div v-else class="flex items-center gap-2">
+            <div v-else class="flex items-center gap-1.5 sm:gap-2">
               <RouterLink
                 to="/login"
-                class="px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-text-primary hover:bg-black/5 rounded transition-colors"
+                class="px-3 py-2 text-xs font-bold text-gray-700 hover:text-gray-950 hover:bg-slate-100 rounded-xl transition-colors"
               >
                 {{ t('nav.login') }}
               </RouterLink>
               <RouterLink
                 to="/register"
-                class="px-3.5 py-1.5 text-xs font-semibold rounded bg-primary text-text-primary hover:bg-primary-hover shadow-md transition-all"
+                class="px-3.5 py-2 text-xs font-black rounded-xl bg-primary text-gray-950 hover:bg-primary-hover shadow-sm transition-all"
               >
                 {{ t('nav.register') }}
               </RouterLink>
             </div>
           </div>
 
-          <!-- Mobile Hamburger Menu Button (stays visible through tablet widths —
-               the desktop mega-menu/nav links don't appear until lg/xl) -->
+          <!-- Mobile Hamburger Menu Button -->
           <button
-            class="lg:hidden p-2 rounded glass hover:bg-black/5 text-text-secondary hover:text-text-primary transition-colors"
+            class="lg:hidden p-2 rounded-xl bg-slate-100 text-gray-700 hover:text-gray-950 transition-colors cursor-pointer"
             aria-label="Toggle menu"
             @click="toggleMobileMenu"
           >
-            <Menu v-if="!mobileMenuOpen" class="w-6 h-6" />
-            <X v-else class="w-6 h-6" />
+            <Menu v-if="!mobileMenuOpen" class="w-5 h-5" />
+            <X v-else class="w-5 h-5" />
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Mobile Search Dropdown (Inside fixed Header) -->
-    <div v-if="isSearchOpen" class="lg:hidden px-4 pb-3 pt-1 border-t border-black/10 bg-white/95 backdrop-blur-xl">
-      <form class="relative" @submit="handleSearch">
+    <!-- Mobile Search Dropdown (Slide Down) -->
+    <div v-if="isSearchOpen" class="md:hidden px-4 pb-3 pt-1 border-t border-black/10 bg-white/98 backdrop-blur-xl">
+      <form class="relative" @submit.prevent="handleSearch">
         <input
           id="header-search-mobile"
           v-model="searchQuery"
           type="text"
-          :placeholder="t('nav.searchPlaceholder')"
-          class="w-full pl-10 pr-10 py-2.5 rounded bg-black/5 border border-black/10 text-base text-text-primary placeholder-text-muted focus:outline-none focus:border-secondary"
+          :placeholder="t('nav.searchPlaceholder') || 'MacBook, Camry, Bişkek...'"
+          class="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-slate-100 border border-black/10 text-xs font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary focus:bg-white"
         />
-        <Search class="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+        <Search class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
         <button
           v-if="searchQuery"
           type="button"
-          class="p-1 absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
+          class="p-1 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
           @click="searchQuery = ''"
         >
           <X class="w-4 h-4" />
@@ -427,24 +439,26 @@ watch(() => userStore.isAuthenticated, (val) => {
     >
       <div class="h-[calc(100vh-4rem)] max-h-screen w-4/5 max-w-sm bg-white border-r border-black/10 p-5 sm:p-6 flex flex-col justify-between shadow-2xl overflow-y-auto custom-scrollbar" @click.stop>
         <div class="space-y-4">
+          <!-- Mobile Sell Action -->
           <RouterLink to="/sell" class="block" @click="closeMobileMenu">
-            <button class="w-full py-3 rounded bg-primary text-text-primary font-bold text-sm shadow-md flex items-center justify-center gap-2">
+            <button class="w-full py-3 rounded-2xl bg-primary text-gray-950 font-black text-xs shadow-md flex items-center justify-center gap-2 cursor-pointer">
               <PlusCircle class="w-4 h-4" />
               <span>{{ t('nav.sell') }}</span>
             </button>
           </RouterLink>
 
+          <!-- User Card / Auth Buttons -->
           <div v-if="!userStore.isAuthenticated" class="grid grid-cols-2 gap-2 pt-1">
             <RouterLink
               to="/login"
-              class="py-2.5 text-center text-xs font-medium text-text-secondary hover:text-text-primary bg-black/[0.03] rounded border border-black/10"
+              class="py-2.5 text-center text-xs font-bold text-gray-700 bg-slate-100 rounded-xl border border-black/5"
               @click="closeMobileMenu"
             >
               {{ t('nav.login') }}
             </RouterLink>
             <RouterLink
               to="/register"
-              class="py-2.5 text-center text-xs font-semibold rounded bg-primary text-text-primary shadow-md"
+              class="py-2.5 text-center text-xs font-black rounded-xl bg-primary text-gray-950 shadow-sm"
               @click="closeMobileMenu"
             >
               {{ t('nav.register') }}
@@ -452,47 +466,57 @@ watch(() => userStore.isAuthenticated, (val) => {
           </div>
           <div v-else class="pt-1">
             <RouterLink
-              to="/dashboard"
-              class="flex items-center gap-2 px-4 py-2.5 rounded bg-black/[0.03] border border-black/10 text-xs font-medium text-text-primary"
+              to="/dashboard/overview"
+              class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-black/5"
               @click="closeMobileMenu"
             >
-              <User class="w-4 h-4 text-primary" />
-              <span>{{ userStore.fullName }} ({{ t('nav.myProfile') }})</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-8 h-8 rounded-xl bg-primary flex items-center justify-center font-black text-xs text-gray-950 shrink-0">
+                  {{ userStore.fullName?.charAt(0) || 'U' }}
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-black text-gray-950 truncate">{{ userStore.fullName }}</p>
+                  <p class="text-[10px] text-gray-400 truncate">{{ userStore.formattedBalance }}</p>
+                </div>
+              </div>
+              <ChevronDown class="w-4 h-4 text-gray-400 -rotate-90" />
             </RouterLink>
           </div>
 
+          <!-- Navigation Links -->
           <nav class="space-y-1 pt-2">
+            <RouterLink
+              to="/categories"
+              class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-gray-700 hover:text-gray-950 hover:bg-slate-100 transition-colors font-bold text-xs"
+              @click="closeMobileMenu"
+            >
+              <div class="flex items-center gap-3">
+                <LayoutGrid class="w-4 h-4 text-amber-800" />
+                <span>{{ t('nav.allCategories') }}</span>
+              </div>
+              <ChevronDown class="w-3.5 h-3.5 text-gray-400 -rotate-90" />
+            </RouterLink>
+
             <RouterLink
               v-for="link in navLinks"
               :key="link.path"
               :to="link.path"
-              class="flex items-center justify-between px-4 py-3 rounded text-text-secondary hover:text-text-primary hover:bg-black/5 transition-colors font-medium text-sm"
+              class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-gray-700 hover:text-gray-950 hover:bg-slate-100 transition-colors font-bold text-xs"
               @click="closeMobileMenu"
             >
               <div class="flex items-center gap-3">
-                <component :is="link.icon" class="w-5 h-5 text-primary" />
+                <component :is="link.icon" class="w-4 h-4 text-gray-500" />
                 <span>{{ link.label }}</span>
               </div>
-              <span v-if="link.badge" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-error/15 text-error">
+              <span v-if="link.badge" class="px-2 py-0.5 text-[10px] font-black rounded-full bg-rose-500 text-white">
                 {{ link.badge }}
               </span>
-            </RouterLink>
-
-            <RouterLink
-              to="/categories"
-              class="flex items-center justify-between px-4 py-3 rounded text-text-secondary hover:text-text-primary hover:bg-black/5 transition-colors font-medium text-sm"
-              @click="closeMobileMenu"
-            >
-              <div class="flex items-center gap-3">
-                <Menu class="w-5 h-5 text-primary" />
-                <span>{{ t('nav.allCategories') }}</span>
-              </div>
             </RouterLink>
           </nav>
         </div>
 
-        <div class="pt-6 pb-2 border-t border-black/10 mt-4">
-          <p class="text-xs text-text-muted text-center">iTorgo • MBank / Optima / DemirBank</p>
+        <div class="pt-6 pb-2 border-t border-black/[0.06] mt-4 text-center">
+          <p class="text-[11px] text-gray-400 font-medium">iTorgo • MBank / Optima / DemirBank</p>
         </div>
       </div>
     </div>
