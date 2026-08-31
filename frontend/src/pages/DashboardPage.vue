@@ -233,7 +233,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-text-primary pt-16 sm:pt-20 font-sans">
+  <div class="min-h-screen bg-background text-text-primary pt-24 sm:pt-28 pb-20 font-sans">
     <!-- Mobile Tabs (Inline with horizontal scroll) -->
     <div class="lg:hidden px-4 pt-4 pb-2 border-b border-black/[0.06] bg-white/60 backdrop-blur-md">
       <div class="flex items-center justify-between mb-2.5">
@@ -247,14 +247,16 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="flex">
-      <!-- Sidebar -->
-      <DashboardSidebar />
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left Sidebar (Desktop 3-Cols) -->
+        <div class="hidden lg:block lg:col-span-3 sticky top-28">
+          <DashboardSidebar />
+        </div>
 
-      <!-- Main Content -->
-      <main class="flex-1 min-w-0 min-h-screen" style="margin-top: 0;">
-        <div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:pt-6">
-          <!-- Tab Content - single root for v-if/v-else-if chain -->
+        <!-- Main Content (Desktop 9-Cols) -->
+        <main class="lg:col-span-9 min-w-0">
           <div>
             <!-- Overview Tab -->
             <div v-if="activeTab === 'overview'" class="space-y-6 animate-fade-in-up">
@@ -922,8 +924,8 @@ onMounted(async () => {
 
             </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
 
     <!-- Modals -->
