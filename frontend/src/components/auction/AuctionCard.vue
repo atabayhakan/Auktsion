@@ -85,7 +85,7 @@ const specificBadge = computed(() => {
     <!-- Image & Badges -->
     <div class="relative aspect-16/10 overflow-hidden bg-black/5">
       <img
-        :src="auction.images[0] || 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?w=800&auto=format&fit=crop&q=80'"
+        :src="auction.images[0] || '/placeholder-lot.svg'"
         :alt="auction.title"
         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
