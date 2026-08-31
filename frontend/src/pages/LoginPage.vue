@@ -86,13 +86,18 @@ function switchMode() {
       
       <!-- Brand Header -->
       <div class="text-center space-y-3">
-        <RouterLink to="/" class="inline-flex items-center gap-2 group">
-          <div class="w-11 h-11 rounded-2xl bg-primary p-2 shadow-md group-hover:scale-105 transition-transform flex items-center justify-center">
-            <IlbirsIcon class="w-full h-full text-text-primary" />
+        <RouterLink to="/" class="inline-flex items-center gap-2.5 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 border border-amber-300/30 p-2 shadow-sm group-hover:scale-105 transition-transform flex items-center justify-center">
+            <IlbirsIcon class="w-full h-full text-gray-950" />
           </div>
-          <span class="font-bold text-2xl text-text-primary tracking-tight">
-            iTorgo <span class="text-primary text-xs px-1.5 py-0.5 rounded-full bg-primary/10 border border-primary/30">KG</span>
-          </span>
+          <div class="flex flex-col text-left">
+            <span class="font-black text-2xl text-gray-950 tracking-tight leading-none flex items-center">
+              iTorgo<span class="w-1.5 h-1.5 rounded-full bg-amber-500 ml-1 shrink-0" />
+            </span>
+            <span class="text-[9px] font-black text-gray-400 tracking-widest uppercase font-mono mt-0.5 leading-none">
+              REAL-TIME PLATFORM
+            </span>
+          </div>
         </RouterLink>
 
         <div>
