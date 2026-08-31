@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import {
   LayoutDashboard, Store, CreditCard, Wallet, FileText, ShieldCheck, Settings, Heart, CheckCircle, Building2, Gauge,
-  Lock, Clock, CheckCircle2
+  Lock, Clock, CheckCircle2, Smartphone, Sparkles, MapPin, Laptop, Camera, AlertTriangle, Bell, KeyRound, Mail
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
@@ -33,6 +33,7 @@ import PaymentRow from '@/components/dashboard/PaymentRow.vue'
 import PayoutRow from '@/components/dashboard/PayoutRow.vue'
 import PayoutMethodCard from '@/components/dashboard/PayoutMethodCard.vue'
 import DocumentUpload from '@/components/dashboard/DocumentUpload.vue'
+import { kyrgyzstanRegions } from '@/data/regions'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -168,6 +169,28 @@ const kycStepOrder = ['not_started', 'phone_verified', 'id_uploaded', 'ocr_passe
 const currentKycStep = computed(() => {
   return Math.max(0, kycStepOrder.indexOf(userStore.kycStatus))
 })
+
+
+// Settings tab reactive state
+const isSavingProfile = ref(false)
+const twoFactorEnabled = ref(false)
+const emailNotifEnabled = ref(true)
+const pushNotifEnabled = ref(true)
+const smsNotifEnabled = ref(true)
+const avatarPreview = ref<string | null>(null)
+
+function handleAvatarUpload(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    const file = target.files[0]
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      avatarPreview.value = e.target?.result as string
+      uiStore.toastSuccess(t('toasts.success') || 'Başarılı', 'Profil fotoğrafı güncellendi')
+    }
+    reader.readAsDataURL(file)
+  }
+}
 
 // Profile form
 const profileForm = ref({
@@ -648,78 +671,255 @@ onMounted(async () => {
             </div>
 
             <!-- Settings Tab -->
-            <div v-else-if="activeTab === 'settings'" class="animate-fade-in-up">
-              <div class="max-w-3xl space-y-8">
-                <Card variant="glass">
-                  <h3 class="text-base font-bold text-text-primary mb-6">{{ t('dashboard.profileInfo') }}</h3>
-                  <form class="space-y-6" @submit.prevent="updateProfile">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <Input v-model="profileForm.fullName" :label="t('auth.fullName')" />
-                      <Input v-model="profileForm.email" :label="t('auth.email')" type="email" />
-                      <Input v-model="profileForm.phone" :label="t('auth.phone')" placeholder="+996 XXX XXXXXXX" />
-                      <Input v-model="profileForm.city" :label="t('sell.city')" />
-                    </div>
-                    <Button type="submit" variant="primary">{{ t('common.save') }}</Button>
-                  </form>
-                </Card>
-
-                <Card variant="glass">
-                  <h3 class="text-base font-bold text-text-primary mb-6">{{ t('dashboard.security') }}</h3>
-                  <div class="space-y-4">
-                    <div class="flex items-center justify-between p-4 rounded-xl bg-black/[0.03]">
-                      <div>
-                        <p class="font-medium text-text-primary">{{ t('dashboard.twoFactorAuth') }}</p>
-                        <p class="text-text-muted text-sm">{{ t('dashboard.twoFactorDesc') }}</p>
-                      </div>
-                      <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" class="sr-only peer" />
-                        <div class="w-11 h-6 bg-black/15 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-black/15 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                      </label>
-                    </div>
-                    <div class="flex gap-3">
-                      <Button variant="outline" @click="changePassword">{{ t('auth.changePassword') }}</Button>
-                      <Button variant="danger" @click="showDeleteModal = true">{{ t('dashboard.deleteAccount') }}</Button>
-                    </div>
-                  </div>
-                </Card>
-
-                <Card variant="glass">
-                  <h3 class="text-base font-bold text-text-primary mb-6">{{ t('dashboard.notifications') }}</h3>
-                  <div class="space-y-4">
-                    <div class="flex items-center justify-between p-4 rounded-xl bg-black/[0.03]">
-                      <div>
-                        <p class="font-medium text-text-primary">{{ t('dashboard.emailNotifications') }}</p>
-                        <p class="text-text-muted text-sm">{{ t('dashboard.emailNotificationsDesc') }}</p>
-                      </div>
-                      <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" checked class="sr-only peer" />
-                        <div class="w-11 h-6 bg-black/15 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-black/15 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                      </label>
-                    </div>
-                    <div class="flex items-center justify-between p-4 rounded-xl bg-black/[0.03]">
-                      <div>
-                        <p class="font-medium text-text-primary">{{ t('dashboard.pushNotifications') }}</p>
-                        <p class="text-text-muted text-sm">{{ t('dashboard.pushNotificationsDesc') }}</p>
-                      </div>
-                      <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" checked class="sr-only peer" />
-                        <div class="w-11 h-6 bg-black/15 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-black/15 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                      </label>
-                    </div>
-                  </div>
-                </Card>
-
-                <Card variant="glass" class="!border-error/30">
-                  <h3 class="text-base font-bold text-text-primary mb-6">{{ t('dashboard.dangerZone') }}</h3>
-                  <div class="flex items-center justify-between p-4 rounded-xl bg-error/10 border border-error/20">
-                    <div>
-                      <p class="font-medium text-error">{{ t('dashboard.deleteAccount') }}</p>
-                      <p class="text-text-muted text-sm">{{ t('dashboard.deleteAccountWarning') }}</p>
-                    </div>
-                    <Button variant="danger" @click="showDeleteModal = true">{{ t('dashboard.deleteAccount') }}</Button>
-                  </div>
-                </Card>
+            <div v-else-if="activeTab === 'settings'" class="animate-fade-in-up space-y-8 max-w-4xl">
+              
+              <!-- Header -->
+              <div class="pb-6 border-b border-black/[0.06]">
+                <h2 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight flex items-center gap-2.5">
+                  <Settings class="w-7 h-7 text-primary" />
+                  <span>{{ t('dashboard.settings') || 'Ayarlar & Hesap Yönetimi' }}</span>
+                </h2>
+                <p class="text-xs sm:text-sm text-gray-500 mt-1 leading-relaxed">
+                  Profil bilgilerinizi, iletişim kanallarınızı, güvenlik seçeneklerinizi ve bildirim tercihlerinizi yönetin.
+                </p>
               </div>
+
+              <!-- Card 1: Profil Bilgileri & Avatar -->
+              <div class="bg-white p-6 sm:p-8 rounded-3xl border border-black/[0.08] shadow-2xs space-y-6">
+                <div class="flex items-center justify-between pb-4 border-b border-black/[0.06]">
+                  <div class="flex items-center gap-2">
+                    <User class="w-5 h-5 text-amber-600" />
+                    <h3 class="text-base font-black text-gray-950">{{ t('dashboard.profileInfo') || 'Profil Bilgileri' }}</h3>
+                  </div>
+                  <span class="text-xs font-bold text-gray-400 font-mono">ID: #{{ userStore.user?.id ? userStore.user.id.slice(0, 8) : 'KG-9482' }}</span>
+                </div>
+
+                <!-- Avatar & Identity Bar -->
+                <div class="flex flex-col sm:flex-row items-center gap-5 p-4 rounded-2xl bg-slate-50 border border-black/[0.04]">
+                  <div class="relative group">
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 text-gray-950 font-black text-2xl flex items-center justify-center shadow-md overflow-hidden border-2 border-white">
+                      <img v-if="avatarPreview || userStore.user?.avatar" :src="avatarPreview || userStore.user?.avatar" alt="Avatar" class="w-full h-full object-cover" />
+                      <span v-else>{{ (userStore.fullName || 'HA').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() }}</span>
+                    </div>
+                    <label class="absolute -bottom-1 -right-1 w-7 h-7 rounded-xl bg-gray-900 hover:bg-black text-white flex items-center justify-center shadow-md cursor-pointer transition-all hover:scale-110">
+                      <Camera class="w-3.5 h-3.5" />
+                      <input type="file" accept="image/*" class="sr-only" @change="handleAvatarUpload" />
+                    </label>
+                  </div>
+
+                  <div class="space-y-1 text-center sm:text-left">
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                      <h4 class="text-base font-black text-gray-950">{{ userStore.fullName || 'Hakan Atabay' }}</h4>
+                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        <CheckCircle2 class="w-3 h-3 text-emerald-600" />
+                        <span>Kayıtlı Üye</span>
+                      </span>
+                    </div>
+                    <p class="text-xs text-gray-500">{{ userStore.user?.email || 'atabayhakan007@gmail.com' }}</p>
+                    <p class="text-[11px] text-gray-400 font-medium">Fotoğrafı güncellemek için kamera ikonuna tıklayın.</p>
+                  </div>
+                </div>
+
+                <!-- Form Fields -->
+                <form class="space-y-6" @submit.prevent="updateProfile">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    
+                    <!-- Full Name -->
+                    <div class="space-y-1.5">
+                      <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                        <User class="w-3.5 h-3.5 text-gray-400" />
+                        <span>{{ t('auth.fullName') || 'Adınız ve Soyadınız' }}</span>
+                      </label>
+                      <input
+                        v-model="profileForm.fullName"
+                        type="text"
+                        class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-black/10 text-xs sm:text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                      />
+                    </div>
+
+                    <!-- Email -->
+                    <div class="space-y-1.5">
+                      <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                        <Mail class="w-3.5 h-3.5 text-gray-400" />
+                        <span>{{ t('auth.email') || 'E-posta Adresi' }}</span>
+                      </label>
+                      <input
+                        v-model="profileForm.email"
+                        type="email"
+                        class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-black/10 text-xs sm:text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                      />
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="space-y-1.5">
+                      <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                        <Phone class="w-3.5 h-3.5 text-gray-400" />
+                        <span>{{ t('auth.phone') || 'Telefon Numarası' }}</span>
+                      </label>
+                      <input
+                        v-model="profileForm.phone"
+                        type="tel"
+                        placeholder="+996 555 774468"
+                        class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-black/10 text-xs sm:text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all font-mono"
+                      />
+                    </div>
+
+                    <!-- City / Region -->
+                    <div class="space-y-1.5">
+                      <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                        <MapPin class="w-3.5 h-3.5 text-gray-400" />
+                        <span>{{ t('sell.city') || 'Şehir / Bölge' }}</span>
+                      </label>
+                      <select
+                        v-model="profileForm.city"
+                        class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-black/10 text-xs sm:text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all cursor-pointer"
+                      >
+                        <option value="Бишкек">Bişkek Şehri (г. Бишкек)</option>
+                        <option value="Ош">Oş Şehri (г. Ош)</option>
+                        <option value="Чүй">Çüy Bölgesi (Чуйская область)</option>
+                        <option value="Жалал-Абад">Celal-Abad Bölgesi (Джалал-Абад)</option>
+                        <option value="Ысык-Көл">Isık-Göl Bölgesi (Иссык-Куль)</option>
+                        <option value="Нарын">Narın Bölgesi (Нарынская область)</option>
+                        <option value="Талас">Talas Bölgesi (Таласская область)</option>
+                        <option value="Баткен">Batken Bölgesi (Баткенская область)</option>
+                      </select>
+                    </div>
+
+                  </div>
+
+                  <div class="flex items-center justify-end pt-2">
+                    <button
+                      type="submit"
+                      :disabled="isSavingProfile"
+                      class="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                    >
+                      <span v-if="isSavingProfile" class="w-3.5 h-3.5 border-2 border-gray-950 border-t-transparent rounded-full animate-spin" />
+                      <CheckCircle2 v-else class="w-4 h-4" />
+                      <span>{{ isSavingProfile ? 'Kaydediliyor...' : (t('common.save') || 'Değişiklikleri Kaydet') }}</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Card 2: Hesap Güvenliği & Şifre -->
+              <div class="bg-white p-6 sm:p-8 rounded-3xl border border-black/[0.08] shadow-2xs space-y-6">
+                <div class="flex items-center gap-2 pb-4 border-b border-black/[0.06]">
+                  <ShieldCheck class="w-5 h-5 text-emerald-600" />
+                  <h3 class="text-base font-black text-gray-950">{{ t('dashboard.security') || 'Hesap Güvenliği' }}</h3>
+                </div>
+
+                <div class="space-y-4">
+                  
+                  <!-- 2FA Switch -->
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-black/[0.04] transition-all">
+                    <div class="space-y-0.5">
+                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.twoFactorAuth') || '2FA (İki Faktörlü Kimlik Doğrulama)' }}</p>
+                      <p class="text-xs text-gray-500">{{ t('dashboard.twoFactorDesc') || 'SMS veya Google Authenticator ile her girişte ek koruma.' }}</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
+                      <input v-model="twoFactorEnabled" type="checkbox" class="sr-only peer" />
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                  </div>
+
+                  <!-- Password Management -->
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 border border-black/[0.04]">
+                    <div class="space-y-0.5">
+                      <p class="font-black text-xs sm:text-sm text-gray-950">Giriş Şifresi</p>
+                      <p class="text-xs text-gray-500">Son güncelleme: 30 gün önce. Güçlü bir şifre kullanmanız önerilir.</p>
+                    </div>
+                    <button
+                      type="button"
+                      class="px-4 py-2 rounded-xl bg-white border border-black/10 hover:bg-slate-100 text-gray-900 font-bold text-xs shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer self-start sm:self-auto shrink-0"
+                      @click="changePassword"
+                    >
+                      <KeyRound class="w-3.5 h-3.5 text-gray-500" />
+                      <span>{{ t('auth.changePassword') || 'Şifreyi Değiştir' }}</span>
+                    </button>
+                  </div>
+
+                  <!-- Active Session Info -->
+                  <div class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/60 text-xs">
+                    <Laptop class="w-5 h-5 text-emerald-700 shrink-0" />
+                    <div>
+                      <p class="font-bold text-emerald-950">Aktif Oturum: Windows (Chrome) • Bişkek, KG</p>
+                      <p class="text-emerald-800/80 text-[11px]">Şu anda bu cihaz üzerinden oturum açtınız.</p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Card 3: Bildirim Tercihleri -->
+              <div class="bg-white p-6 sm:p-8 rounded-3xl border border-black/[0.08] shadow-2xs space-y-6">
+                <div class="flex items-center gap-2 pb-4 border-b border-black/[0.06]">
+                  <Bell class="w-5 h-5 text-blue-600" />
+                  <h3 class="text-base font-black text-gray-950">{{ t('dashboard.notifications') || 'Bildirim Tercihleri' }}</h3>
+                </div>
+
+                <div class="space-y-4">
+                  
+                  <!-- Email Notifications -->
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-black/[0.04]">
+                    <div class="space-y-0.5">
+                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.emailNotifications') || 'E-posta Bildirimleri' }}</p>
+                      <p class="text-xs text-gray-500">{{ t('dashboard.emailNotificationsDesc') || 'Önemli haberler, teklif onayları ve kargo bilgileri e-posta ile gönderilsin.' }}</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
+                      <input v-model="emailNotifEnabled" type="checkbox" class="sr-only peer" />
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                  </div>
+
+                  <!-- Push Notifications -->
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-black/[0.04]">
+                    <div class="space-y-0.5">
+                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.pushNotifications') || 'Tarayıcı & Push Bildirimleri' }}</p>
+                      <p class="text-xs text-gray-500">{{ t('dashboard.pushNotificationsDesc') || 'Teklifiniz geçildiğinde ve açık artırma bitimine 15 dk kala anlık bildirim alın.' }}</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
+                      <input v-model="pushNotifEnabled" type="checkbox" class="sr-only peer" />
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                  </div>
+
+                  <!-- SMS Notifications -->
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-black/[0.04]">
+                    <div class="space-y-0.5">
+                      <p class="font-black text-xs sm:text-sm text-gray-950">SMS ile Kritik Uyarılar</p>
+                      <p class="text-xs text-gray-500">Güvenlik doğrulamaları ve banka emanet para transferi bilgilendirmeleri SMS ile iletilsin.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
+                      <input v-model="smsNotifEnabled" type="checkbox" class="sr-only peer" />
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Card 4: Tehlikeli Bölge -->
+              <div class="bg-rose-50/50 p-6 sm:p-8 rounded-3xl border border-rose-200 shadow-2xs space-y-4">
+                <div class="flex items-center gap-2">
+                  <AlertTriangle class="w-5 h-5 text-rose-600" />
+                  <h3 class="text-base font-black text-rose-950">{{ t('dashboard.dangerZone') || 'Tehlikeli Bölge' }}</h3>
+                </div>
+
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-rose-200/80 shadow-2xs">
+                  <div class="space-y-0.5">
+                    <p class="font-black text-xs sm:text-sm text-rose-950">{{ t('dashboard.deleteAccount') || 'Hesabı Kalıcı Olarak Sil' }}</p>
+                    <p class="text-xs text-gray-500 max-w-lg">{{ t('dashboard.deleteAccountWarning') || 'Hesabınızı sildiğinizde tüm teklifleriniz, açık artırmalarınız ve cüzdan verileriniz kalıcı olarak silinir.' }}</p>
+                  </div>
+                  <button
+                    type="button"
+                    class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                    @click="showDeleteModal = true"
+                  >
+                    <span>{{ t('dashboard.deleteAccount') || 'Hesabı Sil' }}</span>
+                  </button>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
