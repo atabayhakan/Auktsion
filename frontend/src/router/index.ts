@@ -71,7 +71,7 @@ const routes: RouteRecordRaw[] = [
     name: 'Sell',
     component: SellPage,
     alias: ['/sat', '/ilan-ver', '/сатуу', '/продать'],
-    meta: { titleKey: 'sell.title', requiresAuth: true }
+    meta: { titleKey: 'sell.title', requiresAuth: false }
   },
   {
     path: '/dashboard/:tab?',

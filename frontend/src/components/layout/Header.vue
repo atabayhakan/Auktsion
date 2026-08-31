@@ -268,11 +268,12 @@ watch(() => userStore.isAuthenticated, (val) => {
           </button>
 
           <!-- Sell / Lot Sat Button -->
-          <RouterLink to="/sell" class="hidden sm:inline-flex">
-            <button class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs shadow-sm hover:shadow hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
-              <PlusCircle class="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>{{ t('nav.sell') }}</span>
-            </button>
+          <RouterLink 
+            to="/sell" 
+            class="hidden sm:inline-flex px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs shadow-sm hover:shadow hover:scale-[1.02] active:scale-95 transition-all items-center gap-1.5 cursor-pointer whitespace-nowrap"
+          >
+            <PlusCircle class="w-3.5 h-3.5 stroke-[2.5]" />
+            <span>{{ t('nav.sell') || 'Lot Sat' }}</span>
           </RouterLink>
 
           <!-- Language Selector Dropdown -->
@@ -439,11 +440,13 @@ watch(() => userStore.isAuthenticated, (val) => {
       <div class="h-[calc(100vh-4rem)] max-h-screen w-4/5 max-w-sm bg-white border-r border-black/10 p-5 sm:p-6 flex flex-col justify-between shadow-2xl overflow-y-auto custom-scrollbar" @click.stop>
         <div class="space-y-4">
           <!-- Mobile Sell Action -->
-          <RouterLink to="/sell" class="block" @click="closeMobileMenu">
-            <button class="w-full py-3 rounded-2xl bg-primary text-gray-950 font-black text-xs shadow-md flex items-center justify-center gap-2 cursor-pointer">
-              <PlusCircle class="w-4 h-4" />
-              <span>{{ t('nav.sell') }}</span>
-            </button>
+          <RouterLink 
+            to="/sell" 
+            class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs shadow-md flex items-center justify-center gap-2 cursor-pointer" 
+            @click="closeMobileMenu"
+          >
+            <PlusCircle class="w-4 h-4" />
+            <span>{{ t('nav.sell') || 'Lot Sat' }}</span>
           </RouterLink>
 
           <!-- User Card / Auth Buttons -->
