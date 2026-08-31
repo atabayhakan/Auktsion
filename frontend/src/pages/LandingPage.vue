@@ -3,9 +3,10 @@ import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import {
   ArrowRight, ShieldCheck, CreditCard, Store,
-  ChevronRight, Sparkles,
+  ChevronRight, Sparkles, PlusCircle,
   Car, Home as HomeIcon, Smartphone, Flame,
-  Grid
+  Grid, Zap, CheckCircle2, Lock, HelpCircle, Layers,
+  Wheat, Gem, Palette, Tractor, Building2
 } from 'lucide-vue-next'
 import AuctionCard from '@/components/auction/AuctionCard.vue'
 import CategoryCard from '@/components/auction/CategoryCard.vue'
@@ -29,7 +30,6 @@ const { formatMoney } = currency
 const { t, locale } = useI18n()
 const activeFilterTab = ref('all')
 
-// Ensure auctions always has fallback data
 const allAuctions = computed(() => {
   if (auctionStore.auctions && auctionStore.auctions.length > 0) {
     return auctionStore.auctions
@@ -37,9 +37,6 @@ const allAuctions = computed(() => {
   return mockAuctions
 })
 
-// Photo-based category tiles — real taxonomy only; urgency/promo badges live
-// in the dedicated Discovery rails (Section 3) instead of being interleaved
-// here. Same localization pattern as CategoriesPage.vue / MegaMenu.vue.
 const categoryTiles = computed(() => {
   const currentLang = (locale.value as 'ky' | 'ru' | 'tr') || 'ky'
   return platformCategories.map(cat => ({
@@ -53,12 +50,12 @@ const categoryTiles = computed(() => {
 
 // Tab filters for top immediate grid
 const filterTabs = computed(() => [
-  { id: 'all', label: t('home.tabAll'), icon: Grid },
-  { id: 'livestock', label: t('home.tabLivestock'), icon: Store },
-  { id: 'vehicles', label: t('home.tabVehicles'), icon: Car },
-  { id: 'real-estate', label: t('home.tabRealEstate'), icon: HomeIcon },
-  { id: 'electronics', label: t('home.tabElectronics'), icon: Smartphone },
-  { id: 'ending_soon', label: t('home.tabEndingSoon'), icon: Flame },
+  { id: 'all', label: t('home.tabAll') || 'Tümü', icon: Grid },
+  { id: 'livestock', label: t('home.tabLivestock') || '🐄 Hayvan Pazarı', icon: Store },
+  { id: 'vehicles', label: t('home.tabVehicles') || '🚗 Araçlar', icon: Car },
+  { id: 'real-estate', label: t('home.tabRealEstate') || '🏢 Dordoy & Emlak', icon: HomeIcon },
+  { id: 'electronics', label: t('home.tabElectronics') || '📱 Elektronik', icon: Smartphone },
+  { id: 'ending_soon', label: t('home.tabEndingSoon') || '🔥 Yakında Bitiyor', icon: Flame },
 ])
 
 const filteredPopularAuctions = computed(() => {
@@ -81,31 +78,22 @@ const filteredPopularAuctions = computed(() => {
   return list.slice(0, 8)
 })
 
-// Featured hero auctions — electronics & vehicles only, the categories with
-// the broadest general appeal; livestock has its own shelf further down the
-// page instead of taking over the hero spotlight.
 const featuredAuctions = computed(() =>
   allAuctions.value.filter(a => a.category === 'electronics' || a.category === 'vehicles').slice(0, 4)
 )
 
-// Livestock shelf
 const livestockAuctions = computed(() =>
   allAuctions.value.filter(a => a.category === 'livestock').slice(0, 4)
 )
 
-// Vehicle shelf
 const vehicleAuctions = computed(() =>
   allAuctions.value.filter(a => a.category === 'vehicles').slice(0, 4)
 )
 
-// Real estate & Dordoy shelf
 const realEstateAuctions = computed(() =>
   allAuctions.value.filter(a => a.category === 'real-estate').slice(0, 4)
 )
 
-// Discovery rails — real data only (store getters), no fabricated
-// trending/watch-count signals. Falls back to sorting allAuctions directly
-// when the store hasn't loaded yet, mirroring the allAuctions fallback above.
 const endingSoonRail = computed(() =>
   (auctionStore.auctions.length > 0 ? auctionStore.endingSoonAuctions : allAuctions.value).slice(0, 4)
 )
@@ -116,28 +104,45 @@ const mostActiveRail = computed(() =>
   (auctionStore.auctions.length > 0 ? auctionStore.mostActiveAuctions : allAuctions.value).slice(0, 4)
 )
 
-// Secondary promo tiles (campaign strip below the hero carousel) — the old
-// "flash auction" tile was dropped: it duplicated the new Ending Soon rail
-// (Section 3) exactly. The concierge tile is a standalone service pitch, not
-// a data signal, so it stays.
+// 3-Column Feature Promo Strip
 const promoTiles = computed(() => [
   {
     id: 'concierge',
-    label: t('home.conciergeLabel'),
-    title: t('home.conciergeTitle'),
-    desc: t('home.conciergeDesc'),
+    label: t('home.conciergeLabel') || 'PREMİUM HİZMET',
+    title: t('home.conciergeTitle') || 'iTorgo Konsiyerj',
+    desc: t('home.conciergeDesc') || 'Uzmanlarımız sizin için ilan oluştursun ve en yüksek fiyata satsın.',
     icon: Sparkles,
+    link: '/sell',
+    tone: 'bg-amber-500/[0.06] border-amber-500/20 hover:border-amber-500/40',
+    iconTone: 'text-amber-800 bg-amber-500/15',
+  },
+  {
+    id: 'escrow',
+    label: 'GÜVENLİ TİCARET',
+    title: '%100 Banka Emaneti',
+    desc: 'Teslimatı onaylayana kadar paranız banka emanetinde (Escrow) bloke edilir.',
+    icon: ShieldCheck,
     link: '/how-it-works',
-    tone: 'bg-primary/[0.06] border-primary/15',
-    iconTone: 'text-primary bg-primary/10',
+    tone: 'bg-emerald-500/[0.06] border-emerald-500/20 hover:border-emerald-500/40',
+    iconTone: 'text-emerald-800 bg-emerald-500/15',
+  },
+  {
+    id: 'instant-pay',
+    label: 'ANINDA ÇEKİM',
+    title: 'MBank & Optima QR',
+    desc: '5 saniyede komisyonsuz ödeme ve doğrudan banka hesabına bakiye çekimi.',
+    icon: Zap,
+    link: '/how-it-works',
+    tone: 'bg-blue-500/[0.06] border-blue-500/20 hover:border-blue-500/40',
+    iconTone: 'text-blue-800 bg-blue-500/15',
   },
 ])
 
 // Bank partners
 const bankPartners = computed(() => [
-  { name: 'MBank', badge: 'QR & MBank Pay', desc: t('home.escrowBankMbankDesc'), icon: Smartphone, color: 'text-emerald-600' },
-  { name: 'DemirBank Escrow', badge: t('home.escrowBankDemirBadge'), desc: t('home.escrowBankDemirDesc'), icon: ShieldCheck, color: 'text-blue-600' },
-  { name: 'Optima Bank', badge: '3D Secure 2.0', desc: t('home.escrowBankOptimaDesc'), icon: CreditCard, color: 'text-red-600' },
+  { name: 'MBank', badge: 'QR & MBank Pay', desc: t('home.escrowBankMbankDesc') || 'Ulusal ödeme sistemi ile %0 komisyonla anında ödeme.', icon: Smartphone, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  { name: 'DemirBank Escrow', badge: t('home.escrowBankDemirBadge') || 'Emanet Güvencesi', desc: t('home.escrowBankDemirDesc') || 'Ürünü görüp teslim alana kadar paranız bankada güvenle saklanır.', icon: ShieldCheck, color: 'text-blue-600', bg: 'bg-blue-50' },
+  { name: 'Optima Bank', badge: '3D Secure 2.0', desc: t('home.escrowBankOptimaDesc') || 'Kırgızistan\'daki tüm Visa/Mastercard ve Elkart kartları desteklenir.', icon: CreditCard, color: 'text-rose-600', bg: 'bg-rose-50' },
 ])
 
 onMounted(async () => {
@@ -152,12 +157,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-text-primary font-sans pt-28 sm:pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto space-y-10 lg:space-y-14">
+  <div class="min-h-screen bg-background text-text-primary font-sans pt-24 sm:pt-28 pb-20 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto space-y-10 lg:space-y-12">
 
       <!-- ================================================================
-           SECTION 1: CATEGORY TILES (photo-based, replaces the old
-           emoji-circle "quick stories" row)
+           SECTION 1: CATEGORY TILES (Photo Cards)
            ================================================================ -->
       <section aria-label="Category Tiles">
         <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
@@ -170,62 +174,57 @@ onMounted(async () => {
       </section>
 
       <!-- ================================================================
-           SECTION 2: HERO BANNER CAROUSEL + PROMO TILES
+           SECTION 2: HERO BANNER CAROUSEL + 3-COLUMN PROMO STRIP
            ================================================================ -->
-      <section aria-labelledby="hero-title" class="relative space-y-4">
+      <section aria-labelledby="hero-title" class="relative space-y-5">
         <h1 id="hero-title" class="sr-only">{{ t('home.heroTitle') }}</h1>
 
         <HeroBannerCarousel :featured-auctions="featuredAuctions" />
 
-        <!-- Promo Tile Strip -->
-        <div class="grid grid-cols-1 sm:max-w-md gap-4">
+        <!-- 3-Column Promo Strip -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <RouterLink
             v-for="tile in promoTiles"
             :key="tile.id"
             :to="tile.link"
-            class="group rounded-2xl border p-5 flex items-center gap-4 transition-all hover:shadow-md hover:-translate-y-0.5"
+            class="group rounded-3xl border p-5 flex items-center gap-4 transition-all hover:shadow-md hover:-translate-y-0.5 shadow-2xs"
             :class="tile.tone"
           >
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" :class="tile.iconTone">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-2xs" :class="tile.iconTone">
               <component :is="tile.icon" class="w-6 h-6" />
             </div>
             <div class="flex-1 min-w-0">
-              <div class="text-[10px] font-bold tracking-wider text-text-muted">{{ tile.label }}</div>
-              <div class="text-sm font-bold text-text-primary">{{ tile.title }}</div>
-              <div class="text-xs text-text-secondary line-clamp-1">{{ tile.desc }}</div>
+              <div class="text-[10px] font-black tracking-wider uppercase opacity-70">{{ tile.label }}</div>
+              <div class="text-sm font-extrabold text-gray-950 truncate">{{ tile.title }}</div>
+              <div class="text-xs text-gray-500 line-clamp-1 mt-0.5">{{ tile.desc }}</div>
             </div>
-            <ChevronRight class="w-4 h-4 text-text-muted group-hover:text-primary group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+            <ChevronRight class="w-4 h-4 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-all flex-shrink-0" />
           </RouterLink>
         </div>
       </section>
 
       <!-- ================================================================
-           SECTION 3: LIVE ACTIVITY — real cross-auction bid feed (GET
-           /api/activity/recent) plus live bid.placed WebSocket pushes
-           (see stores/activity.ts, composables/useEcho.ts). Hidden entirely
-           when empty rather than showing a fabricated "quiet" state.
+           SECTION 3: LIVE ACTIVITY (Only when activity exists)
            ================================================================ -->
-      <section aria-labelledby="rail-live-title" class="space-y-5">
+      <section v-if="activityStore.recentActivity?.length" aria-labelledby="rail-live-title" class="space-y-4">
         <div class="flex items-center gap-2.5">
           <span class="relative flex h-2.5 w-2.5" aria-hidden="true">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75" />
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary" />
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75" />
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500" />
           </span>
-          <h3 id="rail-live-title" class="text-xl font-extrabold text-text-primary">{{ t('discovery.liveActivity.title') }}</h3>
+          <h3 id="rail-live-title" class="text-xl font-extrabold text-gray-950">{{ t('discovery.liveActivity.title') }}</h3>
         </div>
         <LiveActivityFeed />
       </section>
 
       <!-- ================================================================
-           SECTION 4: DISCOVERY RAILS — real data only (ending soon / newest /
-           most active by bid count), replacing the promo badges that used to
-           live in the category-icon row above.
+           SECTION 4: DISCOVERY RAILS (Ending Soon, Newest, Most Active)
            ================================================================ -->
       <section v-if="endingSoonRail.length > 0" class="space-y-5" aria-labelledby="rail-ending-soon-title">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2.5">
             <span class="text-2xl">🔥</span>
-            <h3 id="rail-ending-soon-title" class="text-xl font-extrabold text-text-primary">{{ t('discovery.endingSoon.title') }}</h3>
+            <h3 id="rail-ending-soon-title" class="text-xl font-black text-gray-950">{{ t('discovery.endingSoon.title') }}</h3>
           </div>
           <RouterLink to="/auctions?sort=ending_soon" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
             <span>{{ t('discovery.endingSoon.viewAll') }}</span>
@@ -241,7 +240,7 @@ onMounted(async () => {
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2.5">
             <span class="text-2xl">✨</span>
-            <h3 id="rail-newest-title" class="text-xl font-extrabold text-text-primary">{{ t('discovery.newest.title') }}</h3>
+            <h3 id="rail-newest-title" class="text-xl font-black text-gray-950">{{ t('discovery.newest.title') }}</h3>
           </div>
           <RouterLink to="/auctions?sort=newest" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
             <span>{{ t('discovery.newest.viewAll') }}</span>
@@ -253,39 +252,8 @@ onMounted(async () => {
         </div>
       </section>
 
-      <section v-if="mostActiveRail.length > 0" class="space-y-5" aria-labelledby="rail-most-active-title">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <span class="text-2xl">📈</span>
-            <h3 id="rail-most-active-title" class="text-xl font-extrabold text-text-primary">{{ t('discovery.mostActive.title') }}</h3>
-          </div>
-          <RouterLink to="/auctions?sort=most_bids" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-            <span>{{ t('discovery.mostActive.viewAll') }}</span>
-            <ChevronRight class="w-4 h-4" />
-          </RouterLink>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <AuctionCard v-for="auction in mostActiveRail" :key="auction.id" :auction="auction as any" />
-        </div>
-      </section>
-
       <!-- ================================================================
-           SECTION 5: FOR YOU — derived entirely from the watchlist (see
-           GET /api/user/recommendations). Hidden for logged-out users and
-           for anyone not watching anything yet — never a generic fallback.
-           ================================================================ -->
-      <section v-if="recommendationsStore.items.length > 0" class="space-y-5" aria-labelledby="rail-for-you-title">
-        <div class="flex items-center gap-2.5">
-          <span class="text-2xl">💜</span>
-          <h3 id="rail-for-you-title" class="text-xl font-extrabold text-text-primary">{{ t('discovery.forYou.title') }}</h3>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <AuctionCard v-for="auction in recommendationsStore.items" :key="auction.id" :auction="auction as any" />
-        </div>
-      </section>
-
-      <!-- ================================================================
-           SECTION 6: IMMEDIATE LIVE LOTS (Explore Directly)
+           SECTION 5: POPULAR / LIVE LOTS & ONBOARDING HUB
            ================================================================ -->
       <section class="space-y-6" aria-labelledby="live-lots-title">
 
@@ -293,14 +261,14 @@ onMounted(async () => {
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div class="flex items-center gap-2 mb-1">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-error/10 text-error border border-error/20">
-                <span class="w-1.5 h-1.5 rounded-full bg-error animate-ping" />
-                {{ t('home.heroLiveBadge') }}
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-50 text-rose-600 border border-rose-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
+                {{ t('home.heroLiveBadge') || 'CANLI YAYIN' }}
               </span>
-              <span class="text-xs text-text-muted font-medium">{{ t('home.heroLiveSubtitle') }}</span>
+              <span class="text-xs text-gray-500 font-medium">{{ t('home.heroLiveSubtitle') || 'Kırgızistan genelindeki tüm aktif açık artırmalar' }}</span>
             </div>
-            <h2 id="live-lots-title" class="font-extrabold text-2xl sm:text-3xl text-text-primary">
-              {{ t('home.popularTitle') }}
+            <h2 id="live-lots-title" class="font-black text-2xl sm:text-3xl text-gray-950 tracking-tight">
+              {{ t('home.popularTitle') || 'Popüler Lotlar' }}
             </h2>
           </div>
 
@@ -311,8 +279,8 @@ onMounted(async () => {
               :key="tab.id"
               class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer"
               :class="activeFilterTab === tab.id
-                ? 'bg-primary text-text-primary shadow-md'
-                : 'bg-white border border-border text-text-secondary hover:bg-black/5'"
+                ? 'bg-primary text-gray-950 font-black shadow-sm ring-2 ring-primary/20'
+                : 'bg-white border border-black/10 text-gray-600 hover:bg-slate-50 hover:text-gray-950'"
               @click="activeFilterTab = tab.id"
             >
               <span>{{ tab.label }}</span>
@@ -320,8 +288,8 @@ onMounted(async () => {
           </div>
         </div>
 
-        <!-- Lots Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Lots Grid (When lots exist) -->
+        <div v-if="filteredPopularAuctions.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           <AuctionCard
             v-for="auction in filteredPopularAuctions"
             :key="auction.id"
@@ -329,13 +297,72 @@ onMounted(async () => {
           />
         </div>
 
-        <!-- View All Link -->
-        <div class="text-center pt-2">
+        <!-- Zero-Listings Engaging Onboarding & Category Explorer (When 0 listings) -->
+        <div v-else class="bg-gradient-to-br from-slate-50 via-white to-amber-500/[0.04] border border-black/[0.08] rounded-3xl p-8 sm:p-12 text-center space-y-8 shadow-2xs">
+          <div class="max-w-2xl mx-auto space-y-3">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-900 text-xs font-black">
+              <Sparkles class="w-4 h-4 text-amber-600" />
+              <span>İlk Ay %0 Komisyon Fırsatı</span>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">
+              Henüz Bu Kategoride Aktif İlan Bulunmuyor
+            </h3>
+            <p class="text-xs sm:text-sm text-gray-500 leading-relaxed max-w-lg mx-auto">
+              Kırgızistan genelinde binlerce alıcı yeni ilanları bekliyor. İlk açık artırmanızı komisyonsuz başlatın, dakikalar içinde en yüksek teklifi alın.
+            </p>
+            <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
+              <RouterLink
+                to="/sell"
+                class="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer hover:scale-[1.02]"
+              >
+                <PlusCircle class="w-4 h-4" />
+                <span>+ Hemen İlk İlanı Siz Verin</span>
+              </RouterLink>
+              <RouterLink
+                to="/how-it-works"
+                class="px-6 py-3 rounded-2xl bg-white border border-black/10 text-gray-800 font-bold text-xs sm:text-sm hover:bg-slate-50 transition-all flex items-center gap-2"
+              >
+                <HelpCircle class="w-4 h-4 text-gray-500" />
+                <span>Açık Artırma Nasıl Çalışır?</span>
+              </RouterLink>
+            </div>
+          </div>
+
+          <!-- 3-Step Quick Guide -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left pt-6 border-t border-black/[0.06]">
+            <div class="p-5 rounded-2xl bg-white border border-black/[0.05] space-y-2 shadow-2xs">
+              <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-black text-sm">
+                1
+              </div>
+              <h4 class="text-sm font-black text-gray-950">İlanınızı Oluşturun</h4>
+              <p class="text-xs text-gray-500 leading-relaxed">Yapay zeka asistanımızla fotoğrafları yükleyin, başlangıç fiyatını belirleyin.</p>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-white border border-black/[0.05] space-y-2 shadow-2xs">
+              <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-black text-sm">
+                2
+              </div>
+              <h4 class="text-sm font-black text-gray-950">Canlı Teklifleri Toplayın</h4>
+              <p class="text-xs text-gray-500 leading-relaxed">Gerçek zamanlı WebSocket ile alıcıların rekabetini anlık izleyin.</p>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-white border border-black/[0.05] space-y-2 shadow-2xs">
+              <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black text-sm">
+                3
+              </div>
+              <h4 class="text-sm font-black text-gray-950">Escrow ile Güvenli Ödeme</h4>
+              <p class="text-xs text-gray-500 leading-relaxed">Teslimat onaylandığında kazandığınız tutar anında banka hesabınıza geçer.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- View All Link (if auctions exist) -->
+        <div v-if="filteredPopularAuctions.length > 0" class="text-center pt-2">
           <RouterLink
             to="/auctions"
-            class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-border text-text-primary font-bold text-sm hover:bg-black/5 transition-all shadow-xs"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-black/10 text-gray-900 font-extrabold text-xs sm:text-sm hover:bg-slate-50 transition-all shadow-2xs"
           >
-            <span>{{ t('home.allLotsCount', { n: allAuctions.length }) }}</span>
+            <span>{{ t('home.allLotsCount', { n: allAuctions.length }) || 'Tüm Lotları Gör' }}</span>
             <ArrowRight class="w-4 h-4" />
           </RouterLink>
         </div>
@@ -343,15 +370,15 @@ onMounted(async () => {
       </section>
 
       <!-- ================================================================
-           SECTION 7: LIVESTOCK (Мал Базары) SHELF
+           SECTION 6: CATEGORY SHELVES (When auctions exist)
            ================================================================ -->
       <section v-if="livestockAuctions.length > 0" class="space-y-6">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2.5">
             <span class="text-2xl">🐎</span>
             <div>
-              <h3 class="text-xl font-extrabold text-text-primary">{{ t('home.shelfLivestockTitle') }}</h3>
-              <p class="text-xs text-text-secondary">{{ t('home.shelfLivestockDesc') }}</p>
+              <h3 class="text-xl font-extrabold text-gray-950">{{ t('home.shelfLivestockTitle') }}</h3>
+              <p class="text-xs text-gray-500">{{ t('home.shelfLivestockDesc') }}</p>
             </div>
           </div>
           <RouterLink to="/auctions?category=livestock" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
@@ -359,26 +386,18 @@ onMounted(async () => {
             <ChevronRight class="w-4 h-4" />
           </RouterLink>
         </div>
-
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <AuctionCard
-            v-for="auction in livestockAuctions"
-            :key="auction.id"
-            :auction="auction as any"
-          />
+          <AuctionCard v-for="auction in livestockAuctions" :key="auction.id" :auction="auction as any" />
         </div>
       </section>
 
-      <!-- ================================================================
-           SECTION 8: VEHICLES (Автоунаалар) SHELF
-           ================================================================ -->
       <section v-if="vehicleAuctions.length > 0" class="space-y-6">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2.5">
             <span class="text-2xl">🚗</span>
             <div>
-              <h3 class="text-xl font-extrabold text-text-primary">{{ t('home.shelfVehiclesTitle') }}</h3>
-              <p class="text-xs text-text-secondary">{{ t('home.shelfVehiclesDesc') }}</p>
+              <h3 class="text-xl font-extrabold text-gray-950">{{ t('home.shelfVehiclesTitle') }}</h3>
+              <p class="text-xs text-gray-500">{{ t('home.shelfVehiclesDesc') }}</p>
             </div>
           </div>
           <RouterLink to="/auctions?category=vehicles" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
@@ -386,116 +405,78 @@ onMounted(async () => {
             <ChevronRight class="w-4 h-4" />
           </RouterLink>
         </div>
-
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <AuctionCard
-            v-for="auction in vehicleAuctions"
-            :key="auction.id"
-            :auction="auction as any"
-          />
+          <AuctionCard v-for="auction in vehicleAuctions" :key="auction.id" :auction="auction as any" />
         </div>
       </section>
 
       <!-- ================================================================
-           SECTION 9: REAL ESTATE & DORDOY SHOPS SHELF
+           SECTION 7: UNIFIED BANK ESCROW & TRUST COMPLIANCE HUB
            ================================================================ -->
-      <section v-if="realEstateAuctions.length > 0" class="space-y-6">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <span class="text-2xl">🏢</span>
-            <div>
-              <h3 class="text-xl font-extrabold text-text-primary">{{ t('home.shelfRealEstateTitle') }}</h3>
-              <p class="text-xs text-text-secondary">{{ t('home.shelfRealEstateDesc') }}</p>
-            </div>
+      <section class="bg-white p-6 sm:p-10 rounded-3xl border border-black/[0.08] shadow-2xs space-y-8">
+        
+        <!-- Header -->
+        <div class="text-center max-w-2xl mx-auto space-y-2">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-black border border-emerald-200">
+            <ShieldCheck class="w-4 h-4 text-emerald-600" />
+            <span>{{ t('home.escrowBadge') || '%100 Banka Emanet (Escrow) Güvencesi' }}</span>
           </div>
-          <RouterLink to="/auctions?category=real-estate" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-            <span>{{ t('home.shelfViewAll') }}</span>
-            <ChevronRight class="w-4 h-4" />
-          </RouterLink>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <AuctionCard
-            v-for="auction in realEstateAuctions"
-            :key="auction.id"
-            :auction="auction as any"
-          />
-        </div>
-      </section>
-
-      <!-- ================================================================
-           SECTION 10: BANK ESCROW & SECURITY GUARANTEE
-           ================================================================ -->
-      <section class="glass p-6 sm:p-8 rounded-3xl shadow-sm space-y-6">
-        <div class="text-center max-w-2xl mx-auto space-y-1.5">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success text-xs font-bold border border-success/20">
-            <ShieldCheck class="w-4 h-4" />
-            <span>{{ t('home.escrowBadge') }}</span>
-          </div>
-          <h3 class="text-xl sm:text-2xl font-extrabold text-text-primary">
-            {{ t('home.escrowTitle') }}
+          <h3 class="text-xl sm:text-3xl font-black text-gray-950 tracking-tight">
+            {{ t('home.escrowTitle') || 'Kırgızistan\'ın Güvenilir Banka Emanetli Açık Artırma Platformu' }}
           </h3>
-          <p class="text-xs sm:text-sm text-text-secondary">
-            {{ t('home.escrowSubtitle') }}
+          <p class="text-xs sm:text-sm text-gray-500 leading-relaxed">
+            {{ t('home.escrowSubtitle') || 'Paranız ve satıcının ürünü, teslimat onaylanana kadar güvenli banka emanet hesabında korunur.' }}
           </p>
         </div>
 
+        <!-- 3 Bank Integration Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           <div
             v-for="bank in bankPartners"
             :key="bank.name"
-            class="p-5 rounded-2xl bg-black/[0.02] border border-black/[0.06] space-y-2.5 hover:bg-black/[0.04] transition-colors"
+            class="p-6 rounded-3xl bg-slate-50/80 border border-black/[0.05] space-y-3 hover:bg-slate-100/80 transition-all shadow-2xs"
           >
             <div class="flex items-center justify-between">
-              <div class="w-9 h-9 rounded-xl bg-white border border-border flex items-center justify-center shadow-xs" :class="bank.color">
-                <component :is="bank.icon" class="w-4 h-4" />
+              <div class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-2xs border border-black/5" :class="[bank.bg, bank.color]">
+                <component :is="bank.icon" class="w-5 h-5" />
               </div>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+              <span class="text-[11px] font-black px-2.5 py-1 rounded-full bg-white text-gray-800 border border-black/5 shadow-2xs">
                 {{ bank.badge }}
               </span>
             </div>
-            <h4 class="text-sm font-bold text-text-primary">{{ bank.name }}</h4>
-            <p class="text-xs text-text-secondary leading-relaxed">{{ bank.desc }}</p>
+            <h4 class="text-base font-black text-gray-950">{{ bank.name }}</h4>
+            <p class="text-xs text-gray-500 leading-relaxed">{{ bank.desc }}</p>
           </div>
-        </div>
-      </section>
-
-      <!-- ================================================================
-           SECTION 11: SEO KNOWLEDGE & MARKET GUIDE
-           ================================================================ -->
-      <section class="mt-8 pt-8 border-t border-black/[0.08] space-y-6 bg-black/[0.015] rounded-3xl p-6 sm:p-8">
-        <div class="space-y-2 max-w-4xl">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-extrabold text-text-primary">
-            <ShieldCheck class="w-3.5 h-3.5 text-primary" />
-            <span>{{ t('home.escrowBadge') }}</span>
-          </div>
-          <h2 class="text-xl sm:text-2xl font-black text-text-primary tracking-tight">
-            {{ t('home.seoTitle') }}
-          </h2>
-          <p class="text-xs sm:text-sm text-text-secondary leading-relaxed">
-            {{ t('home.seoDesc1') }}
-          </p>
         </div>
 
-        <!-- 4-Pillar Pillars Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t border-black/[0.06]">
-          <div class="space-y-1.5 p-4 rounded-2xl bg-white/80 border border-black/[0.06] shadow-xs">
-            <h3 class="text-sm font-extrabold text-text-primary">{{ t('home.seoCol1Title') }}</h3>
-            <p class="text-xs text-text-muted leading-relaxed">{{ t('home.seoCol1Desc') }}</p>
+        <!-- 4 Security & Ecosystem Pillars -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t border-black/[0.06]">
+          <div class="space-y-1.5 p-4 rounded-2xl bg-slate-50/50 border border-black/[0.04]">
+            <h4 class="text-xs font-black text-gray-950 flex items-center gap-1.5">
+              <span>🔒</span> {{ t('home.seoCol1Title') || '%100 Banka Emanet Güvencesi' }}
+            </h4>
+            <p class="text-[11px] text-gray-500 leading-relaxed">{{ t('home.seoCol1Desc') || 'Ödeme, ürün teslim alınıp onaylanana kadar güvenli banka emanetinde saklanır.' }}</p>
           </div>
-          <div class="space-y-1.5 p-4 rounded-2xl bg-white/80 border border-black/[0.06] shadow-xs">
-            <h3 class="text-sm font-extrabold text-text-primary">{{ t('home.seoCol2Title') }}</h3>
-            <p class="text-xs text-text-muted leading-relaxed">{{ t('home.seoCol2Desc') }}</p>
+          <div class="space-y-1.5 p-4 rounded-2xl bg-slate-50/50 border border-black/[0.04]">
+            <h4 class="text-xs font-black text-gray-950 flex items-center gap-1.5">
+              <span>⚡</span> {{ t('home.seoCol2Title') || 'MBank ve Optima ile Anında Ödeme' }}
+            </h4>
+            <p class="text-[11px] text-gray-500 leading-relaxed">{{ t('home.seoCol2Desc') || 'MBank QR ve Optima Bank ile KGS para biriminde anında ve masrafsız işlem kolaylığı.' }}</p>
           </div>
-          <div class="space-y-1.5 p-4 rounded-2xl bg-white/80 border border-black/[0.06] shadow-xs">
-            <h3 class="text-sm font-extrabold text-text-primary">{{ t('home.seoCol3Title') }}</h3>
-            <p class="text-xs text-text-muted leading-relaxed">{{ t('home.seoCol3Desc') }}</p>
+          <div class="space-y-1.5 p-4 rounded-2xl bg-slate-50/50 border border-black/[0.04]">
+            <h4 class="text-xs font-black text-gray-950 flex items-center gap-1.5">
+              <span>🎯</span> {{ t('home.seoCol3Title') || 'Şeffaf ve Gerçek Zamanlı Teklifler' }}
+            </h4>
+            <p class="text-[11px] text-gray-500 leading-relaxed">{{ t('home.seoCol3Desc') || 'WebSocket altyapısıyla her teklif anlık güncellenir; botlar veya gizli komisyonlar yoktur.' }}</p>
           </div>
-          <div class="space-y-1.5 p-4 rounded-2xl bg-white/80 border border-black/[0.06] shadow-xs">
-            <h3 class="text-sm font-extrabold text-text-primary">{{ t('home.seoCol4Title') }}</h3>
-            <p class="text-xs text-text-muted leading-relaxed">{{ t('home.seoCol4Desc') }}</p>
+          <div class="space-y-1.5 p-4 rounded-2xl bg-slate-50/50 border border-black/[0.04]">
+            <h4 class="text-xs font-black text-gray-950 flex items-center gap-1.5">
+              <span>🐄</span> {{ t('home.seoCol4Title') || 'Dordoy ve Canlı Hayvan Pazarı' }}
+            </h4>
+            <p class="text-[11px] text-gray-500 leading-relaxed">{{ t('home.seoCol4Desc') || 'Araşan koçlarından araçlara ve Dordoy toptan ürünlerine kadar zengin ilan yelpazesi.' }}</p>
           </div>
         </div>
+
       </section>
 
     </div>
