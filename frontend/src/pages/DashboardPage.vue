@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import {
-  LayoutDashboard, Store, CreditCard, Wallet, FileText, ShieldCheck, Settings, Heart, CheckCircle, Building2, Gauge
+  LayoutDashboard, Store, CreditCard, Wallet, FileText, ShieldCheck, Settings, Heart, CheckCircle, Building2, Gauge,
+  Lock, Clock, CheckCircle2
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
@@ -462,79 +463,179 @@ onMounted(async () => {
             </div>
 
             <!-- KYC Tab -->
-            <div v-else-if="activeTab === 'kyc'" class="animate-fade-in-up">
-              <div class="max-w-3xl">
-                <div class="flex items-center justify-between mb-8">
-                  <h2 class="text-2xl sm:text-3xl font-extrabold text-text-primary">{{ t('dashboard.kyc') }}</h2>
-                  <Badge :variant="userStore.kycStatus === 'verified' ? 'success' : 'warning'">
-                    {{ statusLabels.kyc(userStore.kycStatus) }}
-                  </Badge>
+            <div v-else-if="activeTab === 'kyc'" class="animate-fade-in-up space-y-8 max-w-4xl">
+              
+              <!-- Header & Trust Shield Banner -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-black/[0.06]">
+                <div>
+                  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-900 border border-amber-500/20 text-xs font-black mb-2 shadow-2xs">
+                    <ShieldCheck class="w-4 h-4 text-amber-600" />
+                    <span>{{ t('dashboard.kycTrustBadge') || 'Kırgızistan Ulusal Bankası AML/CFT Mevzuatına Uygun' }}</span>
+                  </div>
+                  <h2 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">{{ t('dashboard.kyc') }}</h2>
+                  <p class="text-xs sm:text-sm text-gray-500 mt-1 max-w-xl leading-relaxed">
+                    {{ t('dashboard.kycSubtitle') || 'Güvenli ve şeffaf açık artırma işlemleri için kimlik doğrulaması gerekmektedir. Bilgileriniz 256-bit SSL ile şifrelenir.' }}
+                  </p>
                 </div>
 
-                <!-- Stepper -->
+                <div class="shrink-0 flex items-center gap-2 self-start sm:self-center">
+                  <span class="text-xs font-bold text-gray-400">Durum:</span>
+                  <div 
+                    class="px-3.5 py-1.5 rounded-full text-xs font-extrabold flex items-center gap-1.5 shadow-2xs border"
+                    :class="userStore.kycStatus === 'verified'
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                      : userStore.kycStatus === 'pending'
+                        ? 'bg-amber-50 text-amber-800 border-amber-200 animate-pulse'
+                        : 'bg-slate-100 text-gray-700 border-slate-200'"
+                  >
+                    <CheckCircle2 v-if="userStore.kycStatus === 'verified'" class="w-3.5 h-3.5 text-emerald-600" />
+                    <Clock v-else class="w-3.5 h-3.5 text-amber-600" />
+                    <span>{{ statusLabels.kyc(userStore.kycStatus) }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Verified Celebratory Banner (If verified) -->
+              <div 
+                v-if="userStore.kycStatus === 'verified'" 
+                class="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-emerald-500/15 via-emerald-500/10 to-teal-500/15 border border-emerald-500/30 flex items-center gap-4 text-emerald-950 shadow-2xs"
+              >
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <ShieldCheck class="w-7 h-7" />
+                </div>
+                <div>
+                  <h4 class="font-extrabold text-sm sm:text-base text-emerald-900">
+                    {{ t('dashboard.kycVerifiedBadge') || 'Kimliğiniz Doğrulandı' }}
+                  </h4>
+                  <p class="text-xs text-emerald-800/80 mt-0.5 leading-relaxed">
+                    {{ t('dashboard.kycVerifiedBanner') || 'Tebrikler! Kimliğiniz %100 doğrulandı. Tüm açık artırma, para yatırma ve çekme limitleriniz aktif.' }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Stepper Card -->
+              <div class="bg-white p-6 sm:p-8 rounded-3xl border border-black/[0.08] shadow-2xs space-y-5">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">
+                    Doğrulama Aşamaları
+                  </h3>
+                  <span class="text-xs font-bold font-mono text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200">
+                    Aşama {{ currentKycStep + 1 }} / 5
+                  </span>
+                </div>
+
                 <Stepper
                   :model-value="currentKycStep"
                   :steps="kycSteps.map(s => ({ id: s.id, label: s.label, description: s.description }))"
-                  variant="vertical"
+                  variant="default"
                   show-descriptions
-                >
-                </Stepper>
+                />
+              </div>
 
-                <div class="mt-8 space-y-6">
-                  <Card variant="glass">
-                    <h3 class="text-base font-bold text-text-primary mb-4">{{ t('dashboard.kycRequiredDocs') }}</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <DocumentUpload
-                        :title="t('dashboard.kycPassport')"
-                        description="JPEG, PNG or PDF"
-                        accepted="image/*,.pdf"
-                        max-size="10MB"
-                        document-type="idFront"
-                        :uploaded="userStore.kycDocuments.idFront"
-                      />
-                      <DocumentUpload
-                        :title="t('dashboard.kycSelfieDoc')"
-                        description="JPEG or PNG"
-                        accepted="image/*"
-                        max-size="10MB"
-                        document-type="selfie"
-                        :uploaded="userStore.kycDocuments.selfie"
-                      />
-                      <DocumentUpload
-                        :title="t('dashboard.kycProofAddress')"
-                        description="JPEG, PNG or PDF"
-                        accepted="image/*,.pdf"
-                        max-size="10MB"
-                        document-type="proofOfAddress"
-                        :uploaded="userStore.kycDocuments.proofOfAddress"
-                      />
-                    </div>
-                    <div class="mt-6 pt-6 border-t border-black/10">
-                      <Button variant="primary" :disabled="userStore.kycStatus === 'verified'" @click="submitKyc">
-                        {{ t('dashboard.submitKyc') }}
-                      </Button>
-                    </div>
-                  </Card>
+              <!-- Required Documents Section -->
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h3 class="text-base font-extrabold text-gray-950">{{ t('dashboard.kycRequiredDocs') }}</h3>
+                    <p class="text-xs text-gray-500">Lütfen geçerli ve okunabilir belgelerinizi yükleyin</p>
+                  </div>
+                  <div class="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
+                    <Lock class="w-3.5 h-3.5 text-emerald-600" />
+                    <span>256-Bit SSL Korumalı</span>
+                  </div>
+                </div>
 
-                  <Card variant="glass">
-                    <h3 class="text-base font-bold text-text-primary mb-4">{{ t('dashboard.amlLimit') }}</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                      <div class="p-4 rounded-xl bg-black/[0.03]">
-                        <p class="text-text-muted">{{ t('dashboard.amlLimit') }}</p>
-                        <p class="text-text-primary font-medium mt-1">50 000 {{ t('common.currency') }}</p>
-                      </div>
-                      <div class="p-4 rounded-xl bg-black/[0.03]">
-                        <p class="text-text-muted">{{ t('dashboard.sanctionsCheck') }}</p>
-                        <p class="text-success font-medium mt-1">{{ t('dashboard.clean') }}</p>
-                      </div>
-                      <div class="p-4 rounded-xl bg-black/[0.03]">
-                        <p class="text-text-muted">{{ t('dashboard.pepStatus') }}</p>
-                        <p class="text-success font-medium mt-1">{{ t('dashboard.none') }}</p>
-                      </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <DocumentUpload
+                    :title="t('dashboard.kycPassport')"
+                    description="Ön & Arka Yüz"
+                    accepted="image/*,.pdf"
+                    max-size="10MB"
+                    document-type="idFront"
+                    :uploaded="userStore.kycDocuments.idFront"
+                  />
+                  <DocumentUpload
+                    :title="t('dashboard.kycSelfieDoc')"
+                    description="Net Yüz Fotoğrafı"
+                    accepted="image/*"
+                    max-size="10MB"
+                    document-type="selfie"
+                    :uploaded="userStore.kycDocuments.selfie"
+                  />
+                  <DocumentUpload
+                    :title="t('dashboard.kycProofAddress')"
+                    description="Fatura / İkametgah"
+                    accepted="image/*,.pdf"
+                    max-size="10MB"
+                    document-type="proofOfAddress"
+                    :uploaded="userStore.kycDocuments.proofOfAddress"
+                  />
+                </div>
+
+                <!-- Action & Submit Card -->
+                <div class="p-6 rounded-3xl bg-slate-50 border border-black/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xs">
+                  <div class="flex items-center gap-3 text-xs text-gray-600">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                      <Clock class="w-4 h-4" />
                     </div>
-                  </Card>
+                    <div>
+                      <p class="font-extrabold text-gray-900">{{ t('dashboard.kycReviewTime') || 'Ortalama inceleme süresi: 5 - 15 dakika' }}</p>
+                      <p class="text-gray-500 text-[11px]">Belgeler yüklendikten sonra doğrudan güvenlik ekibimize iletilir.</p>
+                    </div>
+                  </div>
+
+                  <Button 
+                    variant="primary" 
+                    class="w-full sm:w-auto px-8 py-3 rounded-2xl font-black text-xs sm:text-sm shadow-md hover:bg-primary-hover transition-all cursor-pointer"
+                    :disabled="userStore.kycStatus === 'verified'" 
+                    @click="submitKyc"
+                  >
+                    {{ userStore.kycStatus === 'verified' ? 'Doğrulandı ✓' : (t('dashboard.submitKyc') || 'Onaya Gönder') }}
+                  </Button>
                 </div>
               </div>
+
+              <!-- AML & Compliance Security Ribbon -->
+              <div class="bg-white p-6 sm:p-8 rounded-3xl border border-black/[0.08] shadow-2xs space-y-4">
+                <div class="flex items-center gap-2">
+                  <ShieldCheck class="w-5 h-5 text-emerald-600" />
+                  <h3 class="text-sm font-black text-gray-950 uppercase tracking-wider">
+                    AML & Yasal Uyumluluk Durumu
+                  </h3>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                  <div class="p-4 rounded-2xl bg-slate-50 border border-black/[0.04] space-y-1">
+                    <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">{{ t('dashboard.amlLimit') }}</p>
+                    <p class="text-sm font-black text-gray-900 font-mono">50.000 KGS</p>
+                    <p class="text-[10px] text-emerald-600 font-semibold">{{ t('dashboard.kycLimitVerified') || 'Doğrulama Sonrası: 5.000.000 KGS' }}</p>
+                  </div>
+
+                  <div class="p-4 rounded-2xl bg-slate-50 border border-black/[0.04] space-y-1">
+                    <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">{{ t('dashboard.sanctionsCheck') }}</p>
+                    <div class="flex items-center gap-1.5 text-sm font-black text-emerald-700">
+                      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      <span>{{ t('dashboard.clean') || 'Temiz (OFAC/UN)' }}</span>
+                    </div>
+                    <p class="text-[10px] text-gray-400">Yaptırım riski bulunmuyor</p>
+                  </div>
+
+                  <div class="p-4 rounded-2xl bg-slate-50 border border-black/[0.04] space-y-1">
+                    <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">{{ t('dashboard.pepStatus') }}</p>
+                    <div class="flex items-center gap-1.5 text-sm font-black text-gray-900">
+                      <span>{{ t('dashboard.none') || 'Yok' }}</span>
+                    </div>
+                    <p class="text-[10px] text-gray-400">Siyasi nüfuz sahibi değil</p>
+                  </div>
+
+                  <div class="p-4 rounded-2xl bg-slate-50 border border-black/[0.04] space-y-1">
+                    <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">{{ t('dashboard.kycDataSecurity') || 'Veri Güvenliği' }}</p>
+                    <p class="text-sm font-black text-amber-700 font-mono">256-Bit SSL</p>
+                    <p class="text-[10px] text-gray-400">Uçtan uca şifreli</p>
+                  </div>
+                </div>
+              </div>
+
             </div>
 
             <!-- Settings Tab -->

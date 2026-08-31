@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { CheckCircle, Clock, XCircle, Upload, Image, FileText, Shield, X } from 'lucide-vue-next'
+import { CheckCircle2, Clock, Upload, FileText, X, AlertCircle, ShieldCheck } from 'lucide-vue-next'
 import { useUIStore } from '@/stores/ui'
 import { useUserStore } from '@/stores/user'
 import { useI18n } from '@/composables/useI18n'
-import Card from '@/components/ui/Card.vue'
 
 interface Props {
   title: string
@@ -25,26 +24,14 @@ const emit = defineEmits<{
 }>()
 
 const isDragging = ref(false)
+const isUploading = ref(false)
 const uploadProgress = ref(0)
 
 const fileInput = ref<HTMLInputElement | null>(null)
 const file = ref<File | null>(null)
-const preview = ref<string | null>(null)
+const preview = ref<string | null>(props.uploaded || null)
 
-const isUploaded = computed(() => !!props.uploaded)
-const isComplete = computed(() => isUploaded.value || !!file.value)
-
-const statusIcon = computed(() => {
-  if (isUploaded.value) return CheckCircle
-  if (file.value) return Clock
-  return Upload
-})
-
-const statusColor = computed(() => {
-  if (isUploaded.value) return 'text-green-400'
-  if (file.value) return 'text-amber-400'
-  return 'text-gray-500'
-})
+const isUploaded = computed(() => !!props.uploaded || (!!preview.value && !isUploading.value))
 
 function handleDragOver(event: DragEvent) {
   event.preventDefault()
@@ -75,7 +62,6 @@ function handleFileInput(event: Event) {
 }
 
 function handleFileSelect(selectedFile: File) {
-  // Validate file type
   const acceptedTypes = props.accepted.split(',').map(t => t.trim())
   const isValidType = acceptedTypes.some(type => {
     if (type.startsWith('.')) return selectedFile.name.toLowerCase().endsWith(type.toLowerCase())
@@ -83,14 +69,13 @@ function handleFileSelect(selectedFile: File) {
   })
   
   if (!isValidType) {
-    uiStore.toastError(t('common.error'), `${t('toasts.errorOccurred')}: ${props.accepted}`)
+    uiStore.toastError(t('common.error') || 'Hata', `Desteklenmeyen dosya formatı: ${props.accepted}`)
     return
   }
   
-  // Validate file size (supports "10MB", "5MB" etc)
   const maxSizeMB = parseInt(props.maxSize) || 10
   if (selectedFile.size > maxSizeMB * 1024 * 1024) {
-    uiStore.toastError(t('common.error'), `${t('toasts.errorOccurred')}: max ${props.maxSize}`)
+    uiStore.toastError(t('common.error') || 'Hata', `Maksimum dosya boyutu: ${props.maxSize}`)
     return
   }
   
@@ -104,28 +89,33 @@ function inferDocumentType(): string {
   if (props.documentType) return props.documentType
   const titleLower = (props.title || '').toLowerCase()
   if (titleLower.includes('selfie')) return 'selfie'
-  if (titleLower.includes('address') || titleLower.includes('proof')) return 'proofOfAddress'
-  if (titleLower.includes('back')) return 'idBack'
+  if (titleLower.includes('address') || titleLower.includes('adres') || titleLower.includes('дарек')) return 'proofOfAddress'
+  if (titleLower.includes('back') || titleLower.includes('arka')) return 'idBack'
   return 'idFront'
 }
 
 async function handleUpload(selectedFile: File) {
-  uploadProgress.value = 10
+  isUploading.value = true
+  uploadProgress.value = 25
   try {
     const type = inferDocumentType()
     const res: any = await userStore.uploadKycDocument(type, selectedFile)
     const url = res?.url || (res?.data as any)?.url || preview.value || ''
     uploadProgress.value = 100
-    uiStore.toastSuccess(t('toasts.success'), `${selectedFile.name} — ${t('toasts.uploaded')}`)
+    uiStore.toastSuccess(t('toasts.success') || 'Başarılı', `${selectedFile.name} yüklendi`)
     emit('update:uploaded', url)
   } catch (err: any) {
     uploadProgress.value = 0
-    const msg = err?.response?.data?.error || err?.data?.error || err?.message || 'Upload failed'
-    uiStore.toastError(t('common.error'), msg)
+    const msg = err?.response?.data?.error || err?.data?.error || err?.message || 'Yükleme başarısız'
+    uiStore.toastError(t('common.error') || 'Hata', msg)
     file.value = null
-    if (preview.value) URL.revokeObjectURL(preview.value)
-    preview.value = null
+    if (preview.value && !props.uploaded) {
+      URL.revokeObjectURL(preview.value)
+      preview.value = null
+    }
     if (fileInput.value) fileInput.value.value = ''
+  } finally {
+    isUploading.value = false
   }
 }
 
@@ -134,6 +124,7 @@ function removeFile() {
   preview.value = null
   uploadProgress.value = 0
   if (fileInput.value) fileInput.value.value = ''
+  emit('update:uploaded', '')
 }
 
 function triggerFileInput() {
@@ -142,26 +133,46 @@ function triggerFileInput() {
 </script>
 
 <template>
-  <Card :variant="isUploaded ? 'gold' : 'glass'" class="p-6">
-    <div class="flex items-start justify-between mb-4">
+  <div 
+    class="bg-white rounded-3xl p-5 sm:p-6 border transition-all duration-300 flex flex-col justify-between shadow-2xs group"
+    :class="isUploaded 
+      ? 'border-emerald-200 ring-1 ring-emerald-500/20 bg-emerald-500/[0.02]' 
+      : 'border-black/[0.08] hover:border-primary/50'"
+  >
+    <!-- Card Header -->
+    <div class="flex items-start justify-between gap-3 mb-4">
       <div>
-        <h4 class="font-semibold text-text-primary mb-1">{{ title }}</h4>
-        <p class="text-text-muted text-sm">{{ description }}</p>
+        <div class="flex items-center gap-2">
+          <h4 class="font-extrabold text-sm sm:text-base text-gray-950">{{ title }}</h4>
+        </div>
+        <p class="text-xs text-gray-500 mt-0.5">{{ description }}</p>
       </div>
 
-      <div v-if="isUploaded" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-green-500/20 border border-green-500/30">
-        <CheckCircle class="w-4 h-4 text-green-400" />
-        <span class="text-sm text-green-300">{{ t('status.kyc.verified') }}</span>
+      <div 
+        v-if="isUploaded" 
+        class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-extrabold shrink-0"
+      >
+        <CheckCircle2 class="w-3.5 h-3.5 text-emerald-600" />
+        <span>{{ t('status.kyc.verified') || 'Yüklendi' }}</span>
+      </div>
+      <div 
+        v-else 
+        class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-gray-500 text-[11px] font-bold shrink-0"
+      >
+        <Clock class="w-3.5 h-3.5 text-gray-400" />
+        <span>Bekliyor</span>
       </div>
     </div>
 
-    <!-- Upload Zone -->
+    <!-- Upload Dropzone -->
     <div
-      class="relative"
+      class="relative rounded-2xl border-2 border-dashed transition-all duration-300 overflow-hidden flex flex-col items-center justify-center p-5 min-h-[160px]"
       :class="[
-        'rounded-2xl border-2 border-dashed transition-all duration-300',
-        isDragging ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50',
-        isComplete ? 'border-green-500/50' : ''
+        isDragging 
+          ? 'border-primary bg-primary/10 scale-[0.99]' 
+          : isUploaded 
+            ? 'border-emerald-300/80 bg-white' 
+            : 'border-black/10 bg-slate-50 hover:bg-slate-100/80 hover:border-primary/50'
       ]"
       @dragover="handleDragOver"
       @dragleave="handleDragLeave"
@@ -171,73 +182,73 @@ function triggerFileInput() {
         ref="fileInput"
         type="file"
         :accept="props.accepted"
-        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+        :disabled="isUploading"
         @change="handleFileInput"
       />
       
-      <div 
-        class="flex flex-col items-center justify-center p-8 min-h-[160px]"
-        :class="isComplete ? 'opacity-50' : ''"
-      >
-        <div v-if="isComplete && preview" class="relative mb-4">
+      <!-- Uploaded Preview -->
+      <div v-if="preview" class="relative w-full h-full flex flex-col items-center justify-center">
+        <div class="relative max-h-36 max-w-full rounded-xl overflow-hidden shadow-2xs border border-black/10">
           <img 
-            v-if="preview.startsWith('data:image') || preview.startsWith('blob:')" 
+            v-if="preview.startsWith('data:image') || preview.startsWith('blob:') || preview.startsWith('http')" 
             :src="preview" 
             alt="Preview" 
-            class="max-w-full max-h-48 rounded-xl object-cover"
+            class="max-h-36 w-auto object-contain rounded-xl"
           />
-          <div v-else class="w-24 h-24 rounded-xl bg-black/5 flex items-center justify-center">
-            <FileText class="w-8 h-8 text-text-muted" />
+          <div v-else class="w-28 h-28 rounded-xl bg-slate-100 flex flex-col items-center justify-center gap-2">
+            <FileText class="w-8 h-8 text-primary" />
+            <span class="text-[10px] font-bold text-gray-600 truncate max-w-[90px]">{{ file?.name || 'Doküman' }}</span>
           </div>
-          
+
           <button 
             type="button"
-            class="absolute top-2 right-2 p-1 rounded-full bg-red-500/80 text-white hover:bg-red-500 transition-colors"
+            class="absolute top-1.5 right-1.5 p-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white shadow-md transition-transform hover:scale-110 z-20 cursor-pointer"
             aria-label="Remove"
-            @click="removeFile"
+            @click.stop="removeFile"
           >
-            <X class="w-4 h-4" />
+            <X class="w-3.5 h-3.5" />
           </button>
         </div>
-        
-        <div v-else class="flex flex-col items-center gap-3">
-          <div class="w-16 h-16 rounded-full bg-black/5 border border-border flex items-center justify-center group-hover:border-primary/50 group-hover:bg-primary/10 transition-all">
-            <component :is="statusIcon" :class="['w-7 h-7', statusColor]" />
-          </div>
 
-          <p class="text-text-primary font-medium">{{ t('sell.dragDrop') }}</p>
-          <p class="text-text-muted text-sm text-center max-w-xs">
-            <button type="button" class="text-primary hover:underline font-medium" @click="triggerFileInput">{{ t('sell.browseFiles') }}</button>
+        <button 
+          type="button" 
+          class="text-xs font-bold text-primary hover:text-primary-hover mt-3 z-20 cursor-pointer"
+          @click.stop="triggerFileInput"
+        >
+          Değiştir / Yeniden Yükle
+        </button>
+      </div>
+      
+      <!-- Empty Upload State -->
+      <div v-else class="flex flex-col items-center text-center gap-2.5">
+        <div class="w-12 h-12 rounded-2xl bg-white border border-black/[0.08] shadow-2xs flex items-center justify-center group-hover:scale-110 transition-transform">
+          <Upload class="w-5 h-5 text-gray-500 group-hover:text-primary transition-colors" />
+        </div>
+
+        <div>
+          <p class="text-xs font-extrabold text-gray-800">
+            {{ t('sell.dragDrop') || 'Dosyayı buraya sürükleyin' }}
           </p>
-
-          <p class="text-text-muted text-xs mt-2">
-            {{ props.accepted }} | max: {{ props.maxSize }}
+          <p class="text-[11px] text-primary font-bold mt-0.5 hover:underline cursor-pointer">
+            {{ t('sell.browseFiles') || 'veya dosya seçin' }}
           </p>
         </div>
       </div>
 
-      <!-- Progress Bar -->
-      <div v-if="file && uploadProgress < 100" class="absolute bottom-0 left-0 right-0 h-1 bg-black/10 rounded-b-2xl overflow-hidden">
-        <div
-          class="h-full bg-primary transition-all duration-300 ease-out"
-          :style="{ width: uploadProgress + '%' }"
+      <!-- Upload Progress Indicator -->
+      <div v-if="isUploading" class="absolute inset-x-0 bottom-0 h-1.5 bg-slate-200 overflow-hidden">
+        <div 
+          class="h-full bg-primary transition-all duration-300 ease-out" 
+          :style="{ width: uploadProgress + '%' }" 
         />
       </div>
     </div>
 
-    <!-- Requirements -->
-    <div class="mt-4 p-4 rounded-xl bg-black/[0.03] border border-border">
-      <p class="text-xs text-text-muted mb-2">Requirements:</p>
-      <ul class="space-y-1 text-xs text-text-muted">
-        <li class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full bg-gray-600 flex-shrink-0" />
-          Format: {{ props.accepted }}
-        </li>
-        <li class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full bg-gray-600 flex-shrink-0" />
-          Max size: {{ props.maxSize }}
-        </li>
-      </ul>
+    <!-- Requirements Pill Footer -->
+    <div class="mt-4 pt-3 border-t border-black/[0.06] flex items-center justify-between text-[11px] text-gray-400 font-medium">
+      <span class="truncate">Format: {{ props.accepted.replace('image/*', 'JPG, PNG') }}</span>
+      <span class="font-bold text-gray-500 shrink-0">Maks {{ props.maxSize }}</span>
     </div>
-  </Card>
+  </div>
 </template>
