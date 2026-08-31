@@ -5,7 +5,8 @@ import {
   Filter, Search, SlidersHorizontal, ArrowUpDown,
   RotateCcw, Sparkles, Check, ChevronDown, CheckCircle2,
   MapPin, Flame, Zap, X, AlertCircle, PlusCircle, Radio,
-  Store, Gavel, Layers
+  Store, Gavel, Layers, ShieldCheck, ArrowRight, Smartphone,
+  Car, Home as HomeIcon, Gem, Palette, Tractor, Wheat
 } from 'lucide-vue-next'
 import { useAuctionStore } from '@/stores/auction'
 import { useI18n } from '@/composables/useI18n'
@@ -91,6 +92,40 @@ const categories = computed(() => {
       name: c.name[lang] || c.name.tr || c.name.ky,
       icon: c.icon
     }))
+  ]
+})
+
+const quickCategories = computed(() => {
+  const lang = currentLang.value
+  return [
+    { 
+      slug: 'livestock', 
+      name: lang === 'ky' ? 'Мал базары' : lang === 'ru' ? 'Скотный рынок' : 'Hayvan Pazarı & Tarım',
+      desc: lang === 'ky' ? 'Арашан кочкорлору, жылкылар, бодо мал' : lang === 'ru' ? 'Арашанские бараны, лошади, КРС' : 'Arashan koçları, atlar, büyükbaş hayvanlar',
+      icon: '🐎',
+      color: 'bg-amber-50 text-amber-900 border-amber-200'
+    },
+    { 
+      slug: 'vehicles', 
+      name: lang === 'ky' ? 'Автоунаалар' : lang === 'ru' ? 'Автомобили' : 'Otomotiv & Araçlar',
+      desc: lang === 'ky' ? 'Toyota Camry, Lexus, Hyundai, коммерциялык' : lang === 'ru' ? 'Toyota Camry, Lexus, Hyundai, коммерческий транспорт' : 'Toyota Camry, Lexus, Hyundai, ticari araçlar',
+      icon: '🚗',
+      color: 'bg-rose-50 text-rose-900 border-rose-200'
+    },
+    { 
+      slug: 'real-estate', 
+      name: lang === 'ky' ? 'Дордой & Кыймылсыз мүлк' : lang === 'ru' ? 'Дордой и Недвижимость' : 'Dordoy & Gayrimenkul',
+      desc: lang === 'ky' ? 'Соода контейнерлери, дүкөндөр, батирлер' : lang === 'ru' ? 'Контейнеры Дордой, магазины, квартиры' : 'Ticari konteynerler, dükkanlar, daireler',
+      icon: '🏢',
+      color: 'bg-emerald-50 text-emerald-900 border-emerald-200'
+    },
+    { 
+      slug: 'electronics', 
+      name: lang === 'ky' ? 'Электроника' : lang === 'ru' ? 'Электроника' : 'Elektronik & Cihazlar',
+      desc: lang === 'ky' ? 'MacBook, iPhone, акылдуу түзмөктөр' : lang === 'ru' ? 'MacBook, iPhone, гаджеты и техника' : 'MacBook, iPhone, akıllı saatler',
+      icon: '📱',
+      color: 'bg-blue-50 text-blue-900 border-blue-200'
+    },
   ]
 })
 
@@ -216,7 +251,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-text-primary pt-24 sm:pt-28 pb-20 px-4 sm:px-6 lg:px-8 font-sans">
+  <div class="min-h-screen bg-background text-text-primary pt-28 sm:pt-32 pb-24 px-4 sm:px-6 lg:px-8 font-sans">
     <div class="max-w-7xl mx-auto space-y-6 sm:space-y-8">
 
       <!-- Top Header & Search Bar -->
@@ -410,8 +445,8 @@ onMounted(() => {
       <!-- Main Layout: Sidebar Filters + Products Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        <!-- Sidebar Filters (Desktop) -->
-        <aside class="hidden lg:block lg:col-span-3 bg-white p-6 rounded-3xl border border-black/[0.08] shadow-2xs space-y-6">
+        <!-- Sidebar Filters (Desktop Sticky) -->
+        <aside class="hidden lg:block lg:col-span-3 sticky top-28 bg-white p-6 rounded-3xl border border-black/[0.08] shadow-2xs space-y-6">
 
           <div class="flex items-center justify-between pb-3 border-b border-black/5">
             <div class="flex items-center gap-2 text-xs font-black text-gray-950 uppercase tracking-wider">
@@ -486,7 +521,7 @@ onMounted(() => {
 
         </aside>
 
-        <!-- Product Grid / Empty State -->
+        <!-- Product Grid / Rich Discovery Hub -->
         <main class="lg:col-span-9 space-y-6">
           <div v-if="auctionStore.isLoading" class="flex flex-col items-center justify-center py-20 gap-3">
             <div class="w-9 h-9 border-3 border-primary border-t-transparent rounded-full animate-spin" />
@@ -499,7 +534,7 @@ onMounted(() => {
             <button class="ml-auto underline font-bold" @click="auctionStore.fetchAuctions()">{{ t('common.retry') }}</button>
           </div>
 
-          <!-- Auction Cards Grid -->
+          <!-- Auction Cards Grid (When items exist) -->
           <div v-else-if="filteredAuctions.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <AuctionCard
               v-for="auction in filteredAuctions"
@@ -508,38 +543,107 @@ onMounted(() => {
             />
           </div>
 
-          <!-- Rich Empty State & First Listing Onboarding -->
-          <div v-else class="bg-gradient-to-br from-slate-50 via-white to-amber-500/[0.04] rounded-3xl border border-black/[0.08] p-8 sm:p-12 text-center space-y-6 shadow-2xs">
-            <div class="w-16 h-16 rounded-3xl bg-amber-100 text-amber-800 flex items-center justify-center mx-auto shadow-2xs">
-              <Gavel class="w-8 h-8" />
+          <!-- Rich Interactive Discovery Hub (When 0 items found) -->
+          <div v-else class="space-y-6">
+            
+            <!-- Main Empty State Banner -->
+            <div class="bg-gradient-to-br from-slate-50 via-white to-amber-500/[0.04] rounded-3xl border border-black/[0.08] p-8 sm:p-12 text-center space-y-6 shadow-2xs">
+              <div class="w-16 h-16 rounded-3xl bg-gradient-to-br from-amber-400 to-amber-600 text-gray-950 flex items-center justify-center mx-auto shadow-md">
+                <Gavel class="w-8 h-8" />
+              </div>
+
+              <div class="max-w-lg mx-auto space-y-2">
+                <h3 class="text-xl sm:text-2xl font-black text-gray-950 tracking-tight">
+                  {{ t('liveAuctionsPage.noResultsTitle') || 'Bu Filtrelere Uygun İlan Bulunamadı' }}
+                </h3>
+                <p class="text-xs sm:text-sm text-gray-500 leading-relaxed">
+                  Filtrelerinizi genişleterek diğer kategorilere göz atabilir veya ilk açık artırmayı %0 komisyonla siz başlatabilirsiniz.
+                </p>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+                <button 
+                  type="button" 
+                  class="px-5 py-2.5 rounded-2xl border border-black/10 bg-white hover:bg-slate-50 text-gray-800 font-bold text-xs shadow-2xs transition-all cursor-pointer"
+                  @click="resetFilters"
+                >
+                  {{ t('liveAuctionsPage.resetFiltersBtn') || 'Filtreleri Sıfırla' }}
+                </button>
+
+                <RouterLink 
+                  to="/sell"
+                  class="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-md transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105"
+                >
+                  <PlusCircle class="w-4 h-4" />
+                  <span>{{ t('liveAuctionsPage.startAuctionBtn') || '+ Hemen İlan Ver (%0 Komisyon)' }}</span>
+                </RouterLink>
+              </div>
             </div>
 
-            <div class="max-w-md mx-auto space-y-2">
-              <h3 class="text-xl sm:text-2xl font-black text-gray-950 tracking-tight">
-                {{ t('liveAuctionsPage.noResultsTitle') || 'Bu Filtrelere Uygun İlan Bulunamadı' }}
-              </h3>
-              <p class="text-xs sm:text-sm text-gray-500 leading-relaxed">
-                {{ t('liveAuctionsPage.noResultsDesc') || 'Filtreleri sıfırlayabilir veya ilk açık artırmayı siz başlatabilirsiniz.' }}
-              </p>
+            <!-- Quick Categories Discovery Strip -->
+            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-black/[0.08] shadow-2xs space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-black/[0.05]">
+                <div class="flex items-center gap-2">
+                  <Sparkles class="w-4 h-4 text-amber-600" />
+                  <h4 class="text-sm font-black text-gray-950">Popüler Kategorileri Keşfedin</h4>
+                </div>
+                <RouterLink to="/categories" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+                  <span>Tüm Kategoriler</span>
+                  <ArrowRight class="w-3.5 h-3.5" />
+                </RouterLink>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <RouterLink
+                  v-for="qCat in quickCategories"
+                  :key="qCat.slug"
+                  :to="`/auctions?category=${qCat.slug}`"
+                  class="p-4 rounded-2xl border transition-all hover:shadow-md hover:-translate-y-0.5 flex items-center gap-3.5 group shadow-2xs"
+                  :class="qCat.color"
+                >
+                  <span class="text-2xl shrink-0 group-hover:scale-110 transition-transform">{{ qCat.icon }}</span>
+                  <div class="flex-1 min-w-0">
+                    <h5 class="text-xs font-black truncate text-gray-950">{{ qCat.name }}</h5>
+                    <p class="text-[11px] opacity-75 line-clamp-1 mt-0.5">{{ qCat.desc }}</p>
+                  </div>
+                  <ArrowRight class="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0" />
+                </RouterLink>
+              </div>
             </div>
 
-            <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
-              <button 
-                type="button" 
-                class="px-5 py-2.5 rounded-xl border border-black/10 bg-white hover:bg-slate-50 text-gray-800 font-bold text-xs shadow-2xs transition-all cursor-pointer"
-                @click="resetFilters"
-              >
-                {{ t('liveAuctionsPage.resetFiltersBtn') || 'Filtreleri Sıfırla' }}
-              </button>
+            <!-- 3 Trust Badges -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="p-4 rounded-2xl bg-white border border-black/[0.06] shadow-2xs flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                  <ShieldCheck class="w-4 h-4" />
+                </div>
+                <div>
+                  <h5 class="text-xs font-black text-gray-950">%100 Banka Emaneti</h5>
+                  <p class="text-[11px] text-gray-500">DemirBank Escrow koruması</p>
+                </div>
+              </div>
 
-              <RouterLink 
-                to="/sell"
-                class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs shadow-sm transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105"
-              >
-                <PlusCircle class="w-4 h-4" />
-                <span>{{ t('liveAuctionsPage.startAuctionBtn') || '+ Hemen İlan Ver (%0 Komisyon)' }}</span>
-              </RouterLink>
+              <div class="p-4 rounded-2xl bg-white border border-black/[0.06] shadow-2xs flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
+                  <Zap class="w-4 h-4" />
+                </div>
+                <div>
+                  <h5 class="text-xs font-black text-gray-950">MBank & Optima QR</h5>
+                  <p class="text-[11px] text-gray-500">5 saniyede anında ödeme</p>
+                </div>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-white border border-black/[0.06] shadow-2xs flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                  <Radio class="w-4 h-4" />
+                </div>
+                <div>
+                  <h5 class="text-xs font-black text-gray-950">Canlı WebSocket İhale</h5>
+                  <p class="text-[11px] text-gray-500">Gecikmesiz anlık teklifler</p>
+                </div>
+              </div>
             </div>
+
           </div>
         </main>
 
