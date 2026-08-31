@@ -160,22 +160,21 @@ watch(() => userStore.isAuthenticated, (val) => {
             <!-- Icon + Text (Default) -->
             <template v-else>
               <div
-                class="w-9 h-9 sm:w-10 sm:h-10 p-1.5 shadow-sm group-hover:scale-105 transition-transform flex items-center justify-center shrink-0"
+                class="w-9 h-9 sm:w-10 sm:h-10 p-1.5 shadow-2xs group-hover:scale-105 transition-all flex items-center justify-center shrink-0 border border-amber-300/30"
                 :class="[
                   themeStore.theme.logoBadgeShape === 'circle' ? 'rounded-full' :
                   themeStore.theme.logoBadgeShape === 'square' ? 'rounded-none' :
-                  themeStore.theme.logoBadgeShape === 'transparent' ? 'bg-transparent shadow-none' :
-                  'rounded-2xl'
+                  themeStore.theme.logoBadgeShape === 'transparent' ? 'bg-transparent shadow-none border-0' :
+                  'rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600'
                 ]"
-                :style="{ backgroundColor: themeStore.theme.logoBadgeColor || '#F2B138' }"
               >
                 <IlbirsIcon class="w-full h-full text-gray-950" />
               </div>
               <div class="flex flex-col">
-                <span class="font-sans font-black text-base sm:text-lg text-gray-950 tracking-tight flex items-center gap-1 leading-none">
-                  {{ themeStore.theme.logoText || 'iTorgo' }}
+                <span class="font-sans font-black text-lg sm:text-xl text-gray-950 tracking-tight flex items-center leading-none">
+                  {{ themeStore.theme.logoText || 'iTorgo' }}<span class="w-1.5 h-1.5 rounded-full bg-amber-500 ml-1 shrink-0" />
                 </span>
-                <span class="text-[9px] text-gray-400 tracking-wider uppercase font-bold hidden sm:block mt-1 leading-none">
+                <span class="text-[8.5px] text-gray-400 tracking-widest uppercase font-mono font-black hidden sm:block mt-1 leading-none">
                   {{ themeStore.theme.logoTagline || 'REAL-TIME PLATFORM' }}
                 </span>
               </div>

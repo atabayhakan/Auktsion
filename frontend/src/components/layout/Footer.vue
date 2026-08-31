@@ -67,13 +67,15 @@ const footerLinks = {
         
         <!-- Brand & About Column (2 cols wide) -->
         <div class="col-span-2 space-y-4">
-          <router-link to="/" class="flex items-center gap-2.5" aria-label="iTorgo Ana Sayfa">
-            <div class="w-10 h-10 rounded-2xl bg-primary p-1.5 flex items-center justify-center shadow-xs">
+          <router-link to="/" class="flex items-center gap-2.5 group" aria-label="iTorgo Ana Sayfa">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 border border-amber-300/30 p-1.5 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-all">
               <IlbirsIcon class="w-full h-full text-gray-950" />
             </div>
             <div class="flex flex-col">
-              <span class="font-black text-xl text-gray-950 tracking-tight leading-none">iTorgo</span>
-              <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mt-0.5 leading-none">REAL-TIME PLATFORM</span>
+              <span class="font-black text-xl text-gray-950 tracking-tight leading-none flex items-center">
+                iTorgo<span class="w-1.5 h-1.5 rounded-full bg-amber-500 ml-1 shrink-0" />
+              </span>
+              <span class="text-[8.5px] text-gray-400 font-mono font-black uppercase tracking-widest mt-1 leading-none">REAL-TIME PLATFORM</span>
             </div>
           </router-link>
 
