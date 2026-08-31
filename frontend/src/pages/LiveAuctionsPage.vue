@@ -4,7 +4,8 @@ import { useRoute, useRouter, RouterLink } from 'vue-router'
 import {
   Filter, Search, SlidersHorizontal, ArrowUpDown,
   RotateCcw, Sparkles, Check, ChevronDown, CheckCircle2,
-  MapPin, Flame, Zap, X
+  MapPin, Flame, Zap, X, AlertCircle, PlusCircle, Radio,
+  Store, Gavel, Layers
 } from 'lucide-vue-next'
 import { useAuctionStore } from '@/stores/auction'
 import { useI18n } from '@/composables/useI18n'
@@ -16,15 +17,18 @@ import { mockAuctions } from '@/data/mockAuctions'
 const route = useRoute()
 const router = useRouter()
 const auctionStore = useAuctionStore()
-const { t, locale } = useI18n()
+const { t, currentLocale } = useI18n()
+
+const currentLang = computed(() => (currentLocale.value?.code as 'ky' | 'ru' | 'tr') || 'tr')
 
 const searchQuery = ref((route.query.search as string) || '')
 const selectedCategory = ref((route.query.category as string) || 'all')
 const selectedRegion = ref((route.query.region as string) || 'all')
 const selectedSort = ref((route.query.sort as string) || 'ending_soon')
-const minPrice = ref<number | null>(null)
-const maxPrice = ref<number | null>(null)
-const isBlitzOnly = ref(false)
+const statusFilter = ref((route.query.status as string) || 'all')
+const minPrice = ref<number | null>(route.query.minPrice ? Number(route.query.minPrice) : null)
+const maxPrice = ref<number | null>(route.query.maxPrice ? Number(route.query.maxPrice) : null)
+const isBlitzOnly = ref(route.query.blitz === '1')
 const showMobileFilters = ref(false)
 
 watch(() => route.query.category, (newCat) => {
@@ -39,6 +43,10 @@ watch(() => route.query.sort, (newSort) => {
   if (newSort) selectedSort.value = newSort as string
 })
 
+watch(() => route.query.status, (newStatus) => {
+  statusFilter.value = (newStatus as string) || 'all'
+})
+
 watch(() => route.query.search, (newSearch) => {
   searchQuery.value = (newSearch as string) || ''
 })
@@ -49,10 +57,12 @@ function updateRouteQuery() {
   if (selectedCategory.value !== 'all') query.category = selectedCategory.value
   if (selectedRegion.value !== 'all') query.region = selectedRegion.value
   if (selectedSort.value !== 'ending_soon') query.sort = selectedSort.value
+  if (statusFilter.value !== 'all') query.status = statusFilter.value
   if (searchQuery.value.trim()) query.search = searchQuery.value.trim()
   if (minPrice.value) query.minPrice = String(minPrice.value)
   if (maxPrice.value) query.maxPrice = String(maxPrice.value)
   if (isBlitzOnly.value) query.blitz = '1'
+  
   const current = route.query as Record<string, string>
   const same = Object.keys({ ...query, ...current }).every(k => (query[k] || '') === (current[k] || ''))
   if (!same) router.replace({ query })
@@ -61,9 +71,11 @@ function updateRouteQuery() {
 watch(selectedCategory, updateRouteQuery)
 watch(selectedRegion, updateRouteQuery)
 watch(selectedSort, updateRouteQuery)
+watch(statusFilter, updateRouteQuery)
 watch(isBlitzOnly, updateRouteQuery)
 watch(minPrice, updateRouteQuery)
 watch(maxPrice, updateRouteQuery)
+
 let searchDebounce: ReturnType<typeof setTimeout> | null = null
 watch(searchQuery, () => {
   if (searchDebounce) clearTimeout(searchDebounce)
@@ -71,23 +83,23 @@ watch(searchQuery, () => {
 })
 
 const categories = computed(() => {
-  const currentLang = (locale.value as 'ky' | 'ru' | 'tr') || 'ky'
+  const lang = currentLang.value
   return [
-    { id: 'all', name: 'Бардыгы', icon: '✨' },
+    { id: 'all', name: t('liveAuctionsPage.allCategories') || 'Tüm Kategoriler', icon: '✨' },
     ...platformCategories.map(c => ({
       id: c.slug,
-      name: c.name[currentLang] || c.name.ky,
+      name: c.name[lang] || c.name.tr || c.name.ky,
       icon: c.icon
     }))
   ]
 })
 
 const sortOptions = computed(() => [
-  { value: 'ending_soon', label: 'Жакында Бүтөт 🔥' },
-  { value: 'price_desc', label: 'Баа: Кымбаттан Арзанга' },
-  { value: 'price_asc', label: 'Баа: Арзандан Кымбатка' },
-  { value: 'most_bids', label: 'Эң Көп Сунуш Түшкөн' },
-  { value: 'newest', label: 'Эң Жаңы Кошулган' },
+  { value: 'ending_soon', label: t('liveAuctionsPage.sortEndingSoon') || 'Yakında Bitenler 🔥' },
+  { value: 'price_desc', label: t('liveAuctionsPage.sortPriceDesc') || 'Fiyat: Yüksekten Düşüğe' },
+  { value: 'price_asc', label: t('liveAuctionsPage.sortPriceAsc') || 'Fiyat: Düşükten Yükseğe' },
+  { value: 'most_bids', label: t('liveAuctionsPage.sortMostBids') || 'En Çok Teklif Alan ⚡' },
+  { value: 'newest', label: t('liveAuctionsPage.sortNewest') || 'En Yeniler ✨' },
 ])
 
 const allAuctions = computed(() => {
@@ -99,6 +111,11 @@ const allAuctions = computed(() => {
 
 const filteredAuctions = computed(() => {
   let list = [...allAuctions.value]
+
+  // Status filter (live vs all)
+  if (statusFilter.value === 'live') {
+    list = list.filter(a => a.status === 'active' || (a as any).isLive)
+  }
 
   // Category filter
   if (selectedCategory.value !== 'all') {
@@ -172,6 +189,7 @@ const activeFilterCount = computed(() => {
   let n = 0
   if (selectedRegion.value !== 'all') n++
   if (selectedSort.value !== 'ending_soon') n++
+  if (statusFilter.value !== 'all') n++
   if (minPrice.value !== null && minPrice.value > 0) n++
   if (maxPrice.value !== null && maxPrice.value > 0) n++
   if (isBlitzOnly.value) n++
@@ -183,6 +201,7 @@ function resetFilters() {
   selectedCategory.value = 'all'
   selectedRegion.value = 'all'
   selectedSort.value = 'ending_soon'
+  statusFilter.value = 'all'
   minPrice.value = null
   maxPrice.value = null
   isBlitzOnly.value = false
@@ -197,33 +216,69 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-text-primary pt-28 sm:pt-32 pb-20 px-4 sm:px-6 lg:px-8 font-sans">
-    <div class="max-w-7xl mx-auto space-y-8">
+  <div class="min-h-screen bg-background text-text-primary pt-24 sm:pt-28 pb-20 px-4 sm:px-6 lg:px-8 font-sans">
+    <div class="max-w-7xl mx-auto space-y-6 sm:space-y-8">
 
-      <!-- Top Header -->
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-black/[0.06]">
+      <!-- Top Header & Search Bar -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-black/[0.06]">
         <div>
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error/10 text-error text-xs font-bold mb-2 border border-error/20">
-            <span class="w-2 h-2 rounded-full bg-error animate-ping" />
-            <span>{{ filteredAuctions.length }} Активдүү Аукцион</span>
+          <div class="flex items-center gap-2 mb-2">
+            <span 
+              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black border"
+              :class="statusFilter === 'live' 
+                ? 'bg-rose-50 text-rose-600 border-rose-200' 
+                : 'bg-amber-500/10 text-amber-900 border-amber-500/20'"
+            >
+              <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+              <span>{{ t('liveAuctionsPage.activeLots', { n: filteredAuctions.length }) || `${filteredAuctions.length} Aktif İlan` }}</span>
+            </span>
+
+            <!-- Status filter pills -->
+            <div class="inline-flex items-center p-0.5 rounded-full bg-slate-100 border border-black/5 text-[11px] font-bold">
+              <button
+                type="button"
+                class="px-2.5 py-1 rounded-full transition-all cursor-pointer"
+                :class="statusFilter === 'all' ? 'bg-white text-gray-950 shadow-2xs font-extrabold' : 'text-gray-500 hover:text-gray-950'"
+                @click="statusFilter = 'all'"
+              >
+                {{ t('liveAuctionsPage.allStatusTab') || '✨ Tümü' }}
+              </button>
+              <button
+                type="button"
+                class="px-2.5 py-1 rounded-full transition-all cursor-pointer"
+                :class="statusFilter === 'live' ? 'bg-rose-500 text-white shadow-2xs font-extrabold' : 'text-gray-500 hover:text-gray-950'"
+                @click="statusFilter = 'live'"
+              >
+                {{ t('liveAuctionsPage.liveStatusTab') || '🔴 Canlı' }}
+              </button>
+            </div>
           </div>
-          <h1 class="text-3xl sm:text-4xl font-extrabold text-text-primary tracking-tight">
-            Кыргызстан боюнча Түз Эфирдеги Аукциондор
+
+          <h1 class="text-2xl sm:text-4xl font-black text-gray-950 tracking-tight">
+            {{ t('liveAuctionsPage.title') || 'Kırgızistan Canlı ve Aktif Açık Artırmalar' }}
           </h1>
-          <p class="text-xs sm:text-sm text-text-secondary mt-1">
-            Мал базары, автоунаалар, Дордой соода контейнерлери жана башка буюмдар
+          <p class="text-xs sm:text-sm text-gray-500 mt-1 max-w-2xl leading-relaxed">
+            {{ t('liveAuctionsPage.subtitle') || 'Hayvan pazarı, otomotiv, Dordoy toptan ticaret ürünleri ve gayrimenkul' }}
           </p>
         </div>
 
         <!-- Search Bar -->
-        <div class="w-full md:w-80 relative">
+        <div class="w-full md:w-84 relative group">
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Лоттун аты же шаар боюнча издөө..."
-            class="w-full pl-9 pr-4 py-2.5 rounded-2xl bg-white border border-border text-base focus:outline-none focus:border-secondary shadow-sm text-text-primary placeholder-text-muted"
+            :placeholder="t('liveAuctionsPage.searchPlaceholder') || 'Lot adı veya şehir ara...'"
+            class="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-white border border-black/10 text-xs sm:text-sm focus:outline-none focus:border-amber-400 focus:ring-3 focus:ring-amber-400/20 shadow-2xs text-gray-900 placeholder-gray-400 font-medium transition-all"
           />
-          <Search class="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-amber-700 transition-colors" />
+          <button 
+            v-if="searchQuery"
+            type="button" 
+            class="p-1 absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 cursor-pointer"
+            @click="searchQuery = ''"
+          >
+            <X class="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
 
@@ -232,10 +287,10 @@ onMounted(() => {
         <button
           v-for="cat in categories"
           :key="cat.id"
-          class="px-4 py-2.5 rounded-2xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer"
+          class="px-4 py-2.5 rounded-2xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer shadow-2xs"
           :class="selectedCategory === cat.id
-            ? 'bg-primary text-text-primary shadow-md'
-            : 'bg-white border border-border text-text-secondary hover:bg-black/5'"
+            ? 'bg-primary text-gray-950 font-black shadow-sm ring-2 ring-primary/25 scale-[1.02]'
+            : 'bg-white border border-black/10 text-gray-600 hover:bg-slate-50 hover:text-gray-950'"
           @click="selectedCategory = cat.id"
         >
           <span>{{ cat.icon }}</span>
@@ -245,12 +300,12 @@ onMounted(() => {
 
       <!-- Mobile Filters Trigger -->
       <button
-        class="lg:hidden w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-white border border-border text-sm font-bold text-text-primary shadow-sm"
+        class="lg:hidden w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-white border border-black/10 text-xs sm:text-sm font-black text-gray-900 shadow-2xs cursor-pointer"
         @click="showMobileFilters = true"
       >
         <SlidersHorizontal class="w-4 h-4 text-primary" />
-        <span>Фильтрлер</span>
-        <span v-if="activeFilterCount > 0" class="w-5 h-5 rounded-full bg-primary text-text-primary text-[11px] font-extrabold flex items-center justify-center">
+        <span>{{ t('liveAuctionsPage.filters') || 'Filtreler' }}</span>
+        <span v-if="activeFilterCount > 0" class="w-5 h-5 rounded-full bg-primary text-gray-950 text-[10px] font-black flex items-center justify-center">
           {{ activeFilterCount }}
         </span>
       </button>
@@ -267,38 +322,38 @@ onMounted(() => {
             @click.stop
           >
             <div class="flex items-center justify-between pb-3 border-b border-black/5">
-              <div class="flex items-center gap-2 text-sm font-bold text-text-primary">
+              <div class="flex items-center gap-2 text-sm font-black text-gray-950">
                 <SlidersHorizontal class="w-4 h-4 text-primary" />
-                <span>Фильтрлер</span>
+                <span>{{ t('liveAuctionsPage.filters') || 'Filtreler' }}</span>
               </div>
-              <button class="p-2 rounded-xl hover:bg-black/5 text-text-secondary" aria-label="Жабуу" @click="showMobileFilters = false">
+              <button class="p-2 rounded-xl hover:bg-black/5 text-gray-500" aria-label="Kapat" @click="showMobileFilters = false">
                 <X class="w-5 h-5" />
               </button>
             </div>
 
             <!-- Region Filter -->
             <div class="space-y-2">
-              <label class="text-xs font-bold text-text-secondary flex items-center gap-1.5">
+              <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
                 <MapPin class="w-3.5 h-3.5 text-primary" />
-                <span>Облус / Шаар</span>
+                <span>{{ t('liveAuctionsPage.regionCity') || 'Bölge / Şehir' }}</span>
               </label>
               <select
                 v-model="selectedRegion"
-                class="w-full px-3.5 py-3 rounded-xl bg-black/[0.02] border border-border text-base font-semibold focus:outline-none focus:ring-2 focus:ring-secondary/30 text-text-primary"
+                class="w-full px-3.5 py-3 rounded-2xl bg-slate-50 border border-black/10 text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary text-gray-900"
               >
-                <option value="all">Бүткүл Кыргызстан (Бардыгы)</option>
+                <option value="all">{{ t('liveAuctionsPage.allKyrgyzstan') || 'Tüm Kırgızistan (Tümü)' }}</option>
                 <option v-for="r in kyrgyzstanRegions" :key="r.id" :value="r.id">
-                  {{ r.name.ky }}
+                  {{ r.name[currentLang] || r.name.tr || r.name.ky }}
                 </option>
               </select>
             </div>
 
             <!-- Sort Filter -->
             <div class="space-y-2">
-              <label class="text-xs font-bold text-text-secondary">Сорттоо</label>
+              <label class="text-xs font-bold text-gray-700">{{ t('liveAuctionsPage.sorting') || 'Sıralama' }}</label>
               <select
                 v-model="selectedSort"
-                class="w-full px-3.5 py-3 rounded-xl bg-black/[0.02] border border-border text-base font-semibold focus:outline-none focus:ring-2 focus:ring-secondary/30 text-text-primary"
+                class="w-full px-3.5 py-3 rounded-2xl bg-slate-50 border border-black/10 text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary text-gray-900"
               >
                 <option v-for="s in sortOptions" :key="s.value" :value="s.value">
                   {{ s.label }}
@@ -308,44 +363,44 @@ onMounted(() => {
 
             <!-- Price Range -->
             <div class="space-y-2">
-              <label class="text-xs font-bold text-text-secondary">Баа Диапазону (KGS сом)</label>
+              <label class="text-xs font-bold text-gray-700">{{ t('liveAuctionsPage.priceRange') || 'Fiyat Aralığı (KGS)' }}</label>
               <div class="grid grid-cols-2 gap-2">
                 <input
                   v-model.number="minPrice"
                   type="number"
-                  placeholder="Мин"
-                  class="w-full px-3 py-2.5 rounded-xl bg-black/[0.02] border border-border text-base font-mono"
+                  :placeholder="t('liveAuctionsPage.min') || 'Min'"
+                  class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-black/10 text-xs font-mono font-bold"
                 />
                 <input
                   v-model.number="maxPrice"
                   type="number"
-                  placeholder="Макс"
-                  class="w-full px-3 py-2.5 rounded-xl bg-black/[0.02] border border-border text-base font-mono"
+                  :placeholder="t('liveAuctionsPage.max') || 'Maks'"
+                  class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-black/10 text-xs font-mono font-bold"
                 />
               </div>
             </div>
 
             <!-- Blitz Only Checkbox -->
             <div class="pt-2 border-t border-black/5">
-              <label class="flex items-center gap-2 text-sm font-bold text-error cursor-pointer">
-                <input v-model="isBlitzOnly" type="checkbox" class="w-4 h-4 rounded text-error" />
-                <span>🔥 Флаш Аукциондор (1 Саат)</span>
+              <label class="flex items-center gap-2 text-xs font-bold text-rose-600 cursor-pointer">
+                <input v-model="isBlitzOnly" type="checkbox" class="w-4 h-4 rounded text-rose-600" />
+                <span>🔥 {{ t('liveAuctionsPage.flashOnly') || '1 Saatlik Flaş İhaleler' }}</span>
               </label>
             </div>
 
             <div class="flex items-center gap-3 pt-2">
               <button
-                class="flex-1 py-3 rounded-xl border border-border text-sm font-bold text-text-secondary flex items-center justify-center gap-1.5"
+                class="flex-1 py-3 rounded-2xl border border-black/10 text-xs font-bold text-gray-600 flex items-center justify-center gap-1.5"
                 @click="resetFilters"
               >
                 <RotateCcw class="w-3.5 h-3.5" />
-                <span>Тазалоо</span>
+                <span>{{ t('liveAuctionsPage.clearFilters') || 'Temizle' }}</span>
               </button>
               <button
-                class="flex-1 py-3 rounded-xl bg-primary text-text-primary font-bold text-sm shadow-md"
+                class="flex-1 py-3 rounded-2xl bg-primary text-gray-950 font-black text-xs shadow-md"
                 @click="showMobileFilters = false"
               >
-                {{ filteredAuctions.length }} натыйжаны көрүү
+                {{ t('liveAuctionsPage.resultsCount', { n: filteredAuctions.length }) || `${filteredAuctions.length} Sonuç Göster` }}
               </button>
             </div>
           </div>
@@ -356,42 +411,45 @@ onMounted(() => {
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
         <!-- Sidebar Filters (Desktop) -->
-        <aside class="hidden lg:block lg:col-span-3 glass p-6 rounded-3xl shadow-sm space-y-6">
+        <aside class="hidden lg:block lg:col-span-3 bg-white p-6 rounded-3xl border border-black/[0.08] shadow-2xs space-y-6">
 
           <div class="flex items-center justify-between pb-3 border-b border-black/5">
-            <div class="flex items-center gap-2 text-sm font-bold text-text-primary">
+            <div class="flex items-center gap-2 text-xs font-black text-gray-950 uppercase tracking-wider">
               <SlidersHorizontal class="w-4 h-4 text-primary" />
-              <span>Фильтрлер</span>
+              <span>{{ t('liveAuctionsPage.filters') || 'Filtreler' }}</span>
             </div>
-            <button class="text-[11px] text-text-muted hover:text-error transition-colors flex items-center gap-1 cursor-pointer" @click="resetFilters">
+            <button 
+              class="text-[11px] font-bold text-gray-400 hover:text-rose-600 transition-colors flex items-center gap-1 cursor-pointer" 
+              @click="resetFilters"
+            >
               <RotateCcw class="w-3 h-3" />
-              <span>Тазалоо</span>
+              <span>{{ t('liveAuctionsPage.clearFilters') || 'Temizle' }}</span>
             </button>
           </div>
 
           <!-- Region Filter -->
           <div class="space-y-2">
-            <label class="text-xs font-bold text-text-secondary flex items-center gap-1.5">
+            <label class="text-xs font-extrabold text-gray-700 flex items-center gap-1.5">
               <MapPin class="w-3.5 h-3.5 text-primary" />
-              <span>Облус / Шаар</span>
+              <span>{{ t('liveAuctionsPage.regionCity') || 'Bölge / Şehir' }}</span>
             </label>
             <select
               v-model="selectedRegion"
-              class="w-full px-3.5 py-2.5 rounded-xl bg-black/[0.02] border border-border text-base font-semibold focus:outline-none focus:ring-2 focus:ring-secondary/30 text-text-primary"
+              class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-black/10 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 cursor-pointer"
             >
-              <option value="all">Бүткүл Кыргызстан (Бардыгы)</option>
+              <option value="all">{{ t('liveAuctionsPage.allKyrgyzstan') || 'Tüm Kırgızistan (Tümü)' }}</option>
               <option v-for="r in kyrgyzstanRegions" :key="r.id" :value="r.id">
-                {{ r.name.ky }}
+                {{ r.name[currentLang] || r.name.tr || r.name.ky }}
               </option>
             </select>
           </div>
 
           <!-- Sort Filter -->
           <div class="space-y-2">
-            <label class="text-xs font-bold text-text-secondary">Сорттоо</label>
+            <label class="text-xs font-extrabold text-gray-700">{{ t('liveAuctionsPage.sorting') || 'Sıralama' }}</label>
             <select
               v-model="selectedSort"
-              class="w-full px-3.5 py-2.5 rounded-xl bg-black/[0.02] border border-border text-base font-semibold focus:outline-none focus:ring-2 focus:ring-secondary/30 text-text-primary"
+              class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-black/10 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 cursor-pointer"
             >
               <option v-for="s in sortOptions" :key="s.value" :value="s.value">
                 {{ s.label }}
@@ -401,44 +459,47 @@ onMounted(() => {
 
           <!-- Price Range -->
           <div class="space-y-2">
-            <label class="text-xs font-bold text-text-secondary">Баа Диапазону (KGS сом)</label>
+            <label class="text-xs font-extrabold text-gray-700">{{ t('liveAuctionsPage.priceRange') || 'Fiyat Aralığı (KGS)' }}</label>
             <div class="grid grid-cols-2 gap-2">
               <input
                 v-model.number="minPrice"
                 type="number"
-                placeholder="Мин"
-                class="w-full px-3 py-2 rounded-xl bg-black/[0.02] border border-border text-base font-mono"
+                :placeholder="t('liveAuctionsPage.min') || 'Min'"
+                class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-black/10 text-xs font-mono font-bold"
               />
               <input
                 v-model.number="maxPrice"
                 type="number"
-                placeholder="Макс"
-                class="w-full px-3 py-2 rounded-xl bg-black/[0.02] border border-border text-base font-mono"
+                :placeholder="t('liveAuctionsPage.max') || 'Maks'"
+                class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-black/10 text-xs font-mono font-bold"
               />
             </div>
           </div>
 
           <!-- Blitz Only Checkbox -->
-          <div class="pt-2 border-t border-black/5">
-            <label class="flex items-center gap-2 text-xs font-bold text-error cursor-pointer">
-              <input v-model="isBlitzOnly" type="checkbox" class="w-4 h-4 rounded text-error" />
-              <span>🔥 Флаш Аукциондор (1 Саат)</span>
+          <div class="pt-3 border-t border-black/5">
+            <label class="flex items-center gap-2 text-xs font-bold text-rose-600 cursor-pointer">
+              <input v-model="isBlitzOnly" type="checkbox" class="w-4 h-4 rounded text-rose-600" />
+              <span>🔥 {{ t('liveAuctionsPage.flashOnly') || '1 Saatlik Flaş İhaleler' }}</span>
             </label>
           </div>
 
         </aside>
 
-        <!-- Product Grid -->
+        <!-- Product Grid / Empty State -->
         <main class="lg:col-span-9 space-y-6">
-          <div v-if="auctionStore.isLoading" class="flex flex-col items-center justify-center py-12 gap-3">
-            <div class="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            <p class="text-xs font-medium text-text-muted">{{ t('common.loading') }}</p>
+          <div v-if="auctionStore.isLoading" class="flex flex-col items-center justify-center py-20 gap-3">
+            <div class="w-9 h-9 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+            <p class="text-xs font-bold text-gray-400">{{ t('common.loading') }}</p>
           </div>
-          <div v-else-if="auctionStore.error" class="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 text-xs flex items-center gap-2">
-            <AlertCircle class="w-4 h-4" />
+
+          <div v-else-if="auctionStore.error" class="p-5 rounded-3xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-3">
+            <AlertCircle class="w-5 h-5 shrink-0" />
             <span>{{ auctionStore.error }}</span>
-            <button class="ml-auto underline font-medium" @click="auctionStore.fetchAuctions()">{{ t('common.retry') }}</button>
+            <button class="ml-auto underline font-bold" @click="auctionStore.fetchAuctions()">{{ t('common.retry') }}</button>
           </div>
+
+          <!-- Auction Cards Grid -->
           <div v-else-if="filteredAuctions.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <AuctionCard
               v-for="auction in filteredAuctions"
@@ -447,13 +508,38 @@ onMounted(() => {
             />
           </div>
 
-          <div v-else class="text-center py-20 p-8 glass rounded-3xl space-y-3">
-            <div class="text-4xl">🔍</div>
-            <h3 class="text-lg font-bold text-text-primary">Бул фильтрлер боюнча лот табылган жок</h3>
-            <p class="text-xs text-text-muted">Башка категорияны же аймакты тандап көрүңүз.</p>
-            <button class="px-5 py-2.5 rounded-xl bg-primary text-text-primary font-bold text-xs" @click="resetFilters">
-              Фильтрлерди баштапкы абалга келтирүү
-            </button>
+          <!-- Rich Empty State & First Listing Onboarding -->
+          <div v-else class="bg-gradient-to-br from-slate-50 via-white to-amber-500/[0.04] rounded-3xl border border-black/[0.08] p-8 sm:p-12 text-center space-y-6 shadow-2xs">
+            <div class="w-16 h-16 rounded-3xl bg-amber-100 text-amber-800 flex items-center justify-center mx-auto shadow-2xs">
+              <Gavel class="w-8 h-8" />
+            </div>
+
+            <div class="max-w-md mx-auto space-y-2">
+              <h3 class="text-xl sm:text-2xl font-black text-gray-950 tracking-tight">
+                {{ t('liveAuctionsPage.noResultsTitle') || 'Bu Filtrelere Uygun İlan Bulunamadı' }}
+              </h3>
+              <p class="text-xs sm:text-sm text-gray-500 leading-relaxed">
+                {{ t('liveAuctionsPage.noResultsDesc') || 'Filtreleri sıfırlayabilir veya ilk açık artırmayı siz başlatabilirsiniz.' }}
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <button 
+                type="button" 
+                class="px-5 py-2.5 rounded-xl border border-black/10 bg-white hover:bg-slate-50 text-gray-800 font-bold text-xs shadow-2xs transition-all cursor-pointer"
+                @click="resetFilters"
+              >
+                {{ t('liveAuctionsPage.resetFiltersBtn') || 'Filtreleri Sıfırla' }}
+              </button>
+
+              <RouterLink 
+                to="/sell"
+                class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs shadow-sm transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105"
+              >
+                <PlusCircle class="w-4 h-4" />
+                <span>{{ t('liveAuctionsPage.startAuctionBtn') || '+ Hemen İlan Ver (%0 Komisyon)' }}</span>
+              </RouterLink>
+            </div>
           </div>
         </main>
 
