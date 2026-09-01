@@ -134,12 +134,12 @@ watch(() => userStore.isAuthenticated, (val) => {
     ]"
   >
     <!-- Top Navigation Bar -->
-    <div class="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16 sm:h-18 gap-2.5 sm:gap-4">
+    <div class="w-full max-w-[1600px] mx-auto px-3 sm:px-5 lg:px-6 xl:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-18 gap-2 xl:gap-3">
         
         <!-- Left: Brand & Logo -->
-        <div class="flex items-center gap-3 lg:gap-4 flex-shrink-0">
-          <RouterLink to="/" class="flex items-center gap-2.5 group" :aria-label="themeStore.theme.logoText || 'iTorgo'">
+        <div class="flex items-center gap-2.5 xl:gap-3.5 flex-shrink-0">
+          <RouterLink to="/" class="flex items-center gap-2 group shrink-0" :aria-label="themeStore.theme.logoText || 'iTorgo'">
             <!-- Custom Image Logo -->
             <img
               v-if="themeStore.theme.logoType === 'image' && themeStore.theme.logoUrl"
@@ -192,7 +192,7 @@ watch(() => userStore.isAuthenticated, (val) => {
               <template #trigger>
                 <button
                   type="button"
-                  class="px-3.5 py-2 rounded-xl bg-slate-100/90 hover:bg-slate-200/80 text-gray-800 hover:text-gray-950 font-extrabold text-xs border border-black/5 transition-all flex items-center gap-2 shadow-2xs group cursor-pointer"
+                  class="px-2.5 xl:px-3 py-1.5 xl:py-2 rounded-xl bg-slate-100/90 hover:bg-slate-200/80 text-gray-800 hover:text-gray-950 font-extrabold text-xs border border-black/5 transition-all flex items-center gap-1.5 xl:gap-2 shadow-2xs group cursor-pointer whitespace-nowrap"
                 >
                   <LayoutGrid class="w-3.5 h-3.5 text-gray-600 group-hover:text-amber-800 transition-colors" />
                   <span>{{ t('nav.allCategories') }}</span>
@@ -208,15 +208,15 @@ watch(() => userStore.isAuthenticated, (val) => {
         </div>
 
         <!-- Center: Search Bar (Desktop) -->
-        <div class="hidden md:flex flex-1 min-w-[200px] max-w-sm xl:max-w-md mx-2">
+        <div class="hidden md:flex flex-1 min-w-[120px] max-w-[190px] xl:max-w-xs 2xl:max-w-sm mx-1 xl:mx-2">
           <form class="w-full relative group" @submit.prevent="handleSearch">
-            <div class="relative flex items-center w-full bg-slate-100/90 hover:bg-slate-100 focus-within:bg-white rounded-full border border-black/[0.08] focus-within:border-primary/80 focus-within:ring-4 focus-within:ring-primary/20 transition-all duration-200 pl-3.5 pr-1.5 py-1">
-              <Search class="w-4 h-4 text-gray-400 group-focus-within:text-amber-600 transition-colors flex-shrink-0" />
+            <div class="relative flex items-center w-full bg-slate-100/90 hover:bg-slate-100 focus-within:bg-white rounded-full border border-black/[0.08] focus-within:border-primary/80 focus-within:ring-3 focus-within:ring-primary/20 transition-all duration-200 pl-3 pr-1 py-1">
+              <Search class="w-3.5 h-3.5 text-gray-400 group-focus-within:text-amber-600 transition-colors flex-shrink-0" />
               <input
                 v-model="searchQuery"
                 type="text"
-                :placeholder="t('nav.searchPlaceholder') || 'MacBook, Camry, Bişkek...'"
-                class="bg-transparent border-none focus:ring-0 w-full text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 outline-none ml-2 min-w-0"
+                :placeholder="t('nav.searchPlaceholder') || 'MacBook, Camry...'"
+                class="bg-transparent border-none focus:ring-0 w-full text-xs font-medium text-gray-900 placeholder-gray-400 outline-none ml-1.5 min-w-0"
               />
               <button
                 v-if="searchQuery"
@@ -229,34 +229,32 @@ watch(() => userStore.isAuthenticated, (val) => {
               </button>
               <button
                 type="submit"
-                class="w-7 h-7 rounded-full bg-gray-950 text-white flex items-center justify-center hover:bg-primary hover:text-gray-950 transition-all hover:scale-105 flex-shrink-0 cursor-pointer shadow-xs"
+                class="w-6 h-6 rounded-full bg-gray-950 text-white flex items-center justify-center hover:bg-primary hover:text-gray-950 transition-all hover:scale-105 flex-shrink-0 cursor-pointer shadow-xs"
                 aria-label="Search"
               >
-                <ArrowRight class="w-3.5 h-3.5" />
+                <ArrowRight class="w-3 h-3" />
               </button>
             </div>
           </form>
         </div>
 
         <!-- Center-Right: Navigation Links (Desktop) -->
-        <nav class="hidden xl:flex items-center gap-1 flex-shrink-0">
+        <nav class="hidden xl:flex items-center gap-0.5 2xl:gap-1 flex-shrink-0">
           <RouterLink
             v-for="link in navLinks"
             :key="link.path"
             :to="link.path"
-            class="relative px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:text-gray-950 hover:bg-slate-100 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap"
+            class="relative px-2.5 py-1.5 xl:px-3 xl:py-2 rounded-xl text-xs font-bold text-gray-600 hover:text-gray-950 hover:bg-slate-100 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap"
             active-class="!text-amber-950 !bg-amber-500/15 !border-amber-500/30 border font-extrabold"
           >
-            <component :is="link.icon" class="w-4 h-4 flex-shrink-0 text-gray-500 group-hover:text-gray-900" />
+            <component :is="link.icon" class="w-3.5 h-3.5 flex-shrink-0 text-gray-500 group-hover:text-gray-900" />
             <span>{{ link.label }}</span>
-            <span v-if="link.badge" class="px-1.5 py-0.5 text-[9px] font-black rounded-full bg-rose-500 text-white uppercase tracking-wider animate-pulse ml-0.5">
-              {{ link.badge }}
-            </span>
+            <span v-if="link.badge" class="w-2 h-2 rounded-full bg-rose-500 animate-ping inline-block ml-0.5 shrink-0" />
           </RouterLink>
         </nav>
 
         <!-- Right Side: CTA Actions & Profiles -->
-        <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+        <div class="flex items-center gap-1 sm:gap-1.5 xl:gap-2 flex-shrink-0">
 
           <!-- Mobile Search Toggle -->
           <button
@@ -270,7 +268,7 @@ watch(() => userStore.isAuthenticated, (val) => {
           <!-- Sell / Lot Sat Button -->
           <RouterLink 
             to="/sell" 
-            class="hidden sm:inline-flex px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs shadow-sm hover:shadow hover:scale-[1.02] active:scale-95 transition-all items-center gap-1.5 cursor-pointer whitespace-nowrap"
+            class="hidden sm:inline-flex px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs shadow-sm hover:shadow hover:scale-[1.02] active:scale-95 transition-all items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
           >
             <PlusCircle class="w-3.5 h-3.5 stroke-[2.5]" />
             <span>{{ t('nav.sell') || 'Lot Sat' }}</span>
@@ -287,10 +285,10 @@ watch(() => userStore.isAuthenticated, (val) => {
               <template #trigger>
                 <button
                   type="button"
-                  class="px-2.5 py-2 rounded-xl bg-slate-100/90 hover:bg-slate-200/80 border border-black/5 text-gray-800 transition-all text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                  class="px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-slate-100/90 hover:bg-slate-200/80 border border-black/5 text-gray-800 transition-all text-xs font-bold flex items-center gap-1 cursor-pointer shadow-2xs shrink-0"
                   :title="t('nav.language')"
                 >
-                  <FlagIcon :code="currentLocale.code" custom-class="w-4 h-3 rounded-[2px]" />
+                  <FlagIcon :code="currentLocale.code" custom-class="w-3.5 h-2.5 rounded-[2px]" />
                   <span class="uppercase text-[11px] font-extrabold text-gray-700">{{ currentLocale.code }}</span>
                   <ChevronDown class="w-3 h-3 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': langMenuOpen }" />
                 </button>
@@ -378,16 +376,16 @@ watch(() => userStore.isAuthenticated, (val) => {
               </div>
             </Dropdown>
 
-            <div v-else class="flex items-center gap-1.5 sm:gap-2">
+            <div v-else class="flex items-center gap-1 sm:gap-1.5 shrink-0 whitespace-nowrap">
               <RouterLink
                 to="/login"
-                class="px-3 py-2 text-xs font-bold text-gray-700 hover:text-gray-950 hover:bg-slate-100 rounded-xl transition-colors"
+                class="px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-bold text-gray-700 hover:text-gray-950 hover:bg-slate-100 rounded-xl transition-colors shrink-0 whitespace-nowrap"
               >
                 {{ t('nav.login') }}
               </RouterLink>
               <RouterLink
                 to="/register"
-                class="px-3.5 py-2 text-xs font-black rounded-xl bg-primary text-gray-950 hover:bg-primary-hover shadow-sm transition-all"
+                class="px-3 sm:px-3.5 py-1.5 sm:py-2 text-xs font-black rounded-xl bg-primary text-gray-950 hover:bg-primary-hover shadow-sm transition-all shrink-0 whitespace-nowrap"
               >
                 {{ t('nav.register') }}
               </RouterLink>
