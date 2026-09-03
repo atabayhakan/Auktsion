@@ -119,38 +119,101 @@ ${langPrompts[params.targetLanguage] || langPrompts.ky}
 }
 
 /**
- * Fallback generator when local 9Router is offline
+ * Fallback generator when local 9Router is offline or timeout occurs
+ * Fully multilingual: Russian (ru), Kyrgyz (ky), Turkish (tr)
  */
 function fallbackLocalGenerator(params: GenerateListingParams): GeneratedListingResult {
   const isLivestock = params.category === 'livestock'
   const isVehicle = params.category === 'vehicles'
   const isRealEstate = params.category === 'real-estate'
+  const lang = params.targetLanguage || 'ru'
+  const city = params.city || (lang === 'tr' ? 'Bişkek' : 'Бишкек')
 
   let title = params.keywords
   let desc = ''
   let price = 50000
   let step = 1000
+  let highlights: string[] = []
 
-  if (isLivestock) {
-    title = `Ала-Тоо тукумундагы саан уй / бука (${params.city || 'Кочкор'})`
-    desc = `Саламатсыздарбы! Малдын ден соолугу чың, бардык ветеринардык текшерүүлөрдөн жана эмдөөлөрдөн өткөн. Жем-чөпкө талабы жок, семиз. Жеринен келип көрсөңүздөр болот же жеткирүү боюнча сүйлөшөбүз.`
-    price = 85000
-    step = 2000
-  } else if (isVehicle) {
-    title = `Toyota Camry 2.5 SE (${params.city || 'Бишкек'})`
-    desc = `Абалы идеалдуу, мотор, коробка, ходовой 100% сонун. Бажы алымдары (растаможка) толук төлөнгөн, юридикалык жактан таза. Каршерингде же таксиде иштеген эмес. Компьютердик диагностикага даяр.`
-    price = 1200000
-    step = 20000
-  } else if (isRealEstate) {
-    title = `Дордой базары / Коммерциялык соода түйүнү (${params.city || 'Бишкек'})`
-    desc = `Дордой базарындагы өтүмдүү катардагы соода түйүнү / контейнер. Бардык документтери (Кызыл китеп / Техпаспорт) колунда. Электр, күзөт жана транспорттук логистика абдан ыңгайлуу.`
-    price = 2500000
-    step = 50000
+  if (lang === 'ru') {
+    if (isLivestock) {
+      title = `${params.keywords || 'Племенной скот ала-тооской породы'} (${city})`
+      desc = `Здоровый скот, прошел все ветеринарные проверки и вакцинацию. Отличный аппетит, упитанный. Возможен осмотр на месте либо доставка по договоренности. Оплата через безопасный эскроу-счет MBank / Optima.`
+      price = 85000
+      step = 2000
+      highlights = ['100% Ветеринарный паспорт', 'Проверенный заводчик', 'Быстрая передача']
+    } else if (isVehicle) {
+      title = `${params.keywords || 'Toyota Camry 2.5 SE'} (${city})`
+      desc = `Отличное техническое и эстетическое состояние. Двигатель, КПП и ходовая часть работают идеально. Полностью растаможен, без залогов и штрафов. Не работал в такси. Готов к любой компьютерной диагностике.`
+      price = 1200000
+      step = 20000
+      highlights = ['Растаможен в КР', 'Юридически чист', 'Оригинальный пробег']
+    } else if (isRealEstate) {
+      title = `${params.keywords || 'Рынок Дордой / Коммерческое помещение'} (${city})`
+      desc = `Двухэтажный торговый контейнер / объект на проходной линии рынка Дордой. Полный пакет документов на руках (Красная книга, техпаспорт). Удобный подъезд, охрана, высокий пешеходный трафик.`
+      price = 2500000
+      step = 50000
+      highlights = ['Красная книга', 'Высокая проходимость', 'Готовый бизнес']
+    } else {
+      title = `${params.keywords} (${city})`
+      desc = `Качественный товар в отличном состоянии. Полная комплектация, гарантированная работоспособность. Безопасная сделка через банковский эскроу iTorgo (MBank / Optima).`
+      price = 35000
+      step = 1000
+      highlights = ['100% Гарантия', 'Проверенный продавец', 'Оплата при получении']
+    }
+  } else if (lang === 'tr') {
+    if (isLivestock) {
+      title = `${params.keywords || 'Safkan Damızlık Büyükbaş'} (${city})`
+      desc = `Tüm veteriner aşıları ve sağlık kontrolleri eksiksiz yapılmıştır. Yem seçmez, besi durumu mükemmeldir. Yerinde kontrol edilebilir veya güvenli nakliye ayarlanabilir. Ödeme banka emanetindedir.`
+      price = 85000
+      step = 2000
+      highlights = ['Veteriner Onaylı', 'Doğrudan Yetiştiriciden', 'Hızlı Teslimat']
+    } else if (isVehicle) {
+      title = `${params.keywords || 'Toyota Camry 2.5'} (${city})`
+      desc = `Aracın motoru, şanzımanı ve yürüyen aksamı kusursuz durumdadır. Gümrük vergileri tam ödenmiş, yasal olarak temizdir. Ticari geçmişi yoktur, ekspertize açıktır.`
+      price = 1200000
+      step = 20000
+      highlights = ['Gümrük Vergisi Ödendi', 'Ekspertize Açık', 'Masrafsız']
+    } else if (isRealEstate) {
+      title = `${params.keywords || 'Dordoy Pazarı Ticari Dükkan / Konteyner'} (${city})`
+      desc = `Dordoy pazarının işlek lokasyonunda çift katlı konteyner / ticari mülk. Kırmızı kitap ve teknik pasaport dahil tüm evraklar hazırdır. Yüksek kira getirisi potansiyeli vardır.`
+      price = 2500000
+      step = 50000
+      highlights = ['Kırmızı Kitap Ruhsatlı', 'Yüksek Yaya Trafiği', 'Yatırımlık']
+    } else {
+      title = `${params.keywords} (${city})`
+      desc = `Yeni model kaliteli ürün. Kutusu ve aksesuarları eksiksiz olup çalışmasına %100 kefil olunur. MBank / Optima güvencesiyle iTorgo banka emanetiyle güvenle alabilirsiniz.`
+      price = 35000
+      step = 1000
+      highlights = ['%100 Garanti', 'Doğrulanmış Satıcı', 'Banka Emaneti']
+    }
   } else {
-    title = `${params.keywords} (${params.city || 'Бишкек'})`
-    desc = `Жаңы үлгүдөгү сапаттуу товар. Комплекти толук, иштөөсүнө 100% кепилдик берилет. MBank / Optima аркылуу эскроу кепилдиги менен коопсуз сатып алсаңыз болот.`
-    price = 35000
-    step = 1000
+    // Kyrgyz (ky)
+    if (isLivestock) {
+      title = `Ала-Тоо тукумундагы саан уй / бука (${city})`
+      desc = `Саламатсыздарбы! Малдын ден соолугу чың, бардык ветеринардык текшерүүлөрдөн жана эмдөөлөрдөн өткөн. Жем-чөпкө талабы жок, семиз. Жеринен келип көрсөңүздөр болот же жеткирүү боюнча сүйлөшөбүз.`
+      price = 85000
+      step = 2000
+      highlights = ['100% Ветеринардык текшерүү', 'Ишенимдүү малчы', 'Ыкчам өткөрүп берүү']
+    } else if (isVehicle) {
+      title = `Toyota Camry 2.5 SE (${city})`
+      desc = `Абалы идеалдуу, мотор, коробка, ходовой 100% сонун. Бажы алымдары (растаможка) толук төлөнгөн, юридикалык жактан таза. Каршерингде же таксиде иштеген эмес. Компьютердик диагностикага даяр.`
+      price = 1200000
+      step = 20000
+      highlights = ['Бажы төлөнгөн', 'Юридикалык таза', 'Оригинал пробег']
+    } else if (isRealEstate) {
+      title = `Дордой базары / Коммерциялык соода түйүнү (${city})`
+      desc = `Дордой базарындагы өтүмдүү катардагы соода түйүнү / контейнер. Бардык документтери (Кызыл китеп / Техпаспорт) колунда. Электр, күзөт жана транспорттук логистика абдан ыңгайлуу.`
+      price = 2500000
+      step = 50000
+      highlights = ['Кызыл китеп', 'Өтүмдүү орун', 'Даяр бизнес']
+    } else {
+      title = `${params.keywords} (${city})`
+      desc = `Жаңы үлгүдөгү сапаттуу товар. Комплекти толук, иштөөсүнө 100% кепилдик берилет. MBank / Optima аркылуу эскроу кепилдиги менен коопсуз сатып алсаңыз болот.`
+      price = 35000
+      step = 1000
+      highlights = ['100% Кепилдик', 'Текшерилген сатуучу', 'Ыкчам өткөрүп берүү']
+    }
   }
 
   return {
@@ -159,7 +222,7 @@ function fallbackLocalGenerator(params: GenerateListingParams): GeneratedListing
     suggestedStartingPrice: price,
     suggestedBidIncrement: step,
     category: params.category,
-    highlights: ['100% Кепилдик', 'Текшерилген сатуучу', 'Ыкчам өткөрүп берүү'],
+    highlights,
     success: true
   }
 }

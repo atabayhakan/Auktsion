@@ -39,8 +39,12 @@ const promoSlides = computed<Slide[]>(() => [
     subtitle: t('home.promoMbankDesc') || 'Komisyonsuz, 5 saniyede — kazandığınız lotu hemen güvenle ödeyin.',
     ctaLabel: t('home.promoMbankCta') || 'Nasıl Çalışır?',
     ctaLink: '/how-it-works',
-    badgeText: '0% Komisyon • MBank QR',
-    highlights: ['5 Saniyede QR ile Doğrudan Ödeme', '%100 Güvenli Banka Emaneti', 'Optima & DemirBank Desteği'],
+    badgeText: t('home.promoMbankBadge') || '0% Komisyon • MBank QR',
+    highlights: [
+      t('home.promoMbankH1') || '5 Saniyede QR ile Doğrudan Ödeme',
+      t('home.promoMbankH2') || '%100 Güvenli Banka Emaneti',
+      t('home.promoMbankH3') || 'Optima & DemirBank Desteği'
+    ],
     gradient: 'from-amber-500/15 via-amber-500/5 to-transparent',
   },
   {
@@ -51,8 +55,12 @@ const promoSlides = computed<Slide[]>(() => [
     subtitle: t('home.promoNewSellersDesc') || 'Şimdi kaydolun ve lotunuzu yayınlayın — binlerce gerçek alıcıya anında ulaşın.',
     ctaLabel: t('home.promoNewSellersCta') || 'Hemen İlan Ver',
     ctaLink: '/sell',
-    badgeText: 'Satıcı Avantajı',
-    highlights: ['Yapay Zeka Destekli İlan Asistanı', 'Canlı İhalede En Yüksek Fiyat', 'Anında Banka Hesabına Çekim'],
+    badgeText: t('home.promoNewSellersBadge') || 'Satıcı Avantajı',
+    highlights: [
+      t('home.promoNewSellersH1') || 'Yapay Zeka Destekli İlan Asistanı',
+      t('home.promoNewSellersH2') || 'Canlı İhalede En Yüksek Fiyat',
+      t('home.promoNewSellersH3') || 'Anında Banka Hesabına Çekim'
+    ],
     gradient: 'from-blue-500/15 via-blue-500/5 to-transparent',
   },
   {
@@ -63,8 +71,12 @@ const promoSlides = computed<Slide[]>(() => [
     subtitle: t('home.promoFlashDesc') || 'Rezerv fiyatsız onlarca lot — hemen teklif verin ve en iyi fiyata kazanın.',
     ctaLabel: t('home.promoFlashCta') || 'Açık Artırmaları Gör',
     ctaLink: '/auctions',
-    badgeText: 'Canlı WebSocket',
-    highlights: ['Gecikmesiz Anlık Teklifler', 'Şeffaf Teklif Geçmişi', 'Adil & Denetimli Sistem'],
+    badgeText: t('home.promoFlashBadge') || 'Canlı WebSocket',
+    highlights: [
+      t('home.promoFlashH1') || 'Gecikmesiz Anlık Teklifler',
+      t('home.promoFlashH2') || 'Şeffaf Teklif Geçmişi',
+      t('home.promoFlashH3') || 'Adil & Denetimli Sistem'
+    ],
     gradient: 'from-emerald-500/15 via-emerald-500/5 to-transparent',
   },
 ])

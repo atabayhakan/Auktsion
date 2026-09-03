@@ -618,8 +618,8 @@ onMounted(() => {
                   <ShieldCheck class="w-4 h-4" />
                 </div>
                 <div>
-                  <h5 class="text-xs font-black text-gray-950">%100 Banka Emaneti</h5>
-                  <p class="text-[11px] text-gray-500">DemirBank Escrow koruması</p>
+                  <h5 class="text-xs font-black text-gray-950">{{ t('home.trustEscrowTitle') || '%100 Banka Emaneti' }}</h5>
+                  <p class="text-[11px] text-gray-500">{{ t('home.trustEscrowDesc') || 'DemirBank Escrow koruması' }}</p>
                 </div>
               </div>
 
@@ -628,8 +628,8 @@ onMounted(() => {
                   <Zap class="w-4 h-4" />
                 </div>
                 <div>
-                  <h5 class="text-xs font-black text-gray-950">MBank & Optima QR</h5>
-                  <p class="text-[11px] text-gray-500">5 saniyede anında ödeme</p>
+                  <h5 class="text-xs font-black text-gray-950">{{ t('home.trustQrTitle') || 'MBank & Optima QR' }}</h5>
+                  <p class="text-[11px] text-gray-500">{{ t('home.trustQrDesc') || '5 saniyede anında ödeme' }}</p>
                 </div>
               </div>
 
@@ -638,8 +638,8 @@ onMounted(() => {
                   <Radio class="w-4 h-4" />
                 </div>
                 <div>
-                  <h5 class="text-xs font-black text-gray-950">Canlı WebSocket İhale</h5>
-                  <p class="text-[11px] text-gray-500">Gecikmesiz anlık teklifler</p>
+                  <h5 class="text-xs font-black text-gray-950">{{ t('home.trustWsTitle') || 'Canlı WebSocket İhale' }}</h5>
+                  <p class="text-[11px] text-gray-500">{{ t('home.trustWsDesc') || 'Gecikmesiz anlık teklifler' }}</p>
                 </div>
               </div>
             </div>

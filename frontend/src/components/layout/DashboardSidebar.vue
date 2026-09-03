@@ -92,7 +92,7 @@ function handleLogout() {
           >
             <CheckCircle2 v-if="userStore.kycStatus === 'verified'" class="w-2.5 h-2.5" />
             <Clock v-else class="w-2.5 h-2.5" />
-            <span>{{ userStore.kycStatus === 'verified' ? 'Doğrulandı' : 'KYC Bekliyor' }}</span>
+            <span>{{ userStore.kycStatus === 'verified' ? (t('status.kyc.verified') || 'Doğrulandı') : (t('status.kyc.pending') || 'KYC Bekliyor') }}</span>
           </span>
         </div>
       </div>

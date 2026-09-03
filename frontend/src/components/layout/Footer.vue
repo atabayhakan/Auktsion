@@ -35,8 +35,8 @@ const footerLinks = {
             <ShieldCheck class="w-4 h-4" />
           </div>
           <div>
-            <p class="font-extrabold text-gray-950">Kırgızistan Ulusal Bankası AML/CFT Uyumlu</p>
-            <p class="text-gray-500 text-[11px]">256-Bit SSL Şifreleme ve DemirBank Escrow Emanet Güvencesi</p>
+            <p class="font-extrabold text-gray-950">{{ t('footer.nbkrTitle') || 'Kırgızistan Ulusal Bankası AML/CFT Uyumlu' }}</p>
+            <p class="text-gray-500 text-[11px]">{{ t('footer.nbkrDesc') || '256-Bit SSL Şifreleme ve DemirBank Escrow Emanet Güvencesi' }}</p>
           </div>
         </div>
 

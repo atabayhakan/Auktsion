@@ -51,7 +51,7 @@ const localValue = ref(props.modelValue ?? '')
 const debounceTimer = ref<ReturnType<typeof setTimeout> | null>(null)
 
 const inputClasses = computed(() => {
-  const base = 'w-full px-4 py-2.5 sm:py-3 rounded bg-white border border-border text-text-primary placeholder-text-muted transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary disabled:opacity-50 disabled:cursor-not-allowed readonly:bg-black/[0.03] text-base'
+  const base = 'w-full px-4 py-2.5 sm:py-3 rounded bg-white dark:bg-slate-900 border border-border text-text-primary placeholder:text-gray-400/50 dark:placeholder:text-gray-500/40 placeholder:font-normal transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary disabled:opacity-50 disabled:cursor-not-allowed readonly:bg-black/[0.03] text-base'
 
   const states = {
     default: '',

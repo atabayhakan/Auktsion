@@ -98,10 +98,26 @@ export async function createAuction(req: Request, res: Response): Promise<void> 
       isBlitz,
       isFeatured,
       durationHours,
+      durationDays,
       attributes,
     } = req.body;
 
-    if (!title || !description || !category || !startingPrice || !bidIncrement || !city || !regionId) {
+    const parsePriceMinor = (val: any): number | undefined => {
+      if (val === undefined || val === null) return undefined;
+      if (typeof val === 'object') {
+        if (val.minorUnits !== undefined && !isNaN(Number(val.minorUnits))) return Math.round(Number(val.minorUnits));
+        if (val.amount !== undefined && !isNaN(Number(val.amount))) return Math.round(Number(val.amount) * 100);
+      }
+      const num = Number(val);
+      return isNaN(num) ? undefined : Math.round(num * 100);
+    };
+
+    const startingPriceMinor = parsePriceMinor(startingPrice);
+    const reservePriceMinor = parsePriceMinor(reservePrice);
+    const buyNowPriceMinor = parsePriceMinor(buyNowPrice);
+    const bidIncrementMinor = parsePriceMinor(bidIncrement);
+
+    if (!title || !description || !category || startingPriceMinor === undefined || bidIncrementMinor === undefined || !city || !regionId) {
       res.status(400).json({
         success: false,
         error: 'Бардык милдеттүү талааларды толтуруңуз (title, description, category, startingPrice, bidIncrement, city, regionId required)',
@@ -109,10 +125,7 @@ export async function createAuction(req: Request, res: Response): Promise<void> 
       return;
     }
 
-    const startingPriceMinor = Math.round(Number(startingPrice) * 100);
-    const reservePriceMinor = reservePrice ? Math.round(Number(reservePrice) * 100) : undefined;
-    const buyNowPriceMinor = buyNowPrice ? Math.round(Number(buyNowPrice) * 100) : undefined;
-    const bidIncrementMinor = Math.round(Number(bidIncrement) * 100);
+    const calculatedHours = durationHours ? Number(durationHours) : (durationDays ? Number(durationDays) * 24 : 48);
 
     const id = `lot-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
@@ -133,7 +146,7 @@ export async function createAuction(req: Request, res: Response): Promise<void> 
       district,
       isBlitz: Boolean(isBlitz),
       isFeatured: Boolean(isFeatured),
-      durationHours: durationHours ? Number(durationHours) : 48,
+      durationHours: calculatedHours,
       attributes: attributes || {},
     });
 

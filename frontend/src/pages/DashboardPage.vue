@@ -513,7 +513,7 @@ onMounted(async () => {
                 </div>
 
                 <div class="shrink-0 flex items-center gap-2 self-start sm:self-center">
-                  <span class="text-xs font-bold text-gray-400">Durum:</span>
+                  <span class="text-xs font-bold text-gray-400">{{ t('common.status') || 'Durum' }}:</span>
                   <div 
                     class="px-3.5 py-1.5 rounded-full text-xs font-extrabold flex items-center gap-1.5 shadow-2xs border"
                     :class="userStore.kycStatus === 'verified'
