@@ -695,6 +695,9 @@ export default {
     "verifiedOnly": "Только проверенные продавцы"
   },
   "footer": {
+    "homeAria": "iTorgo Главная",
+    "ariaLabel": "Подвал сайта",
+    "location": "Бишкек, Кыргызская Республика",
     "nbkrTitle": "Соответствие требованиям НБКР (ПОД/ФТ)",
     "nbkrDesc": "256-битное SSL шифрование и эскроу-депозит DemirBank",
     "aboutUs": "О нас",

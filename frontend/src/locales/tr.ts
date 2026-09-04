@@ -695,6 +695,9 @@ export default {
     "verifiedOnly": "Sadece Doğrulanmış Satıcılar"
   },
   "footer": {
+    "homeAria": "iTorgo Ana Sayfa",
+    "ariaLabel": "Alt bilgi",
+    "location": "Bişkek, Kırgızistan Cumhuriyeti",
     "nbkrTitle": "Kırgızistan Ulusal Bankası AML/CFT Uyumlu",
     "nbkrDesc": "256-Bit SSL Şifreleme ve DemirBank Escrow Emanet Güvencesi",
     "aboutUs": "Hakkımızda",

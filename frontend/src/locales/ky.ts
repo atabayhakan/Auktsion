@@ -695,6 +695,9 @@ export default {
     "verifiedOnly": "Тастыкталган сатуучулар гана"
   },
   "footer": {
+    "homeAria": "iTorgo Башкы бет",
+    "ariaLabel": "Сайттын төмөнкү бөлүгү",
+    "location": "Бишкек, Кыргыз Республикасы",
     "nbkrTitle": "КР Улуттук Банкынын AML/CFT талаптарына ылайык",
     "nbkrDesc": "256-биттик SSL шифрлөө жана DemirBank эскроу кепилдиги",
     "aboutUs": "Биз жөнүндө",

@@ -25,7 +25,7 @@ const footerLinks = {
 </script>
 
 <template>
-  <footer class="bg-white border-t border-black/[0.08] text-gray-900 font-sans" aria-label="Alt bilgi">
+  <footer class="bg-white border-t border-black/[0.08] text-gray-900 font-sans" :aria-label="t('footer.ariaLabel') || 'Подвал сайта'">
     
     <!-- Trust & Payment Methods Banner -->
     <div class="border-b border-black/[0.06] bg-slate-50/70 py-6 px-4 sm:px-6 lg:px-8">
@@ -35,8 +35,8 @@ const footerLinks = {
             <ShieldCheck class="w-4 h-4" />
           </div>
           <div>
-            <p class="font-extrabold text-gray-950">{{ t('footer.nbkrTitle') || 'Kırgızistan Ulusal Bankası AML/CFT Uyumlu' }}</p>
-            <p class="text-gray-500 text-[11px]">{{ t('footer.nbkrDesc') || '256-Bit SSL Şifreleme ve DemirBank Escrow Emanet Güvencesi' }}</p>
+            <p class="font-extrabold text-gray-950">{{ t('footer.nbkrTitle') || 'Соответствие требованиям НБКР (ПОД/ФТ)' }}</p>
+            <p class="text-gray-500 text-[11px]">{{ t('footer.nbkrDesc') || '256-битное SSL шифрование и эскроу-депозит DemirBank' }}</p>
           </div>
         </div>
 
@@ -67,7 +67,7 @@ const footerLinks = {
         
         <!-- Brand & About Column (2 cols wide) -->
         <div class="col-span-2 space-y-4">
-          <router-link to="/" class="flex items-center gap-2.5 group" aria-label="iTorgo Ana Sayfa">
+          <router-link to="/" class="flex items-center gap-2.5 group" :aria-label="t('footer.homeAria') || 'iTorgo Главная'">
             <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 border border-amber-300/30 p-1.5 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-all">
               <IlbirsIcon class="w-full h-full text-gray-950" />
             </div>
@@ -80,13 +80,13 @@ const footerLinks = {
           </router-link>
 
           <p class="text-xs text-gray-500 leading-relaxed max-w-sm">
-            {{ t('footer.tagline') || 'Kırgızistan\'ın 1 numaralı online açık artırma platformu. MBank, Optima Bank ve DemirBank güvencesiyle %100 güvenli işlemler.' }}
+            {{ t('footer.tagline') || 'Онлайн-аукцион №1 в Кыргызстане. 100% безопасные сделки через MBank, Optima Bank, DemirBank.' }}
           </p>
 
           <div class="pt-2 space-y-1.5 text-xs text-gray-500 font-medium">
             <div class="flex items-center gap-2">
               <MapPin class="w-3.5 h-3.5 text-gray-400" />
-              <span>Bişkek, Kırgızistan Cumhuriyeti</span>
+              <span>{{ t('footer.location') || 'Бишкек, Кыргызская Республика' }}</span>
             </div>
             <div class="flex items-center gap-2">
               <Mail class="w-3.5 h-3.5 text-gray-400" />
@@ -96,8 +96,8 @@ const footerLinks = {
         </div>
 
         <!-- Platform Links -->
-        <nav aria-label="Platform" class="space-y-3">
-          <h4 class="font-black text-xs uppercase tracking-wider text-gray-900">{{ t('footer.platform') || 'Platform' }}</h4>
+        <nav :aria-label="t('footer.platform') || 'Платформа'" class="space-y-3">
+          <h4 class="font-black text-xs uppercase tracking-wider text-gray-900">{{ t('footer.platform') || 'Платформа' }}</h4>
           <ul class="space-y-2.5">
             <li v-for="link in footerLinks.platform" :key="link.path">
               <router-link
@@ -111,8 +111,8 @@ const footerLinks = {
         </nav>
 
         <!-- Company Links -->
-        <nav aria-label="Şirket" class="space-y-3">
-          <h4 class="font-black text-xs uppercase tracking-wider text-gray-900">{{ t('footer.company') || 'Şirket' }}</h4>
+        <nav :aria-label="t('footer.company') || 'Компания'" class="space-y-3">
+          <h4 class="font-black text-xs uppercase tracking-wider text-gray-900">{{ t('footer.company') || 'Компания' }}</h4>
           <ul class="space-y-2.5">
             <li v-for="link in footerLinks.company" :key="link.path">
               <router-link
@@ -126,8 +126,8 @@ const footerLinks = {
         </nav>
 
         <!-- Legal Links -->
-        <nav aria-label="Yasal" class="space-y-3">
-          <h4 class="font-black text-xs uppercase tracking-wider text-gray-900">{{ t('footer.legal') || 'Yasal Bilgiler' }}</h4>
+        <nav :aria-label="t('footer.legal') || 'Юридическая информация'" class="space-y-3">
+          <h4 class="font-black text-xs uppercase tracking-wider text-gray-900">{{ t('footer.legal') || 'Юридическая информация' }}</h4>
           <ul class="space-y-2.5">
             <li v-for="link in footerLinks.legal" :key="link.path">
               <router-link
@@ -146,7 +146,7 @@ const footerLinks = {
     <div class="bg-slate-50 border-t border-black/[0.06]">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs text-gray-500">
-          <p>&copy; {{ currentYear }} iTorgo. {{ t('footer.copyright') || 'Tüm hakları saklıdır. Kırgızistan, Bişkek' }}</p>
+          <p>&copy; {{ currentYear }} iTorgo. {{ t('footer.copyright') || 'Все права защищены. Кыргызстан, Бишкек.' }}</p>
 
           <div class="flex flex-wrap items-center gap-4">
             <router-link
@@ -158,7 +158,7 @@ const footerLinks = {
               {{ t(link.label) }}
             </router-link>
             <span class="text-gray-300">|</span>
-            <span class="font-mono font-bold text-gray-700">KGS (Сом)</span>
+            <span class="font-mono font-bold text-gray-700">{{ t('footer.currencyLabel') || 'KGS (сом)' }}</span>
           </div>
         </div>
       </div>
