@@ -95,19 +95,19 @@ const features = computed(() => [
     title: t('howItWorksPage.featDeliveryTitle'),
     description: t('howItWorksPage.featDeliveryDesc'),
     icon: Truck,
-    badge: 'Бүт Кыргызстан'
+    badge: currentLocale.value === 'ky' ? 'Бүт Кыргызстан' : (currentLocale.value === 'tr' ? 'Tüm Kırgızistan' : 'Весь Кыргызстан')
   },
   {
     title: t('howItWorksPage.featLotsTitle'),
     description: t('howItWorksPage.featLotsDesc'),
     icon: Award,
-    badge: '5 000+ Лот'
+    badge: currentLocale.value === 'ky' ? '5 000+ Лот' : (currentLocale.value === 'tr' ? '5.000+ Lot' : '5 000+ Лотов')
   },
   {
     title: t('howItWorksPage.featSupportTitle'),
     description: t('howItWorksPage.featSupportDesc'),
     icon: Clock,
-    badge: '24/7 Колдоо'
+    badge: currentLocale.value === 'ky' ? '24/7 Колдоо' : (currentLocale.value === 'tr' ? '7/24 Destek' : '24/7 Поддержка')
   },
 ])
 

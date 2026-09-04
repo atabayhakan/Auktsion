@@ -472,7 +472,7 @@ defineExpose({
           type="button"
           class="p-2 rounded-xl border transition-all cursor-pointer"
           :class="isSoundOn ? 'bg-amber-400/20 border-amber-400/40 text-amber-300' : 'bg-white/5 border-white/10 text-white/50 hover:text-white'"
-          :title="isSoundOn ? 'Ses açık' : 'Ses kapalı'"
+          :title="isSoundOn ? (filmLang === 'ky' ? 'Үн күйүк' : (filmLang === 'tr' ? 'Ses açık' : 'Звук включен')) : (filmLang === 'ky' ? 'Үн өчүк' : (filmLang === 'tr' ? 'Ses kapalı' : 'Без звука'))"
           @click="toggleSound"
         >
           <Volume2 v-if="isSoundOn" class="w-4 h-4" />
@@ -483,7 +483,7 @@ defineExpose({
         <button
           type="button"
           class="p-2 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:text-white transition-all cursor-pointer"
-          :title="isFullscreen ? 'Çıkış' : 'Tam Ekran'"
+          :title="isFullscreen ? (filmLang === 'ky' ? 'Чыгуу' : (filmLang === 'tr' ? 'Çıkış' : 'Свернуть')) : (filmLang === 'ky' ? 'Толук экран' : (filmLang === 'tr' ? 'Tam Ekran' : 'На весь экран'))"
           @click="toggleFullscreen"
         >
           <Minimize2 v-if="isFullscreen" class="w-4 h-4" />
@@ -548,7 +548,7 @@ defineExpose({
                 </div>
               </div>
             </div>
-            <span class="text-[10px] text-white/40">сейчас</span>
+            <span class="text-[10px] text-white/40">{{ filmLang === 'ky' ? 'азыр' : (filmLang === 'tr' ? 'şimdi' : 'сейчас') }}</span>
           </div>
 
           <!-- 4-Digit Code Blocks -->
@@ -669,7 +669,7 @@ defineExpose({
             <Search class="w-4 h-4 text-amber-400 absolute left-4" />
             <div class="w-full bg-black/60 border border-amber-400/50 rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm font-bold text-white flex items-center justify-between">
               <span>Apple MacBook Pro M3 Max / iPhone 15</span>
-              <span class="px-2 py-0.5 rounded-md bg-amber-400/20 text-amber-300 text-[10px] font-black font-mono">12 ЛОТОВ</span>
+              <span class="px-2 py-0.5 rounded-md bg-amber-400/20 text-amber-300 text-[10px] font-black font-mono">{{ filmLang === 'ky' ? '12 ЛОТ' : (filmLang === 'tr' ? '12 LOT' : '12 ЛОТОВ') }}</span>
             </div>
           </div>
 
@@ -741,7 +741,7 @@ defineExpose({
                 {{ simCurrentBid.toLocaleString('ru-RU') }} сом
               </div>
               <div class="text-[10px] text-emerald-400 font-bold mt-0.5">
-                +1 000 сом кадам
+                {{ filmLang === 'ky' ? '+1 000 сом кадам' : (filmLang === 'tr' ? '+1.000 KGS artış adımı' : '+1 000 сом шаг ставки') }}
               </div>
             </div>
 
@@ -757,7 +757,7 @@ defineExpose({
                 00:{{ simTimerSeconds < 10 ? '0' + simTimerSeconds : simTimerSeconds }}
               </div>
               <div class="text-[10px] text-amber-300 font-bold mt-0.5">
-                {{ simIsAntisniping ? '⚡ +2 МИНУТЫ ДОБАВЛЕНО!' : 'Антиснайпинг 2.0' }}
+                {{ simIsAntisniping ? (filmLang === 'ky' ? '⚡ +2 МҮНӨТ КОШУЛДУ!' : (filmLang === 'tr' ? '⚡ +2 DK EKLENDİ!' : '⚡ +2 МИНУТЫ ДОБАВЛЕНО!')) : 'Anti-sniping 2.0' }}
               </div>
             </div>
           </div>
@@ -892,7 +892,7 @@ defineExpose({
               <span class="text-sm font-black text-white">iTorgo Express Courier</span>
             </div>
             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-              {{ simDeliveredSuccess ? 'DELIVERED & PAID' : 'TRANSIT: БИШКЕК ➡️ ОШ' }}
+              {{ simDeliveredSuccess ? (filmLang === 'ky' ? 'ЖЕТКИРИЛДИ ЖАНА ТӨЛӨНДҮ' : (filmLang === 'tr' ? 'TESLİM EDİLDİ & ÖDENDİ' : 'ДОСТАВЛЕНО И ОПЛАЧЕНО')) : (filmLang === 'ky' ? 'ЖОЛДО: БИШКЕК ➡️ ОШ' : (filmLang === 'tr' ? 'YOLDA: BİŞKEK ➡️ OŞ' : 'В ПУТИ: БИШКЕК ➡️ ОШ')) }}
             </span>
           </div>
 
@@ -905,9 +905,9 @@ defineExpose({
               />
             </div>
             <div class="flex justify-between text-[11px] font-bold text-white/60 mt-2">
-              <span>📍 Бишкек</span>
-              <span>🚚 Жолдо</span>
-              <span>📍 Ош (Дарегине жетти)</span>
+              <span>📍 {{ filmLang === 'tr' ? 'Bişkek' : 'Бишкек' }}</span>
+              <span>🚚 {{ filmLang === 'ky' ? 'Жолдо' : (filmLang === 'tr' ? 'Yolda' : 'В пути') }}</span>
+              <span>📍 {{ filmLang === 'ky' ? 'Ош (Дарегине жетти)' : (filmLang === 'tr' ? 'Oş (Teslim edildi)' : 'Ош (Доставлено)') }}</span>
             </div>
           </div>
 
@@ -992,7 +992,7 @@ defineExpose({
             type="button"
             class="p-2.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 hover:text-white transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             :disabled="currentScene === 0"
-            title="Предыдущая сцена"
+            :title="filmLang === 'ky' ? 'Мурунку кадам' : (filmLang === 'tr' ? 'Önceki Adım' : 'Предыдущая сцена')"
             @click="goToScene(currentScene - 1)"
           >
             <ChevronLeft class="w-4 h-4" />
@@ -1014,7 +1014,7 @@ defineExpose({
             type="button"
             class="p-2.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 hover:text-white transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             :disabled="currentScene === scenes.length - 1"
-            title="Следующая сцена"
+            :title="filmLang === 'ky' ? 'Кийинки кадам' : (filmLang === 'tr' ? 'Sonraki Adım' : 'Следующая сцена')"
             @click="goToScene(currentScene + 1)"
           >
             <ChevronRight class="w-4 h-4" />

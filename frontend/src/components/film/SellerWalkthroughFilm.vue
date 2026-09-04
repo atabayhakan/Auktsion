@@ -249,7 +249,11 @@ const scenes = computed(() => [
 
 // Interactive simulated scene states for seller
 const simCategory = ref('electronics')
-const simTitle = ref('Sony PlayStation 5 Pro 2TB (Жаңы / Жабык куту)')
+const simTitle = computed(() => {
+  if (filmLang.value === 'ky') return 'Sony PlayStation 5 Pro 2TB (Жаңы / Жабык куту)'
+  if (filmLang.value === 'tr') return 'Sony PlayStation 5 Pro 2TB (Sıfır / Kapalı Kutu)'
+  return 'Sony PlayStation 5 Pro 2TB (Новый / В заводской упаковке)'
+})
 const simAiActive = ref(false)
 const simPhotoCount = ref(3)
 const simStartPrice = ref(25000)
@@ -437,7 +441,7 @@ defineExpose({
           type="button"
           class="p-2 rounded-xl border transition-all cursor-pointer"
           :class="isSoundOn ? 'bg-emerald-400/20 border-emerald-400/40 text-emerald-300' : 'bg-white/5 border-white/10 text-white/50 hover:text-white'"
-          :title="isSoundOn ? 'Ses açık' : 'Ses kapalı'"
+          :title="isSoundOn ? (filmLang === 'ky' ? 'Үн күйүк' : (filmLang === 'tr' ? 'Ses açık' : 'Звук включен')) : (filmLang === 'ky' ? 'Үн өчүк' : (filmLang === 'tr' ? 'Ses kapalı' : 'Без звука'))"
           @click="toggleSound"
         >
           <Volume2 v-if="isSoundOn" class="w-4 h-4" />
@@ -447,6 +451,7 @@ defineExpose({
         <button
           type="button"
           class="p-2 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:text-white transition-all cursor-pointer"
+          :title="isFullscreen ? (filmLang === 'ky' ? 'Чыгуу' : (filmLang === 'tr' ? 'Çıkış' : 'Свернуть')) : (filmLang === 'ky' ? 'Толук экран' : (filmLang === 'tr' ? 'Tam Ekran' : 'На весь экран'))"
           @click="toggleFullscreen"
         >
           <Minimize2 v-if="isFullscreen" class="w-4 h-4" />
@@ -504,7 +509,7 @@ defineExpose({
                 class="px-3 py-1 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-[11px] font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
                 @click="triggerUserAiGenerate"
               >
-                {{ simAiActive ? '✓ Даяр' : '✨ Түзүү' }}
+                {{ simAiActive ? (filmLang === 'ky' ? '✓ Даяр' : (filmLang === 'tr' ? '✓ Hazır' : '✓ Готово')) : (filmLang === 'ky' ? '✨ Түзүү' : (filmLang === 'tr' ? '✨ Oluştur' : '✨ Создать')) }}
               </button>
             </div>
             <p class="text-[11px] text-white/70 leading-relaxed font-mono">
@@ -522,7 +527,7 @@ defineExpose({
         <div class="rounded-3xl bg-gradient-to-b from-[#161a26] to-[#0f121d] border border-white/15 p-6 sm:p-7 shadow-2xl space-y-4">
           <div class="flex items-center justify-between border-b border-white/10 pb-3">
             <span class="text-xs font-bold text-white/70">{{ filmLang === 'ky' ? '2-Кадам: Сүрөттөрдү жүктөө' : (filmLang === 'tr' ? '2. Adım: Fotoğraf ve Video Yükleme' : 'Шаг 2: Загрузка фото и видео') }}</span>
-            <span class="text-[10px] font-bold text-emerald-400 font-mono">{{ simPhotoCount }} / 10 ФОТО</span>
+            <span class="text-[10px] font-bold text-emerald-400 font-mono">{{ simPhotoCount }} / 10 {{ filmLang === 'ky' ? 'СҮРӨТ' : (filmLang === 'tr' ? 'FOTO' : 'ФОТО') }}</span>
           </div>
 
           <!-- Photo Drag & Drop Zone -->
@@ -536,7 +541,7 @@ defineExpose({
             <div class="text-xs font-bold text-white">
               {{ filmLang === 'ky' ? 'Сүрөттөрдү бул жерге таштаңыз же басыңыз' : (filmLang === 'tr' ? 'Fotoğrafları sürükleyin veya tıklayın' : 'Перетащите живые фото или нажмите') }}
             </div>
-            <p class="text-[10px] text-white/40">PNG, JPG, WebP (макс 15 MB)</p>
+            <p class="text-[10px] text-white/40">PNG, JPG, WebP ({{ filmLang === 'ky' ? 'макс. 15 МБ' : (filmLang === 'tr' ? 'maks. 15 MB' : 'макс. 15 МБ') }})</p>
           </div>
 
           <!-- Photo Grid Thumbnail Cards -->
@@ -574,7 +579,7 @@ defineExpose({
               <div class="text-xl font-black text-white font-mono">
                 {{ simStartPrice.toLocaleString('ru-RU') }} сом
               </div>
-              <div class="text-[9px] text-white/40">1 сомдон да баштаса болот</div>
+              <div class="text-[9px] text-white/40">{{ filmLang === 'ky' ? '1 сомдон да баштаса болот' : (filmLang === 'tr' ? '1 KGS ile bile başlanabilir' : 'Можно начать даже с 1 сома') }}</div>
             </div>
 
             <!-- Bid Step -->
@@ -583,7 +588,7 @@ defineExpose({
               <div class="text-xl font-black text-emerald-400 font-mono">
                 +{{ simStepPrice.toLocaleString('ru-RU') }} сом
               </div>
-              <div class="text-[9px] text-emerald-400/70">Ар бир коюлган коюм</div>
+              <div class="text-[9px] text-emerald-400/70">{{ filmLang === 'ky' ? 'Ар бир коюлган коюм' : (filmLang === 'tr' ? 'Her teklifteki artış miktarı' : 'Шаг каждого предложения') }}</div>
             </div>
           </div>
 
@@ -611,13 +616,13 @@ defineExpose({
           <!-- Duration Selector Pills -->
           <div class="grid grid-cols-3 gap-2 text-center text-xs font-bold">
             <div class="p-3 rounded-2xl bg-white/5 border border-white/10 text-white/60">
-              ⚡ 24 саат
+              ⚡ {{ filmLang === 'ky' ? '24 саат' : (filmLang === 'tr' ? '24 saat' : '24 часа') }}
             </div>
             <div class="p-3 rounded-2xl bg-amber-400 text-gray-950 font-black shadow-md">
-              🔥 3 күн (Сунуш)
+              🔥 {{ filmLang === 'ky' ? '3 күн (Сунуш)' : (filmLang === 'tr' ? '3 gün (Öneri)' : '3 дня (Хит)') }}
             </div>
             <div class="p-3 rounded-2xl bg-white/5 border border-white/10 text-white/60">
-              🗓️ 7 күн
+              🗓️ {{ filmLang === 'ky' ? '7 күн' : (filmLang === 'tr' ? '7 gün' : '7 дней') }}
             </div>
           </div>
 
@@ -628,7 +633,7 @@ defineExpose({
               <span>{{ filmLang === 'ky' ? 'Антиснайпинг автоматтык күйгүзүлгөн' : (filmLang === 'tr' ? 'Anti-Sniping Otomatik Devrede' : 'Антиснайпинг включен автоматически') }}</span>
             </div>
             <p class="text-[11px] text-white/60 leading-relaxed">
-              {{ filmLang === 'ky' ? 'Акыркы секундаларда текеп коюлса, таймер 2 мүнөткө узарып, сатуучуга эң жогорку пайда алып келет.' : (filmLang === 'tr' ? 'Son saniyelerdeki teklifler süreyi 2 dakika uzatarak lotun değerinin altında gitmesini önler.' : 'Ставки на последних секундах продлевают таймер, гарантируя максимальную финальную цену.') }}
+              {{ filmLang === 'ky' ? 'Акыркы секундаларда коюм коюлса, таймер 2 мүнөткө узарып, сатуучуга эң жогорку пайда алып келет.' : (filmLang === 'tr' ? 'Son saniyelerdeki teklifler süreyi 2 dakika uzatarak lotun değerinin altında gitmesini önler.' : 'Ставки на последних секундах продлевают таймер, гарантируя максимальную финальную цену.') }}
             </p>
           </div>
         </div>
@@ -640,7 +645,7 @@ defineExpose({
           <div class="flex items-center justify-between border-b border-white/10 pb-3">
             <span class="text-xs font-bold text-white/70">{{ filmLang === 'ky' ? '5-Кадам: Түз эфирге чыгаруу' : (filmLang === 'tr' ? '5. Adım: Canlı Yayına Alma' : 'Шаг 5: Публикация лота') }}</span>
             <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500 text-gray-950">
-              {{ simPublished ? 'ONLINE 🔴' : 'READY' }}
+              {{ simPublished ? (filmLang === 'ky' ? 'ТҮЗ ЭФИРДЕ 🔴' : (filmLang === 'tr' ? 'CANLI YAYINDA 🔴' : 'В ЭФИРЕ 🔴')) : (filmLang === 'ky' ? 'ДАЯР' : (filmLang === 'tr' ? 'HAZIR' : 'ГОТОВ')) }}
             </span>
           </div>
 
@@ -758,6 +763,7 @@ defineExpose({
             type="button"
             class="p-2.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 hover:text-white transition-all cursor-pointer disabled:opacity-30"
             :disabled="currentScene === 0"
+            :title="filmLang === 'ky' ? 'Мурунку кадам' : (filmLang === 'tr' ? 'Önceki Adım' : 'Предыдущая сцена')"
             @click="goToScene(currentScene - 1)"
           >
             <ChevronLeft class="w-4 h-4" />
@@ -777,6 +783,7 @@ defineExpose({
             type="button"
             class="p-2.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 hover:text-white transition-all cursor-pointer disabled:opacity-30"
             :disabled="currentScene === scenes.length - 1"
+            :title="filmLang === 'ky' ? 'Кийинки кадам' : (filmLang === 'tr' ? 'Sonraki Adım' : 'Следующая сцена')"
             @click="goToScene(currentScene + 1)"
           >
             <ChevronRight class="w-4 h-4" />
@@ -785,6 +792,7 @@ defineExpose({
           <button
             type="button"
             class="p-2.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 hover:text-white transition-all cursor-pointer"
+            :title="filmLang === 'ky' ? 'Башынан баштоо' : (filmLang === 'tr' ? 'Baştan Başlat' : 'Перезапустить с начала')"
             @click="restartFilm"
           >
             <RotateCcw class="w-4 h-4" />
