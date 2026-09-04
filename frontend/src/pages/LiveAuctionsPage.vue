@@ -224,9 +224,7 @@ function resetFilters() {
 }
 
 onMounted(() => {
-  if (auctionStore.auctions.length === 0) {
-    auctionStore.fetchAuctions()
-  }
+  auctionStore.fetchAuctions()
 })
 </script>
 

@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Auction, AuctionFilters, Money } from '@/types'
 import { mockAuctions } from '@/data/mockAuctions'
+import apiClient from '@/services/api'
 
 export const useAuctionStore = defineStore('auction', () => {
   // State
@@ -94,20 +95,18 @@ export const useAuctionStore = defineStore('auction', () => {
     error.value = null
     
     try {
-      if (window.axios) {
-        const response = await window.axios.get('/api/auctions', { 
-          params: filters.value 
-        })
-        if (response?.data?.data && response.data.data.length > 0) {
-          if (append) {
-            auctions.value = [...auctions.value, ...response.data.data]
-          } else {
-            auctions.value = response.data.data
-          }
-          hasMore.value = response.data.meta?.hasMore || false
-          totalCount.value = response.data.meta?.total || response.data.data.length
-          return
+      const response = await apiClient.get<any>('/api/auctions', filters.value)
+      if (response?.data?.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
+        if (append) {
+          const existingIds = new Set(auctions.value.map(a => a.id))
+          const fresh = response.data.data.filter((a: any) => !existingIds.has(a.id))
+          auctions.value = [...auctions.value, ...fresh]
+        } else {
+          auctions.value = response.data.data
         }
+        hasMore.value = response.data.meta?.hasMore || false
+        totalCount.value = response.data.meta?.total || response.data.data.length
+        return
       }
       
       // Standalone / Mock fallback
@@ -131,12 +130,10 @@ export const useAuctionStore = defineStore('auction', () => {
     error.value = null
     
     try {
-      if (window.axios) {
-        const response = await window.axios.get(`/api/auctions/${id}`)
-        if (response?.data?.data) {
-          currentAuction.value = response.data.data
-          return currentAuction.value
-        }
+      const response = await apiClient.get<any>(`/api/auctions/${id}`)
+      if (response?.data?.data) {
+        currentAuction.value = response.data.data
+        return currentAuction.value
       }
       
       // Fallback

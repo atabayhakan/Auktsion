@@ -132,9 +132,7 @@ function openBidSheet(lot: Auction) {
 }
 
 onMounted(async () => {
-  if (auctionStore.auctions.length === 0) {
-    await auctionStore.fetchAuctions()
-  }
+  await auctionStore.fetchAuctions()
   activityStore.fetchInitial()
 })
 </script>

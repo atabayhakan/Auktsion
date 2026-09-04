@@ -688,6 +688,7 @@ export const useAdminStore = defineStore('admin', () => {
 
     // Actions
     toggleSidebar,
+    fetchNotifications,
     markNotificationRead,
     markAllNotificationsRead,
     fetchOverview,

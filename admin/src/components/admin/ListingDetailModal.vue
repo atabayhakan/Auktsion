@@ -115,11 +115,11 @@ function handleReject() {
             <div class="grid grid-cols-2 gap-3">
               <div class="bg-accent p-3 rounded-xl border border-border">
                 <span class="text-text-muted block mb-1">{{ t('admin.listings.detail.startingPrice') }}</span>
-                <span class="font-bold text-text-primary text-sm">{{ listing.startingPrice.formatted }}</span>
+                <span class="font-bold text-text-primary text-sm">{{ listing.startingPrice?.formatted || '—' }}</span>
               </div>
               <div class="bg-primary/10 p-3 rounded-xl border border-primary/20">
                 <span class="text-primary font-semibold block mb-1">{{ t('admin.listings.detail.currentPrice') }}</span>
-                <span class="font-bold text-primary text-sm">{{ listing.currentPrice.formatted }}</span>
+                <span class="font-bold text-primary text-sm">{{ listing.currentPrice?.formatted || '—' }}</span>
               </div>
             </div>
 
@@ -130,7 +130,7 @@ function handleReject() {
                   <DollarSign class="w-4 h-4 text-amber-600" />
                   <span>{{ t('admin.listings.detail.hiddenReservePrice') }}</span>
                 </span>
-                <span class="font-bold text-amber-900 text-sm">{{ listing.reservePrice.formatted }}</span>
+                <span class="font-bold text-amber-900 text-sm">{{ listing.reservePrice?.formatted || '—' }}</span>
               </div>
               <p class="text-[11px] text-amber-800 mt-1">
                 {{ t('admin.listings.detail.reserveHint') }}
@@ -141,16 +141,16 @@ function handleReject() {
             <div class="p-3 bg-accent rounded-xl border border-border flex items-center justify-between">
               <div class="flex items-center gap-2.5">
                 <img
-                  :src="listing.seller.avatar || 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=100&q=80'"
+                  :src="listing.seller?.avatar || 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=100&q=80'"
                   class="w-9 h-9 rounded-full object-cover"
                 />
                 <div>
-                  <span class="font-bold text-text-primary block">{{ listing.seller.fullName }}</span>
-                  <span class="text-text-muted">★ {{ listing.seller.rating }} • {{ listing.city }}</span>
+                  <span class="font-bold text-text-primary block">{{ listing.seller?.fullName || listing.sellerId || '—' }}</span>
+                  <span class="text-text-muted">★ {{ listing.seller?.rating || '5.0' }} • {{ listing.city }}</span>
                 </div>
               </div>
               <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">
-                {{ listing.seller.kycStatus === 'verified' ? t('admin.listings.detail.kycVerified') : t('admin.listings.detail.kycPending') }}
+                {{ listing.seller?.kycStatus === 'verified' ? t('admin.listings.detail.kycVerified') : t('admin.listings.detail.kycPending') }}
               </span>
             </div>
 

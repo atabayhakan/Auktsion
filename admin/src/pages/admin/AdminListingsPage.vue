@@ -262,7 +262,7 @@ function resetFilters() {
               <td class="py-3.5 px-5">
                 <div class="flex items-center gap-3">
                   <img
-                    :src="l.images[0] || 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=150&q=80'"
+                    :src="(l.images && l.images[0]) || 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=150&q=80'"
                     class="w-12 h-10 rounded-xl object-cover ring-1 ring-black/10 shadow-2xs shrink-0"
                   />
                   <div class="min-w-0">
@@ -287,20 +287,20 @@ function resetFilters() {
 
               <!-- Current Price -->
               <td class="py-3.5 px-4">
-                <span class="font-black text-amber-600 block text-sm">{{ l.currentPrice.formatted }}</span>
-                <span class="text-[10px] text-gray-400 font-medium">{{ t('admin.listings.bidsCount', { count: l.bidCount }) }}</span>
+                <span class="font-black text-amber-600 block text-sm">{{ l.currentPrice?.formatted || l.startingPrice?.formatted || '—' }}</span>
+                <span class="text-[10px] text-gray-400 font-medium">{{ t('admin.listings.bidsCount', { count: l.bidCount || 0 }) }}</span>
               </td>
 
               <!-- Reserve Price -->
               <td class="py-3.5 px-4">
-                <span class="font-bold text-gray-800 block font-mono">{{ l.reservePrice.formatted }}</span>
+                <span class="font-bold text-gray-800 block font-mono">{{ l.reservePrice?.formatted || '—' }}</span>
                 <span class="text-[10px] text-gray-400">{{ t('admin.listings.hiddenMinimum') || 'Gizli minimum' }}</span>
               </td>
 
               <!-- Seller -->
               <td class="py-3.5 px-4">
-                <span class="font-extrabold text-gray-900 block">{{ l.seller.fullName }}</span>
-                <span class="text-amber-500 text-[10px] font-bold">★ {{ l.seller.rating }}</span>
+                <span class="font-extrabold text-gray-900 block">{{ l.seller?.fullName || l.sellerId || '—' }}</span>
+                <span class="text-amber-500 text-[10px] font-bold">★ {{ l.seller?.rating || '5.0' }}</span>
               </td>
 
               <!-- Status -->
