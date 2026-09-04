@@ -184,8 +184,14 @@ const canBid = computed(() => {
   return auction.value?.status === 'active' && !timeRemaining.value.isEnded
 })
 
+const isOwnListing = computed(() => {
+  if (!userStore.user || !auction.value) return false
+  const sellerId = auction.value.sellerId || (auction.value as any).seller_id || (auction.value.seller as any)?.id
+  return sellerId === userStore.user.id
+})
+
 const buyNowPrice = computed(() => (auction.value as any)?.buyNowPrice || (auction.value as any)?.buy_now_price || null)
-const canBuyNow = computed(() => !!buyNowPrice.value && canBid.value)
+const canBuyNow = computed(() => !!buyNowPrice.value && canBid.value && !isOwnListing.value)
 const isBuyingNow = ref(false)
 
 async function handleBuyNow() {
@@ -238,6 +244,9 @@ function openBidModal() {
     router.push({ path: '/login', query: { redirect: route.fullPath } })
     return
   }
+  if (auction.value) {
+    biddingStore.setCurrentAuction(auction.value.id)
+  }
   bidAmount.value = minimumNextBid.value?.amount || ''
   bidError.value = null
   showBidModal.value = true
@@ -259,6 +268,11 @@ const quickIncrementOptions = computed(() => {
 async function submitBid() {
   if (!bidAmount.value || isPlacingBid.value) return
 
+  if (isOwnListing.value) {
+    bidError.value = t('auction.ownListingNotice') || 'Сиз өзүңүздүн лотуңузга коюм коё албайсыз (Вы не можете делать ставки на собственный лот)'
+    return
+  }
+
   const amountNum = parseFloat(bidAmount.value)
   const minNum = minimumNextBid.value ? parseFloat(minimumNextBid.value.amount) : 0
 
@@ -277,6 +291,8 @@ async function submitBid() {
     } else {
       bidError.value = biddingStore.bidError || t('common.error')
     }
+  } catch (err: any) {
+    bidError.value = err?.message || t('common.error')
   } finally {
     isPlacingBid.value = false
   }
@@ -550,7 +566,15 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
             <!-- Bidding Action Bar -->
             <div class="pt-4 border-t border-black/[0.06] flex flex-col sm:flex-row items-center gap-3">
               <button
-                v-if="canBid"
+                v-if="isOwnListing"
+                disabled
+                class="w-full sm:flex-1 py-3.5 px-6 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 font-bold text-xs sm:text-sm cursor-not-allowed flex items-center justify-center gap-2 shadow-2xs"
+              >
+                <span>{{ t('auction.ownListingNotice') || 'Сиз бул лоттун сатуучусусуз (Собственный лот)' }}</span>
+              </button>
+
+              <button
+                v-else-if="canBid"
                 class="w-full sm:flex-1 py-3.5 px-6 rounded-2xl bg-primary text-text-primary font-extrabold text-sm sm:text-base hover:bg-primary-hover shadow-md transition-all flex items-center justify-center gap-2 active:scale-98"
                 @click="openBidModal"
               >
@@ -777,7 +801,14 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
         </div>
       </div>
       <button
-        v-if="canBid"
+        v-if="isOwnListing"
+        disabled
+        class="flex-shrink-0 py-3 px-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 font-bold text-xs cursor-not-allowed"
+      >
+        <span>{{ t('auction.ownListingNotice') }}</span>
+      </button>
+      <button
+        v-else-if="canBid"
         class="flex-shrink-0 py-3 px-5 rounded-2xl bg-primary text-text-primary font-extrabold text-sm shadow-md active:scale-95 transition-transform flex items-center gap-1.5"
         :class="{ 'scale-105': timeRemaining.isCritical && !timeRemaining.isEnded }"
         @click="openBidModal"
@@ -798,6 +829,10 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
       @cancel="showBidModal = false"
     >
       <div class="space-y-4 pt-2">
+        <div v-if="isOwnListing" class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold">
+          {{ t('auction.ownListingNotice') }}
+        </div>
+
         <div>
           <label class="block text-xs font-bold text-text-secondary mb-1.5">{{ t('auction.bidAmount') }}</label>
           <Input
@@ -853,7 +888,7 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
             {{ t('common.cancel') }}
           </button>
           <button
-            :disabled="isPlacingBid || !bidConfirmed"
+            :disabled="isPlacingBid || !bidConfirmed || isOwnListing"
             class="px-5 py-2 rounded-xl bg-primary text-text-primary font-bold text-xs hover:bg-primary-hover shadow-md transition-all disabled:opacity-50"
             @click="submitBid"
           >

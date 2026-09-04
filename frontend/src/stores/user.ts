@@ -83,7 +83,7 @@ export const useUserStore = defineStore('user', () => {
   const fullName = computed(() => user.value?.fullName || '')
   const avatar = computed(() => user.value?.avatar || PLACEHOLDER_AVATAR)
   const isKycVerified = computed(() => kycStatus.value === 'verified')
-  const canBid = computed(() => ['phone_verified', 'id_uploaded', 'ocr_passed', 'verified'].includes(kycStatus.value))
+  const canBid = computed(() => isAuthenticated.value && user.value?.status !== 'banned' && user.value?.status !== 'suspended')
   const canPayout = computed(() => isKycVerified.value)
   const defaultCard = computed(() => savedCards.value.find(c => c.isDefault))
   const defaultPayoutMethod = computed(() => payoutMethods.value.find(p => p.isDefault))

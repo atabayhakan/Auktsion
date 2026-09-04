@@ -53,38 +53,45 @@ export const useBiddingStore = defineStore('bidding', () => {
 
   // Actions
   async function placeBid(formData: BidFormData) {
-    if (!canPlaceBid.value || !currentAuctionId.value) return false
+    if (!currentAuctionId.value) return false
+
+    if (!userStore.isAuthenticated) {
+      uiStore.toastWarning(t('toasts.warning'), t('toasts.loginRequired') || 'Войдите в систему')
+      return false
+    }
+
+    if (!userStore.canBid) {
+      bidError.value = t('toasts.accountSuspended') || 'Ваш аккаунт заблокирован'
+      uiStore.toastError(t('common.error'), bidError.value)
+      return false
+    }
 
     isPlacingBid.value = true
     bidError.value = null
 
     const amount = typeof formData.amount === 'string' ? parseFloat(formData.amount) : formData.amount
-    lastBidAmount.value = formData.amount
+    lastBidAmount.value = String(formData.amount)
 
-    // Declared outside try/catch so the catch block can remove the SAME
-    // object it added — the previous version recomputed `temp-${Date.now()}`
-    // at catch-time, which is never equal to the id generated moments
-    // earlier, so a failed bid's placeholder row was never cleaned up.
     const optimisticBid: Bid = {
       id: `temp-${Date.now()}`,
       auctionId: currentAuctionId.value,
-      bidderId: userStore.user!.id,
+      bidderId: userStore.user?.id || 'anon',
       bidder: {
-        id: userStore.user!.id,
-        uuid: userStore.user!.uuid,
-        fullName: userStore.user!.fullName,
-        avatar: userStore.user!.avatar,
-        rating: userStore.user!.rating,
-        reviewCount: userStore.user!.reviewCount,
+        id: userStore.user?.id || 'anon',
+        uuid: (userStore.user as any)?.uuid || userStore.user?.id || '',
+        fullName: userStore.user?.fullName || 'Катышуучу',
+        avatar: userStore.user?.avatar || '',
+        rating: (userStore.user as any)?.rating || 5.0,
+        reviewCount: (userStore.user as any)?.reviewCount || 0,
         kyStatus: userStore.kycStatus,
-        isSeller: userStore.user!.isSeller,
-        joinedAt: userStore.user!.createdAt,
+        isSeller: (userStore.user as any)?.isSeller || false,
+        joinedAt: (userStore.user as any)?.createdAt || new Date().toISOString(),
       },
       amount: {
-        amount: formData.amount,
+        amount: String(amount),
         minorUnits: Math.round(amount * 100),
         currency: 'KGS',
-        formatted: `${Number(amount).toLocaleString()} ${t('common.currency')}`,
+        formatted: `${Number(amount).toLocaleString('ru-RU')} ${t('common.currency') || 'сом'}`,
       },
       sequence: Date.now(),
       placedAt: new Date().toISOString(),
@@ -93,23 +100,13 @@ export const useBiddingStore = defineStore('bidding', () => {
     }
 
     try {
-      // Optimistic update is local to this browser's own bid history only —
-      // the shared auction price/bidCount is deliberately left untouched
-      // here. It updates solely from the authoritative bid.placed WebSocket
-      // broadcast (handleRealTimeBid → auctionStore.updateAuctionPrice), so
-      // a rejected bid never leaves every OTHER viewer looking at a price
-      // that was optimistically bumped and then never corrected.
       bidHistory.value.unshift(optimisticBid)
 
-      // Make API call — the backend converts to minor units itself
-      // (auctionController.ts: amountMinor = Math.round(Number(amount) * 100)),
-      // so this must send the plain major-unit amount, not pre-multiplied.
       const response = await apiClient.post(`/api/auctions/${currentAuctionId.value}/bids`, {
         amount,
       })
 
       if (response?.data?.data) {
-        // Server confirmed - replace optimistic with real
         const confirmedBid = response.data.data
         const index = bidHistory.value.findIndex(b => b.id === optimisticBid.id)
         if (index !== -1) {
@@ -120,13 +117,13 @@ export const useBiddingStore = defineStore('bidding', () => {
         return true
       }
 
-      throw new Error('Invalid response')
+      throw new Error('Invalid response from server')
     } catch (err: any) {
-      // Remove optimistic bid on error
       const index = bidHistory.value.findIndex(b => b.id === optimisticBid.id)
       if (index !== -1) bidHistory.value.splice(index, 1)
 
-      bidError.value = err.response?.data?.message || t('toasts.bidError')
+      const serverMsg = err.response?.data?.error || err.data?.error || err.response?.data?.message || err.message
+      bidError.value = serverMsg || t('toasts.bidError')
       uiStore.toastError(t('common.error'), bidError.value || undefined)
       return false
     } finally {

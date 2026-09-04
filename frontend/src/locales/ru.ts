@@ -122,6 +122,7 @@ export default {
     "noBidsYet": "Пока нет ставок. Будьте первым!",
     "notFoundTitle": "Аукцион не найден",
     "optimaDesc": "Карты Optima Bank и Optima24",
+    "ownListingNotice": "Вы являетесь продавцом этого лота (Собственный лот)",
     "paymentMethods": "Способы оплаты (KGS)",
     "paymentSuccessToast": "Оплата через MBank прошла успешно",
     "placeBid": "Сделать ставку",

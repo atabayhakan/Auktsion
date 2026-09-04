@@ -122,6 +122,7 @@ export default {
     "noBidsYet": "Henüz teklif yok. İlk siz olun!",
     "notFoundTitle": "Açık artırma bulunamadı",
     "optimaDesc": "Optima Bank kartları ve Optima24",
+    "ownListingNotice": "Bu ilanın satıcısısınız (Kendi ilanınız)",
     "paymentMethods": "Ödeme Yöntemleri (KGS)",
     "paymentSuccessToast": "MBank ile ödeme başarıyla gerçekleşti",
     "placeBid": "Teklif Ver",

@@ -122,6 +122,7 @@ export default {
     "noBidsYet": "Азырынча текеп жок. Биринчи болуңуз!",
     "notFoundTitle": "Ачуурма табылган жок",
     "optimaDesc": "Optima Bank карталары жана Optima24",
+    "ownListingNotice": "Сиз бул лоттун сатуучусусуз (Өз лотуңуз)",
     "paymentMethods": "Төлөө ыкмалары (KGS)",
     "paymentSuccessToast": "MBank аркылуу төлөм ийгиликтүү болду",
     "placeBid": "Текеп берүү",
