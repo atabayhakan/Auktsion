@@ -140,7 +140,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F8F9FC] text-gray-900 font-sans pt-20 sm:pt-24 pb-20 px-3 sm:px-5 lg:px-8">
+  <div class="min-h-screen bg-[#F8F9FC] text-gray-900 font-sans pt-28 sm:pt-32 lg:pt-24 pb-24 px-3 sm:px-5 lg:px-8">
     <div class="max-w-[1440px] mx-auto space-y-8 sm:space-y-12">
 
       <!-- ================================================================

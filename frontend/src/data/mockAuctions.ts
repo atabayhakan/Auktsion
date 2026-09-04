@@ -24,7 +24,7 @@ export const mockAuctions: Auction[] = [
     category: 'electronics',
     subCategory: 'phones',
     images: [
-      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1591337676887-a217a6970a8a?auto=format&fit=crop&w=800&q=80'
     ],
     startingPrice: makeMoney(35000),
