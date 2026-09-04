@@ -62,7 +62,7 @@ const gatewayInfo = computed(() => getPaymentGatewayInfo(props.payment.gateway))
     </div>
 
     <!-- Amount & Status -->
-    <div class="flex flex-col items-end gap-1 min-w-[140px]">
+    <div class="flex flex-col items-end gap-1 shrink-0">
       <p class="text-primary font-bold text-lg">{{ formatMoney(payment.amount) }}</p>
       <Badge :variant="statusLabel.color === 'green' ? 'success' : statusLabel.color === 'yellow' ? 'warning' : statusLabel.color === 'blue' ? 'info' : statusLabel.color === 'red' ? 'danger' : 'gray'">
         {{ statusLabel.label }}

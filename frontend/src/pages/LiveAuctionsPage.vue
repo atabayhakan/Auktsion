@@ -6,7 +6,7 @@ import {
   RotateCcw, Sparkles, Check, ChevronDown, CheckCircle2,
   MapPin, Flame, Zap, X, AlertCircle, PlusCircle, Radio,
   Store, Gavel, Layers, ShieldCheck, ArrowRight, Smartphone,
-  Car, Home as HomeIcon, Gem, Palette, Tractor, Wheat
+  Car, Home as HomeIcon, Gem, Palette, Tractor, Wheat, Building2
 } from 'lucide-vue-next'
 import { useAuctionStore } from '@/stores/auction'
 import { useI18n } from '@/composables/useI18n'
@@ -83,49 +83,29 @@ watch(searchQuery, () => {
   searchDebounce = setTimeout(updateRouteQuery, 400)
 })
 
+const categoryIconMap: Record<string, any> = {
+  all: Layers,
+  electronics: Smartphone,
+  vehicles: Car,
+  'real-estate': Building2,
+  livestock: Wheat,
+  jewelry: Gem,
+  art: Palette,
+  machinery: Tractor
+}
+
+function getCategoryIcon(id: string) {
+  return categoryIconMap[id] || Layers
+}
+
 const categories = computed(() => {
   const lang = currentLang.value
   return [
-    { id: 'all', name: t('liveAuctionsPage.allCategories') || 'Все категории', icon: '✨' },
+    { id: 'all', name: t('liveAuctionsPage.allCategories') || 'Все категории' },
     ...platformCategories.map(c => ({
       id: c.slug,
-      name: c.name[lang] || c.name.ru || c.name.ky || c.name.tr,
-      icon: c.icon
+      name: c.name[lang] || c.name.ru || c.name.ky || c.name.tr
     }))
-  ]
-})
-
-const quickCategories = computed(() => {
-  const lang = currentLang.value
-  return [
-    { 
-      slug: 'livestock', 
-      name: lang === 'ky' ? 'Мал базары' : lang === 'ru' ? 'Скотный рынок' : 'Hayvan Pazarı & Tarım',
-      desc: lang === 'ky' ? 'Арашан кочкорлору, жылкылар, бодо мал' : lang === 'ru' ? 'Арашанские бараны, лошади, КРС' : 'Arashan koçları, atlar, büyükbaş hayvanlar',
-      icon: '🐎',
-      color: 'bg-amber-50 text-amber-900 border-amber-200'
-    },
-    { 
-      slug: 'vehicles', 
-      name: lang === 'ky' ? 'Автоунаалар' : lang === 'ru' ? 'Автомобили' : 'Otomotiv & Araçlar',
-      desc: lang === 'ky' ? 'Toyota Camry, Lexus, Hyundai, коммерциялык' : lang === 'ru' ? 'Toyota Camry, Lexus, Hyundai, коммерческий транспорт' : 'Toyota Camry, Lexus, Hyundai, ticari araçlar',
-      icon: '🚗',
-      color: 'bg-rose-50 text-rose-900 border-rose-200'
-    },
-    { 
-      slug: 'real-estate', 
-      name: lang === 'ky' ? 'Дордой & Кыймылсыз мүлк' : lang === 'ru' ? 'Дордой и Недвижимость' : 'Dordoy & Gayrimenkul',
-      desc: lang === 'ky' ? 'Соода контейнерлери, дүкөндөр, батирлер' : lang === 'ru' ? 'Контейнеры Дордой, магазины, квартиры' : 'Ticari konteynerler, dükkanlar, daireler',
-      icon: '🏢',
-      color: 'bg-emerald-50 text-emerald-900 border-emerald-200'
-    },
-    { 
-      slug: 'electronics', 
-      name: lang === 'ky' ? 'Электроника' : lang === 'ru' ? 'Электроника' : 'Elektronik & Cihazlar',
-      desc: lang === 'ky' ? 'MacBook, iPhone, акылдуу түзмөктөр' : lang === 'ru' ? 'MacBook, iPhone, гаджеты и техника' : 'MacBook, iPhone, akıllı saatler',
-      icon: '📱',
-      color: 'bg-blue-50 text-blue-900 border-blue-200'
-    },
   ]
 })
 
@@ -328,7 +308,7 @@ onMounted(() => {
             : 'bg-white border border-black/10 text-gray-600 hover:bg-slate-50 hover:text-gray-950'"
           @click="selectedCategory = cat.id"
         >
-          <span>{{ cat.icon }}</span>
+          <component :is="getCategoryIcon(cat.id)" class="w-4 h-4 shrink-0" :class="selectedCategory === cat.id ? 'text-gray-950' : 'text-amber-800'" />
           <span>{{ cat.name }}</span>
         </button>
       </div>

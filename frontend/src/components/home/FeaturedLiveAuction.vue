@@ -86,13 +86,13 @@ const liveViewers = computed(() => {
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-80" />
                 <span class="relative inline-flex rounded-full h-2 w-2 bg-white" />
               </span>
-              <span>ПРЯМОЙ ЭФИР</span>
+              <span>{{ t('home.liveBroadcast') || 'ПРЯМОЙ ЭФИР' }}</span>
             </div>
 
             <!-- Live Viewers Counter -->
             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 text-white/90 backdrop-blur-md text-[11px] font-semibold border border-white/10">
               <Eye class="w-3.5 h-3.5 text-amber-400" />
-              <span>{{ liveViewers }} сейчас смотрят</span>
+              <span>{{ t('home.watchingNow', { n: liveViewers }) || `${liveViewers} сейчас смотрят` }}</span>
             </div>
           </div>
 
@@ -100,11 +100,11 @@ const liveViewers = computed(() => {
           <div class="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[11px] pointer-events-none">
             <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-black/70 backdrop-blur-md border border-white/10 text-white/90 font-medium">
               <ShieldCheck class="w-3.5 h-3.5 text-emerald-400" />
-              <span>Официальная гарантия & IMEI</span>
+              <span>{{ t('home.officialWarranty') || 'Официальная гарантия & IMEI' }}</span>
             </div>
             <div class="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-black/70 backdrop-blur-md border border-white/10 text-amber-400 font-bold">
               <TrendingUp class="w-3.5 h-3.5" />
-              <span>{{ auction.bidCount }} ставок</span>
+              <span>{{ t('home.bidsCount', { n: auction.bidCount }) || `${auction.bidCount} ставок` }}</span>
             </div>
           </div>
         </div>
@@ -117,7 +117,7 @@ const liveViewers = computed(() => {
         <div class="space-y-2">
           <div class="flex items-center gap-2">
             <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/30">
-              Главный лот дня
+              {{ t('home.featuredLotOfDay') || 'Главный лот дня' }}
             </span>
             <span class="text-xs text-white/50">{{ auction.city }}</span>
           </div>
@@ -142,7 +142,7 @@ const liveViewers = computed(() => {
               <div class="text-[10px] text-white/50 flex items-center gap-2">
                 <span>⭐ {{ auction.seller.rating }}</span>
                 <span>•</span>
-                <span>{{ auction.seller.totalSales }} успешных сделок</span>
+                <span>{{ t('home.successfulDeals', { n: auction.seller.totalSales }) || `${auction.seller.totalSales} успешных сделок` }}</span>
               </div>
             </div>
           </div>
@@ -153,13 +153,13 @@ const liveViewers = computed(() => {
           <!-- Current Bid -->
           <div class="space-y-0.5">
             <div class="text-[10px] font-bold text-white/60 uppercase tracking-wider">
-              Текущая ставка
+              {{ t('home.currentBid') || 'Текущая ставка' }}
             </div>
             <div class="text-xl sm:text-2xl lg:text-3xl font-black text-amber-400 tracking-tight font-mono">
               {{ formatMoney(auction.currentPrice) }}
             </div>
             <div class="text-[10px] text-white/40">
-              Шаг: +{{ formatMoney(auction.bidIncrement) }}
+              {{ t('home.bidStep', { step: formatMoney(auction.bidIncrement) }) || `Шаг: +${formatMoney(auction.bidIncrement)}` }}
             </div>
           </div>
 
@@ -167,13 +167,13 @@ const liveViewers = computed(() => {
           <div class="space-y-0.5 text-right">
             <div class="text-[10px] font-bold text-white/60 uppercase tracking-wider flex items-center justify-end gap-1">
               <Clock class="w-3.5 h-3.5 text-rose-400" />
-              <span>До конца</span>
+              <span>{{ t('home.timeLeft') || 'До конца' }}</span>
             </div>
             <div class="text-lg sm:text-xl lg:text-2xl font-black text-white font-mono tracking-wider">
               <span>{{ formattedCountdown.hours }}</span>:<span>{{ formattedCountdown.mins }}</span>:<span class="text-amber-400">{{ formattedCountdown.secs }}</span>
             </div>
             <div class="text-[10px] text-emerald-400 font-medium">
-              Антиснайпинг активен
+              {{ t('home.antiSnipingActive') || 'Антиснайпинг активен' }}
             </div>
           </div>
         </div>
@@ -187,7 +187,7 @@ const liveViewers = computed(() => {
             @click="emit('openBid', auction)"
           >
             <TrendingUp class="w-4 h-4 sm:w-5 sm:h-5" />
-            <span>Сделать ставку</span>
+            <span>{{ t('home.placeBidNow') || 'Сделать ставку' }}</span>
           </button>
 
           <!-- Secondary CTA: Buy Now & Detail -->
@@ -198,7 +198,7 @@ const liveViewers = computed(() => {
               class="py-2 px-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-white font-bold text-[11px] sm:text-xs text-center transition-all flex items-center justify-center gap-1 cursor-pointer truncate"
             >
               <Zap class="w-3.5 h-3.5 text-amber-400 shrink-0" />
-              <span class="truncate">Купить: {{ formatMoney(auction.buyNowPrice) }}</span>
+              <span class="truncate">{{ t('home.buyNow') || 'Купить' }}: {{ formatMoney(auction.buyNowPrice) }}</span>
             </RouterLink>
 
             <RouterLink
@@ -206,7 +206,7 @@ const liveViewers = computed(() => {
               class="py-2 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-white/80 hover:text-white font-medium text-[11px] sm:text-xs text-center transition-all flex items-center justify-center gap-1 truncate"
               :class="{ 'col-span-2': !auction.buyNowPrice }"
             >
-              <span class="truncate">Подробнее о лоте</span>
+              <span class="truncate">{{ t('home.lotDetails') || 'Подробнее о лоте' }}</span>
               <ChevronRight class="w-3.5 h-3.5 shrink-0" />
             </RouterLink>
           </div>
@@ -216,7 +216,7 @@ const liveViewers = computed(() => {
         <div class="pt-1.5 border-t border-white/10 flex items-center justify-between text-[10px] text-white/50">
           <span class="flex items-center gap-1">
             <ShieldCheck class="w-3 h-3 text-emerald-400" />
-            Безопасная сделка через Escrow
+            {{ t('home.safeEscrowDeal') || 'Безопасная сделка через Escrow' }}
           </span>
           <span>MBank • Optima • Demir</span>
         </div>

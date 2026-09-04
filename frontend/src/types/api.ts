@@ -45,33 +45,39 @@ export interface AuctionFilters {
 }
 
 export interface LivestockAttributes {
-  animalType: 'cow' | 'bull' | 'horse' | 'foal' | 'sheep' | 'ram' | 'goat' | 'other'
+  animalType?: 'cow' | 'bull' | 'horse' | 'foal' | 'sheep' | 'ram' | 'goat' | 'other' | string
   breed?: string // Ала-Тоо, Гиссар, Аргымак ж.б.
   ageYears?: number
+  ageMonths?: number
   weightKg?: number
   milkYieldLiters?: number
   isVaccinated?: boolean
+  vaccinated?: boolean
   hasVetPassport?: boolean
   deliveryAvailable?: boolean
 }
 
 export interface VehicleAttributes {
-  brand: string
+  brand?: string
+  make?: string
   model: string
   year: number
-  mileageKm: number
-  steering: 'left' | 'right' // Сол / Оң руль
-  fuelType: 'petrol' | 'gas' | 'diesel' | 'hybrid' | 'electric'
-  transmission: 'automatic' | 'manual' | 'variator' | 'robot'
-  engineVolume: number // e.g. 2.5
-  isCustomsCleared: boolean // Бажы төлөнгөн (Растаможен)
-  condition: 'perfect' | 'good' | 'needs_repair' | 'damaged'
+  mileage?: number
+  mileageKm?: number
+  steering?: 'left' | 'right' | string // Сол / Оң руль
+  fuelType?: 'petrol' | 'gas' | 'diesel' | 'hybrid' | 'electric' | string
+  transmission?: 'automatic' | 'manual' | 'variator' | 'robot' | string
+  engineVolume?: number // e.g. 2.5
+  isCustomsCleared?: boolean // Бажы төлөнгөн (Растаможен)
+  condition?: 'perfect' | 'good' | 'needs_repair' | 'damaged' | string
 }
 
 export interface RealEstateAttributes {
-  propertyType: 'commercial_shop' | 'dordoy_container' | 'apartment' | 'house' | 'land'
+  propertyType?: 'commercial_shop' | 'dordoy_container' | 'apartment' | 'house' | 'land' | string
+  type?: string
   areaSqm: number
-  deedType: 'red_book' | 'yellow_book' | 'tech_passport' // Кызыл китеп / Сары китеп / Техпаспорт
+  rooms?: number
+  deedType?: 'red_book' | 'yellow_book' | 'tech_passport' | string // Кызыл китеп / Сары китеп / Техпаспорт
   floor?: number
   totalFloors?: number
   monthlyRevenue?: number
@@ -160,6 +166,7 @@ export interface User {
   rating?: number
   reviewCount?: number
   isSeller?: boolean
+  balance?: Money | number | { amount: number; formatted?: string }
   createdAt: string
   updatedAt: string
   payoutMethods: PayoutMethod[]

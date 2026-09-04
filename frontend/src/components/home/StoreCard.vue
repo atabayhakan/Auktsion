@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { CheckCircle2, ChevronRight, Store, Star } from 'lucide-vue-next'
+import { useI18n } from '@/composables/useI18n'
 
 export interface MerchantStore {
   id: string
@@ -19,6 +20,7 @@ interface Props {
 }
 
 defineProps<Props>()
+const { t } = useI18n()
 </script>
 
 <template>
@@ -49,7 +51,7 @@ defineProps<Props>()
               <span>{{ store.rating }}</span>
             </div>
             <span class="text-gray-400 text-[10px]">•</span>
-            <span class="text-gray-600 font-medium text-[11px]">{{ store.totalSales }} сделок</span>
+            <span class="text-gray-600 font-medium text-[11px]">{{ store.totalSales }} {{ t('home.deals') || 'сделок' }}</span>
           </div>
         </div>
       </div>
@@ -75,9 +77,9 @@ defineProps<Props>()
       :to="`/auctions?seller=${store.id}`"
       class="w-full py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-gray-800 hover:text-gray-950 font-bold text-xs flex items-center justify-between border border-black/5 transition-colors"
     >
-      <span>{{ store.activeLotsCount }} активных лотов</span>
+      <span>{{ t('home.activeLotsCount', { n: store.activeLotsCount }) || `${store.activeLotsCount} активных лотов` }}</span>
       <div class="flex items-center gap-0.5 text-amber-600 font-bold">
-        <span>Каталог</span>
+        <span>{{ t('home.catalog') || 'Каталог' }}</span>
         <ChevronRight class="w-3.5 h-3.5" />
       </div>
     </RouterLink>

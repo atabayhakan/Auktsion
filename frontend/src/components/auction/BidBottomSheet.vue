@@ -92,7 +92,7 @@ async function handleConfirmBid() {
 
   const bidAmount = selectedAmount.value
   if (bidAmount < minNextBid.value) {
-    uiStore.toastError('Ошибка ставки', `Минимальная ставка: ${minNextBid.value.toLocaleString('ru-RU')} сом`)
+    uiStore.toastError(t('bidSheet.bidErrorTitle') || 'Ошибка ставки', t('bidSheet.bidErrorMin', { min: minNextBid.value.toLocaleString('ru-RU') }) || `Минимальная ставка: ${minNextBid.value.toLocaleString('ru-RU')} сом`)
     return
   }
 
@@ -100,14 +100,14 @@ async function handleConfirmBid() {
   try {
     const res = await auctionStore.placeBid(props.auction.id, { amount: String(bidAmount) })
     if (res.success) {
-      uiStore.toastSuccess('Ставка принята', `Ставка ${bidAmount.toLocaleString('ru-RU')} сом принята! Вы лидируете.`)
+      uiStore.toastSuccess(t('bidSheet.bidSuccessTitle') || 'Ставка принята', t('bidSheet.bidSuccessMsg', { amount: bidAmount.toLocaleString('ru-RU') }) || `Ставка ${bidAmount.toLocaleString('ru-RU')} сом принята! Вы лидируете.`)
       emit('bidPlaced', bidAmount)
       close()
     } else {
-      uiStore.toastError('Не удалось сделать ставку', res.error || 'Попробуйте снова')
+      uiStore.toastError(t('bidSheet.bidErrorTitle') || 'Не удалось сделать ставку', res.error || t('common.error'))
     }
   } catch (err: any) {
-    uiStore.toastError('Ошибка размещения ставки', err?.message || 'Попробуйте снова')
+    uiStore.toastError(t('bidSheet.bidErrorTitle') || 'Ошибка размещения ставки', err?.message || t('common.error'))
   } finally {
     isSubmitting.value = false
   }
@@ -133,10 +133,10 @@ async function handleConfirmBid() {
             <div class="flex items-center gap-2">
               <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-50 text-rose-600 border border-rose-200">
                 <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
-                ЖИВЫЕ ТОРГИ
+                {{ t('bidSheet.liveBidding') || 'ЖИВЫЕ ТОРГИ' }}
               </span>
               <h3 class="text-base sm:text-lg font-black text-gray-950">
-                Сделать ставку
+                {{ t('bidSheet.placeBid') || 'Сделать ставку' }}
               </h3>
             </div>
             <button
@@ -162,8 +162,8 @@ async function handleConfirmBid() {
                   {{ auction.title }}
                 </h4>
                 <div class="flex items-center gap-3 mt-1 text-xs text-gray-500">
-                  <span class="font-medium">Текущая: <b class="text-gray-900">{{ formatMoney(auction.currentPrice) }}</b></span>
-                  <span class="font-medium text-amber-700">{{ auction.bidCount }} ставок</span>
+                  <span class="font-medium">{{ t('bidSheet.currentPrice') || 'Текущая:' }} <b class="text-gray-900">{{ formatMoney(auction.currentPrice) }}</b></span>
+                  <span class="font-medium text-amber-700">{{ auction.bidCount }} {{ t('bidSheet.bids') || 'ставок' }}</span>
                 </div>
               </div>
             </div>
@@ -171,20 +171,20 @@ async function handleConfirmBid() {
             <!-- Price Setting Display -->
             <div class="bg-gradient-to-br from-amber-500/[0.08] to-orange-500/[0.04] border border-amber-500/20 rounded-2xl p-4 text-center space-y-2">
               <div class="text-xs font-bold text-amber-900 uppercase tracking-wider">
-                Ваша ставка
+                {{ t('bidSheet.yourBid') || 'Ваша ставка' }}
               </div>
               <div class="text-3xl sm:text-4xl font-black text-gray-950 tracking-tight font-mono">
-                {{ selectedAmount.toLocaleString('ru-RU') }} <span class="text-2xl text-amber-600">сом</span>
+                {{ selectedAmount.toLocaleString('ru-RU') }} <span class="text-2xl text-amber-600">{{ t('common.currency') || 'сом' }}</span>
               </div>
               <div class="text-[11px] text-gray-500">
-                Минимальный шаг: +{{ incrementStep.toLocaleString('ru-RU') }} сом (следующая мин. {{ minNextBid.toLocaleString('ru-RU') }} с)
+                {{ t('bidSheet.minStep', { step: incrementStep.toLocaleString('ru-RU'), min: minNextBid.toLocaleString('ru-RU') }) || `Минимальный шаг: +${incrementStep.toLocaleString('ru-RU')} сом (следующая мин. ${minNextBid.toLocaleString('ru-RU')} с)` }}
               </div>
             </div>
 
             <!-- Quick Increment Buttons -->
             <div>
               <div class="text-xs font-bold text-gray-600 mb-2">
-                Быстрые варианты:
+                {{ t('bidSheet.quickOptions') || 'Быстрые варианты:' }}
               </div>
               <div class="grid grid-cols-4 gap-2">
                 <button
@@ -205,7 +205,7 @@ async function handleConfirmBid() {
             <!-- Custom Amount Input -->
             <div>
               <label class="block text-xs font-bold text-gray-600 mb-1.5">
-                Или введите свою максимальную ставку:
+                {{ t('bidSheet.orEnterMaxBid') || 'Или введите свою максимальную ставку:' }}
               </label>
               <div class="relative flex items-center">
                 <input
@@ -213,10 +213,10 @@ async function handleConfirmBid() {
                   type="number"
                   :min="minNextBid"
                   :step="incrementStep"
-                  placeholder="Например 45 000"
+                  :placeholder="t('bidSheet.bidPlaceholder') || 'Например 45 000'"
                   class="w-full bg-slate-50 border border-black/10 focus:border-primary focus:bg-white rounded-xl px-4 py-3 text-base font-bold text-gray-950 outline-none transition-all font-mono"
                 />
-                <span class="absolute right-4 text-xs font-bold text-gray-400">сом</span>
+                <span class="absolute right-4 text-xs font-bold text-gray-400">{{ t('common.currency') || 'сом' }}</span>
               </div>
             </div>
 
@@ -224,11 +224,11 @@ async function handleConfirmBid() {
             <div class="space-y-2 pt-1">
               <div class="flex items-start gap-2 text-xs text-gray-600">
                 <ShieldCheck class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span><b>100% Защита Escrow:</b> Средства не списываются сразу. Если ваша ставка будет перебита, вы не платите ничего.</span>
+                <span>{{ t('bidSheet.escrowGuaranteed') || '100% Защита Escrow: Средства не списываются сразу. Если ваша ставка будет перебита, вы не платите ничего.' }}</span>
               </div>
               <div class="flex items-start gap-2 text-xs text-gray-600">
                 <Clock class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                <span><b>Антиснайпинг:</b> Ставка на последних секундах автоматически продлевает таймер на 2 минуты, гарантируя честность.</span>
+                <span>{{ t('bidSheet.antiSnipingGuaranteed') || 'Антиснайпинг: Ставка на последних секундах автоматически продлевает таймер на 2 минуты, гарантируя честность.' }}</span>
               </div>
             </div>
           </div>
@@ -242,10 +242,10 @@ async function handleConfirmBid() {
               @click="handleConfirmBid"
             >
               <TrendingUp class="w-5 h-5" />
-              <span>Подтвердить ставку · {{ selectedAmount.toLocaleString('ru-RU') }} сом</span>
+              <span>{{ t('bidSheet.confirmBidBtn', { amount: selectedAmount.toLocaleString('ru-RU') }) || `Подтвердить ставку · ${selectedAmount.toLocaleString('ru-RU')} сом` }}</span>
             </button>
             <div class="text-center text-[11px] text-gray-400">
-              Нажимая кнопку, вы соглашаетесь с правилами проведения аукционов ITOrgo
+              {{ t('bidSheet.termsAgreeNotice') || 'Нажимая кнопку, вы соглашаетесь с правилами проведения аукционов iTorgo' }}
             </div>
           </div>
         </div>

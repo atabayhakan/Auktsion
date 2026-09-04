@@ -66,7 +66,7 @@ const timeRemaining = computed(() => {
       </div>
     </RouterLink>
 
-    <div class="flex flex-col items-end gap-1 min-w-[140px]">
+    <div class="flex flex-col items-end gap-1 shrink-0">
       <Badge :variant="statusBadgeVariant">
         {{ localizedStatus }}
       </Badge>

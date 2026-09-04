@@ -12,7 +12,7 @@ import type { Auction, Money } from '@/types'
 import {
   Heart, Share2, Clock, AlertCircle, ChevronLeft,
   ChevronRight, MessageSquare, Flame, Send, CreditCard,
-  Loader2, Gauge, MapPin, Zap
+  Loader2, Gauge, MapPin, Zap, Car, Building2, Sparkles, ShieldCheck
 } from 'lucide-vue-next'
 import Input from '@/components/ui/Input.vue'
 import Modal from '@/components/ui/Modal.vue'
@@ -243,6 +243,19 @@ function openBidModal() {
   showBidModal.value = true
 }
 
+const quickIncrementOptions = computed(() => {
+  if (!auction.value) return []
+  const current = parseFloat(auction.value.currentPrice?.amount || '0')
+  const inc = parseFloat(auction.value.bidIncrement?.amount || '500')
+  const step = inc > 0 ? inc : 500
+  return [
+    { label: `+${step.toLocaleString('ru-RU')} с`, value: current + step },
+    { label: `+${(step * 2).toLocaleString('ru-RU')} с`, value: current + step * 2 },
+    { label: `+${(step * 5).toLocaleString('ru-RU')} с`, value: current + step * 5 },
+    { label: `+${(step * 10).toLocaleString('ru-RU')} с`, value: current + step * 10 },
+  ]
+})
+
 async function submitBid() {
   if (!bidAmount.value || isPlacingBid.value) return
 
@@ -272,8 +285,12 @@ async function submitBid() {
 const shareUrl = computed(() => typeof window !== 'undefined' ? window.location.href : '')
 
 function copyShareLink() {
-  if (typeof navigator !== 'undefined') {
-    navigator.clipboard.writeText(shareUrl.value)
+  const url = shareUrl.value
+  if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(url)
+      .then(() => uiStore.toastSuccess(t('toasts.success'), t('toasts.copiedToClipboard')))
+      .catch(() => uiStore.toastSuccess(t('toasts.success'), t('toasts.copiedToClipboard')))
+  } else {
     uiStore.toastSuccess(t('toasts.success'), t('toasts.copiedToClipboard'))
   }
 }
@@ -406,71 +423,71 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
             <!-- Specific Category Attributes Box (Livestock / Vehicle / Real Estate) -->
             <div v-if="auction.livestock" class="p-4 rounded-2xl bg-primary/5 border border-primary/20 space-y-2">
               <div class="text-xs font-bold text-primary flex items-center gap-1.5">
-                <span>🐄</span>
-                <span>Мал Чарбасынын Тастыкталган Мүнөздөмөлөрү</span>
+                <Sparkles class="w-4 h-4 text-primary" />
+                <span>{{ t('lotAttributes.livestockTitle') }}</span>
               </div>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                 <div class="p-2 rounded-xl bg-white">
-                  <div class="text-[10px] text-text-muted">Породасы</div>
+                  <div class="text-[10px] text-text-muted">{{ t('lotAttributes.breed') }}</div>
                   <div class="font-bold text-text-primary">{{ auction.livestock.breed || 'Ала-Тоо' }}</div>
                 </div>
                 <div class="p-2 rounded-xl bg-white">
-                  <div class="text-[10px] text-text-muted">Салмагы</div>
-                  <div class="font-bold font-mono text-text-primary">{{ auction.livestock.weightKg }} кг</div>
+                  <div class="text-[10px] text-text-muted">{{ t('lotAttributes.weight') }}</div>
+                  <div class="font-bold font-mono text-text-primary">{{ auction.livestock.weightKg }} {{ t('lotAttributes.weightKg') }}</div>
                 </div>
                 <div class="p-2 rounded-xl bg-white">
-                  <div class="text-[10px] text-text-muted">Сүтү / Жашы</div>
-                  <div class="font-bold text-text-primary">{{ auction.livestock.milkYieldLiters ? auction.livestock.milkYieldLiters + ' л/күн' : auction.livestock.ageYears + ' жаш' }}</div>
+                  <div class="text-[10px] text-text-muted">{{ t('lotAttributes.milkOrAge') }}</div>
+                  <div class="font-bold text-text-primary">{{ auction.livestock.milkYieldLiters ? auction.livestock.milkYieldLiters + ' ' + t('lotAttributes.litersPerDay') : auction.livestock.ageYears + ' ' + t('lotAttributes.yearsOld') }}</div>
                 </div>
                 <div class="p-2 rounded-xl bg-white">
-                  <div class="text-[10px] text-text-muted">Вет. Паспорт</div>
-                  <div class="font-bold text-success">Бар ✓</div>
+                  <div class="text-[10px] text-text-muted">{{ t('lotAttributes.vetPassport') }}</div>
+                  <div class="font-bold text-success">{{ t('lotAttributes.present') }}</div>
                 </div>
               </div>
             </div>
 
             <div v-else-if="auction.vehicle" class="p-4 rounded-2xl bg-secondary/5 border border-secondary/20 space-y-2">
               <div class="text-xs font-bold text-secondary flex items-center gap-1.5">
-                <span>🚗</span>
-                <span>Автоунаанын Техникалык Мүнөздөмөлөрү</span>
+                <Car class="w-4 h-4 text-secondary" />
+                <span>{{ t('lotAttributes.vehicleTitle') }}</span>
               </div>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                 <div class="p-2 rounded-xl bg-white">
-                  <div class="text-[10px] text-text-muted">Жылы & Мотор</div>
+                  <div class="text-[10px] text-text-muted">{{ t('lotAttributes.yearEngine') }}</div>
                   <div class="font-bold text-text-primary">{{ auction.vehicle.year }} • {{ auction.vehicle.engineVolume }}L</div>
                 </div>
                 <div class="p-2 rounded-xl bg-white">
-                  <div class="text-[10px] text-text-muted">Пробег</div>
-                  <div class="font-bold font-mono text-text-primary">{{ auction.vehicle.mileageKm?.toLocaleString() }} км</div>
+                  <div class="text-[10px] text-text-muted">{{ t('lotAttributes.mileage') }}</div>
+                  <div class="font-bold font-mono text-text-primary">{{ auction.vehicle.mileageKm?.toLocaleString() }} {{ t('lotAttributes.kmUnit') }}</div>
                 </div>
                 <div class="p-2 rounded-xl bg-white">
-                  <div class="text-[10px] text-text-muted">Руль & Май</div>
-                  <div class="font-bold text-text-primary">{{ auction.vehicle.steering === 'right' ? 'Оң руль' : 'Сол руль' }} • {{ auction.vehicle.fuelType }}</div>
+                  <div class="text-[10px] text-text-muted">{{ t('lotAttributes.steeringFuel') }}</div>
+                  <div class="font-bold text-text-primary">{{ auction.vehicle.steering === 'right' ? t('lotAttributes.rightSteering') : t('lotAttributes.leftSteering') }} • {{ auction.vehicle.fuelType }}</div>
                 </div>
                 <div class="p-2 rounded-xl bg-white">
-                  <div class="text-[10px] text-text-muted">Бажы (Растаможка)</div>
-                  <div class="font-bold text-success">{{ auction.vehicle.isCustomsCleared ? 'Төлөнгөн ✓' : 'Жок' }}</div>
+                  <div class="text-[10px] text-text-muted">{{ t('lotAttributes.customsCleared') }}</div>
+                  <div class="font-bold text-success">{{ auction.vehicle.isCustomsCleared ? t('lotAttributes.paidYes') : t('lotAttributes.paidNo') }}</div>
                 </div>
               </div>
             </div>
 
             <div v-else-if="auction.realEstate" class="p-4 rounded-2xl bg-primary/5 border border-primary/20 space-y-2">
               <div class="text-xs font-bold text-primary flex items-center gap-1.5">
-                <span>🏢</span>
-                <span>Кыймылсыз Мүлк & Дордой Контейнери</span>
+                <Building2 class="w-4 h-4 text-primary" />
+                <span>{{ t('lotAttributes.realEstateTitle') }}</span>
               </div>
               <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
                 <div class="p-2 rounded-xl bg-white">
-                  <div class="text-[10px] text-text-muted">Аянты</div>
-                  <div class="font-bold font-mono text-text-primary">{{ auction.realEstate.areaSqm }} м²</div>
+                  <div class="text-[10px] text-text-muted">{{ t('lotAttributes.area') }}</div>
+                  <div class="font-bold font-mono text-text-primary">{{ auction.realEstate.areaSqm }} {{ t('lotAttributes.sqmUnit') }}</div>
                 </div>
                 <div class="p-2 rounded-xl bg-white">
-                  <div class="text-[10px] text-text-muted">Документ</div>
-                  <div class="font-bold text-success">{{ auction.realEstate.deedType === 'red_book' ? 'Кызыл китеп ✓' : 'Техпаспорт ✓' }}</div>
+                  <div class="text-[10px] text-text-muted">{{ t('lotAttributes.deed') }}</div>
+                  <div class="font-bold text-success">{{ auction.realEstate.deedType === 'red_book' ? t('lotAttributes.redBook') : t('lotAttributes.techPassport') }}</div>
                 </div>
                 <div class="p-2 rounded-xl bg-white">
-                  <div class="text-[10px] text-text-muted">Айлык Ижара Кирешеси</div>
-                  <div class="font-bold font-mono text-success">{{ auction.realEstate.monthlyRevenue?.toLocaleString() }} KGS</div>
+                  <div class="text-[10px] text-text-muted">{{ t('lotAttributes.monthlyRevenue') }}</div>
+                  <div class="font-bold font-mono text-success">{{ auction.realEstate.monthlyRevenue?.toLocaleString() }} {{ t('lotAttributes.revenueCurrency') }}</div>
                 </div>
               </div>
             </div>
@@ -794,6 +811,25 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
           <p v-if="minimumNextBid" class="text-xs text-text-muted mt-1">
             {{ t('auction.minimumBid') }}: <span class="font-bold text-primary">{{ minimumNextBid.formatted }}</span>
           </p>
+        </div>
+
+        <!-- Quick Increment Pill Buttons -->
+        <div v-if="quickIncrementOptions.length > 0" class="space-y-1.5">
+          <label class="block text-[11px] font-bold text-text-muted uppercase tracking-wider">{{ t('bidSheet.quickOptions') || 'Быстрые варианты:' }}</label>
+          <div class="grid grid-cols-4 gap-1.5">
+            <button
+              v-for="inc in quickIncrementOptions"
+              :key="inc.label"
+              type="button"
+              class="py-2 px-1 rounded-xl text-xs font-bold border transition-all cursor-pointer text-center"
+              :class="parseFloat(bidAmount) === inc.value
+                ? 'bg-primary border-primary text-text-primary shadow-xs'
+                : 'bg-white border-black/10 text-gray-800 hover:bg-slate-50'"
+              @click="bidAmount = String(inc.value)"
+            >
+              {{ inc.label }}
+            </button>
+          </div>
         </div>
 
         <div class="flex items-center gap-2">

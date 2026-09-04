@@ -161,7 +161,7 @@ export const useThemeStore = defineStore('theme', () => {
     root.style.setProperty('--card-radius', t.cardRadius)
 
     // Dynamic Google Fonts
-    if (t.fontFamily && t.fontFamily !== 'system-ui') {
+    if (t.fontFamily && (t.fontFamily as string) !== 'system-ui') {
       try { loadGoogleFont(t.fontFamily) } catch {}
       root.style.setProperty('--font-sans', `'${t.fontFamily}', system-ui, sans-serif`)
       if (document.body) {

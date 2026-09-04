@@ -174,16 +174,16 @@ onMounted(async () => {
             </div>
             <div>
               <h2 id="rail-ending-soon-title" class="text-lg sm:text-xl font-black text-gray-950 tracking-tight">
-                Скоро завершаются
+                {{ t('home.endingSoon') || 'Скоро завершаются' }}
               </h2>
-              <p class="text-xs text-gray-500 hidden sm:block">Лоты с минимальным остатком времени и горячими ставками</p>
+              <p class="text-xs text-gray-500 hidden sm:block">{{ t('home.endingSoonDesc') || 'Лоты с минимальным остатком времени и горячими ставками' }}</p>
             </div>
           </div>
           <RouterLink
             to="/auctions?sort=ending_soon&status=live"
             class="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1 group"
           >
-            <span>Смотреть все</span>
+            <span>{{ t('common.viewAll') || 'Смотреть все' }}</span>
             <ChevronRight class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </RouterLink>
         </div>
@@ -208,9 +208,9 @@ onMounted(async () => {
             </div>
             <div>
               <h2 id="for-you-title" class="text-lg sm:text-xl font-black text-gray-950 tracking-tight">
-                {{ activeCategorySlug === 'all' ? 'Рекомендуемые лоты' : 'Лоты в категории' }}
+                {{ activeCategorySlug === 'all' ? (t('home.recommendedLots') || 'Рекомендуемые лоты') : (t('home.categoryLots') || 'Лоты в категории') }}
               </h2>
-              <p class="text-xs text-gray-500 hidden sm:block">Лучшие цены и проверенные продавцы по всему Кыргызстану</p>
+              <p class="text-xs text-gray-500 hidden sm:block">{{ t('home.recommendedLotsDesc') || 'Лучшие цены и проверенные продавцы по всему Кыргызстану' }}</p>
             </div>
           </div>
 
@@ -221,7 +221,7 @@ onMounted(async () => {
             @click="isAiModalOpen = true"
           >
             <Bot class="w-4 h-4 text-amber-600 group-hover:rotate-12 transition-transform" />
-            <span>✨ Помочь найти лот?</span>
+            <span>{{ t('home.aiHelpFind') || '✨ Помочь найти лот?' }}</span>
           </button>
         </div>
 
@@ -239,7 +239,7 @@ onMounted(async () => {
             :to="activeCategorySlug === 'all' ? '/auctions' : `/auctions?category=${activeCategorySlug}`"
             class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-black/10 text-gray-900 font-extrabold text-xs sm:text-sm hover:bg-slate-50 transition-all shadow-2xs"
           >
-            <span>Показать больше лотов</span>
+            <span>{{ t('home.showMoreLots') || 'Показать больше лотов' }}</span>
             <ArrowRight class="w-4 h-4" />
           </RouterLink>
         </div>
@@ -256,16 +256,16 @@ onMounted(async () => {
             </div>
             <div>
               <h2 id="verified-stores-title" class="text-lg sm:text-xl font-black text-gray-950 tracking-tight">
-                Проверенные магазины Кыргызстана
+                {{ t('home.verifiedStores') || 'Проверенные магазины Кыргызстана' }}
               </h2>
-              <p class="text-xs text-gray-500 hidden sm:block">Магазины с официальной верификацией, рейтингом от 4.8 и гарантией возврата</p>
+              <p class="text-xs text-gray-500 hidden sm:block">{{ t('home.verifiedStoresDesc') || 'Магазины с официальной верификацией, рейтингом от 4.8 и гарантией возврата' }}</p>
             </div>
           </div>
           <RouterLink
             to="/auctions"
             class="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1"
           >
-            <span>Все магазины</span>
+            <span>{{ t('home.allStores') || 'Все магазины' }}</span>
             <ChevronRight class="w-4 h-4" />
           </RouterLink>
         </div>
@@ -291,16 +291,16 @@ onMounted(async () => {
             </div>
             <div>
               <h3 class="text-lg sm:text-xl font-black text-gray-950 tracking-tight">
-                Автомобили и транспорт
+                {{ t('categories.vehicles') || 'Автомобили и транспорт' }}
               </h3>
-              <p class="text-xs text-gray-500 hidden sm:block">Седаны, внедорожники и коммерческий транспорт с чистой историей</p>
+              <p class="text-xs text-gray-500 hidden sm:block">{{ t('home.vehiclesDesc') || 'Седаны, внедорожники и коммерческий транспорт с чистой историей' }}</p>
             </div>
           </div>
           <RouterLink
             to="/auctions?category=vehicles"
             class="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1"
           >
-            <span>Смотреть авто</span>
+            <span>{{ t('home.viewVehicles') || 'Смотреть авто' }}</span>
             <ChevronRight class="w-4 h-4" />
           </RouterLink>
         </div>
@@ -318,16 +318,16 @@ onMounted(async () => {
             </div>
             <div>
               <h3 class="text-lg sm:text-xl font-black text-gray-950 tracking-tight">
-                Гаджеты и Электроника
+                {{ t('categories.electronics') || 'Гаджеты и Электроника' }}
               </h3>
-              <p class="text-xs text-gray-500 hidden sm:block">Официальные устройства с зарегистрированным кодом IMEI</p>
+              <p class="text-xs text-gray-500 hidden sm:block">{{ t('home.electronicsDesc') || 'Официальные устройства с зарегистрированным кодом IMEI' }}</p>
             </div>
           </div>
           <RouterLink
             to="/auctions?category=electronics"
             class="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1"
           >
-            <span>Смотреть гаджеты</span>
+            <span>{{ t('home.viewElectronics') || 'Смотреть гаджеты' }}</span>
             <ChevronRight class="w-4 h-4" />
           </RouterLink>
         </div>
@@ -345,16 +345,16 @@ onMounted(async () => {
             </div>
             <div>
               <h3 class="text-lg sm:text-xl font-black text-gray-950 tracking-tight">
-                Скотный рынок и Сельское хозяйство
+                {{ t('categories.livestock') || 'Скотный рынок и Сельское хозяйство' }}
               </h3>
-              <p class="text-xs text-gray-500 hidden sm:block">Породистые бараны Арашан, скаковые лошади и дойные коровы</p>
+              <p class="text-xs text-gray-500 hidden sm:block">{{ t('home.livestockDesc') || 'Породистые бараны Арашан, скаковые лошади и дойные коровы' }}</p>
             </div>
           </div>
           <RouterLink
             to="/auctions?category=livestock"
             class="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1"
           >
-            <span>Смотреть рынок</span>
+            <span>{{ t('home.viewLivestock') || 'Смотреть рынок' }}</span>
             <ChevronRight class="w-4 h-4" />
           </RouterLink>
         </div>
@@ -371,13 +371,13 @@ onMounted(async () => {
           <div class="space-y-1">
             <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-black border border-emerald-200">
               <ShieldCheck class="w-4 h-4 text-emerald-600" />
-              <span>100% Банковский эскроу</span>
+              <span>{{ t('home.escrowTitle') || '100% Банковский эскроу' }}</span>
             </div>
             <h3 class="text-lg sm:text-xl font-black text-gray-950">
-              Безопасные расчеты через ведущие банки Кыргызстана
+              {{ t('home.escrowHeading') || 'Безопасные расчеты через ведущие банки Кыргызстана' }}
             </h3>
             <p class="text-xs text-gray-500">
-              Деньги блокируются на защищенном эскроу-счете и переводятся продавцу только после вашего личного подтверждения получения товара.
+              {{ t('home.escrowSubheading') || 'Деньги блокируются на защищенном эскроу-счете и переводятся продавцу только после вашего личного подтверждения получения товара.' }}
             </p>
           </div>
 
@@ -386,13 +386,13 @@ onMounted(async () => {
               to="/how-it-works"
               class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-gray-800 font-bold text-xs transition-colors"
             >
-              Как это работает?
+              {{ t('home.howItWorksBtn') || 'Как это работает?' }}
             </RouterLink>
             <RouterLink
               to="/sell"
               class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-gray-950 font-black text-xs transition-colors shadow-2xs"
             >
-              Начать продавать
+              {{ t('home.startSellingBtn') || 'Начать продавать' }}
             </RouterLink>
           </div>
         </div>
@@ -401,31 +401,31 @@ onMounted(async () => {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="p-4 rounded-2xl bg-slate-50 border border-black/5 space-y-2">
             <div class="flex items-center justify-between">
-              <div class="font-black text-xs text-gray-950">MBank Pay & QR</div>
-              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">0% комиссия</span>
+              <div class="font-black text-xs text-gray-950">{{ t('home.bankMbankTitle') || 'MBank Pay & QR' }}</div>
+              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">{{ t('home.bankMbankFee') || '0% комиссия' }}</span>
             </div>
             <p class="text-xs text-gray-500 leading-relaxed">
-              Мгновенное пополнение и оплата через приложение MBank без очередей и скрытых комиссий.
+              {{ t('home.bankMbankDesc') || 'Мгновенное пополнение и оплата через приложение MBank без очередей и скрытых комиссий.' }}
             </p>
           </div>
 
           <div class="p-4 rounded-2xl bg-slate-50 border border-black/5 space-y-2">
             <div class="flex items-center justify-between">
-              <div class="font-black text-xs text-gray-950">DemirBank Escrow</div>
-              <span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-md">Защита средств</span>
+              <div class="font-black text-xs text-gray-950">{{ t('home.bankDemirTitle') || 'DemirBank Escrow' }}</div>
+              <span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-md">{{ t('home.bankDemirBadge') || 'Защита средств' }}</span>
             </div>
             <p class="text-xs text-gray-500 leading-relaxed">
-              Официальное банковское хранение средств до момента передачи и проверки лота покупателем.
+              {{ t('home.bankDemirDesc') || 'Официальное банковское хранение средств до момента передачи и проверки лота покупателем.' }}
             </p>
           </div>
 
           <div class="p-4 rounded-2xl bg-slate-50 border border-black/5 space-y-2">
             <div class="flex items-center justify-between">
-              <div class="font-black text-xs text-gray-950">Optima Bank & Элкарт</div>
-              <span class="text-[10px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-md">3D Secure 2.0</span>
+              <div class="font-black text-xs text-gray-950">{{ t('home.bankOptimaTitle') || 'Optima Bank & Элкарт' }}</div>
+              <span class="text-[10px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-md">{{ t('home.bankOptimaBadge') || '3D Secure 2.0' }}</span>
             </div>
             <p class="text-xs text-gray-500 leading-relaxed">
-              Поддержка всех национальных карт Элкарт, Visa и Mastercard с мгновенным выводом выручки.
+              {{ t('home.bankOptimaDesc') || 'Поддержка всех национальных карт Элкарт, Visa и Mastercard с мгновенным выводом выручки.' }}
             </p>
           </div>
         </div>

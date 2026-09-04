@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Eye, EyeOff, Search, X, Loader2, Check, AlertCircle } from 'lucide-vue-next'
+import { useI18n } from '@/composables/useI18n'
 
 interface Props {
   modelValue: string
@@ -44,6 +45,7 @@ const emit = defineEmits<{
   clear: []
 }>()
 
+const { t } = useI18n()
 const isFocused = ref(false)
 const isHovered = ref(false)
 const showPassword = ref(props.type === 'password' && props.showPassword)
@@ -194,7 +196,7 @@ function handleKeyDown(event: KeyboardEvent) {
         v-else-if="showClear"
         type="button"
         class="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-[rgb(var(--color-text-muted))] hover:text-[rgb(var(--color-error))] hover:bg-[rgb(var(--color-error))/0.1] transition-all duration-200"
-        aria-label="Temizle"
+        :aria-label="t('common.clear') || 'Очистить'"
         @click="handleClear"
       >
         <X class="w-4 h-4" />
@@ -205,7 +207,7 @@ function handleKeyDown(event: KeyboardEvent) {
         v-else-if="showPasswordToggle"
         type="button"
         class="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-[rgb(var(--color-text-muted))] hover:text-[rgb(var(--color-text-primary))] hover:bg-[rgb(var(--color-accent))] transition-all duration-200"
-        :aria-label="showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'"
+        :aria-label="showPassword ? (t('auth.hidePassword') || 'Скрыть пароль') : (t('auth.showPassword') || 'Показать пароль')"
         :aria-pressed="showPassword"
         @click="togglePassword"
       >

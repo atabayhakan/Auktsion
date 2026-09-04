@@ -54,7 +54,7 @@ const bankInfo = computed(() => getBankInfo(props.payout.bankName))
     </div>
 
     <!-- Amount & Status -->
-    <div class="flex flex-col items-end gap-1 min-w-[140px]">
+    <div class="flex flex-col items-end gap-1 shrink-0">
       <p class="text-primary font-bold text-lg">{{ formatMoney(payout.amount) }}</p>
       <Badge variant="info">
         {{ localizedStatus }}

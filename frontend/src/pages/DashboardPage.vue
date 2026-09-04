@@ -191,7 +191,7 @@ function handleAvatarUpload(event: Event) {
     const reader = new FileReader()
     reader.onload = (e) => {
       avatarPreview.value = e.target?.result as string
-      uiStore.toastSuccess(t('toasts.success') || 'Başarılı', t('dashboard.avatarUpdated') || 'Profil fotoğrafı güncellendi')
+      uiStore.toastSuccess(t('toasts.success') || 'Успешно', t('dashboard.avatarUpdated') || 'Фото профиля обновлено')
     }
     reader.readAsDataURL(file)
   }
@@ -571,7 +571,7 @@ onMounted(async () => {
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
                 <div>
                   <h2 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">{{ t('dashboard.myBids') }}</h2>
-                  <p class="text-xs sm:text-sm text-gray-500 mt-0.5">{{ t('dashboard.bidHistoryDesc') || 'Katıldığınız açık artırma ve teklif geçmişiniz' }}</p>
+                  <p class="text-xs sm:text-sm text-gray-500 mt-0.5">{{ t('dashboard.bidHistoryDesc') || 'История ваших аукционов и ставок' }}</p>
                 </div>
                 <Tabs v-model="bidTab" :tabs="bidTabs" variant="pills" />
               </div>
@@ -674,16 +674,16 @@ onMounted(async () => {
                 <div>
                   <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-900 border border-amber-500/20 text-xs font-black mb-2 shadow-2xs">
                     <ShieldCheck class="w-4 h-4 text-amber-600" />
-                    <span>{{ t('dashboard.kycTrustBadge') || 'Kırgızistan Ulusal Bankası AML/CFT Mevzuatına Uygun' }}</span>
+                    <span>{{ t('dashboard.kycTrustBadge') || 'Соответствует требованиям ПОД/ФТ НБКР' }}</span>
                   </div>
                   <h2 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">{{ t('dashboard.kyc') }}</h2>
                   <p class="text-xs sm:text-sm text-gray-500 mt-1 max-w-xl leading-relaxed">
-                    {{ t('dashboard.kycSubtitle') || 'Güvenli ve şeffaf açık artırma işlemleri için kimlik doğrulaması gerekmektedir. Bilgileriniz 256-bit SSL ile şifrelenir.' }}
+                    {{ t('dashboard.kycSubtitle') || 'Верификация требуется для безопасных торгов. Ваши данные зашифрованы 256-битным SSL.' }}
                   </p>
                 </div>
 
                 <div class="shrink-0 flex items-center gap-2 self-start sm:self-center">
-                  <span class="text-xs font-bold text-gray-400">{{ t('common.status') || 'Durum' }}:</span>
+                  <span class="text-xs font-bold text-gray-400">{{ t('common.status') || 'Статус' }}:</span>
                   <div 
                     class="px-3.5 py-1.5 rounded-full text-xs font-extrabold flex items-center gap-1.5 shadow-2xs border"
                     :class="userStore.kycStatus === 'verified'
@@ -709,10 +709,10 @@ onMounted(async () => {
                 </div>
                 <div>
                   <h4 class="font-extrabold text-sm sm:text-base text-emerald-900">
-                    {{ t('dashboard.kycVerifiedBadge') || 'Kimliğiniz Doğrulandı' }}
+                    {{ t('dashboard.kycVerifiedBadge') || 'Личность подтверждена' }}
                   </h4>
                   <p class="text-xs text-emerald-800/80 mt-0.5 leading-relaxed">
-                    {{ t('dashboard.kycVerifiedBanner') || 'Tebrikler! Kimliğiniz %100 doğrulandı. Tüm açık artırma, para yatırma ve çekme limitleriniz aktif.' }}
+                    {{ t('dashboard.kycVerifiedBanner') || 'Поздравляем! Ваша личность верифицирована на 100%. Все лимиты активны.' }}
                   </p>
                 </div>
               </div>
@@ -721,10 +721,10 @@ onMounted(async () => {
               <div class="bg-white p-6 sm:p-8 rounded-3xl border border-black/[0.08] shadow-2xs space-y-5">
                 <div class="flex items-center justify-between">
                   <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">
-                    {{ t('dashboard.kycStages') || 'Doğrulama Aşamaları' }}
+                    {{ t('dashboard.kycStages') || 'Этапы верификации' }}
                   </h3>
                   <span class="text-xs font-bold font-mono text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200">
-                    {{ t('dashboard.kycStageOf', { current: currentKycStep + 1, total: 5 }) || `Aşama ${currentKycStep + 1} / 5` }}
+                    {{ t('dashboard.kycStageOf', { current: currentKycStep + 1, total: 5 }) || `Этап ${currentKycStep + 1} / 5` }}
                   </span>
                 </div>
 
@@ -741,18 +741,18 @@ onMounted(async () => {
                 <div class="flex items-center justify-between">
                   <div>
                     <h3 class="text-base font-extrabold text-gray-950">{{ t('dashboard.kycRequiredDocs') }}</h3>
-                    <p class="text-xs text-gray-500">{{ t('dashboard.kycUploadHint') || 'Lütfen geçerli ve okunabilir belgelerinizi yükleyin' }}</p>
+                    <p class="text-xs text-gray-500">{{ t('dashboard.kycUploadHint') || 'Загрузите четкие и действительные документы' }}</p>
                   </div>
                   <div class="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
                     <Lock class="w-3.5 h-3.5 text-emerald-600" />
-                    <span>{{ t('dashboard.sslProtected') || '256-Bit SSL Korumalı' }}</span>
+                    <span>{{ t('dashboard.sslProtected') || 'Защита 256-бит SSL' }}</span>
                   </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <DocumentUpload
                     :title="t('dashboard.kycPassport')"
-                    :description="t('dashboard.passportDesc') || 'Ön & Arka Yüz'"
+                    :description="t('dashboard.passportDesc') || 'Лицевая и обратная сторона'"
                     accepted="image/*,.pdf"
                     max-size="10MB"
                     document-type="idFront"
@@ -760,7 +760,7 @@ onMounted(async () => {
                   />
                   <DocumentUpload
                     :title="t('dashboard.kycSelfieDoc')"
-                    :description="t('dashboard.selfieDesc') || 'Net Yüz Fotoğrafı'"
+                    :description="t('dashboard.selfieDesc') || 'Четкое селфи лица'"
                     accepted="image/*"
                     max-size="10MB"
                     document-type="selfie"
@@ -768,7 +768,7 @@ onMounted(async () => {
                   />
                   <DocumentUpload
                     :title="t('dashboard.kycProofAddress')"
-                    :description="t('dashboard.addressDesc') || 'Fatura / İkametgah'"
+                    :description="t('dashboard.addressDesc') || 'Квитанция / Прописка'"
                     accepted="image/*,.pdf"
                     max-size="10MB"
                     document-type="proofOfAddress"
@@ -783,8 +783,8 @@ onMounted(async () => {
                       <Clock class="w-4 h-4" />
                     </div>
                     <div>
-                      <p class="font-extrabold text-gray-900">{{ t('dashboard.kycReviewTime') || 'Ortalama inceleme süresi: 5 - 15 dakika' }}</p>
-                      <p class="text-gray-500 text-[11px]">{{ t('dashboard.kycSecurityForward') || 'Belgeler yüklendikten sonra doğrudan güvenlik ekibimize iletilir.' }}</p>
+                      <p class="font-extrabold text-gray-900">{{ t('dashboard.kycReviewTime') || 'Среднее время проверки: 5 - 15 минут' }}</p>
+                      <p class="text-gray-500 text-[11px]">{{ t('dashboard.kycSecurityForward') || 'После загрузки документы сразу поступают в службу безопасности.' }}</p>
                     </div>
                   </div>
 
@@ -794,7 +794,7 @@ onMounted(async () => {
                     :disabled="userStore.kycStatus === 'verified'" 
                     @click="submitKyc"
                   >
-                    {{ userStore.kycStatus === 'verified' ? (t('dashboard.verifiedCheck') || 'Doğrulandı ✓') : (t('dashboard.submitKyc') || 'Onaya Gönder') }}
+                    {{ userStore.kycStatus === 'verified' ? (t('dashboard.verifiedCheck') || 'Подтверждено ✓') : (t('dashboard.submitKyc') || 'Отправить на проверку') }}
                   </Button>
                 </div>
               </div>
@@ -804,7 +804,7 @@ onMounted(async () => {
                 <div class="flex items-center gap-2">
                   <ShieldCheck class="w-5 h-5 text-emerald-600" />
                   <h3 class="text-sm font-black text-gray-950 uppercase tracking-wider">
-                    {{ t('dashboard.amlComplianceTitle') || 'AML & Yasal Uyumluluk Durumu' }}
+                    {{ t('dashboard.amlComplianceTitle') || 'Статус ПОД/ФТ и соответствие AML' }}
                   </h3>
                 </div>
 
@@ -812,30 +812,30 @@ onMounted(async () => {
                   <div class="p-4 rounded-2xl bg-slate-50 border border-black/[0.04] space-y-1">
                     <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">{{ t('dashboard.amlLimit') }}</p>
                     <p class="text-sm font-black text-gray-900 font-mono">50.000 KGS</p>
-                    <p class="text-[10px] text-emerald-600 font-semibold">{{ t('dashboard.kycLimitVerified') || 'Doğrulama Sonrası: 5.000.000 KGS' }}</p>
+                    <p class="text-[10px] text-emerald-600 font-semibold">{{ t('dashboard.kycLimitVerified') || 'После верификации: 5 000 000 сом' }}</p>
                   </div>
 
                   <div class="p-4 rounded-2xl bg-slate-50 border border-black/[0.04] space-y-1">
                     <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">{{ t('dashboard.sanctionsCheck') }}</p>
                     <div class="flex items-center gap-1.5 text-sm font-black text-emerald-700">
                       <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                      <span>{{ t('dashboard.cleanOfac') || 'Temiz (OFAC/UN)' }}</span>
+                      <span>{{ t('dashboard.cleanOfac') || 'Чисто (OFAC/UN)' }}</span>
                     </div>
-                    <p class="text-[10px] text-gray-400">{{ t('dashboard.noSanctionsRisk') || 'Yaptırım riski bulunmuyor' }}</p>
+                    <p class="text-[10px] text-gray-400">{{ t('dashboard.noSanctionsRisk') || 'Санкционных рисков нет' }}</p>
                   </div>
 
                   <div class="p-4 rounded-2xl bg-slate-50 border border-black/[0.04] space-y-1">
                     <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">{{ t('dashboard.pepStatus') }}</p>
                     <div class="flex items-center gap-1.5 text-sm font-black text-gray-900">
-                      <span>{{ t('dashboard.none') || 'Yok' }}</span>
+                      <span>{{ t('dashboard.none') || 'Нет' }}</span>
                     </div>
-                    <p class="text-[10px] text-gray-400">{{ t('dashboard.notPep') || 'Siyasi nüfuz sahibi değil' }}</p>
+                    <p class="text-[10px] text-gray-400">{{ t('dashboard.notPep') || 'Не является ПДЛ' }}</p>
                   </div>
 
                   <div class="p-4 rounded-2xl bg-slate-50 border border-black/[0.04] space-y-1">
-                    <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">{{ t('dashboard.kycDataSecurity') || 'Veri Güvenliği' }}</p>
+                    <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">{{ t('dashboard.kycDataSecurity') || 'Безопасность данных' }}</p>
                     <p class="text-sm font-black text-amber-700 font-mono">256-Bit SSL</p>
-                    <p class="text-[10px] text-gray-400">{{ t('dashboard.endToEndEncrypted') || 'Uçtan uca şifreli' }}</p>
+                    <p class="text-[10px] text-gray-400">{{ t('dashboard.endToEndEncrypted') || 'Сквозное шифрование' }}</p>
                   </div>
                 </div>
               </div>
@@ -849,10 +849,10 @@ onMounted(async () => {
               <div class="pb-6 border-b border-black/[0.06]">
                 <h2 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight flex items-center gap-2.5">
                   <Settings class="w-7 h-7 text-primary" />
-                  <span>{{ t('dashboard.settings') || 'Ayarlar & Hesap Yönetimi' }}</span>
+                  <span>{{ t('dashboard.settings') || 'Настройки и управление аккаунтом' }}</span>
                 </h2>
                 <p class="text-xs sm:text-sm text-gray-500 mt-1 leading-relaxed">
-                  {{ t('dashboard.settingsSubtitle') || 'Profil bilgilerinizi, iletişim kanallarınızı, güvenlik seçeneklerinizi ve bildirim tercihlerinizi yönetin.' }}
+                  {{ t('dashboard.settingsSubtitle') || 'Управляйте данными профиля, контактами, безопасностью и уведомлениями.' }}
                 </p>
               </div>
 
@@ -861,7 +861,7 @@ onMounted(async () => {
                 <div class="flex items-center justify-between pb-4 border-b border-black/[0.06]">
                   <div class="flex items-center gap-2">
                     <User class="w-5 h-5 text-amber-600" />
-                    <h3 class="text-base font-black text-gray-950">{{ t('dashboard.profileInfo') || 'Profil Bilgileri' }}</h3>
+                    <h3 class="text-base font-black text-gray-950">{{ t('dashboard.profileInfo') || 'Данные профиля' }}</h3>
                   </div>
                   <span class="text-xs font-bold text-gray-400 font-mono">ID: #{{ userStore.user?.id ? userStore.user.id.slice(0, 8) : 'KG-9482' }}</span>
                 </div>
@@ -884,11 +884,11 @@ onMounted(async () => {
                       <h4 class="text-base font-black text-gray-950">{{ userStore.fullName || 'Hakan Atabay' }}</h4>
                       <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                         <CheckCircle2 class="w-3 h-3 text-emerald-600" />
-                        <span>{{ t('dashboard.registeredUser') || 'Kayıtlı Üye' }}</span>
+                        <span>{{ t('dashboard.registeredUser') || 'Зарегистрированный участник' }}</span>
                       </span>
                     </div>
                     <p class="text-xs text-gray-500">{{ userStore.user?.email || 'atabayhakan007@gmail.com' }}</p>
-                    <p class="text-[11px] text-gray-400 font-medium">{{ t('dashboard.photoUploadHint') || 'Fotoğrafı güncellemek için kamera ikonuna tıklayın.' }}</p>
+                    <p class="text-[11px] text-gray-400 font-medium">{{ t('dashboard.photoUploadHint') || 'Нажмите на иконку камеры для обновления фото.' }}</p>
                   </div>
                 </div>
 
@@ -900,7 +900,7 @@ onMounted(async () => {
                     <div class="space-y-1.5">
                       <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
                         <User class="w-3.5 h-3.5 text-gray-400" />
-                        <span>{{ t('auth.fullName') || 'Adınız ve Soyadınız' }}</span>
+                        <span>{{ t('auth.fullName') || 'Имя и Фамилия' }}</span>
                       </label>
                       <input
                         v-model="profileForm.fullName"
@@ -913,7 +913,7 @@ onMounted(async () => {
                     <div class="space-y-1.5">
                       <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
                         <Mail class="w-3.5 h-3.5 text-gray-400" />
-                        <span>{{ t('auth.email') || 'E-posta Adresi' }}</span>
+                        <span>{{ t('auth.email') || 'Электронная почта' }}</span>
                       </label>
                       <input
                         v-model="profileForm.email"
@@ -926,7 +926,7 @@ onMounted(async () => {
                     <div class="space-y-1.5">
                       <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
                         <Phone class="w-3.5 h-3.5 text-gray-400" />
-                        <span>{{ t('auth.phone') || 'Telefon Numarası' }}</span>
+                        <span>{{ t('auth.phone') || 'Номер телефона' }}</span>
                       </label>
                       <input
                         v-model="profileForm.phone"
@@ -940,7 +940,7 @@ onMounted(async () => {
                     <div class="space-y-1.5">
                       <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
                         <MapPin class="w-3.5 h-3.5 text-gray-400" />
-                        <span>{{ t('sell.city') || 'Şehir / Bölge' }}</span>
+                        <span>{{ t('sell.city') || 'Город / Регион' }}</span>
                       </label>
                       <select
                         v-model="profileForm.city"
@@ -966,17 +966,17 @@ onMounted(async () => {
                     >
                       <span v-if="isSavingProfile" class="w-3.5 h-3.5 border-2 border-gray-950 border-t-transparent rounded-full animate-spin" />
                       <CheckCircle2 v-else class="w-4 h-4" />
-                      <span>{{ isSavingProfile ? (t('dashboard.saving') || 'Kaydediliyor...') : (t('common.save') || 'Değişiklikleri Kaydet') }}</span>
+                      <span>{{ isSavingProfile ? (t('dashboard.saving') || 'Сохранение...') : (t('common.save') || 'Сохранить изменения') }}</span>
                     </button>
                   </div>
                 </form>
               </div>
 
-              <!-- Card 2: Hesap Güvenliği & Şifre -->
+              <!-- Card 2: Безопасность и пароль -->
               <div class="bg-white p-6 sm:p-8 rounded-3xl border border-black/[0.08] shadow-2xs space-y-6">
                 <div class="flex items-center gap-2 pb-4 border-b border-black/[0.06]">
                   <ShieldCheck class="w-5 h-5 text-emerald-600" />
-                  <h3 class="text-base font-black text-gray-950">{{ t('dashboard.security') || 'Hesap Güvenliği' }}</h3>
+                  <h3 class="text-base font-black text-gray-950">{{ t('dashboard.security') || 'Безопасность аккаунта' }}</h3>
                 </div>
 
                 <div class="space-y-4">
@@ -984,8 +984,8 @@ onMounted(async () => {
                   <!-- 2FA Switch -->
                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-black/[0.04] transition-all">
                     <div class="space-y-0.5">
-                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.twoFactorAuth') || '2FA (İki Faktörlü Kimlik Doğrulama)' }}</p>
-                      <p class="text-xs text-gray-500">{{ t('dashboard.twoFactorDesc') || 'SMS veya Google Authenticator ile her girişte ek koruma.' }}</p>
+                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.twoFactorAuth') || '2FA (Двухфакторная аутентификация)' }}</p>
+                      <p class="text-xs text-gray-500">{{ t('dashboard.twoFactorDesc') || 'Дополнительная защита через SMS или Google Authenticator при каждом входе.' }}</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
                       <input v-model="twoFactorEnabled" type="checkbox" class="sr-only peer" />
@@ -996,8 +996,8 @@ onMounted(async () => {
                   <!-- Password Management -->
                   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 border border-black/[0.04]">
                     <div class="space-y-0.5">
-                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.loginPasswordTitle') || 'Giriş Şifresi' }}</p>
-                      <p class="text-xs text-gray-500">{{ t('dashboard.loginPasswordHint') || 'Son güncelleme: 30 gün önce. Güçlü bir şifre kullanmanız önerilir.' }}</p>
+                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.loginPasswordTitle') || 'Пароль для входа' }}</p>
+                      <p class="text-xs text-gray-500">{{ t('dashboard.loginPasswordHint') || 'Рекомендуется использовать надежный пароль из букв, цифр и символов.' }}</p>
                     </div>
                     <button
                       type="button"
@@ -1005,7 +1005,7 @@ onMounted(async () => {
                       @click="changePassword"
                     >
                       <KeyRound class="w-3.5 h-3.5 text-gray-500" />
-                      <span>{{ t('auth.changePassword') || 'Şifreyi Değiştir' }}</span>
+                      <span>{{ t('auth.changePassword') || 'Сменить пароль' }}</span>
                     </button>
                   </div>
 
@@ -1013,19 +1013,19 @@ onMounted(async () => {
                   <div class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/60 text-xs">
                     <Laptop class="w-5 h-5 text-emerald-700 shrink-0" />
                     <div>
-                      <p class="font-bold text-emerald-950">{{ t('dashboard.activeSessionTitle') || 'Aktif Oturum: Windows (Chrome) • Bişkek, KG' }}</p>
-                      <p class="text-emerald-800/80 text-[11px]">{{ t('dashboard.activeSessionDesc') || 'Şu anda bu cihaz üzerinden oturum açtınız.' }}</p>
+                      <p class="font-bold text-emerald-950">{{ t('dashboard.activeSessionTitle') || 'Активная сессия: Windows (Chrome) • Бишкек, KG' }}</p>
+                      <p class="text-emerald-800/80 text-[11px]">{{ t('dashboard.activeSessionDesc') || 'В настоящее время вы вошли в систему с этого устройства.' }}</p>
                     </div>
                   </div>
 
                 </div>
               </div>
 
-              <!-- Card 3: Bildirim Tercihleri -->
+              <!-- Card 3: Настройки уведомлений -->
               <div class="bg-white p-6 sm:p-8 rounded-3xl border border-black/[0.08] shadow-2xs space-y-6">
                 <div class="flex items-center gap-2 pb-4 border-b border-black/[0.06]">
                   <Bell class="w-5 h-5 text-blue-600" />
-                  <h3 class="text-base font-black text-gray-950">{{ t('dashboard.notifications') || 'Bildirim Tercihleri' }}</h3>
+                  <h3 class="text-base font-black text-gray-950">{{ t('dashboard.notifications') || 'Настройки уведомлений' }}</h3>
                 </div>
 
                 <div class="space-y-4">
@@ -1033,8 +1033,8 @@ onMounted(async () => {
                   <!-- Email Notifications -->
                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-black/[0.04]">
                     <div class="space-y-0.5">
-                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.emailNotifications') || 'E-posta Bildirimleri' }}</p>
-                      <p class="text-xs text-gray-500">{{ t('dashboard.emailNotificationsDesc') || 'Önemli haberler, teklif onayları ve kargo bilgileri e-posta ile gönderilsin.' }}</p>
+                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.emailNotifications') || 'Email-уведомления' }}</p>
+                      <p class="text-xs text-gray-500">{{ t('dashboard.emailNotificationsDesc') || 'Получать важные новости, подтверждения ставок и статус доставки на почту.' }}</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
                       <input v-model="emailNotifEnabled" type="checkbox" class="sr-only peer" />
@@ -1045,8 +1045,8 @@ onMounted(async () => {
                   <!-- Push Notifications -->
                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-black/[0.04]">
                     <div class="space-y-0.5">
-                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.pushNotifications') || 'Tarayıcı & Push Bildirimleri' }}</p>
-                      <p class="text-xs text-gray-500">{{ t('dashboard.pushNotificationsDesc') || 'Teklifiniz geçildiğinde ve açık artırma bitimine 15 dk kala anlık bildirim alın.' }}</p>
+                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.pushNotifications') || 'Push-уведомления в браузере' }}</p>
+                      <p class="text-xs text-gray-500">{{ t('dashboard.pushNotificationsDesc') || 'Мгновенные оповещения при перебитии ставки и за 15 минут до окончания аукциона.' }}</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
                       <input v-model="pushNotifEnabled" type="checkbox" class="sr-only peer" />
@@ -1057,8 +1057,8 @@ onMounted(async () => {
                   <!-- SMS Notifications -->
                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-black/[0.04]">
                     <div class="space-y-0.5">
-                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.smsAlertsTitle') || 'SMS ile Kritik Uyarılar' }}</p>
-                      <p class="text-xs text-gray-500">{{ t('dashboard.smsAlertsDesc') || 'Güvenlik doğrulamaları ve banka emanet para transferi bilgilendirmeleri SMS ile iletilsin.' }}</p>
+                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.smsAlertsTitle') || 'SMS-оповещения' }}</p>
+                      <p class="text-xs text-gray-500">{{ t('dashboard.smsAlertsDesc') || 'Критические уведомления безопасности и банковские переводы Escrow.' }}</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
                       <input v-model="smsNotifEnabled" type="checkbox" class="sr-only peer" />
@@ -1069,24 +1069,24 @@ onMounted(async () => {
                 </div>
               </div>
 
-              <!-- Card 4: Tehlikeli Bölge -->
+              <!-- Card 4: Опасная зона -->
               <div class="bg-rose-50/50 p-6 sm:p-8 rounded-3xl border border-rose-200 shadow-2xs space-y-4">
                 <div class="flex items-center gap-2">
                   <AlertTriangle class="w-5 h-5 text-rose-600" />
-                  <h3 class="text-base font-black text-rose-950">{{ t('dashboard.dangerZone') || 'Tehlikeli Bölge' }}</h3>
+                  <h3 class="text-base font-black text-rose-950">{{ t('dashboard.dangerZone') || 'Опасная зона' }}</h3>
                 </div>
 
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-rose-200/80 shadow-2xs">
                   <div class="space-y-0.5">
-                    <p class="font-black text-xs sm:text-sm text-rose-950">{{ t('dashboard.deleteAccount') || 'Hesabı Kalıcı Olarak Sil' }}</p>
-                    <p class="text-xs text-gray-500 max-w-lg">{{ t('dashboard.deleteAccountWarning') || 'Hesabınızı sildiğinizde tüm teklifleriniz, açık artırmalarınız ve cüzdan verileriniz kalıcı olarak silinir.' }}</p>
+                    <p class="font-black text-xs sm:text-sm text-rose-950">{{ t('dashboard.deleteAccount') || 'Удалить аккаунт' }}</p>
+                    <p class="text-xs text-gray-500 max-w-lg">{{ t('dashboard.deleteAccountWarning') || 'При удалении аккаунта все ваши лоты, ставки и история операций будут безвозвратно удалены.' }}</p>
                   </div>
                   <button
                     type="button"
                     class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
                     @click="showDeleteModal = true"
                   >
-                    <span>{{ t('dashboard.deleteAccount') || 'Hesabı Sil' }}</span>
+                    <span>{{ t('dashboard.deleteAccount') || 'Удалить аккаунт' }}</span>
                   </button>
                 </div>
               </div>

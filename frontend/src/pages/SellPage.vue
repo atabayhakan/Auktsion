@@ -273,11 +273,11 @@ async function handleImageFiles(event: Event) {
   try {
     for (const file of Array.from(files)) {
       if (file.size > 10 * 1024 * 1024) {
-        imageUploadError.value = file.name + ' maks 10MB'
+        imageUploadError.value = `${file.name} — ${t('sell.maxFileSize') || 'Максимальный размер файла: 10 МБ'}`
         continue
       }
       if (!file.type.startsWith('image/')) {
-        imageUploadError.value = file.name + ' - image format only'
+        imageUploadError.value = `${file.name} — ${t('sell.imageOnly') || 'Поддерживаются только изображения (JPG, PNG, WEBP)'}`
         continue
       }
 
@@ -291,7 +291,7 @@ async function handleImageFiles(event: Event) {
       reader.readAsDataURL(file)
     }
   } catch (err: any) {
-    const msg = err?.response?.data?.error || err?.message || 'Upload error'
+    const msg = err?.response?.data?.error || err?.message || (t('sell.uploadError') || 'Ошибка загрузки изображения')
     imageUploadError.value = msg
   } finally {
     isUploadingImages.value = false

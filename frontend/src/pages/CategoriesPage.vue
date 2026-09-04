@@ -111,8 +111,8 @@ function clearFilters() {
             <Search class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <button
               v-if="searchQuery"
-              @click="searchQuery = ''"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-200 transition-colors"
+              @click="searchQuery = ''"
             >
               <X class="w-3.5 h-3.5" />
             </button>
@@ -122,11 +122,11 @@ function clearFilters() {
         <!-- Quick Filter Pills -->
         <div class="flex items-center gap-2 overflow-x-auto pb-1 pt-2 border-t border-black/[0.05] scrollbar-none">
           <button
-            @click="selectedCategorySlug = null"
             class="px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all"
             :class="selectedCategorySlug === null
               ? 'bg-primary text-text-primary shadow-xs font-extrabold'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-950'"
+            @click="selectedCategorySlug = null"
           >
             {{ t('categoriesPage.resetFilter') }} ({{ localizedCategories.length }})
           </button>
@@ -134,11 +134,11 @@ function clearFilters() {
           <button
             v-for="cat in localizedCategories"
             :key="cat.slug"
-            @click="selectedCategorySlug = selectedCategorySlug === cat.slug ? null : cat.slug"
             class="px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-all border"
             :class="selectedCategorySlug === cat.slug
               ? 'bg-gray-900 text-white border-gray-900 shadow-xs'
               : 'bg-white border-black/[0.08] text-gray-700 hover:border-black/20 hover:text-gray-950'"
+            @click="selectedCategorySlug = selectedCategorySlug === cat.slug ? null : cat.slug"
           >
             <component :is="cat.iconConfig.icon" class="w-3.5 h-3.5" :class="selectedCategorySlug === cat.slug ? 'text-amber-400' : cat.iconConfig.color" />
             <span>{{ cat.name }}</span>
@@ -243,8 +243,8 @@ function clearFilters() {
           </p>
         </div>
         <button
-          @click="clearFilters"
           class="px-5 py-2 rounded-xl text-xs font-bold bg-primary text-text-primary hover:bg-primary-hover transition-colors shadow-xs"
+          @click="clearFilters"
         >
           {{ t('categoriesPage.clearSearch') }}
         </button>
