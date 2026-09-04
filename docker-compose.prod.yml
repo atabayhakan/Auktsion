@@ -170,6 +170,7 @@ services:
       - ./nginx/ssl:/etc/nginx/ssl:ro
       - app_uploads:/var/www/uploads:ro
       - frontend_dist:/var/www/frontend:ro
+      - admin_dist:/var/www/admin:ro
     depends_on:
       - app
     networks:
@@ -215,6 +216,31 @@ services:
           cpus: '2'
           memory: 2G
 
+  # ---------------------------------------------------------------------------
+  # ADMIN BUILD (one-shot, populates admin_dist volume)
+  # ---------------------------------------------------------------------------
+  admin-build:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+      target: builder
+    image: auktsion/admin-builder:latest
+    container_name: auktsion-admin-build
+    environment:
+      - VITE_API_URL=https://${DOMAIN:-auktsion.kg}/api
+      - VITE_WS_URL=wss://${DOMAIN:-auktsion.kg}/ws
+    volumes:
+      - admin_dist:/app/dist
+    networks:
+      - backend
+    profiles:
+      - build
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+
 # ---------------------------------------------------------------------------
 # VOLUMES
 # ---------------------------------------------------------------------------
@@ -232,6 +258,8 @@ volumes:
   meili_data:
     driver: local
   frontend_dist:
+    driver: local
+  admin_dist:
     driver: local
 
 # ---------------------------------------------------------------------------

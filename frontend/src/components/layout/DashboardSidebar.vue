@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import {
   Home, Store, CreditCard, LayoutDashboard, User, Settings,
   LogOut, Bell, ShieldCheck, BarChart2, Wallet, FileText, Heart,
-  Gauge, Gavel, Landmark, CheckCircle2, Clock, ShieldAlert, Sparkles
+  Gauge, Gavel, Landmark, CheckCircle2, Clock, ShieldAlert, Sparkles, ExternalLink
 } from 'lucide-vue-next'
 import { useRouter, RouterLink } from 'vue-router'
 import { useUserStore } from '@/stores/user'
@@ -15,6 +15,15 @@ const router = useRouter()
 const userStore = useUserStore()
 const uiStore = useUIStore()
 const { t } = useI18n()
+
+const adminPanelUrl = computed(() => {
+  if (typeof window === 'undefined') return 'https://admin.itorgo.kg'
+  const host = window.location.hostname
+  const proto = window.location.protocol
+  return (host === 'localhost' || host === '127.0.0.1')
+    ? `${proto}//admin.localhost:5174`
+    : `${proto}//admin.itorgo.kg`
+})
 
 // Helper function to check if route matches (handles sub-routes)
 function isRouteActive(routePath: string): boolean {
@@ -95,11 +104,13 @@ function handleLogout() {
       </div>
     </div>
 
-    <!-- Executive Admin Entry (Full card, no text truncation!) -->
-    <RouterLink
+    <!-- Executive Admin Entry (Opens Standalone Admin Panel) -->
+    <a
       v-if="userStore.isAdmin"
-      to="/admin"
-      class="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-gray-950 via-slate-900 to-gray-950 text-white border border-amber-500/30 shadow-xs hover:border-amber-500/60 hover:shadow-md transition-all group"
+      :href="adminPanelUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-gray-950 via-slate-900 to-gray-950 text-white border border-amber-500/30 shadow-xs hover:border-amber-500/60 hover:shadow-md transition-all group cursor-pointer"
     >
       <div class="flex items-center gap-2.5 min-w-0">
         <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/30">
@@ -109,13 +120,14 @@ function handleLogout() {
           <p class="text-xs font-black text-white group-hover:text-amber-300 transition-colors truncate">
             {{ t('nav.adminPanel') || 'Панель управления' }}
           </p>
-          <p class="text-[10px] text-gray-400 font-mono">itorgo.kg/admin</p>
+          <p class="text-[10px] text-gray-400 font-mono">admin.itorgo.kg</p>
         </div>
       </div>
-      <span class="px-2 py-0.5 rounded-md bg-amber-500 text-gray-950 font-mono font-black text-[9px] uppercase tracking-wider shrink-0 shadow-2xs">
+      <span class="px-2 py-0.5 rounded-md bg-amber-500 text-gray-950 font-mono font-black text-[9px] uppercase tracking-wider shrink-0 shadow-2xs flex items-center gap-1">
         ADMIN
+        <ExternalLink class="w-2.5 h-2.5" />
       </span>
-    </RouterLink>
+    </a>
 
     <!-- Navigation Links -->
     <nav class="space-y-4" aria-label="Dashboard navigation">

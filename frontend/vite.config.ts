@@ -21,7 +21,7 @@ export default defineConfig({
     host: true,
     // *.localhost auto-resolves to 127.0.0.1 in modern browsers, so the admin
     // panel is reachable at http://admin.localhost:5173 with no hosts-file edit.
-    allowedHosts: ['localhost', 'admin.localhost'],
+    allowedHosts: ['localhost'],
     hmr: {
       host: 'localhost',
     },
@@ -34,7 +34,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['vue', 'vue-router', 'pinia'],
-          charts: ['chart.js', 'vue-chartjs'],
           utils: ['clsx', 'date-fns', 'lucide-vue-next'],
         },
       },

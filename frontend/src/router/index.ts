@@ -23,20 +23,6 @@ const TermsPage = () => import('@/pages/TermsPage.vue')
 const NotFoundPage = () => import('@/pages/NotFoundPage.vue')
 const PaymentFlow = () => import('@/pages/PaymentFlow.vue')
 
-// Admin Suite
-const AdminLayout = () => import('@/components/admin/AdminLayout.vue')
-const AdminOverviewPage = () => import('@/pages/admin/AdminOverviewPage.vue')
-const AdminUsersPage = () => import('@/pages/admin/AdminUsersPage.vue')
-const AdminListingsPage = () => import('@/pages/admin/AdminListingsPage.vue')
-const AdminDisputesPage = () => import('@/pages/admin/AdminDisputesPage.vue')
-const AdminKycPage = () => import('@/pages/admin/AdminKycPage.vue')
-const AdminFinancialsPage = () => import('@/pages/admin/AdminFinancialsPage.vue')
-const AdminMonitoringPage = () => import('@/pages/admin/AdminMonitoringPage.vue')
-const AdminAnalyticsPage = () => import('@/pages/admin/AdminAnalyticsPage.vue')
-const AdminMediaPage = () => import('@/pages/admin/AdminMediaPage.vue')
-const AdminSettingsPage = () => import('@/pages/admin/AdminSettingsPage.vue')
-const AdminDesignPage = () => import('@/pages/admin/AdminDesignPage.vue')
-
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -138,84 +124,20 @@ const routes: RouteRecordRaw[] = [
     meta: { titleKey: 'paymentModal.title', requiresAuth: true }
   },
 
-  // Admin Panel Suite
+  // Standalone Admin Panel Redirect
   {
-    path: '/admin',
-    component: AdminLayout,
-    meta: { title: 'iTorgo - Админ Панель', requiresAuth: true, requiresAdmin: true },
-    children: [
-      {
-        path: '',
-        redirect: '/admin/overview'
-      },
-      {
-        path: 'overview',
-        name: 'AdminOverview',
-        component: AdminOverviewPage,
-        alias: ['dashboard'],
-        meta: { title: 'iTorgo Admin - Общий обзор (Overview)', requiresAuth: true, requiresAdmin: true }
-      },
-      {
-        path: 'users',
-        name: 'AdminUsers',
-        component: AdminUsersPage,
-        meta: { title: 'iTorgo Admin - Пользователи (Users)', requiresAuth: true, requiresAdmin: true }
-      },
-      {
-        path: 'listings',
-        name: 'AdminListings',
-        component: AdminListingsPage,
-        meta: { title: 'iTorgo Admin - Модерация лотов (Listings)', requiresAuth: true, requiresAdmin: true }
-      },
-      {
-        path: 'disputes',
-        name: 'AdminDisputes',
-        component: AdminDisputesPage,
-        meta: { title: 'iTorgo Admin - Споры и претензии (Disputes)', requiresAuth: true, requiresAdmin: true }
-      },
-      {
-        path: 'kyc',
-        name: 'AdminKyc',
-        component: AdminKycPage,
-        meta: { title: 'iTorgo Admin - Проверка KYC (Approvals)', requiresAuth: true, requiresAdmin: true }
-      },
-      {
-        path: 'financials',
-        name: 'AdminFinancials',
-        component: AdminFinancialsPage,
-        meta: { title: 'iTorgo Admin - Финансы и платежи (Financials)', requiresAuth: true, requiresAdmin: true }
-      },
-      {
-        path: 'monitoring',
-        name: 'AdminMonitoring',
-        component: AdminMonitoringPage,
-        meta: { title: 'iTorgo Admin - Живой мониторинг (War Room)', requiresAuth: true, requiresAdmin: true }
-      },
-      {
-        path: 'analytics',
-        name: 'AdminAnalytics',
-        component: AdminAnalyticsPage,
-        meta: { title: 'iTorgo Admin - Расширенная аналитика (Analytics)', requiresAuth: true, requiresAdmin: true }
-      },
-      {
-        path: 'media',
-        name: 'AdminMedia',
-        component: AdminMediaPage,
-        meta: { title: 'iTorgo Admin - Медиатека (Media Library)', requiresAuth: true, requiresAdmin: true }
-      },
-      {
-        path: 'settings',
-        name: 'AdminSettings',
-        component: AdminSettingsPage,
-        meta: { title: 'iTorgo Admin - Общие настройки (Settings)', requiresAuth: true, requiresAdmin: true }
-      },
-      {
-        path: 'design',
-        name: 'AdminDesign',
-        component: AdminDesignPage,
-        meta: { title: 'iTorgo Admin - Дизайн и тема (Theme Studio)', requiresAuth: true, requiresAdmin: true }
+    path: '/admin/:pathMatch(.*)*',
+    redirect: () => {
+      if (typeof window !== 'undefined') {
+        const host = window.location.hostname
+        const proto = window.location.protocol
+        const adminUrl = (host === 'localhost' || host === '127.0.0.1')
+          ? `${proto}//admin.localhost:5174`
+          : `${proto}//admin.itorgo.kg`
+        window.location.href = adminUrl
       }
-    ]
+      return '/dashboard'
+    }
   },
 
   {
@@ -235,41 +157,13 @@ const router = createRouter({
   }
 })
 
-// Admin route protection & domain routing
+// Route protection
 router.beforeEach((to, _from, next) => {
-  const isAdminHost = typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
   const userJson = typeof window !== 'undefined' ? localStorage.getItem('user') : null
   let user: any = null
   if (userJson) {
     try { user = JSON.parse(userJson) } catch {}
-  }
-
-  const isAdminRoute = to.matched.some(record => record.meta.requiresAdmin)
-  const isLoginRoute = to.name === 'Login'
-
-  // Admin host auto-routing: redirect root to /admin
-  if (isAdminHost) {
-    if (isLoginRoute && !to.query.redirect) {
-      return next({ path: '/login', query: { ...to.query, redirect: '/admin' } })
-    }
-    if (!isAdminRoute && !isLoginRoute) {
-      return next({ path: '/admin' })
-    }
-  }
-
-  // Admin route check
-  if (isAdminRoute) {
-    // If not logged in, redirect to login with return redirect
-    if (!token || !user) {
-      return next({ path: '/login', query: { redirect: to.fullPath } })
-    }
-    // If user is not staff (neither admin nor moderator)
-    if (user && user.role && !['admin', 'moderator'].includes(user.role)) {
-      return next(isAdminHost
-        ? { path: '/login', query: { unauthorized: '1' } }
-        : { path: '/dashboard', query: { unauthorized: '1' } })
-    }
   }
 
   // General auth route check

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru" prefix="og: https://ogp.me/ns#">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>iTorgo Admin — Панель управления</title>
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Canonical & Alternate Hreflang URLs -->
+    <link rel="canonical" href="https://www.itorgo.kg/" />
+    <link rel="alternate" hreflang="ru" href="https://www.itorgo.kg/?lang=ru" />
+    <link rel="alternate" hreflang="ky" href="https://www.itorgo.kg/?lang=ky" />
+    <link rel="alternate" hreflang="tr" href="https://www.itorgo.kg/?lang=tr" />
+    <link rel="alternate" hreflang="x-default" href="https://www.itorgo.kg/" />
+
+    <!-- Open Graph / Facebook / WhatsApp / Telegram Preview -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.itorgo.kg/" />
+    <meta property="og:site_name" content="iTorgo" />
+    <meta property="og:title" content="iTorgo — Онлайн-аукционы в реальном времени в Кыргызстане" />
+    <meta property="og:description" content="Онлайн-аукционы автомобилей, скотного рынка, коммерческой недвижимости и электроники. Банковская защита эскроу и интеграция с MBank / Optima." />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&h=630&q=80" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:locale:alternate" content="ky_KG" />
+    <meta property="og:locale:alternate" content="tr_TR" />
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@iTorgoKG" />
+    <meta name="twitter:title" content="iTorgo — Онлайн-аукционы в реальном времени в Кыргызстане" />
+    <meta name="twitter:description" content="Онлайн-аукцион №1 в Кыргызстане. Безопасные сделки через MBank, Optima и DemirBank." />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&h=630&q=80" />
+
+    <!-- Theme & Icons -->
+    <meta name="theme-color" content="#F2B138" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="iTorgo" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Structured Data (Schema.org JSON-LD): Organization & WebSite -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.itorgo.kg/#organization",
+          "name": "iTorgo",
+          "url": "https://www.itorgo.kg",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.itorgo.kg/favicon.svg"
+          },
+          "description": "Кыргызстандагы №1 реалдуу убакыттагы онлайн аукцион жана соода платформасы.",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Бишкек",
+            "addressCountry": "KG"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Support",
+            "email": "support@itorgo.kg",
+            "availableLanguage": ["Kyrgyz", "Russian", "Turkish"]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.itorgo.kg/#website",
+          "url": "https://www.itorgo.kg",
+          "name": "iTorgo Auction Platform",
+          "publisher": {
+            "@id": "https://www.itorgo.kg/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://www.itorgo.kg/auctions?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Typography (Google Fonts Preload) -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap&subset=cyrillic,cyrillic-ext,latin">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap&subset=cyrillic,cyrillic-ext,latin" media="print" onload="this.media='all'">
+    <script>
+      document.documentElement.classList.add('fonts-pending');
+      const fontLoadTimeout = setTimeout(() => {
+        document.documentElement.classList.remove('fonts-pending');
+        document.documentElement.classList.add('fonts-ready');
+      }, 2500);
+      Promise.all([
+        document.fonts.load('400 1em "Poppins"'),
+        document.fonts.load('600 1em "Poppins"'),
+        document.fonts.load('700 1em "Poppins"'),
+        document.fonts.load('400 1em "JetBrains Mono"')
+      ]).then(() => {
+        clearTimeout(fontLoadTimeout);
+        document.documentElement.classList.remove('fonts-pending');
+        document.documentElement.classList.add('fonts-ready');
+      }).catch(() => {
+        clearTimeout(fontLoadTimeout);
+        document.documentElement.classList.remove('fonts-pending');
+        document.documentElement.classList.add('fonts-ready');
+      });
+    </script>
+  </head>
+  <body class="min-h-screen bg-background text-text-primary antialiased">
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

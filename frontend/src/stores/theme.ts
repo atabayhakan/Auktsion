@@ -3,8 +3,56 @@
 
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import adminService from '@/services/adminService'
-import type { ThemeSettings, ThemePresetItem } from '@/types/admin'
+import { apiClient } from '@/services/api'
+
+export interface ThemeSettings {
+  logoType: 'icon_text' | 'image' | 'text_only'
+  logoUrl: string
+  logoText: string
+  logoTagline: string
+  logoHeightPx: number
+  logoBadgeShape: 'rounded' | 'square' | 'circle' | 'transparent'
+  logoBadgeColor: string
+  faviconUrl: string
+
+  primaryColor: string
+  primaryHoverColor: string
+  secondaryColor: string
+  secondaryHoverColor: string
+  accentColor: string
+  backgroundColor: string
+  surfaceColor: string
+  surfaceElevatedColor: string
+  textPrimaryColor: string
+  textSecondaryColor: string
+  textMutedColor: string
+  borderColor: string
+
+  buttonRadius: '0px' | '6px' | '10px' | '16px' | '9999px'
+  buttonShadow: 'none' | 'sm' | 'md' | 'lg' | 'glow'
+  buttonHoverEffect: 'scale' | 'lift' | 'glow' | 'none'
+
+  cardRadius: '8px' | '16px' | '24px'
+  cardGlassBlur: 'none' | '10px' | '20px' | '40px'
+  cardBorder: 'none' | 'subtle' | 'solid'
+  cardShadow: 'none' | 'sm' | 'md' | 'lg'
+
+  fontFamily: 'Poppins' | 'Inter' | 'Plus Jakarta Sans' | 'Montserrat' | 'Rubik'
+  titleFontWeight: '600' | '700' | '800' | '900'
+
+  activePreset: string
+  updatedAt: string
+}
+
+export interface ThemePresetItem {
+  id: string
+  name: string
+  description: string
+  author: string
+  version: string
+  previewColors: string[]
+  theme: Partial<ThemeSettings>
+}
 
 function hexToRgbValues(hex: string): string {
   if (!hex) return '242 177 56'
@@ -132,14 +180,14 @@ export const useThemeStore = defineStore('theme', () => {
     if (isInitialized.value) return
     isLoading.value = true
     try {
-      const res = await adminService.getTheme()
-      if (res.success && res.data) {
+      const { data: res } = await apiClient.get<any>('/api/admin/theme')
+      if (res && res.success && res.data) {
         theme.value = { ...defaultTheme, ...res.data }
         publishedTheme.value = { ...theme.value }
         applyThemeToDOM(theme.value)
       }
-      const presetsRes = await adminService.getThemePresets()
-      if (presetsRes.success && presetsRes.data) {
+      const { data: presetsRes } = await apiClient.get<any>('/api/admin/theme/presets')
+      if (presetsRes && presetsRes.success && presetsRes.data) {
         presets.value = presetsRes.data
       }
       isInitialized.value = true
@@ -175,8 +223,8 @@ export const useThemeStore = defineStore('theme', () => {
   async function publishTheme(): Promise<{ success: boolean; message?: string }> {
     isSaving.value = true
     try {
-      const res = await adminService.updateTheme(theme.value)
-      if (res.success) {
+      const { data: res } = await apiClient.put<any>('/api/admin/theme', theme.value)
+      if (res && res.success) {
         publishedTheme.value = { ...res.data }
         theme.value = { ...res.data }
         applyThemeToDOM(theme.value)

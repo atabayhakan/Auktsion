@@ -7,16 +7,15 @@ import MobileBottomNav from '@/components/layout/MobileBottomNav.vue'
 import ToastContainer from '@/components/ui/ToastContainer.vue'
 
 const route = useRoute()
-const isAdminRoute = computed(() => route.path.startsWith('/admin'))
 // The auction detail page gets its own sticky bid bar on mobile instead —
 // two competing fixed bottom bars would fight for the same thumb real estate.
-const showMobileNav = computed(() => !isAdminRoute.value && route.name !== 'AuctionDetail')
+const showMobileNav = computed(() => route.name !== 'AuctionDetail')
 </script>
 
 <template>
   <div class="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col bg-background text-text-primary font-sans antialiased">
-    <!-- Fixed Header (public & user routes) -->
-    <Header v-if="!isAdminRoute" />
+    <!-- Fixed Header -->
+    <Header />
     
     <!-- Main Content -->
     <main id="main-content" role="main" class="flex-1 w-full max-w-full overflow-x-hidden" :class="{ 'pb-24 lg:pb-0': showMobileNav }">
@@ -27,10 +26,10 @@ const showMobileNav = computed(() => !isAdminRoute.value && route.name !== 'Auct
       </RouterView>
     </main>
 
-    <!-- Footer (public & user routes) -->
-    <Footer v-if="!isAdminRoute" />
+    <!-- Footer -->
+    <Footer />
 
-    <!-- Mobile Bottom Navigation (public & user routes, not on auction detail) -->
+    <!-- Mobile Bottom Navigation (not on auction detail) -->
     <MobileBottomNav v-if="showMobileNav" />
 
     

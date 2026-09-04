@@ -51,7 +51,7 @@ async function handleSubmit() {
     }
     
     const queryRedirect = router.currentRoute.value.query.redirect as string | undefined
-    const redirect = queryRedirect || (userStore.isAdmin ? '/admin' : '/dashboard')
+    const redirect = queryRedirect || '/dashboard'
     await router.push(redirect)
     if (router.currentRoute.value.name === 'Login') {
       // Navigation was bounced back to Login by a guard; surface it instead of

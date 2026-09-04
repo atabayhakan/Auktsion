@@ -46,13 +46,23 @@ const navLinks = computed(() => [
   { path: '/how-it-works', label: t('nav.howItWorks') || 'Как это работает', icon: HelpCircle },
 ])
 
+const adminUrl = computed(() => {
+  if (typeof window === 'undefined') return 'https://admin.itorgo.kg'
+  const host = window.location.hostname
+  const proto = window.location.protocol
+  return (host === 'localhost' || host === '127.0.0.1')
+    ? `${proto}//admin.localhost:5174`
+    : `${proto}//admin.itorgo.kg`
+})
+
 const userMenuItems = computed(() => [
   ...(userStore.isAdmin ? [{
-    label: t('nav.adminPanel'),
-    path: '/admin',
+    label: t('nav.adminPanel') || 'Панель управления',
+    path: adminUrl.value,
     icon: Gauge,
     badge: 'ADMIN',
-    isVerified: true
+    isVerified: true,
+    isExternal: true
   }] : []),
   { label: t('dashboard.overview') || 'Обзор', path: '/dashboard/overview', icon: User },
   { label: t('nav.myListings'), path: '/dashboard/listings', icon: Store },
@@ -353,10 +363,14 @@ watch(() => userStore.isAuthenticated, (val) => {
                 </div>
 
                 <div class="space-y-0.5">
-                  <RouterLink
+                  <component
+                    :is="item.isExternal ? 'a' : RouterLink"
                     v-for="item in userMenuItems"
                     :key="item.label"
-                    :to="item.path"
+                    :to="!item.isExternal ? item.path : undefined"
+                    :href="item.isExternal ? item.path : undefined"
+                    :target="item.isExternal ? '_blank' : undefined"
+                    :rel="item.isExternal ? 'noopener noreferrer' : undefined"
                     class="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-gray-700 hover:text-gray-950 hover:bg-slate-50 rounded-xl transition-colors"
                     @click="closeUserMenu"
                   >
@@ -365,7 +379,7 @@ watch(() => userStore.isAuthenticated, (val) => {
                     <Badge v-if="item.badge" :variant="(item as any).isVerified ? 'success' : 'warning'" size="sm" class="ml-auto">
                       {{ item.badge }}
                     </Badge>
-                  </RouterLink>
+                  </component>
                 </div>
 
                 <div class="border-t border-black/[0.06] my-1" />
