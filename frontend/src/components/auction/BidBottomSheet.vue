@@ -78,6 +78,12 @@ function close() {
   emit('update:modelValue', false)
 }
 
+const isOwnListing = computed(() => {
+  if (!userStore.user || !props.auction) return false
+  const sellerId = props.auction.sellerId || (props.auction as any).seller_id || (props.auction.seller as any)?.id
+  return sellerId === userStore.user.id
+})
+
 function addIncrement(extra: number) {
   customAmount.value = currentPriceNum.value + extra
 }
@@ -87,6 +93,11 @@ async function handleConfirmBid() {
   if (!userStore.isAuthenticated) {
     close()
     router.push({ path: '/login', query: { redirect: `/auctions/${props.auction.id}` } })
+    return
+  }
+
+  if (isOwnListing.value) {
+    uiStore.toastWarning(t('common.warning') || 'Эскертүү', t('auction.ownListingNotice') || 'Сиз өзүңүздүн лотуңузга коюм коё албайсыз')
     return
   }
 
@@ -235,14 +246,17 @@ async function handleConfirmBid() {
 
           <!-- Bottom Action -->
           <div class="p-4 sm:p-5 bg-slate-50 border-t border-black/[0.06] space-y-2">
+            <div v-if="isOwnListing" class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold text-center">
+              {{ t('auction.ownListingNotice') || 'Сиз бул лоттун сатуучусусуз (Өз лотуңуз)' }}
+            </div>
             <button
               type="button"
-              :disabled="isSubmitting"
-              class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-gray-950 font-black text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 hover:scale-[1.01] active:scale-98"
+              :disabled="isSubmitting || isOwnListing"
+              class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-gray-950 font-black text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.01] active:scale-98"
               @click="handleConfirmBid"
             >
               <TrendingUp class="w-5 h-5" />
-              <span>{{ t('bidSheet.confirmBidBtn', { amount: selectedAmount.toLocaleString('ru-RU') }) || `Подтвердить ставку · ${selectedAmount.toLocaleString('ru-RU')} сом` }}</span>
+              <span>{{ isOwnListing ? (t('auction.ownListingNotice') || 'Өз лотуңуз') : (t('bidSheet.confirmBidBtn', { amount: selectedAmount.toLocaleString('ru-RU') }) || `Подтвердить ставку · ${selectedAmount.toLocaleString('ru-RU')} сом`) }}</span>
             </button>
             <div class="text-center text-[11px] text-gray-400">
               {{ t('bidSheet.termsAgreeNotice') || 'Нажимая кнопку, вы соглашаетесь с правилами проведения аукционов iTorgo' }}

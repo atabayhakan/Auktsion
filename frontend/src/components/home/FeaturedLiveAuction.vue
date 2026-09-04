@@ -18,9 +18,18 @@ const emit = defineEmits<{
   'openBid': [auction: Auction]
 }>()
 
+import { useUserStore } from '@/stores/user'
+
 const { currency } = useFormatters()
 const { formatMoney } = currency
 const { t } = useI18n()
+const userStore = useUserStore()
+
+const isOwnListing = computed(() => {
+  if (!userStore.user || !props.auction) return false
+  const sellerId = props.auction.sellerId || (props.auction as any).seller_id || (props.auction.seller as any)?.id
+  return sellerId === userStore.user.id
+})
 
 // Live ticking seconds countdown
 const timeLeftSeconds = ref(0)
@@ -182,6 +191,15 @@ const liveViewers = computed(() => {
         <div class="space-y-2">
           <!-- Primary CTA: Make Bid -->
           <button
+            v-if="isOwnListing"
+            type="button"
+            disabled
+            class="w-full py-3 sm:py-3.5 px-4 rounded-xl bg-amber-400/20 border border-amber-400/40 text-amber-200 font-bold text-xs sm:text-sm cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            <span>{{ t('auction.ownListingNotice') || 'Сиз бул лоттун сатуучусусуз (Өз лотуңуз)' }}</span>
+          </button>
+          <button
+            v-else
             type="button"
             class="w-full py-3 sm:py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-gray-950 font-black text-sm sm:text-base shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01] active:scale-98"
             @click="emit('openBid', auction)"

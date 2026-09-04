@@ -196,6 +196,20 @@ export const useAuctionStore = defineStore('auction', () => {
     totalCount.value++
   }
 
+  async function placeBid(auctionId: string, data: { amount: string | number }) {
+    try {
+      const amount = typeof data.amount === 'string' ? parseFloat(data.amount) : data.amount
+      const response = await apiClient.post<any>(`/api/auctions/${auctionId}/bids`, { amount })
+      if (response?.data?.data) {
+        return { success: true, data: response.data.data }
+      }
+      return { success: false, error: response?.data?.error || 'Ставка кабыл алынган жок' }
+    } catch (err: any) {
+      const msg = err.response?.data?.error || err.data?.error || err.response?.data?.message || err.message
+      return { success: false, error: msg }
+    }
+  }
+
   return {
     // State
     auctions,
@@ -225,5 +239,6 @@ export const useAuctionStore = defineStore('auction', () => {
     clearCurrentAuction,
     clearAuctions,
     resetFilters,
+    placeBid,
   }
 })
