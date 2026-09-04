@@ -11,10 +11,12 @@ import { useI18n } from '@/composables/useI18n'
 
 interface Props {
   initialScene?: number
+  initialLang?: 'ru' | 'ky' | 'tr'
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  initialScene: 0
+  initialScene: 0,
+  initialLang: 'ru'
 })
 
 const emit = defineEmits<{
@@ -23,14 +25,8 @@ const emit = defineEmits<{
 
 const { currentLocale } = useI18n()
 
-type LangCode = 'ky' | 'ru' | 'tr'
-const filmLang = ref<LangCode>((currentLocale.value as LangCode) || 'ru')
-
-watch(currentLocale, (newVal) => {
-  if (newVal === 'ky' || newVal === 'ru' || newVal === 'tr') {
-    filmLang.value = newVal
-  }
-})
+type LangCode = 'ru' | 'ky' | 'tr'
+const filmLang = ref<LangCode>(props.initialLang || 'ru')
 
 // Playback state
 const currentScene = ref(props.initialScene)
@@ -426,14 +422,14 @@ defineExpose({
       <div class="flex items-center gap-1.5 sm:gap-2">
         <div class="flex items-center p-1 rounded-xl bg-white/10 border border-white/10 text-xs font-bold">
           <button
-            v-for="lang in (['ky', 'ru', 'tr'] as LangCode[])"
+            v-for="lang in (['ru', 'ky', 'tr'] as LangCode[])"
             :key="lang"
             type="button"
             class="px-2 py-1 rounded-lg transition-all cursor-pointer text-[11px]"
             :class="filmLang === lang ? 'bg-emerald-400 text-gray-950 font-black shadow-xs' : 'text-white/70 hover:text-white'"
             @click="filmLang = lang; playClickSound()"
           >
-            {{ lang === 'ky' ? 'KG 🇰🇬' : (lang === 'tr' ? 'TR 🇹🇷' : 'RU 🇷🇺') }}
+            {{ lang === 'ru' ? 'RU 🇷🇺' : (lang === 'ky' ? 'KG 🇰🇬' : 'TR 🇹🇷') }}
           </button>
         </div>
 

@@ -233,8 +233,8 @@ function toggleFaq(idx: number) {
         </div>
 
         <!-- Cinema Device Frame -->
-        <SiteWalkthroughFilm v-if="activeFilmTab === 'buyer'" ref="filmRef" />
-        <SellerWalkthroughFilm v-else ref="sellerFilmRef" />
+        <SiteWalkthroughFilm v-if="activeFilmTab === 'buyer'" ref="filmRef" initial-lang="ru" />
+        <SellerWalkthroughFilm v-else ref="sellerFilmRef" initial-lang="ru" />
       </section>
 
       <!-- ================================================================
