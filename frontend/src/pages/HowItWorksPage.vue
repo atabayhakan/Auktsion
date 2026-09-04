@@ -7,6 +7,7 @@ import {
   HelpCircle, ThumbsUp, Smartphone, Layers
 } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
+import { useI18n } from '@/composables/useI18n'
 import SiteWalkthroughFilm from '@/components/film/SiteWalkthroughFilm.vue'
 import SellerWalkthroughFilm from '@/components/film/SellerWalkthroughFilm.vue'
 
