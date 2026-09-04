@@ -15,12 +15,12 @@ const toasts = computed(() => uiStore.toasts)
 const visibleToasts = computed(() => toasts.value.slice(0, 5))
 
 function getToastClasses(toast: Toast) {
-  const base = 'relative flex items-start gap-3 p-4 rounded-2xl glass-lg shadow-glass-lg border border-white/10 animate-slide-in-right w-full sm:min-w-[320px] sm:max-w-md sm:w-auto overflow-hidden'
+  const base = 'relative flex items-start gap-3.5 p-4 rounded-2xl shadow-2xl backdrop-blur-xl border animate-slide-in-right w-full sm:min-w-[340px] sm:max-w-md sm:w-auto overflow-hidden'
   const variants = {
-    success: 'border-emerald-500/30 bg-emerald-500/10',
-    error: 'border-red-500/30 bg-red-500/10',
-    warning: 'border-amber-500/30 bg-amber-500/10',
-    info: 'border-blue-500/30 bg-blue-500/10',
+    success: 'bg-gray-950/95 border-emerald-500/40 text-white shadow-emerald-950/20',
+    error: 'bg-gray-950/95 border-red-500/40 text-white shadow-red-950/20',
+    warning: 'bg-gray-950/95 border-amber-500/40 text-white shadow-amber-950/20',
+    info: 'bg-gray-950/95 border-blue-500/40 text-white shadow-blue-950/20',
   }
   return [base, variants[toast.type] || variants.info, toast.class || ''].filter(Boolean).join(' ')
 }
@@ -46,7 +46,7 @@ function removeToast(id: string) {
 <template>
   <Teleport to="body">
     <div 
-      class="fixed bottom-6 left-4 right-4 z-90 flex flex-col gap-3 pointer-events-none sm:left-auto sm:right-6 lg:bottom-8 lg:right-8"
+      class="fixed bottom-6 left-4 right-4 z-[9999] flex flex-col gap-3 pointer-events-none sm:left-auto sm:right-6 lg:bottom-8 lg:right-8"
       role="region"
       aria-live="polite"
       aria-label="Notifications"
@@ -70,12 +70,12 @@ function removeToast(id: string) {
           />
 
           <div class="flex-1 min-w-0">
-            <p v-if="toast.title" class="font-medium text-white text-sm">{{ toast.title }}</p>
-            <p v-if="toast.message" class="text-xs text-gray-300 mt-0.5">{{ toast.message }}</p>
+            <p v-if="toast.title" class="font-bold text-white text-sm leading-snug">{{ toast.title }}</p>
+            <p v-if="toast.message" class="text-xs text-gray-300 mt-1 leading-relaxed">{{ toast.message }}</p>
           </div>
           
           <button
-            class="p-1 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10 flex-shrink-0"
+            class="p-1 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10 flex-shrink-0 cursor-pointer"
             aria-label="Close notification"
             @click="removeToast(toast.id)"
           >
@@ -85,7 +85,13 @@ function removeToast(id: string) {
           <!-- Progress bar for auto-dismiss -->
           <div 
             v-if="toast.duration && toast.duration > 0"
-            class="absolute bottom-0 left-0 h-0.5 bg-gold-500/50"
+            class="absolute bottom-0 left-0 h-0.5"
+            :class="{
+              'bg-emerald-500': toast.type === 'success',
+              'bg-red-500': toast.type === 'error',
+              'bg-amber-500': toast.type === 'warning',
+              'bg-blue-500': !toast.type || toast.type === 'info'
+            }"
             :style="{
               width: '100%',
               animation: `toast-progress ${toast.duration}ms linear forwards`

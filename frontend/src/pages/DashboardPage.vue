@@ -112,12 +112,16 @@ function onPasswordChanged() {
 }
 
 async function updateProfile() {
+  if (isSavingProfile.value) return
+  isSavingProfile.value = true
   try {
     await userStore.updateProfile(profileForm.value as any)
-    uiStore.toastSuccess(t('toasts.profileUpdated'), t('toasts.profileSaved'))
+    uiStore.toastSuccess(t('toasts.profileUpdated') || 'Профиль сохранен', t('toasts.profileSaved') || 'Изменения успешно сохранены')
   } catch (err: any) {
     const msg = err?.response?.data?.error || err?.data?.error || err?.message || t('common.error')
-    uiStore.toastError(t('common.error'), msg)
+    uiStore.toastError(t('common.error') || 'Ошибка', msg)
+  } finally {
+    isSavingProfile.value = false
   }
 }
 
@@ -224,9 +228,26 @@ async function loadWatchlist() {
   }
 }
 
+watch(() => userStore.user, (u) => {
+  if (u && !isSavingProfile.value) {
+    if (u.fullName !== undefined) profileForm.value.fullName = u.fullName
+    if (u.email !== undefined) profileForm.value.email = u.email
+    if (u.phone !== undefined) profileForm.value.phone = u.phone
+    if (u.city !== undefined) profileForm.value.city = u.city
+  }
+}, { deep: true })
+
 onMounted(async () => {
   if (userStore.isAuthenticated && !userStore.user) {
     await userStore.fetchUser()
+  }
+  if (userStore.user) {
+    profileForm.value = {
+      fullName: userStore.fullName || '',
+      email: userStore.user.email || '',
+      phone: userStore.user.phone || '',
+      city: userStore.user.city || '',
+    }
   }
   loadWatchlist()
 })

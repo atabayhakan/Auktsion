@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
 import MobileBottomNav from '@/components/layout/MobileBottomNav.vue'
+import ToastContainer from '@/components/ui/ToastContainer.vue'
 
 const route = useRoute()
 const isAdminRoute = computed(() => route.path.startsWith('/admin'))
@@ -34,7 +35,7 @@ const showMobileNav = computed(() => !isAdminRoute.value && route.name !== 'Auct
 
     
     <!-- Global Toast Container -->
-    <div id="toast-container" class="fixed right-6 z-[100] flex flex-col gap-3 pointer-events-none lg:bottom-6 bottom-20" />
+    <ToastContainer />
   </div>
 </template>
 

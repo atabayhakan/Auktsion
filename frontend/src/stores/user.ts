@@ -325,8 +325,9 @@ export const useUserStore = defineStore('user', () => {
   async function updateProfile(data: Partial<User>) {
     try {
       const res = await userService.updateProfile(data)
-      if (res?.data) {
-        user.value = { ...user.value, ...res.data }
+      if (res?.data || (res as any)?.user) {
+        const updated = ((res.data || (res as any)?.user)) as User
+        applyUser({ ...(user.value || {}), ...updated } as User)
         return
       }
     } catch (err) {
@@ -334,7 +335,7 @@ export const useUserStore = defineStore('user', () => {
     }
 
     if (user.value) {
-      user.value = { ...user.value, ...data, updatedAt: new Date().toISOString() }
+      applyUser({ ...user.value, ...data, updatedAt: new Date().toISOString() } as User)
     }
   }
 
