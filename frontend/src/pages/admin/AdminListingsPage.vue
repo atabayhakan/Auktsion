@@ -93,10 +93,10 @@ function resetFilters() {
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight flex items-center gap-3">
-          <span>{{ t('admin.listings.title') || 'İlan Moderasyonu ve Yönetimi' }}</span>
+          <span>{{ t('admin.listings.title') || 'Модерация и управление лотами' }}</span>
         </h1>
         <p class="text-xs sm:text-sm text-gray-500 mt-1">
-          {{ t('admin.listings.subtitle') || 'Açık artırma kataloğu, ilan onayı, gizli rezerve fiyatları ve şüpheli ilanların kontrolü' }}
+          {{ t('admin.listings.subtitle') || 'Каталог аукционов, утверждение лотов, контроль скрытых резервных цен и подозрительных объявлений' }}
         </p>
       </div>
 
@@ -106,7 +106,7 @@ function resetFilters() {
           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-primary hover:bg-primary-hover text-text-primary text-xs font-extrabold shadow-sm transition-all"
         >
           <Plus class="w-4 h-4" />
-          <span>{{ t('admin.listings.createListing') || 'Yeni İlan Ekle' }}</span>
+          <span>{{ t('admin.listings.createListing') || 'Создать новый лот' }}</span>
         </router-link>
       </div>
     </div>
@@ -119,7 +119,7 @@ function resetFilters() {
         </div>
         <div class="min-w-0">
           <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block truncate">
-            Toplam İlan
+            {{ t('admin.listings.metrics.total') || 'Всего лотов' }}
           </span>
           <span class="text-lg font-black text-gray-900 mt-0.5 block">
             {{ adminStore.listingsMeta.total }}
@@ -133,7 +133,7 @@ function resetFilters() {
         </div>
         <div class="min-w-0">
           <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block truncate">
-            Moderasyon Bekleyen
+            {{ t('admin.listings.metrics.pending') || 'На модерации' }}
           </span>
           <span class="text-lg font-black text-gray-900 mt-0.5 block">
             {{ pendingCount }}
@@ -147,7 +147,7 @@ function resetFilters() {
         </div>
         <div class="min-w-0">
           <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block truncate">
-            Aktif Açık Artırmalar
+            {{ t('admin.listings.metrics.active') || 'Активные торги' }}
           </span>
           <span class="text-lg font-black text-gray-900 mt-0.5 block">
             {{ activeCount }}
@@ -161,7 +161,7 @@ function resetFilters() {
         </div>
         <div class="min-w-0">
           <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block truncate">
-            Öne Çıkanlar (Vitrin)
+            {{ t('admin.listings.metrics.featured') || 'На главной (Витрина)' }}
           </span>
           <span class="text-lg font-black text-gray-900 mt-0.5 block">
             {{ featuredCount }}

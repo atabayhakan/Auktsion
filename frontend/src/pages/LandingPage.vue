@@ -50,12 +50,12 @@ const categoryTiles = computed(() => {
 
 // Tab filters for top immediate grid
 const filterTabs = computed(() => [
-  { id: 'all', label: t('home.tabAll') || 'Tümü', icon: Grid },
-  { id: 'livestock', label: t('home.tabLivestock') || '🐄 Hayvan Pazarı', icon: Store },
-  { id: 'vehicles', label: t('home.tabVehicles') || '🚗 Araçlar', icon: Car },
-  { id: 'real-estate', label: t('home.tabRealEstate') || '🏢 Dordoy & Emlak', icon: HomeIcon },
-  { id: 'electronics', label: t('home.tabElectronics') || '📱 Elektronik', icon: Smartphone },
-  { id: 'ending_soon', label: t('home.tabEndingSoon') || '🔥 Yakında Bitiyor', icon: Flame },
+  { id: 'all', label: t('home.tabAll') || 'Все', icon: Grid },
+  { id: 'livestock', label: t('home.tabLivestock') || '🐄 Скотный рынок', icon: Store },
+  { id: 'vehicles', label: t('home.tabVehicles') || '🚗 Автомобили', icon: Car },
+  { id: 'real-estate', label: t('home.tabRealEstate') || '🏢 Дордой и недвижимость', icon: HomeIcon },
+  { id: 'electronics', label: t('home.tabElectronics') || '📱 Электроника', icon: Smartphone },
+  { id: 'ending_soon', label: t('home.tabEndingSoon') || '🔥 Скоро завершаются', icon: Flame },
 ])
 
 const filteredPopularAuctions = computed(() => {
@@ -108,9 +108,9 @@ const mostActiveRail = computed(() =>
 const promoTiles = computed(() => [
   {
     id: 'concierge',
-    label: t('home.conciergeLabel') || 'PREMİUM HİZMET',
-    title: t('home.conciergeTitle') || 'iTorgo Konsiyerj',
-    desc: t('home.conciergeDesc') || 'Uzmanlarımız sizin için ilan oluştursun ve en yüksek fiyata satsın.',
+    label: t('home.conciergeLabel') || 'ПРЕМИУМ СЕРВИС',
+    title: t('home.conciergeTitle') || 'iTorgo Консьерж',
+    desc: t('home.conciergeDesc') || 'Наши эксперты профессионально оформят лот и продадут его по максимальной цене.',
     icon: Sparkles,
     link: '/sell',
     tone: 'bg-amber-500/[0.06] border-amber-500/20 hover:border-amber-500/40',
@@ -118,9 +118,9 @@ const promoTiles = computed(() => [
   },
   {
     id: 'escrow',
-    label: t('home.escrowTileLabel') || 'GÜVENLİ TİCARET',
-    title: t('home.escrowTileTitle') || '%100 Banka Emaneti',
-    desc: t('home.escrowTileDesc') || 'Teslimatı onaylayana kadar paranız banka emanetinde (Escrow) bloke edilir.',
+    label: t('home.escrowTileLabel') || 'БЕЗОПАСНАЯ СДЕЛКА',
+    title: t('home.escrowTileTitle') || '100% Банковский эскроу',
+    desc: t('home.escrowTileDesc') || 'Деньги хранятся на банковском эскроу-счете до вашего полного подтверждения получения товара.',
     icon: ShieldCheck,
     link: '/how-it-works',
     tone: 'bg-emerald-500/[0.06] border-emerald-500/20 hover:border-emerald-500/40',
@@ -128,9 +128,9 @@ const promoTiles = computed(() => [
   },
   {
     id: 'instant-pay',
-    label: t('home.instantTileLabel') || 'ANINDA ÇEKİM',
+    label: t('home.instantTileLabel') || 'МГНОВЕННЫЙ ВЫВОД',
     title: t('home.instantTileTitle') || 'MBank & Optima QR',
-    desc: t('home.instantTileDesc') || '5 saniyede komisyonsuz ödeme ve doğrudan banka hesabına bakiye çekimi.',
+    desc: t('home.instantTileDesc') || 'Оплата без комиссии за 5 секунд и моментальный вывод средств прямо на ваш банковский счет.',
     icon: Zap,
     link: '/how-it-works',
     tone: 'bg-blue-500/[0.06] border-blue-500/20 hover:border-blue-500/40',
@@ -140,9 +140,9 @@ const promoTiles = computed(() => [
 
 // Bank partners
 const bankPartners = computed(() => [
-  { name: 'MBank', badge: 'QR & MBank Pay', desc: t('home.escrowBankMbankDesc') || 'Ulusal ödeme sistemi ile %0 komisyonla anında ödeme.', icon: Smartphone, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  { name: 'DemirBank Escrow', badge: t('home.escrowBankDemirBadge') || 'Emanet Güvencesi', desc: t('home.escrowBankDemirDesc') || 'Ürünü görüp teslim alana kadar paranız bankada güvenle saklanır.', icon: ShieldCheck, color: 'text-blue-600', bg: 'bg-blue-50' },
-  { name: 'Optima Bank', badge: '3D Secure 2.0', desc: t('home.escrowBankOptimaDesc') || 'Kırgızistan\'daki tüm Visa/Mastercard ve Elkart kartları desteklenir.', icon: CreditCard, color: 'text-rose-600', bg: 'bg-rose-50' },
+  { name: 'MBank', badge: 'QR & MBank Pay', desc: t('home.escrowBankMbankDesc') || 'Мгновенная оплата через национальную платежную систему с 0% комиссии.', icon: Smartphone, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  { name: 'DemirBank Escrow', badge: t('home.escrowBankDemirBadge') || 'Гарантия эскроу', desc: t('home.escrowBankDemirDesc') || 'Деньги надежно хранятся в банке до полного получения и осмотра товара.', icon: ShieldCheck, color: 'text-blue-600', bg: 'bg-blue-50' },
+  { name: 'Optima Bank', badge: '3D Secure 2.0', desc: t('home.escrowBankOptimaDesc') || 'Поддержка всех карт Visa/Mastercard и Элкарт Кыргызстана.', icon: CreditCard, color: 'text-rose-600', bg: 'bg-rose-50' },
 ])
 
 onMounted(async () => {
@@ -263,12 +263,12 @@ onMounted(async () => {
             <div class="flex items-center gap-2 mb-1">
               <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-50 text-rose-600 border border-rose-200">
                 <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
-                {{ t('home.heroLiveBadge') || 'CANLI YAYIN' }}
+                {{ t('home.heroLiveBadge') || 'ПРЯМОЙ ЭФИР' }}
               </span>
-              <span class="text-xs text-gray-500 font-medium">{{ t('home.heroLiveSubtitle') || 'Kırgızistan genelindeki tüm aktif açık artırmalar' }}</span>
+              <span class="text-xs text-gray-500 font-medium">{{ t('home.heroLiveSubtitle') || 'Все активные открытые торги Кыргызстана' }}</span>
             </div>
             <h2 id="live-lots-title" class="font-black text-2xl sm:text-3xl text-gray-950 tracking-tight">
-              {{ t('home.popularTitle') || 'Popüler Lotlar' }}
+              {{ t('home.popularTitle') || 'Популярные лоты' }}
             </h2>
           </div>
 
@@ -302,13 +302,13 @@ onMounted(async () => {
           <div class="max-w-2xl mx-auto space-y-3">
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-900 text-xs font-black">
               <Sparkles class="w-4 h-4 text-amber-600" />
-              <span>{{ t('home.emptyPromoBadge') || 'İlk Ay %0 Komisyon Fırsatı' }}</span>
+              <span>{{ t('home.emptyPromoBadge') || '0% комиссия в первый месяц' }}</span>
             </div>
             <h3 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">
-              {{ t('home.emptyCategoryTitle') || 'Henüz Bu Kategoride Aktif İlan Bulunmuyor' }}
+              {{ t('home.emptyCategoryTitle') || 'В этой категории пока нет активных лотов' }}
             </h3>
             <p class="text-xs sm:text-sm text-gray-500 leading-relaxed max-w-lg mx-auto">
-              {{ t('home.emptyCategoryDesc') || 'Kırgızistan genelinde binlerce alıcı yeni ilanları bekliyor. İlk açık artırmanızı komisyonsuz başlatın, dakikalar içinde en yüksek teklifi alın.' }}
+              {{ t('home.emptyCategoryDesc') || 'Тысячи покупателей по всему Кыргызстану ждут новые лоты. Создайте первый аукцион без комиссии и получите лучшие ставки за считанные минуты.' }}
             </p>
             <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
               <RouterLink
@@ -316,14 +316,14 @@ onMounted(async () => {
                 class="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer hover:scale-[1.02]"
               >
                 <PlusCircle class="w-4 h-4" />
-                <span>{{ t('home.emptyBtnCreate') || '+ Hemen İlk İlanı Siz Verin' }}</span>
+                <span>{{ t('home.emptyBtnCreate') || '+ Создать первый лот' }}</span>
               </RouterLink>
               <RouterLink
                 to="/how-it-works"
                 class="px-6 py-3 rounded-2xl bg-white border border-black/10 text-gray-800 font-bold text-xs sm:text-sm hover:bg-slate-50 transition-all flex items-center gap-2"
               >
                 <HelpCircle class="w-4 h-4 text-gray-500" />
-                <span>{{ t('home.emptyBtnHowItWorks') || 'Açık Artırma Nasıl Çalışır?' }}</span>
+                <span>{{ t('home.emptyBtnHowItWorks') || 'Как работают аукционы?' }}</span>
               </RouterLink>
             </div>
           </div>
@@ -334,24 +334,24 @@ onMounted(async () => {
               <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-black text-sm">
                 1
               </div>
-              <h4 class="text-sm font-black text-gray-950">{{ t('home.emptyStep1Title') || 'İlanınızı Oluşturun' }}</h4>
-              <p class="text-xs text-gray-500 leading-relaxed">{{ t('home.emptyStep1Desc') || 'Yapay zeka asistanımızla fotoğrafları yükleyin, başlangıç fiyatını belirleyin.' }}</p>
+              <h4 class="text-sm font-black text-gray-950">{{ t('home.emptyStep1Title') || 'Создайте ваш лот' }}</h4>
+              <p class="text-xs text-gray-500 leading-relaxed">{{ t('home.emptyStep1Desc') || 'Загрузите фото с помощью ИИ-помощника и укажите стартовую цену.' }}</p>
             </div>
 
             <div class="p-5 rounded-2xl bg-white border border-black/[0.05] space-y-2 shadow-2xs">
               <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-black text-sm">
                 2
               </div>
-              <h4 class="text-sm font-black text-gray-950">{{ t('home.emptyStep2Title') || 'Canlı Teklifleri Toplayın' }}</h4>
-              <p class="text-xs text-gray-500 leading-relaxed">{{ t('home.emptyStep2Desc') || 'Gerçek zamanlı WebSocket ile alıcıların rekabetini anlık izleyin.' }}</p>
+              <h4 class="text-sm font-black text-gray-950">{{ t('home.emptyStep2Title') || 'Получайте живые ставки' }}</h4>
+              <p class="text-xs text-gray-500 leading-relaxed">{{ t('home.emptyStep2Desc') || 'Наблюдайте за конкуренцией покупателей в реальном времени через WebSocket.' }}</p>
             </div>
 
             <div class="p-5 rounded-2xl bg-white border border-black/[0.05] space-y-2 shadow-2xs">
               <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black text-sm">
                 3
               </div>
-              <h4 class="text-sm font-black text-gray-950">{{ t('home.emptyStep3Title') || 'Escrow ile Güvenli Ödeme' }}</h4>
-              <p class="text-xs text-gray-500 leading-relaxed">{{ t('home.emptyStep3Desc') || 'Teslimat onaylandığında kazandığınız tutar anında banka hesabınıza geçer.' }}</p>
+              <h4 class="text-sm font-black text-gray-950">{{ t('home.emptyStep3Title') || 'Безопасная оплата через Эскроу' }}</h4>
+              <p class="text-xs text-gray-500 leading-relaxed">{{ t('home.emptyStep3Desc') || 'После подтверждения передачи товара сумма сразу зачисляется на ваш счет.' }}</p>
             </div>
           </div>
         </div>
@@ -362,7 +362,7 @@ onMounted(async () => {
             to="/auctions"
             class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-black/10 text-gray-900 font-extrabold text-xs sm:text-sm hover:bg-slate-50 transition-all shadow-2xs"
           >
-            <span>{{ t('home.allLotsCount', { n: allAuctions.length }) || 'Tüm Lotları Gör' }}</span>
+            <span>{{ t('home.allLotsCount', { n: allAuctions.length }) || 'Смотреть все лоты' }}</span>
             <ArrowRight class="w-4 h-4" />
           </RouterLink>
         </div>

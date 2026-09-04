@@ -1685,9 +1685,17 @@ export default {
       "disputes": "Uyuşmazlıklar ve Şikayetler",
       "kyc": "KYC Doğrulama",
       "financials": "Finanslar ve Ödemeler",
-      "monitoring": "Canlı İzleme",
-      "analytics": "Analitik",
-      "media": "Medya Kütüphanesi"
+      "monitoring": "Canlı İzleme (War Room)",
+      "analytics": "Analitik ve Raporlar",
+      "media": "Medya Kütüphanesi",
+      "design": "Site Tasarımı & Stüdyo",
+      "settings": "Sistem Ayarları",
+      "badgeNew": "YENİ",
+      "sections": {
+        "core": "ANA MERKEZ & CANLI",
+        "operations": "OPERASYON & MODERASYON",
+        "finance": "FİNANS, MEDYA & TASARIM"
+      }
     },
     "sidebar": {
       "collapse": "Daralt",
@@ -1765,6 +1773,13 @@ export default {
       "online": "Çevrimiçi"
     },
     "users": {
+      "metrics": {
+        "total": "Toplam Kullanıcı",
+        "sellers": "Satıcılar (Sellers)",
+        "buyers": "Alıcılar (Buyers)",
+        "kycVerified": "KYC Doğrulandı"
+      },
+      "copied": "Kopyalandı: {text}",
       "title": "Kullanıcı Yönetimi",
       "subtitle": "Tüm kayıtlı kullanıcılar, roller, escrow bakiyeleri ve güvenlik kontrolü",
       "total": "Toplam: {count} kullanıcı",
@@ -1859,6 +1874,12 @@ export default {
       }
     },
     "listings": {
+      "metrics": {
+        "total": "Toplam İlan",
+        "pending": "Moderasyon Bekleyen",
+        "active": "Aktif Açık Artırmalar",
+        "featured": "Öne Çıkanlar (Vitrin)"
+      },
       "title": "İlan Moderasyonu ve Yönetimi",
       "subtitle": "Açık artırma kataloğu, ilan onayı, gizli rezerve fiyatları ve şüpheli ilanların kontrolü",
       "total": "Toplam: {count} ilan",
@@ -2194,8 +2215,19 @@ export default {
       }
     },
     "media": {
-      "title": "Medya Kütüphanesi",
-      "subtitle": "Platformdaki tüm ilan fotoğrafları ve kullanıcı avatarları — tek yerden görüntüleme ve yönetim",
+      "title": "Medya Kütüphanesi & Dosya Yöneticisi",
+      "subtitle": "iOS Files & Finder tarzı gelişmiş dosya yöneticisi — sitedeki tüm ilan, avatar, KYC ve platform görselleri",
+      "totalFiles": "Toplam: {count} dosya",
+      "totalSize": "Alan: {size}",
+      "upDirectory": "Üst Dizine Çık",
+      "select": "Seç",
+      "cancel": "İptal",
+      "delete": "Sil ({count})",
+      "newFolder": "Yeni Klasör",
+      "uploadFile": "Dosya Yükle",
+      "uploading": "Yükleniyor...",
+      "folders": "Klasörler ({count})",
+      "files": "Dosyalar ({count})",
       "totalCount": "Toplam: {count} dosya",
       "filters": {
         "all": "Tümü",
@@ -2236,6 +2268,44 @@ export default {
         "10": "Kasım",
         "11": "Aralık"
       }
+    },
+    "settings": {
+      "title": "Site Genel Ayarları (Sistem Parametreleri)",
+      "subtitle": "Platform komisyonu, anti-sniping kuralları, teminat oranları, iletişim bilgileri ve sistem parametreleri",
+      "reset": "Sıfırla",
+      "save": "Değişiklikleri Kaydet",
+      "saving": "Kaydediliyor...",
+      "tabs": {
+        "general": "Platform & İletişim",
+        "auction": "Açık Artırma & Finans Kuralları",
+        "security": "Güvenlik, KYC & Bakım Modu"
+      },
+      "general": {
+        "platformInfo": "Platform Bilgileri",
+        "siteName": "Site Adı",
+        "siteTitle": "Site Başlığı (SEO Title)",
+        "siteDescription": "Site Açıklaması (Meta Description)",
+        "contactInfo": "Müşteri Hizmetleri & İletişim",
+        "supportEmail": "Destek E-posta Adresi",
+        "whatsappNumber": "WhatsApp Destek Hattı",
+        "supportPhone": "Resmi Çağrı Merkezi Telefonu",
+        "address": "Şirket / Ofis Adresi"
+      },
+      "auction": {
+        "rulesTitle": "İhale ve Komisyon Kuralları",
+        "commissionRate": "Varsayılan Komisyon Oranı (%)",
+        "antiSnipingMinutes": "Anti-Sniping Uzatma Süresi (Dakika)",
+        "antiSnipingTrigger": "Anti-Sniping Tetikleme Eşiği (Dakika)",
+        "minDeposit": "Minimum Teminat Tutarı (KGS)",
+        "currency": "Platform Temel Para Birimi"
+      },
+      "security": {
+        "systemSecurity": "Sistem Güvenliği ve Anahtarları",
+        "maintenanceMode": "Bakım Modu",
+        "autoApprove": "Otomatik İlan Onayı",
+        "kycRequired": "Teklif İçin KYC Zorunlu",
+        "twoFactor": "İki Aşamalı Doğrulama (2FA)"
+      }
     }
   }
-} as const;
+}

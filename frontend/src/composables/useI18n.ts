@@ -2,8 +2,16 @@
 import { ref, computed } from 'vue'
 import { messages, supportedLocales, type LocaleKey } from '@/locales'
 
-const savedLocale = (typeof localStorage !== 'undefined' ? localStorage.getItem('itorgo_locale') : null) as LocaleKey | null
-const initialLocale: LocaleKey = savedLocale && ['ky', 'ru', 'tr'].includes(savedLocale) ? savedLocale : 'ru'
+function getStoredLocale(): LocaleKey | null {
+  if (typeof localStorage === 'undefined') return null
+  const itorgoLocale = localStorage.getItem('itorgo_locale') as LocaleKey | null
+  if (itorgoLocale && ['ru', 'ky', 'tr'].includes(itorgoLocale)) return itorgoLocale
+  const legacyLocale = localStorage.getItem('locale') as LocaleKey | null
+  if (legacyLocale && ['ru', 'ky', 'tr'].includes(legacyLocale)) return legacyLocale
+  return null
+}
+
+const initialLocale: LocaleKey = getStoredLocale() || 'ru'
 const currentLocale = ref<LocaleKey>(initialLocale)
 
 // Synchronize document lang immediately on load
@@ -13,10 +21,11 @@ if (typeof document !== 'undefined') {
 
 export function useI18n() {
   function setLocale(locale: LocaleKey) {
-    if (['ky', 'ru', 'tr'].includes(locale)) {
+    if (['ru', 'ky', 'tr'].includes(locale)) {
       currentLocale.value = locale
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem('itorgo_locale', locale)
+        localStorage.setItem('locale', locale)
       }
       if (typeof document !== 'undefined') {
         document.documentElement.lang = locale

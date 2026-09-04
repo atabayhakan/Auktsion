@@ -3,7 +3,7 @@ import ky from './ky'
 import ru from './ru'
 import tr from './tr'
 
-export type LocaleKey = 'ky' | 'ru' | 'tr'
+export type LocaleKey = 'ru' | 'ky' | 'tr'
 
 export const supportedLocales: Array<{ code: LocaleKey; name: string; nativeName: string; flag: string }> = [
   { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },

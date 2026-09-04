@@ -31,22 +31,22 @@ const publicSiteUrl = usePublicSiteUrl('/')
 
 const navSections = computed(() => [
   {
-    title: 'ANA MERKEZ & CANLI',
+    title: t('admin.nav.sections.core') || 'ГЛАВНЫЙ ЦЕНТР И ЭФИР',
     items: [
       {
-        name: 'Genel Bakış',
+        name: t('admin.nav.overview') || 'Обзор',
         path: '/admin/overview',
         icon: LayoutDashboard,
         badge: null
       },
       {
-        name: 'Canlı İzleme (War Room)',
+        name: t('admin.nav.monitoring') || 'Живой мониторинг',
         path: '/admin/monitoring',
         icon: Activity,
         badge: null
       },
       {
-        name: 'Analitik & Raporlar',
+        name: t('admin.nav.analytics') || 'Аналитика',
         path: '/admin/analytics',
         icon: BarChart3,
         badge: null
@@ -54,30 +54,30 @@ const navSections = computed(() => [
     ]
   },
   {
-    title: 'OPERASYON & MODERASYON',
+    title: t('admin.nav.sections.operations') || 'ОПЕРАЦИИ И МОДЕРАЦИЯ',
     items: [
       {
-        name: 'Kullanıcılar',
+        name: t('admin.nav.users') || 'Пользователи',
         path: '/admin/users',
         icon: Users,
         badge: null
       },
       {
-        name: 'İlan Moderasyonu',
+        name: t('admin.nav.listings') || 'Модерация лотов',
         path: '/admin/listings',
         icon: Gavel,
         badge: adminStore.listings.filter(l => l.status === 'pending_approval').length || null,
         badgeColor: 'bg-amber-500 text-white'
       },
       {
-        name: 'KYC Doğrulama',
+        name: t('admin.nav.kyc') || 'Верификация KYC',
         path: '/admin/kyc',
         icon: ShieldCheck,
         badge: adminStore.pendingKycCount || null,
         badgeColor: 'bg-blue-500 text-white'
       },
       {
-        name: 'Uyuşmazlıklar & Şikayetler',
+        name: t('admin.nav.disputes') || 'Споры и претензии',
         path: '/admin/disputes',
         icon: AlertCircle,
         badge: adminStore.openDisputesCount || null,
@@ -86,26 +86,26 @@ const navSections = computed(() => [
     ]
   },
   {
-    title: 'FİNANS, MEDYA & TASARIM',
+    title: t('admin.nav.sections.finance') || 'ФИНАНСЫ, МЕДИА И ДИЗАЙН',
     items: [
       {
-        name: 'Finanslar & Ödemeler',
+        name: t('admin.nav.financials') || 'Финансы и платежи',
         path: '/admin/financials',
         icon: Wallet,
         badge: adminStore.pendingPayoutsCount || null,
         badgeColor: 'bg-purple-500 text-white'
       },
       {
-        name: 'Medya Kütüphanesi',
+        name: t('admin.nav.media') || 'Медиатека',
         path: '/admin/media',
         icon: FolderOpen,
         badge: null
       },
       {
-        name: 'Site Tasarımı & Stüdyo',
+        name: t('admin.nav.design') || 'Дизайн и темы',
         path: '/admin/design',
         icon: Palette,
-        badge: 'YENİ',
+        badge: t('admin.nav.badgeNew') || 'NEW',
         badgeColor: 'bg-primary text-text-primary font-black'
       }
     ]
@@ -237,9 +237,9 @@ function handleNavClick() {
       </div>
     </nav>
 
-    <!-- Bottom Actions: Site Genel Ayarları & Siteyi Gör -->
+    <!-- Bottom Actions: Platform Settings & View Site -->
     <div class="p-3 border-t border-black/[0.06] space-y-1.5 bg-black/[0.01]">
-      <!-- 1. Site Genel Ayarları -->
+      <!-- 1. Platform Settings -->
       <router-link
         to="/admin/settings"
         :class="[
@@ -248,22 +248,22 @@ function handleNavClick() {
             ? 'bg-primary text-text-primary font-bold shadow-md shadow-primary/20'
             : 'text-text-secondary hover:text-text-primary hover:bg-black/5'
         ]"
-        :title="'Site Genel Ayarları'"
+        :title="t('admin.nav.settings') || 'Настройки платформы'"
         @click="handleNavClick"
       >
         <Settings class="w-4 h-4 shrink-0 text-text-primary" />
         <span v-if="!adminStore.sidebarCollapsed" class="truncate flex-1 text-xs font-bold text-text-primary">
-          Site Genel Ayarları
+          {{ t('admin.nav.settings') || 'Настройки платформы' }}
         </span>
         <div
           v-if="adminStore.sidebarCollapsed"
           class="absolute left-full ml-2 px-2.5 py-1 bg-white text-text-primary text-xs rounded-md shadow-xl whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 border border-black/10 font-bold"
         >
-          Site Genel Ayarları
+          {{ t('admin.nav.settings') || 'Настройки платформы' }}
         </div>
       </router-link>
 
-      <!-- 2. Siteyi Gör (Open Public Site in New Tab) -->
+      <!-- 2. View Site (Open Public Site in New Tab) -->
       <a
         :href="publicSiteUrl"
         target="_blank"
@@ -272,11 +272,11 @@ function handleNavClick() {
           'flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-text-secondary hover:text-text-primary hover:bg-primary/10 hover:border-primary/30 border border-border bg-white shadow-xs transition-all',
           adminStore.sidebarCollapsed ? 'justify-center' : ''
         ]"
-        :title="'Siteyi Canlı Gör'"
+        :title="t('admin.sidebar.returnToSite') || 'Вернуться на сайт'"
       >
         <Globe class="w-4 h-4 shrink-0 text-primary" />
         <span v-if="!adminStore.sidebarCollapsed" class="truncate flex-1">
-          Siteyi Gör
+          {{ t('admin.sidebar.returnToSite') || 'Вернуться на сайт' }}
         </span>
         <ExternalLink v-if="!adminStore.sidebarCollapsed" class="w-3.5 h-3.5 text-text-muted" />
       </a>
@@ -287,7 +287,7 @@ function handleNavClick() {
         class="bg-black/5 rounded-lg p-2 border border-black/[0.04] text-[10px] text-text-muted flex items-center gap-2 mt-1"
       >
         <Shield class="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-        <span class="truncate">%100 Escrow & AML Güvencesi</span>
+        <span class="truncate">{{ t('admin.sidebar.amlNotice') || '8% эскроу и контроль AML от 30 тыс. сом' }}</span>
       </div>
     </div>
   </aside>

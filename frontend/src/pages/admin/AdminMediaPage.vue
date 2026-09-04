@@ -28,10 +28,12 @@ import {
 } from 'lucide-vue-next'
 import { useAdminStore } from '@/stores/admin'
 import { useUIStore } from '@/stores/ui'
+import { useI18n } from '@/composables/useI18n'
 import type { MediaFolderItem, MediaExplorerFile } from '@/types/admin'
 
 const adminStore = useAdminStore()
 const uiStore = useUIStore()
+const { t } = useI18n()
 
 const currentFolderId = ref('root')
 const viewMode = ref<'grid' | 'list'>('grid')
@@ -68,7 +70,7 @@ async function loadFolder(folderId: string) {
 }
 
 const breadcrumbs = computed(() => {
-  return adminStore.mediaExplorer?.breadcrumbs || [{ id: 'root', name: 'Medya Kütüphanesi' }]
+  return adminStore.mediaExplorer?.breadcrumbs || [{ id: 'root', name: t('admin.media.title') || 'Медиатека' }]
 })
 
 const subfolders = computed(() => {
@@ -251,20 +253,20 @@ function formatDate(iso: string) {
       <div>
         <h1 class="text-2xl font-extrabold text-text-primary tracking-tight flex items-center gap-2.5">
           <FolderOpen class="w-6 h-6 text-primary" />
-          <span>Medya Kütüphanesi & Dosya Yöneticisi</span>
+          <span>{{ t('admin.media.title') || 'Медиатека и файловый менеджер' }}</span>
         </h1>
         <p class="text-xs text-text-secondary mt-1">
-          iOS Files & Finder tarzı gelişmiş dosya yöneticisi — sitedeki tüm ilan, avatar, KYC ve platform görselleri
+          {{ t('admin.media.subtitle') || 'iOS Files / Finder файловый менеджер — все фото лотов, аватаров, KYC документов и платформы' }}
         </p>
       </div>
 
       <!-- Quick Metrics -->
       <div class="flex items-center gap-2">
         <div class="px-3 py-1.5 rounded-xl bg-white border border-border text-xs font-bold text-text-secondary shadow-xs">
-          Toplam: <span class="text-text-primary">{{ stats.totalFiles }} dosya</span>
+          {{ t('admin.media.totalFiles', { count: stats.totalFiles }) || ('Всего: ' + stats.totalFiles + ' файлов') }}
         </div>
         <div class="px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-xs font-bold text-text-primary shadow-xs">
-          Alan: <span class="text-primary font-black">{{ stats.formattedTotalSize }}</span>
+          {{ t('admin.media.totalSize', { size: stats.formattedTotalSize }) || ('Объем: ' + stats.formattedTotalSize) }}
         </div>
       </div>
     </div>
@@ -277,7 +279,7 @@ function formatDate(iso: string) {
           v-if="currentFolderId !== 'root'"
           type="button"
           class="p-1.5 rounded-lg hover:bg-black/5 text-text-secondary hover:text-text-primary transition-colors shrink-0"
-          title="Üst Dizine Çık"
+          :title="t('admin.media.upDirectory') || 'На уровень вверх'"
           @click="loadFolder('root')"
         >
           <ArrowLeft class="w-4 h-4" />
@@ -299,7 +301,7 @@ function formatDate(iso: string) {
             ]"
             @click="loadFolder(crumb.id)"
           >
-            {{ crumb.name }}
+            {{ crumb.name === 'Medya Kütüphanesi' ? (t('admin.media.title') || 'Медиатека') : crumb.name }}
           </button>
         </div>
       </div>
@@ -312,7 +314,7 @@ function formatDate(iso: string) {
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Ada göre ara..."
+            :placeholder="t('admin.media.searchPlaceholder') || 'Поиск по имени...'"
             class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-border bg-black/[0.02] text-xs text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
           />
         </div>
@@ -325,7 +327,7 @@ function formatDate(iso: string) {
               'p-1.5 rounded-lg text-xs font-bold transition-all',
               viewMode === 'grid' ? 'bg-white text-text-primary shadow-xs' : 'text-text-muted hover:text-text-primary'
             ]"
-            title="Grid Görünümü"
+            :title="t('admin.media.gridView') || 'Сетка'"
             @click="viewMode = 'grid'"
           >
             <Grid class="w-3.5 h-3.5" />
@@ -336,7 +338,7 @@ function formatDate(iso: string) {
               'p-1.5 rounded-lg text-xs font-bold transition-all',
               viewMode === 'list' ? 'bg-white text-text-primary shadow-xs' : 'text-text-muted hover:text-text-primary'
             ]"
-            title="Liste Görünümü"
+            :title="t('admin.media.listView') || 'Список'"
             @click="viewMode = 'list'"
           >
             <List class="w-3.5 h-3.5" />
@@ -354,7 +356,7 @@ function formatDate(iso: string) {
           ]"
           @click="toggleSelectMode"
         >
-          {{ isSelectMode ? 'İptal' : 'Seç' }}
+          {{ isSelectMode ? (t('admin.media.cancel') || 'Отмена') : (t('admin.media.select') || 'Выбрать') }}
         </button>
 
         <!-- Delete Selected Button -->
@@ -365,7 +367,7 @@ function formatDate(iso: string) {
           @click="handleDeleteSelected"
         >
           <Trash2 class="w-3.5 h-3.5" />
-          <span>Sil ({{ selectedFileIds.size + selectedFolderIds.size }})</span>
+          <span>{{ t('admin.media.delete', { count: selectedFileIds.size + selectedFolderIds.size }) || ('Удалить (' + (selectedFileIds.size + selectedFolderIds.size) + ')') }}</span>
         </button>
 
         <!-- New Folder Button -->
@@ -375,7 +377,7 @@ function formatDate(iso: string) {
           @click="showNewFolderModal = true"
         >
           <FolderPlus class="w-3.5 h-3.5 text-primary" />
-          <span class="hidden sm:inline">Yeni Klasör</span>
+          <span class="hidden sm:inline">{{ t('admin.media.newFolder') || 'Новая папка' }}</span>
         </button>
 
         <!-- Upload File Button -->
@@ -386,7 +388,7 @@ function formatDate(iso: string) {
           @click="triggerUpload"
         >
           <Upload class="w-3.5 h-3.5" />
-          <span>{{ isUploading ? 'Yükleniyor...' : 'Dosya Yükle' }}</span>
+          <span>{{ isUploading ? (t('admin.media.uploading') || 'Загрузка...') : (t('admin.media.uploadFile') || 'Загрузить файл') }}</span>
         </button>
         <input
           ref="fileInputRef"
@@ -404,7 +406,7 @@ function formatDate(iso: string) {
       <div v-if="subfolders.length > 0">
         <h2 class="text-xs font-extrabold text-text-muted uppercase tracking-wider mb-3 px-1 flex items-center gap-1.5">
           <Folder class="w-3.5 h-3.5" />
-          <span>Klasörler ({{ subfolders.length }})</span>
+          <span>{{ t('admin.media.folders', { count: subfolders.length }) || ('Папки (' + subfolders.length + ')') }}</span>
         </h2>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5">
@@ -451,7 +453,7 @@ function formatDate(iso: string) {
       <div>
         <h2 class="text-xs font-extrabold text-text-muted uppercase tracking-wider mb-3 px-1 flex items-center gap-1.5">
           <ImageIcon class="w-3.5 h-3.5" />
-          <span>Dosyalar & Görseller ({{ files.length }})</span>
+          <span>{{ t('admin.media.files', { count: files.length }) || ('Файлы (' + files.length + ')') }}</span>
         </h2>
 
         <!-- Empty State -->

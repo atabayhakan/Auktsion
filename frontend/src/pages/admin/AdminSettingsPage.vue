@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import {
   Settings,
@@ -21,10 +21,12 @@ import {
 } from 'lucide-vue-next'
 import { useAdminStore } from '@/stores/admin'
 import { useUIStore } from '@/stores/ui'
+import { useI18n } from '@/composables/useI18n'
 import type { PlatformSettings } from '@/types/admin'
 
 const adminStore = useAdminStore()
 const uiStore = useUIStore()
+const { t } = useI18n()
 
 const activeTab = ref<'general' | 'auction' | 'security'>('general')
 const isSaving = ref(false)
@@ -91,31 +93,31 @@ function handleReset() {
       <div>
         <h1 class="text-2xl font-extrabold text-text-primary tracking-tight flex items-center gap-2.5">
           <Settings class="w-6 h-6 text-primary" />
-          <span>Site Genel Ayarları (Системалык Жөндөөлөр)</span>
+          <span>{{ t('admin.settings.title') || 'Общие настройки сайта' }}</span>
         </h1>
         <p class="text-xs text-text-secondary mt-1">
-          Platform komisyonu, anti-sniping kuralları, teminat oranları, iletişim bilgileri ve sistem parametreleri
+          {{ t('admin.settings.subtitle') || 'Комиссия платформы, правила anti-sniping, ставки депозитов и параметры системы' }}
         </p>
       </div>
 
       <div class="flex items-center gap-2.5">
         <button
           type="button"
-          class="px-4 py-2 rounded-xl text-xs font-bold text-text-secondary bg-white hover:bg-accent border border-border shadow-xs flex items-center gap-1.5 transition-all"
+          class="px-4 py-2 rounded-xl text-xs font-bold text-text-secondary bg-white hover:bg-accent border border-border shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
           @click="handleReset"
         >
           <RotateCcw class="w-3.5 h-3.5" />
-          <span>Sıfırla</span>
+          <span>{{ t('admin.settings.reset') || 'Сбросить' }}</span>
         </button>
 
         <button
           type="button"
           :disabled="isSaving"
-          class="px-5 py-2 rounded-xl text-xs font-bold text-text-primary bg-primary hover:bg-primary/90 shadow-md shadow-primary/20 flex items-center gap-1.5 transition-all disabled:opacity-50"
+          class="px-5 py-2 rounded-xl text-xs font-bold text-text-primary bg-primary hover:bg-primary/90 shadow-md shadow-primary/20 flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
           @click="handleSave"
         >
           <Save class="w-3.5 h-3.5" />
-          <span>{{ isSaving ? 'Сакталууда...' : 'Değişiklikleri Kaydet' }}</span>
+          <span>{{ isSaving ? (t('admin.settings.saving') || 'Сохранение...') : (t('admin.settings.save') || 'Сохранить изменения') }}</span>
         </button>
       </div>
     </div>
@@ -125,7 +127,7 @@ function handleReset() {
       <button
         type="button"
         :class="[
-          'px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap',
+          'px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer',
           activeTab === 'general'
             ? 'bg-primary text-text-primary shadow-xs'
             : 'text-text-secondary hover:text-text-primary hover:bg-black/5'
@@ -133,13 +135,13 @@ function handleReset() {
         @click="activeTab = 'general'"
       >
         <Globe class="w-4 h-4" />
-        <span>Platform & İletişim</span>
+        <span>{{ t('admin.settings.tabs.general') || 'Платформа и контакты' }}</span>
       </button>
 
       <button
         type="button"
         :class="[
-          'px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap',
+          'px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer',
           activeTab === 'auction'
             ? 'bg-primary text-text-primary shadow-xs'
             : 'text-text-secondary hover:text-text-primary hover:bg-black/5'
@@ -147,13 +149,13 @@ function handleReset() {
         @click="activeTab = 'auction'"
       >
         <Sliders class="w-4 h-4" />
-        <span>Açık Artırma & Finans Kuralları</span>
+        <span>{{ t('admin.settings.tabs.auction') || 'Правила аукционов и финансов' }}</span>
       </button>
 
       <button
         type="button"
         :class="[
-          'px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap',
+          'px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer',
           activeTab === 'security'
             ? 'bg-primary text-text-primary shadow-xs'
             : 'text-text-secondary hover:text-text-primary hover:bg-black/5'
@@ -161,20 +163,22 @@ function handleReset() {
         @click="activeTab = 'security'"
       >
         <Shield class="w-4 h-4" />
-        <span>Güvenlik, KYC & Bakım Modu</span>
+        <span>{{ t('admin.settings.tabs.security') || 'Безопасность, KYC и режим техработ' }}</span>
       </button>
     </div>
 
-    <!-- TAB 1: Platform & İletişim -->
+    <!-- TAB 1: Platform & Contact -->
     <div v-if="activeTab === 'general'" class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="bg-white rounded-2xl p-6 border border-border shadow-xs space-y-4">
         <h2 class="text-sm font-bold text-text-primary flex items-center gap-2 border-b border-border pb-3">
           <Building class="w-4 h-4 text-primary" />
-          <span>Platform Bilgileri</span>
+          <span>{{ t('admin.settings.general.platformInfo') || 'Информация о платформе' }}</span>
         </h2>
 
         <div>
-          <label class="block text-xs font-bold text-text-secondary mb-1">Site Adı</label>
+          <label class="block text-xs font-bold text-text-secondary mb-1">
+            {{ t('admin.settings.general.siteName') || 'Название сайта' }}
+          </label>
           <input
             v-model="form.siteName"
             type="text"
@@ -183,7 +187,9 @@ function handleReset() {
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-text-secondary mb-1">Site Başlığı (SEO Title)</label>
+          <label class="block text-xs font-bold text-text-secondary mb-1">
+            {{ t('admin.settings.general.siteTitle') || 'Заголовок сайта (SEO Title)' }}
+          </label>
           <input
             v-model="form.siteTitle"
             type="text"
@@ -192,7 +198,9 @@ function handleReset() {
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-text-secondary mb-1">Site Açıklaması (Meta Description)</label>
+          <label class="block text-xs font-bold text-text-secondary mb-1">
+            {{ t('admin.settings.general.siteDescription') || 'Описание сайта (Meta Description)' }}
+          </label>
           <textarea
             v-model="form.siteDescription"
             rows="3"
@@ -204,13 +212,13 @@ function handleReset() {
       <div class="bg-white rounded-2xl p-6 border border-border shadow-xs space-y-4">
         <h2 class="text-sm font-bold text-text-primary flex items-center gap-2 border-b border-border pb-3">
           <Phone class="w-4 h-4 text-primary" />
-          <span>Müşteri Hizmetleri & İletişim</span>
+          <span>{{ t('admin.settings.general.contactInfo') || 'Служба поддержки и контакты' }}</span>
         </h2>
 
         <div>
           <label class="block text-xs font-bold text-text-secondary mb-1 flex items-center gap-1.5">
             <Mail class="w-3.5 h-3.5 text-primary" />
-            <span>Destek E-posta Adresi</span>
+            <span>{{ t('admin.settings.general.supportEmail') || 'Email службы поддержки' }}</span>
           </label>
           <input
             v-model="form.supportEmail"
@@ -222,7 +230,7 @@ function handleReset() {
         <div>
           <label class="block text-xs font-bold text-text-secondary mb-1 flex items-center gap-1.5">
             <MessageCircle class="w-3.5 h-3.5 text-emerald-500" />
-            <span>WhatsApp Destek Hattı</span>
+            <span>{{ t('admin.settings.general.whatsappNumber') || 'WhatsApp горячая линия' }}</span>
           </label>
           <input
             v-model="form.whatsappNumber"
@@ -234,7 +242,7 @@ function handleReset() {
         <div>
           <label class="block text-xs font-bold text-text-secondary mb-1 flex items-center gap-1.5">
             <Phone class="w-3.5 h-3.5 text-blue-500" />
-            <span>Resmi Çağrı Merkezi Telefonu</span>
+            <span>{{ t('admin.settings.general.supportPhone') || 'Официальный телефон колл-центра' }}</span>
           </label>
           <input
             v-model="form.supportPhone"
@@ -246,7 +254,7 @@ function handleReset() {
         <div>
           <label class="block text-xs font-bold text-text-secondary mb-1 flex items-center gap-1.5">
             <MapPin class="w-3.5 h-3.5 text-rose-500" />
-            <span>Şirket / Ofis Adresi</span>
+            <span>{{ t('admin.settings.general.address') || 'Юридический адрес компании / офиса' }}</span>
           </label>
           <input
             v-model="form.address"
@@ -257,17 +265,17 @@ function handleReset() {
       </div>
     </div>
 
-    <!-- TAB 2: Açık Artırma & Finans Kuralları -->
+    <!-- TAB 2: Auction & Finance Rules -->
     <div v-if="activeTab === 'auction'" class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="bg-white rounded-2xl p-6 border border-border shadow-xs space-y-4">
         <h2 class="text-sm font-bold text-text-primary flex items-center gap-2 border-b border-border pb-3">
           <Percent class="w-4 h-4 text-primary" />
-          <span>Platform Komisyon Oranı & Para Birimi</span>
+          <span>{{ t('admin.settings.auction.rulesTitle') || 'Правила торгов и комиссии' }}</span>
         </h2>
 
         <div>
           <label class="block text-xs font-bold text-text-secondary mb-1">
-            Platform Komisyonu (%) — Satış başına kesilen tutar
+            {{ t('admin.settings.auction.commissionRate') || 'Комиссия платформы по умолчанию (%)' }}
           </label>
           <div class="relative">
             <input
@@ -280,23 +288,26 @@ function handleReset() {
             />
             <span class="absolute right-3.5 top-2.5 text-sm font-bold text-text-muted">%</span>
           </div>
-          <p class="text-[11px] text-text-muted mt-1">Örn: %8 komisyon ile 100.000 KGS satıştan 8.000 KGS platform geliri elde edilir.</p>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-text-secondary mb-1">Varsayılan Para Birimi</label>
+          <label class="block text-xs font-bold text-text-secondary mb-1">
+            {{ t('admin.settings.auction.currency') || 'Базовая валюта платформы' }}
+          </label>
           <select
             v-model="form.currency"
             class="w-full px-3.5 py-2.5 rounded-xl border border-border bg-black/[0.02] text-text-primary text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40"
           >
-            <option value="KGS">KGS (Кыргыз сому - Kırgız Somu)</option>
-            <option value="USD">USD ($ ABD Doları)</option>
-            <option value="RUB">RUB (₽ Rus Rublesi)</option>
+            <option value="KGS">KGS (Кыргыз сому / сом)</option>
+            <option value="USD">USD ($ US Dollar)</option>
+            <option value="RUB">RUB (₽ Российский рубль)</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-text-secondary mb-1">Minimum Teklif Teminat Tutarı (KGS)</label>
+          <label class="block text-xs font-bold text-text-secondary mb-1">
+            {{ t('admin.settings.auction.minDeposit') || 'Минимальный гарантийный депозит (KGS)' }}
+          </label>
           <div class="relative">
             <input
               v-model.number="form.minDepositKgs"
@@ -307,18 +318,19 @@ function handleReset() {
             />
             <span class="absolute right-3.5 top-2.5 text-xs font-bold text-text-muted">KGS</span>
           </div>
-          <p class="text-[11px] text-text-muted mt-1">Kullanıcının teklif vermesi için cüzdanında bulunması gereken asgari teminat bakiyesi.</p>
         </div>
       </div>
 
       <div class="bg-white rounded-2xl p-6 border border-border shadow-xs space-y-4">
         <h2 class="text-sm font-bold text-text-primary flex items-center gap-2 border-b border-border pb-3">
           <Clock class="w-4 h-4 text-primary" />
-          <span>Anti-Sniping (Son Dakika Teklif Uzatması)</span>
+          <span>Anti-Sniping</span>
         </h2>
 
         <div>
-          <label class="block text-xs font-bold text-text-secondary mb-1">Tetiklenme Süresi (Son kaç dakika kala?)</label>
+          <label class="block text-xs font-bold text-text-secondary mb-1">
+            {{ t('admin.settings.auction.antiSnipingTrigger') || 'Порог срабатывания Anti-Sniping (минуты)' }}
+          </label>
           <div class="relative">
             <input
               v-model.number="form.antiSnipingTriggerMinutes"
@@ -327,13 +339,14 @@ function handleReset() {
               max="30"
               class="w-full px-3.5 py-2.5 rounded-xl border border-border bg-black/[0.02] text-text-primary text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
-            <span class="absolute right-3.5 top-2.5 text-xs font-bold text-text-muted">Dakika</span>
+            <span class="absolute right-3.5 top-2.5 text-xs font-bold text-text-muted">min</span>
           </div>
-          <p class="text-[11px] text-text-muted mt-1">Açık artırmanın bitimine bu süreden az kaldığında teklif gelirse süre otomatik uzar.</p>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-text-secondary mb-1">Eklenecek İlave Süre</label>
+          <label class="block text-xs font-bold text-text-secondary mb-1">
+            {{ t('admin.settings.auction.antiSnipingMinutes') || 'Продление Anti-Sniping (минуты)' }}
+          </label>
           <div class="relative">
             <input
               v-model.number="form.antiSnipingMinutes"
@@ -342,25 +355,25 @@ function handleReset() {
               max="60"
               class="w-full px-3.5 py-2.5 rounded-xl border border-border bg-black/[0.02] text-text-primary text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
-            <span class="absolute right-3.5 top-2.5 text-xs font-bold text-text-muted">Dakika</span>
+            <span class="absolute right-3.5 top-2.5 text-xs font-bold text-text-muted">min</span>
           </div>
-          <p class="text-[11px] text-text-muted mt-1">Her son dakika teklifinde sayaç bu kadar dakika ileri alınır (Adil rekabet).</p>
         </div>
       </div>
     </div>
 
-    <!-- TAB 3: Güvenlik, KYC & Bakım Modu -->
+    <!-- TAB 3: Security, KYC & Maintenance -->
     <div v-if="activeTab === 'security'" class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="bg-white rounded-2xl p-6 border border-border shadow-xs space-y-5">
         <h2 class="text-sm font-bold text-text-primary flex items-center gap-2 border-b border-border pb-3">
           <Lock class="w-4 h-4 text-primary" />
-          <span>Güvenlik & Doğrulama Politikaları</span>
+          <span>{{ t('admin.settings.security.systemSecurity') || 'Системные переключатели и безопасность' }}</span>
         </h2>
 
         <div class="flex items-center justify-between p-3.5 rounded-xl bg-black/[0.02] border border-border">
           <div>
-            <span class="text-sm font-bold text-text-primary block">Teklif Vermek İçin KYC Zorunluluğu</span>
-            <span class="text-[11px] text-text-secondary block mt-0.5">Sadece pasaportu/İNN'i onaylanmış üyeler teklif verebilsin</span>
+            <span class="text-sm font-bold text-text-primary block">
+              {{ t('admin.settings.security.kycRequired') || 'Обязательная верификация KYC для ставок' }}
+            </span>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input v-model="form.kycRequiredToBid" type="checkbox" class="sr-only peer" />
@@ -370,8 +383,9 @@ function handleReset() {
 
         <div class="flex items-center justify-between p-3.5 rounded-xl bg-black/[0.02] border border-border">
           <div>
-            <span class="text-sm font-bold text-text-primary block">İlanların Otomatik Onaylanması</span>
-            <span class="text-[11px] text-text-secondary block mt-0.5">Kapalıyken tüm yeni ilanlar admin moderasyonundan geçer</span>
+            <span class="text-sm font-bold text-text-primary block">
+              {{ t('admin.settings.security.autoApprove') || 'Автоматическое одобрение новых лотов' }}
+            </span>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input v-model="form.autoApproveAuctions" type="checkbox" class="sr-only peer" />
@@ -381,8 +395,9 @@ function handleReset() {
 
         <div class="flex items-center justify-between p-3.5 rounded-xl bg-black/[0.02] border border-border">
           <div>
-            <span class="text-sm font-bold text-text-primary block">İki Adımlı Doğrulama (2FA) Zorunluluğu</span>
-            <span class="text-[11px] text-text-secondary block mt-0.5">Tüm satıcılar ve moderatörler için 2FA mecburi olsun</span>
+            <span class="text-sm font-bold text-text-primary block">
+              {{ t('admin.settings.security.twoFactor') || 'Двухфакторная аутентификация (2FA)' }}
+            </span>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input v-model="form.twoFactorRequired" type="checkbox" class="sr-only peer" />
@@ -394,20 +409,14 @@ function handleReset() {
       <div class="bg-white rounded-2xl p-6 border border-border shadow-xs space-y-5">
         <h2 class="text-sm font-bold text-text-primary flex items-center gap-2 border-b border-border pb-3">
           <AlertTriangle class="w-4 h-4 text-amber-500" />
-          <span>Sistem Bakım Modu (Maintenance Mode)</span>
+          <span>{{ t('admin.settings.security.maintenanceMode') || 'Режим технического обслуживания' }}</span>
         </h2>
-
-        <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 space-y-2">
-          <span class="font-bold block">⚠️ Dikkat: Bakım Modu Açıldığında</span>
-          <p>
-            Normal kullanıcılar siteye girdiğinde "Sistem Güncelleniyor" bakım sayfası ile karşılaşır. Yalnızca Admin ve Moderatörler panele erişebilir.
-          </p>
-        </div>
 
         <div class="flex items-center justify-between p-4 rounded-xl bg-black/[0.02] border border-border">
           <div>
-            <span class="text-sm font-bold text-text-primary block">Bakım Modunu Aktifleştir</span>
-            <span class="text-[11px] text-text-secondary block mt-0.5">Platform genelinde erişimi geçici olarak durdur</span>
+            <span class="text-sm font-bold text-text-primary block">
+              {{ t('admin.settings.security.maintenanceMode') || 'Режим технического обслуживания' }}
+            </span>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input v-model="form.maintenanceMode" type="checkbox" class="sr-only peer" />

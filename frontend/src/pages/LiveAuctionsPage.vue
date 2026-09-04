@@ -20,7 +20,7 @@ const router = useRouter()
 const auctionStore = useAuctionStore()
 const { t, currentLocale } = useI18n()
 
-const currentLang = computed(() => (currentLocale.value?.code as 'ky' | 'ru' | 'tr') || 'tr')
+const currentLang = computed(() => (currentLocale.value?.code as 'ky' | 'ru' | 'tr') || 'ru')
 
 const searchQuery = ref((route.query.search as string) || '')
 const selectedCategory = ref((route.query.category as string) || 'all')
@@ -86,10 +86,10 @@ watch(searchQuery, () => {
 const categories = computed(() => {
   const lang = currentLang.value
   return [
-    { id: 'all', name: t('liveAuctionsPage.allCategories') || 'Tüm Kategoriler', icon: '✨' },
+    { id: 'all', name: t('liveAuctionsPage.allCategories') || 'Все категории', icon: '✨' },
     ...platformCategories.map(c => ({
       id: c.slug,
-      name: c.name[lang] || c.name.tr || c.name.ky,
+      name: c.name[lang] || c.name.ru || c.name.ky || c.name.tr,
       icon: c.icon
     }))
   ]
@@ -130,11 +130,11 @@ const quickCategories = computed(() => {
 })
 
 const sortOptions = computed(() => [
-  { value: 'ending_soon', label: t('liveAuctionsPage.sortEndingSoon') || 'Yakında Bitenler 🔥' },
-  { value: 'price_desc', label: t('liveAuctionsPage.sortPriceDesc') || 'Fiyat: Yüksekten Düşüğe' },
-  { value: 'price_asc', label: t('liveAuctionsPage.sortPriceAsc') || 'Fiyat: Düşükten Yükseğe' },
-  { value: 'most_bids', label: t('liveAuctionsPage.sortMostBids') || 'En Çok Teklif Alan ⚡' },
-  { value: 'newest', label: t('liveAuctionsPage.sortNewest') || 'En Yeniler ✨' },
+  { value: 'ending_soon', label: t('liveAuctionsPage.sortEndingSoon') || 'Скоро завершаются 🔥' },
+  { value: 'price_desc', label: t('liveAuctionsPage.sortPriceDesc') || 'Цена: по убыванию' },
+  { value: 'price_asc', label: t('liveAuctionsPage.sortPriceAsc') || 'Цена: по возрастанию' },
+  { value: 'most_bids', label: t('liveAuctionsPage.sortMostBids') || 'Больше всего ставок ⚡' },
+  { value: 'newest', label: t('liveAuctionsPage.sortNewest') || 'Сначала новые ✨' },
 ])
 
 const allAuctions = computed(() => {
@@ -265,7 +265,7 @@ onMounted(() => {
                 : 'bg-amber-500/10 text-amber-900 border-amber-500/20'"
             >
               <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-              <span>{{ t('liveAuctionsPage.activeLots', { n: filteredAuctions.length }) || `${filteredAuctions.length} Aktif İlan` }}</span>
+              <span>{{ t('liveAuctionsPage.activeLots', { n: filteredAuctions.length }) || `${filteredAuctions.length} Активных лотов` }}</span>
             </span>
 
             <!-- Status filter pills -->
@@ -276,7 +276,7 @@ onMounted(() => {
                 :class="statusFilter === 'all' ? 'bg-white text-gray-950 shadow-2xs font-extrabold' : 'text-gray-500 hover:text-gray-950'"
                 @click="statusFilter = 'all'"
               >
-                {{ t('liveAuctionsPage.allStatusTab') || '✨ Tümü' }}
+                {{ t('liveAuctionsPage.allStatusTab') || '✨ Все' }}
               </button>
               <button
                 type="button"
@@ -284,16 +284,16 @@ onMounted(() => {
                 :class="statusFilter === 'live' ? 'bg-rose-500 text-white shadow-2xs font-extrabold' : 'text-gray-500 hover:text-gray-950'"
                 @click="statusFilter = 'live'"
               >
-                {{ t('liveAuctionsPage.liveStatusTab') || '🔴 Canlı' }}
+                {{ t('liveAuctionsPage.liveStatusTab') || '🔴 В эфире' }}
               </button>
             </div>
           </div>
 
           <h1 class="text-2xl sm:text-4xl font-black text-gray-950 tracking-tight">
-            {{ t('liveAuctionsPage.title') || 'Kırgızistan Canlı ve Aktif Açık Artırmalar' }}
+            {{ t('liveAuctionsPage.title') || 'Живые и активные аукционы Кыргызстана' }}
           </h1>
           <p class="text-xs sm:text-sm text-gray-500 mt-1 max-w-2xl leading-relaxed">
-            {{ t('liveAuctionsPage.subtitle') || 'Hayvan pazarı, otomotiv, Dordoy toptan ticaret ürünleri ve gayrimenkul' }}
+            {{ t('liveAuctionsPage.subtitle') || 'Скотный рынок, автомобили, оптовый рынок Дордой и недвижимость' }}
           </p>
         </div>
 
@@ -302,7 +302,7 @@ onMounted(() => {
           <input
             v-model="searchQuery"
             type="text"
-            :placeholder="t('liveAuctionsPage.searchPlaceholder') || 'Lot adı veya şehir ara...'"
+            :placeholder="t('liveAuctionsPage.searchPlaceholder') || 'Поиск лота или города...'"
             class="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-white border border-black/10 text-xs sm:text-sm focus:outline-none focus:border-amber-400 focus:ring-3 focus:ring-amber-400/20 shadow-2xs text-gray-900 placeholder-gray-400 font-medium transition-all"
           />
           <Search class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-amber-700 transition-colors" />
@@ -339,7 +339,7 @@ onMounted(() => {
         @click="showMobileFilters = true"
       >
         <SlidersHorizontal class="w-4 h-4 text-primary" />
-        <span>{{ t('liveAuctionsPage.filters') || 'Filtreler' }}</span>
+        <span>{{ t('liveAuctionsPage.filters') || 'Фильтры' }}</span>
         <span v-if="activeFilterCount > 0" class="w-5 h-5 rounded-full bg-primary text-gray-950 text-[10px] font-black flex items-center justify-center">
           {{ activeFilterCount }}
         </span>
@@ -359,9 +359,9 @@ onMounted(() => {
             <div class="flex items-center justify-between pb-3 border-b border-black/5">
               <div class="flex items-center gap-2 text-sm font-black text-gray-950">
                 <SlidersHorizontal class="w-4 h-4 text-primary" />
-                <span>{{ t('liveAuctionsPage.filters') || 'Filtreler' }}</span>
+                <span>{{ t('liveAuctionsPage.filters') || 'Фильтры' }}</span>
               </div>
-              <button class="p-2 rounded-xl hover:bg-black/5 text-gray-500" aria-label="Kapat" @click="showMobileFilters = false">
+              <button class="p-2 rounded-xl hover:bg-black/5 text-gray-500" :aria-label="t('common.close') || 'Закрыть'" @click="showMobileFilters = false">
                 <X class="w-5 h-5" />
               </button>
             </div>
@@ -370,22 +370,22 @@ onMounted(() => {
             <div class="space-y-2">
               <label class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
                 <MapPin class="w-3.5 h-3.5 text-primary" />
-                <span>{{ t('liveAuctionsPage.regionCity') || 'Bölge / Şehir' }}</span>
+                <span>{{ t('liveAuctionsPage.regionCity') || 'Регион / Город' }}</span>
               </label>
               <select
                 v-model="selectedRegion"
                 class="w-full px-3.5 py-3 rounded-2xl bg-slate-50 border border-black/10 text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary text-gray-900"
               >
-                <option value="all">{{ t('liveAuctionsPage.allKyrgyzstan') || 'Tüm Kırgızistan (Tümü)' }}</option>
+                <option value="all">{{ t('liveAuctionsPage.allKyrgyzstan') || 'Весь Кыргызстан' }}</option>
                 <option v-for="r in kyrgyzstanRegions" :key="r.id" :value="r.id">
-                  {{ r.name[currentLang] || r.name.tr || r.name.ky }}
+                  {{ r.name[currentLang] || r.name.ru || r.name.ky || r.name.tr }}
                 </option>
               </select>
             </div>
 
             <!-- Sort Filter -->
             <div class="space-y-2">
-              <label class="text-xs font-bold text-gray-700">{{ t('liveAuctionsPage.sorting') || 'Sıralama' }}</label>
+              <label class="text-xs font-bold text-gray-700">{{ t('liveAuctionsPage.sorting') || 'Сортировка' }}</label>
               <select
                 v-model="selectedSort"
                 class="w-full px-3.5 py-3 rounded-2xl bg-slate-50 border border-black/10 text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary text-gray-900"
@@ -398,18 +398,18 @@ onMounted(() => {
 
             <!-- Price Range -->
             <div class="space-y-2">
-              <label class="text-xs font-bold text-gray-700">{{ t('liveAuctionsPage.priceRange') || 'Fiyat Aralığı (KGS)' }}</label>
+              <label class="text-xs font-bold text-gray-700">{{ t('liveAuctionsPage.priceRange') || 'Диапазон цен (KGS)' }}</label>
               <div class="grid grid-cols-2 gap-2">
                 <input
                   v-model.number="minPrice"
                   type="number"
-                  :placeholder="t('liveAuctionsPage.min') || 'Min'"
+                  :placeholder="t('liveAuctionsPage.min') || 'Мин'"
                   class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-black/10 text-xs font-mono font-bold"
                 />
                 <input
                   v-model.number="maxPrice"
                   type="number"
-                  :placeholder="t('liveAuctionsPage.max') || 'Maks'"
+                  :placeholder="t('liveAuctionsPage.max') || 'Макс'"
                   class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-black/10 text-xs font-mono font-bold"
                 />
               </div>
@@ -419,7 +419,7 @@ onMounted(() => {
             <div class="pt-2 border-t border-black/5">
               <label class="flex items-center gap-2 text-xs font-bold text-rose-600 cursor-pointer">
                 <input v-model="isBlitzOnly" type="checkbox" class="w-4 h-4 rounded text-rose-600" />
-                <span>🔥 {{ t('liveAuctionsPage.flashOnly') || '1 Saatlik Flaş İhaleler' }}</span>
+                <span>🔥 {{ t('liveAuctionsPage.flashOnly') || '1-часовые флэш-торги' }}</span>
               </label>
             </div>
 
@@ -429,13 +429,13 @@ onMounted(() => {
                 @click="resetFilters"
               >
                 <RotateCcw class="w-3.5 h-3.5" />
-                <span>{{ t('liveAuctionsPage.clearFilters') || 'Temizle' }}</span>
+                <span>{{ t('liveAuctionsPage.clearFilters') || 'Сбросить' }}</span>
               </button>
               <button
                 class="flex-1 py-3 rounded-2xl bg-primary text-gray-950 font-black text-xs shadow-md"
                 @click="showMobileFilters = false"
               >
-                {{ t('liveAuctionsPage.resultsCount', { n: filteredAuctions.length }) || `${filteredAuctions.length} Sonuç Göster` }}
+                {{ t('liveAuctionsPage.resultsCount', { n: filteredAuctions.length }) || `Показать результаты (${filteredAuctions.length})` }}
               </button>
             </div>
           </div>
@@ -451,14 +451,14 @@ onMounted(() => {
           <div class="flex items-center justify-between pb-3 border-b border-black/5">
             <div class="flex items-center gap-2 text-xs font-black text-gray-950 uppercase tracking-wider">
               <SlidersHorizontal class="w-4 h-4 text-primary" />
-              <span>{{ t('liveAuctionsPage.filters') || 'Filtreler' }}</span>
+              <span>{{ t('liveAuctionsPage.filters') || 'Фильтры' }}</span>
             </div>
             <button 
               class="text-[11px] font-bold text-gray-400 hover:text-rose-600 transition-colors flex items-center gap-1 cursor-pointer" 
               @click="resetFilters"
             >
               <RotateCcw class="w-3 h-3" />
-              <span>{{ t('liveAuctionsPage.clearFilters') || 'Temizle' }}</span>
+              <span>{{ t('liveAuctionsPage.clearFilters') || 'Сбросить' }}</span>
             </button>
           </div>
 
@@ -466,22 +466,22 @@ onMounted(() => {
           <div class="space-y-2">
             <label class="text-xs font-extrabold text-gray-700 flex items-center gap-1.5">
               <MapPin class="w-3.5 h-3.5 text-primary" />
-              <span>{{ t('liveAuctionsPage.regionCity') || 'Bölge / Şehir' }}</span>
+              <span>{{ t('liveAuctionsPage.regionCity') || 'Регион / Город' }}</span>
             </label>
             <select
               v-model="selectedRegion"
               class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-black/10 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 cursor-pointer"
             >
-              <option value="all">{{ t('liveAuctionsPage.allKyrgyzstan') || 'Tüm Kırgızistan (Tümü)' }}</option>
+              <option value="all">{{ t('liveAuctionsPage.allKyrgyzstan') || 'Весь Кыргызстан' }}</option>
               <option v-for="r in kyrgyzstanRegions" :key="r.id" :value="r.id">
-                {{ r.name[currentLang] || r.name.tr || r.name.ky }}
+                {{ r.name[currentLang] || r.name.ru || r.name.ky || r.name.tr }}
               </option>
             </select>
           </div>
 
           <!-- Sort Filter -->
           <div class="space-y-2">
-            <label class="text-xs font-extrabold text-gray-700">{{ t('liveAuctionsPage.sorting') || 'Sıralama' }}</label>
+            <label class="text-xs font-extrabold text-gray-700">{{ t('liveAuctionsPage.sorting') || 'Сортировка' }}</label>
             <select
               v-model="selectedSort"
               class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-black/10 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 cursor-pointer"
@@ -494,18 +494,18 @@ onMounted(() => {
 
           <!-- Price Range -->
           <div class="space-y-2">
-            <label class="text-xs font-extrabold text-gray-700">{{ t('liveAuctionsPage.priceRange') || 'Fiyat Aralığı (KGS)' }}</label>
+            <label class="text-xs font-extrabold text-gray-700">{{ t('liveAuctionsPage.priceRange') || 'Диапазон цен (KGS)' }}</label>
             <div class="grid grid-cols-2 gap-2">
               <input
                 v-model.number="minPrice"
                 type="number"
-                :placeholder="t('liveAuctionsPage.min') || 'Min'"
+                :placeholder="t('liveAuctionsPage.min') || 'Мин'"
                 class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-black/10 text-xs font-mono font-bold"
               />
               <input
                 v-model.number="maxPrice"
                 type="number"
-                :placeholder="t('liveAuctionsPage.max') || 'Maks'"
+                :placeholder="t('liveAuctionsPage.max') || 'Макс'"
                 class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-black/10 text-xs font-mono font-bold"
               />
             </div>
@@ -515,7 +515,7 @@ onMounted(() => {
           <div class="pt-3 border-t border-black/5">
             <label class="flex items-center gap-2 text-xs font-bold text-rose-600 cursor-pointer">
               <input v-model="isBlitzOnly" type="checkbox" class="w-4 h-4 rounded text-rose-600" />
-              <span>🔥 {{ t('liveAuctionsPage.flashOnly') || '1 Saatlik Flaş İhaleler' }}</span>
+              <span>🔥 {{ t('liveAuctionsPage.flashOnly') || '1-часовые флэш-торги' }}</span>
             </label>
           </div>
 
@@ -554,10 +554,10 @@ onMounted(() => {
 
               <div class="max-w-lg mx-auto space-y-2">
                 <h3 class="text-xl sm:text-2xl font-black text-gray-950 tracking-tight">
-                  {{ t('liveAuctionsPage.noResultsTitle') || 'Bu Filtrelere Uygun İlan Bulunamadı' }}
+                  {{ t('liveAuctionsPage.noResultsTitle') || 'По этим фильтрам лоты не найдены' }}
                 </h3>
                 <p class="text-xs sm:text-sm text-gray-500 leading-relaxed">
-                  {{ t('liveAuctionsPage.noResultsDesc') || 'Filtrelerinizi genişleterek diğer kategorilere göz atabilir veya ilk açık artırmayı %0 komisyonla siz başlatabilirsiniz.' }}
+                  {{ t('liveAuctionsPage.noResultsDesc') || 'Вы можете расширить фильтры, просмотреть другие категории или начать первый аукцион с комиссией 0%.' }}
                 </p>
               </div>
 
@@ -567,7 +567,7 @@ onMounted(() => {
                   class="px-5 py-2.5 rounded-2xl border border-black/10 bg-white hover:bg-slate-50 text-gray-800 font-bold text-xs shadow-2xs transition-all cursor-pointer"
                   @click="resetFilters"
                 >
-                  {{ t('liveAuctionsPage.resetFiltersBtn') || 'Filtreleri Sıfırla' }}
+                  {{ t('liveAuctionsPage.resetFiltersBtn') || 'Сбросить фильтры' }}
                 </button>
 
                 <RouterLink 
@@ -575,7 +575,7 @@ onMounted(() => {
                   class="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-md transition-all flex items-center gap-1.5 cursor-pointer hover:scale-105"
                 >
                   <PlusCircle class="w-4 h-4" />
-                  <span>{{ t('liveAuctionsPage.startAuctionBtn') || '+ Hemen İlan Ver (%0 Komisyon)' }}</span>
+                  <span>{{ t('liveAuctionsPage.startAuctionBtn') || '+ Создать лот (0% комиссия)' }}</span>
                 </RouterLink>
               </div>
             </div>
@@ -585,10 +585,10 @@ onMounted(() => {
               <div class="flex items-center justify-between pb-2 border-b border-black/[0.05]">
                 <div class="flex items-center gap-2">
                   <Sparkles class="w-4 h-4 text-amber-600" />
-                  <h4 class="text-sm font-black text-gray-950">{{ t('liveAuctionsPage.exploreCategoriesTitle') || 'Popüler Kategorileri Keşfedin' }}</h4>
+                  <h4 class="text-sm font-black text-gray-950">{{ t('liveAuctionsPage.exploreCategoriesTitle') || 'Популярные категории' }}</h4>
                 </div>
                 <RouterLink to="/categories" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-                  <span>{{ t('liveAuctionsPage.allCategories') || 'Tüm Kategoriler' }}</span>
+                  <span>{{ t('liveAuctionsPage.allCategories') || 'Все категории' }}</span>
                   <ArrowRight class="w-3.5 h-3.5" />
                 </RouterLink>
               </div>
@@ -618,8 +618,8 @@ onMounted(() => {
                   <ShieldCheck class="w-4 h-4" />
                 </div>
                 <div>
-                  <h5 class="text-xs font-black text-gray-950">{{ t('home.trustEscrowTitle') || '%100 Banka Emaneti' }}</h5>
-                  <p class="text-[11px] text-gray-500">{{ t('home.trustEscrowDesc') || 'DemirBank Escrow koruması' }}</p>
+                  <h5 class="text-xs font-black text-gray-950">{{ t('home.trustEscrowTitle') || '100% банковский эскроу' }}</h5>
+                  <p class="text-[11px] text-gray-500">{{ t('home.trustEscrowDesc') || 'Защита DemirBank Escrow' }}</p>
                 </div>
               </div>
 
@@ -628,8 +628,8 @@ onMounted(() => {
                   <Zap class="w-4 h-4" />
                 </div>
                 <div>
-                  <h5 class="text-xs font-black text-gray-950">{{ t('home.trustQrTitle') || 'MBank & Optima QR' }}</h5>
-                  <p class="text-[11px] text-gray-500">{{ t('home.trustQrDesc') || '5 saniyede anında ödeme' }}</p>
+                  <h5 class="text-xs font-black text-gray-950">{{ t('home.trustQrTitle') || 'MBank и Optima QR' }}</h5>
+                  <p class="text-[11px] text-gray-500">{{ t('home.trustQrDesc') || 'Мгновенная оплата за 5 секунд' }}</p>
                 </div>
               </div>
 
@@ -638,8 +638,8 @@ onMounted(() => {
                   <Radio class="w-4 h-4" />
                 </div>
                 <div>
-                  <h5 class="text-xs font-black text-gray-950">{{ t('home.trustWsTitle') || 'Canlı WebSocket İhale' }}</h5>
-                  <p class="text-[11px] text-gray-500">{{ t('home.trustWsDesc') || 'Gecikmesiz anlık teklifler' }}</p>
+                  <h5 class="text-xs font-black text-gray-950">{{ t('home.trustWsTitle') || 'Торги в реальном времени' }}</h5>
+                  <p class="text-[11px] text-gray-500">{{ t('home.trustWsDesc') || 'Моментальные ставки через WebSocket' }}</p>
                 </div>
               </div>
             </div>

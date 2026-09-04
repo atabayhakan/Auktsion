@@ -513,6 +513,28 @@ watch(() => userStore.isAuthenticated, (val) => {
               </span>
             </RouterLink>
           </nav>
+
+          <!-- Mobile Language Switcher Row -->
+          <div class="pt-4 border-t border-black/[0.06] mt-3">
+            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">
+              {{ t('nav.language') || 'Язык / Тил / Dil' }}
+            </p>
+            <div class="grid grid-cols-3 gap-2">
+              <button
+                v-for="loc in supportedLocales"
+                :key="loc.code"
+                type="button"
+                class="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer"
+                :class="loc.code === currentLocale.code
+                  ? 'bg-amber-500/15 border-amber-500 text-amber-950 font-black shadow-xs'
+                  : 'bg-slate-50 border-black/10 text-gray-700 hover:bg-slate-100'"
+                @click="handleLanguageChange(loc.code)"
+              >
+                <FlagIcon :code="loc.code" custom-class="w-4 h-3 rounded-[2px]" />
+                <span class="truncate">{{ loc.nativeName }}</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="pt-6 pb-2 border-t border-black/[0.06] mt-4 text-center">

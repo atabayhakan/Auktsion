@@ -12,42 +12,52 @@ import {
   ChevronRight, 
   AlertTriangle,
   Info,
-  ExternalLink
+  ExternalLink,
+  ChevronDown,
+  Check
 } from 'lucide-vue-next'
 import { useAdminStore } from '@/stores/admin'
 import { useUserStore } from '@/stores/user'
 import { useI18n } from '@/composables/useI18n'
 import { usePublicSiteUrl } from '@/composables/usePublicSiteUrl'
+import FlagIcon from '@/components/icons/FlagIcon.vue'
+import Dropdown from '@/components/ui/Dropdown.vue'
 
 const route = useRoute()
 const router = useRouter()
 const adminStore = useAdminStore()
 const userStore = useUserStore()
-const { t } = useI18n()
+const { t, currentLocale, supportedLocales, setLocale } = useI18n()
 const dashboardUrl = usePublicSiteUrl('/dashboard')
 const mainSiteUrl = usePublicSiteUrl('/')
 
 const isDark = ref(false)
 const showNotifications = ref(false)
 const showUserMenu = ref(false)
+const langMenuOpen = ref(false)
 const searchQuery = ref('')
+
+function handleLanguageChange(code: string) {
+  setLocale(code as any)
+  langMenuOpen.value = false
+}
 
 const breadcrumbs = computed(() => {
   const path = route.path
   const parts = path.split('/').filter(Boolean)
   
   const map: Record<string, string> = {
-    overview: t('admin.nav.overview') || 'Genel Bakış',
-    users: t('admin.nav.users') || 'Kullanıcılar',
-    listings: t('admin.nav.listings') || 'İlan Moderasyonu',
-    disputes: t('admin.nav.disputes') || 'Uyuşmazlıklar',
-    kyc: t('admin.nav.kyc') || 'KYC Doğrulama',
-    financials: t('admin.nav.financials') || 'Finanslar & Ödemeler',
-    monitoring: t('admin.nav.monitoring') || 'Canlı İzleme (War Room)',
-    analytics: t('admin.nav.analytics') || 'Analitik & Raporlar',
-    media: t('admin.nav.media') || 'Medya Kütüphanesi',
-    design: 'Site Tasarımı & Stüdyo',
-    settings: t('nav.settings') || 'Ayarlar'
+    overview: t('admin.nav.overview') || 'Обзор',
+    users: t('admin.nav.users') || 'Пользователи',
+    listings: t('admin.nav.listings') || 'Модерация лотов',
+    disputes: t('admin.nav.disputes') || 'Споры и претензии',
+    kyc: t('admin.nav.kyc') || 'Верификация KYC',
+    financials: t('admin.nav.financials') || 'Финансы и платежи',
+    monitoring: t('admin.nav.monitoring') || 'Живой мониторинг',
+    analytics: t('admin.nav.analytics') || 'Аналитика',
+    media: t('admin.nav.media') || 'Медиатека',
+    design: t('admin.nav.design') || 'Дизайн и темы',
+    settings: t('admin.nav.settings') || 'Настройки'
   }
 
   const result = [{ label: 'iTorgo Admin', path: '/admin/overview' }]
@@ -182,6 +192,46 @@ onUnmounted(() => {
 
     <!-- Right: Actions & User Menu -->
     <div class="flex items-center gap-2 md:gap-3">
+      <!-- Language Selector Dropdown -->
+      <div class="relative">
+        <Dropdown
+          v-model="langMenuOpen"
+          trigger="click"
+          placement="bottom"
+          align="end"
+        >
+          <template #trigger>
+            <button
+              type="button"
+              class="px-2.5 py-1.5 rounded-lg bg-black/5 hover:bg-black/10 text-text-primary transition-all text-xs font-bold flex items-center gap-1.5 cursor-pointer shrink-0 border border-black/10"
+              :title="t('nav.language') || 'Language / Dil / Тил'"
+            >
+              <FlagIcon :code="currentLocale.code" custom-class="w-3.5 h-2.5 rounded-[2px]" />
+              <span class="uppercase text-[11px] font-extrabold text-text-primary">{{ currentLocale.code }}</span>
+              <ChevronDown class="w-3 h-3 text-text-muted transition-transform duration-200" :class="{ 'rotate-180': langMenuOpen }" />
+            </button>
+          </template>
+
+          <div class="w-44 p-1.5 bg-white rounded-xl shadow-xl border border-black/10 space-y-1">
+            <button
+              v-for="loc in supportedLocales"
+              :key="loc.code"
+              class="w-full flex items-center justify-between px-3 py-2 text-xs font-bold rounded-lg transition-colors text-left cursor-pointer"
+              :class="loc.code === currentLocale.code
+                ? 'bg-primary/15 text-text-primary font-black border border-primary/30'
+                : 'text-text-secondary hover:bg-black/5 hover:text-text-primary'"
+              @click="handleLanguageChange(loc.code)"
+            >
+              <div class="flex items-center gap-2">
+                <FlagIcon :code="loc.code" custom-class="w-4 h-3 rounded-[2px]" />
+                <span>{{ loc.nativeName }}</span>
+              </div>
+              <Check v-if="loc.code === currentLocale.code" class="w-3.5 h-3.5 text-primary stroke-[2.5]" />
+            </button>
+          </div>
+        </Dropdown>
+      </div>
+
       <!-- Dark / Light Mode Toggle -->
       <button
         type="button"

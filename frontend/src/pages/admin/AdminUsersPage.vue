@@ -58,7 +58,7 @@ function showToast(msg: string) {
 function copyToClipboard(text: string, id: string) {
   navigator.clipboard.writeText(text)
   copiedId.value = id
-  showToast('Kopyalandı: ' + text)
+  showToast(t('admin.users.copied', { text }) || ('Скопировано: ' + text))
   setTimeout(() => { copiedId.value = null }, 2000)
 }
 
@@ -118,10 +118,10 @@ function resetFilters() {
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight flex items-center gap-3">
-          <span>{{ t('admin.users.title') || 'Kullanıcı Yönetimi' }}</span>
+          <span>{{ t('admin.users.title') || 'Управление пользователями' }}</span>
         </h1>
         <p class="text-xs sm:text-sm text-gray-500 mt-1">
-          {{ t('admin.users.subtitle') || 'Tüm kayıtlı kullanıcılar, roller, escrow bakiyeleri ve güvenlik kontrolü' }}
+          {{ t('admin.users.subtitle') || 'Все зарегистрированные пользователи, роли, балансы эскроу и аудит безопасности' }}
         </p>
       </div>
 
@@ -138,7 +138,7 @@ function resetFilters() {
         </div>
         <div class="min-w-0">
           <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block truncate">
-            Toplam Kullanıcı
+            {{ t('admin.users.metrics.total') || 'Всего пользователей' }}
           </span>
           <span class="text-lg font-black text-gray-900 mt-0.5 block">
             {{ adminStore.usersMeta.total }}
@@ -152,7 +152,7 @@ function resetFilters() {
         </div>
         <div class="min-w-0">
           <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block truncate">
-            Satıcılar (Sellers)
+            {{ t('admin.users.metrics.sellers') || 'Продавцы (Sellers)' }}
           </span>
           <span class="text-lg font-black text-gray-900 mt-0.5 block">
             {{ totalSellers }}
@@ -166,7 +166,7 @@ function resetFilters() {
         </div>
         <div class="min-w-0">
           <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block truncate">
-            Alıcılar (Buyers)
+            {{ t('admin.users.metrics.buyers') || 'Покупатели (Buyers)' }}
           </span>
           <span class="text-lg font-black text-gray-900 mt-0.5 block">
             {{ totalBuyers }}
@@ -180,7 +180,7 @@ function resetFilters() {
         </div>
         <div class="min-w-0">
           <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block truncate">
-            KYC Doğrulandı
+            {{ t('admin.users.metrics.kycVerified') || 'Верифицированы KYC' }}
           </span>
           <span class="text-lg font-black text-gray-900 mt-0.5 block">
             {{ totalVerified }}
@@ -198,7 +198,7 @@ function resetFilters() {
           <input
             v-model="adminStore.userFilters.search"
             type="text"
-            :placeholder="t('admin.users.searchPlaceholder') || 'İsim, VKN, telefon veya e-posta...'"
+            :placeholder="t('admin.users.searchPlaceholder') || 'Имя, ИНН, телефон или email...'"
             class="w-full pl-10 pr-8 py-2.5 bg-slate-50 border border-black/[0.08] rounded-2xl focus:outline-none focus:border-primary focus:bg-white text-xs text-gray-900 transition-all placeholder-gray-400"
             @input="onFilterChange"
           />
@@ -215,15 +215,15 @@ function resetFilters() {
         <div>
           <select
             v-model="adminStore.userFilters.role"
-            :aria-label="t('admin.users.roleFilter')"
+            :aria-label="t('admin.users.roleFilter') || 'Роль'"
             class="w-full px-3.5 py-2.5 bg-slate-50 border border-black/[0.08] rounded-2xl focus:outline-none focus:border-primary focus:bg-white text-gray-800 font-semibold text-xs cursor-pointer transition-all"
             @change="onFilterChange"
           >
-            <option value="all">{{ t('admin.users.roleOptions.all') || 'Tüm Roller' }}</option>
-            <option value="buyer">{{ t('admin.users.roleOptions.buyer') || 'Alıcı (Buyer)' }}</option>
-            <option value="seller">{{ t('admin.users.roleOptions.seller') || 'Satıcı (Seller)' }}</option>
-            <option value="moderator">{{ t('admin.users.roleOptions.moderator') || 'Moderatör' }}</option>
-            <option value="admin">{{ t('admin.users.roleOptions.admin') || 'Yönetici (Admin)' }}</option>
+            <option value="all">{{ t('admin.users.roleOptions.all') || 'Все роли' }}</option>
+            <option value="buyer">{{ t('admin.users.roleOptions.buyer') || 'Покупатели' }}</option>
+            <option value="seller">{{ t('admin.users.roleOptions.seller') || 'Продавцы' }}</option>
+            <option value="moderator">{{ t('admin.users.roleOptions.moderator') || 'Модераторы' }}</option>
+            <option value="admin">{{ t('admin.users.roleOptions.admin') || 'Администраторы' }}</option>
           </select>
         </div>
 
@@ -231,14 +231,14 @@ function resetFilters() {
         <div>
           <select
             v-model="adminStore.userFilters.status"
-            :aria-label="t('admin.users.statusFilter')"
+            :aria-label="t('admin.users.statusFilter') || 'Статус'"
             class="w-full px-3.5 py-2.5 bg-slate-50 border border-black/[0.08] rounded-2xl focus:outline-none focus:border-primary focus:bg-white text-gray-800 font-semibold text-xs cursor-pointer transition-all"
             @change="onFilterChange"
           >
-            <option value="all">{{ t('admin.users.statusOptions.all') || 'Tüm Durumlar' }}</option>
-            <option value="active">{{ t('admin.users.statusOptions.active') || 'Aktif' }}</option>
-            <option value="suspended">{{ t('admin.users.statusOptions.suspended') || 'Askıya Alındı' }}</option>
-            <option value="banned">{{ t('admin.users.statusOptions.banned') || 'Engellendi' }}</option>
+            <option value="all">{{ t('admin.users.statusOptions.all') || 'Все статусы' }}</option>
+            <option value="active">{{ t('admin.users.statusOptions.active') || 'Активен' }}</option>
+            <option value="suspended">{{ t('admin.users.statusOptions.suspended') || 'Приостановлен' }}</option>
+            <option value="banned">{{ t('admin.users.statusOptions.banned') || 'Заблокирован' }}</option>
           </select>
         </div>
 
@@ -246,15 +246,15 @@ function resetFilters() {
         <div>
           <select
             v-model="adminStore.userFilters.kycStatus"
-            :aria-label="t('admin.users.kycFilter')"
+            :aria-label="t('admin.users.kycFilter') || 'Статус KYC'"
             class="w-full px-3.5 py-2.5 bg-slate-50 border border-black/[0.08] rounded-2xl focus:outline-none focus:border-primary focus:bg-white text-gray-800 font-semibold text-xs cursor-pointer transition-all"
             @change="onFilterChange"
           >
-            <option value="all">{{ t('admin.users.kycOptions.all') || 'Tüm KYC Seviyeleri' }}</option>
-            <option value="verified">{{ t('admin.users.kycOptions.verified') || 'Doğrulandı' }}</option>
-            <option value="pending">{{ t('admin.users.kycOptions.pending') || 'İncelemede' }}</option>
-            <option value="not_started">{{ t('admin.users.kycOptions.notStarted') || 'Başlatılmadı' }}</option>
-            <option value="rejected">{{ t('admin.users.kycOptions.rejected') || 'Reddedildi' }}</option>
+            <option value="all">{{ t('admin.users.kycOptions.all') || 'Все уровни KYC' }}</option>
+            <option value="verified">{{ t('admin.users.kycOptions.verified') || 'Подтверждён' }}</option>
+            <option value="pending">{{ t('admin.users.kycOptions.pending') || 'На проверке' }}</option>
+            <option value="not_started">{{ t('admin.users.kycOptions.notStarted') || 'Не начат' }}</option>
+            <option value="rejected">{{ t('admin.users.kycOptions.rejected') || 'Отклонён' }}</option>
           </select>
         </div>
       </div>
@@ -266,13 +266,13 @@ function resetFilters() {
         <table class="w-full text-left text-xs">
           <thead class="bg-slate-50 text-gray-500 font-extrabold uppercase tracking-wider border-b border-black/[0.06] text-[11px]">
             <tr>
-              <th class="py-3.5 px-5">{{ t('admin.users.table.user') || 'KULLANICI' }}</th>
-              <th class="py-3.5 px-4">{{ t('admin.users.table.innContacts') || 'VKN VE İLETİŞİM' }}</th>
-              <th class="py-3.5 px-4">{{ t('admin.users.table.role') || 'ROL' }}</th>
-              <th class="py-3.5 px-4">{{ t('admin.users.table.status') || 'DURUM' }}</th>
-              <th class="py-3.5 px-4">{{ t('admin.users.table.kycStatus') || 'KYC DURUMU' }}</th>
-              <th class="py-3.5 px-4">{{ t('admin.users.table.balance') || 'BAKİYE' }}</th>
-              <th class="py-3.5 px-5 text-right">{{ t('admin.users.table.actions') || 'İŞLEMLER' }}</th>
+              <th class="py-3.5 px-5">{{ t('admin.users.table.user') || 'ПОЛЬЗОВАТЕЛЬ' }}</th>
+              <th class="py-3.5 px-4">{{ t('admin.users.table.innContacts') || 'ИНН И КОНТАКТЫ' }}</th>
+              <th class="py-3.5 px-4">{{ t('admin.users.table.role') || 'РОЛЬ' }}</th>
+              <th class="py-3.5 px-4">{{ t('admin.users.table.status') || 'СТАТУС' }}</th>
+              <th class="py-3.5 px-4">{{ t('admin.users.table.kycStatus') || 'СТАТУС KYC' }}</th>
+              <th class="py-3.5 px-4">{{ t('admin.users.table.balance') || 'БАЛАНС' }}</th>
+              <th class="py-3.5 px-5 text-right">{{ t('admin.users.table.actions') || 'ДЕЙСТВИЯ' }}</th>
             </tr>
           </thead>
 
@@ -293,7 +293,7 @@ function resetFilters() {
                     <div
                       v-if="u.kycStatus === 'verified'"
                       class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center ring-2 ring-white text-[9px]"
-                      title="KYC Doğrulanmış"
+                      :title="t('admin.users.kycOptions.verified') || 'KYC подтверждён'"
                     >
                       ✓
                     </div>
@@ -308,7 +308,7 @@ function resetFilters() {
                       <button
                         @click="copyToClipboard(u.id, u.id)"
                         class="hover:text-gray-700 font-mono text-[10px] bg-gray-100 hover:bg-gray-200 px-1.5 py-0.5 rounded transition-colors"
-                        :title="'Kullanıcı ID Kopyala: ' + u.id"
+                        :title="(t('common.copy') || 'Копировать') + ' ID: ' + u.id"
                       >
                         {{ u.id }}
                       </button>
@@ -326,7 +326,7 @@ function resetFilters() {
                       v-if="u.inn"
                       @click="copyToClipboard(u.inn, u.id + '-inn')"
                       class="text-gray-400 hover:text-gray-700 transition-colors"
-                      title="VKN Kopyala"
+                      :title="(t('common.copy') || 'Копировать') + ' ИНН'"
                     >
                       <Copy class="w-3 h-3" />
                     </button>
@@ -381,7 +381,7 @@ function resetFilters() {
                       u.status === 'banned' ? 'bg-rose-600' : ''
                     ]"
                   />
-                  <span>{{ u.status === 'active' ? (t('admin.users.statusOptions.active') || 'Aktif') : (u.status === 'suspended' ? (t('admin.users.statusOptions.suspended') || 'Askıya Alındı') : (t('admin.users.statusOptions.banned') || 'Engellendi')) }}</span>
+                  <span>{{ u.status === 'active' ? (t('admin.users.statusOptions.active') || 'Активен') : (u.status === 'suspended' ? (t('admin.users.statusOptions.suspended') || 'Приостановлен') : (t('admin.users.statusOptions.banned') || 'Заблокирован')) }}</span>
                 </span>
               </td>
 
@@ -392,20 +392,20 @@ function resetFilters() {
                   class="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200/60"
                 >
                   <ShieldCheck class="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{{ t('admin.users.kycOptions.verified') || 'Doğrulandı' }}</span>
+                  <span>{{ t('admin.users.kycOptions.verified') || 'Подтверждён' }}</span>
                 </span>
                 <span
                   v-else-if="u.kycStatus === 'pending'"
                   class="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 rounded-xl bg-amber-50 text-amber-800 border border-amber-200/60"
                 >
                   <Clock class="w-3.5 h-3.5 text-amber-600" />
-                  <span>{{ t('admin.users.kycOptions.pending') || 'İncelemede' }}</span>
+                  <span>{{ t('admin.users.kycOptions.pending') || 'На проверке' }}</span>
                 </span>
                 <span
                   v-else
                   class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-gray-100 text-gray-500"
                 >
-                  <span>{{ t('admin.users.kycOptions.notStarted') || 'Başlatılmadı' }}</span>
+                  <span>{{ t('admin.users.kycOptions.notStarted') || 'Не начат' }}</span>
                 </span>
               </td>
 
@@ -421,7 +421,7 @@ function resetFilters() {
                 <div class="flex items-center justify-end gap-1.5">
                   <button
                     class="p-2 text-gray-600 hover:text-gray-950 hover:bg-slate-100 rounded-xl transition-all border border-transparent hover:border-black/[0.08] shadow-2xs"
-                    :title="t('admin.users.viewProfile') || 'Detayları İncele'"
+                    :title="t('admin.users.viewProfile') || 'Просмотреть профиль'"
                     @click="handleViewDetail(u)"
                   >
                     <Eye class="w-4 h-4" />
@@ -429,7 +429,7 @@ function resetFilters() {
 
                   <button
                     class="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-xl transition-all border border-transparent hover:border-purple-200 shadow-2xs"
-                    :title="t('admin.actions.changeRole') || 'Rol Düzenle'"
+                    :title="t('admin.actions.changeRole') || 'Изменить роль'"
                     @click="handleOpenRole(u)"
                   >
                     <Shield class="w-4 h-4" />
@@ -437,7 +437,7 @@ function resetFilters() {
 
                   <button
                     class="p-2 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-xl transition-all border border-transparent hover:border-rose-200 shadow-2xs"
-                    :title="t('admin.users.toggleBan') || 'Engelle / Durum Değiştir'"
+                    :title="t('admin.users.toggleBan') || 'Заблокировать / разблокировать'"
                     @click="handleOpenBan(u)"
                   >
                     <Ban class="w-4 h-4" />
@@ -461,7 +461,7 @@ function resetFilters() {
             @click="adminStore.fetchUsers(adminStore.usersMeta.currentPage - 1)"
           >
             <ChevronLeft class="w-3.5 h-3.5" />
-            <span>{{ t('admin.pagination.prev') || 'Geri' }}</span>
+            <span>{{ t('admin.pagination.prev') || 'Назад' }}</span>
           </button>
 
           <button
@@ -469,7 +469,7 @@ function resetFilters() {
             class="px-3 py-1.5 rounded-xl border border-black/[0.08] bg-white disabled:opacity-40 hover:bg-slate-100 font-bold flex items-center gap-1 text-gray-700 transition-colors shadow-2xs"
             @click="adminStore.fetchUsers(adminStore.usersMeta.currentPage + 1)"
           >
-            <span>{{ t('admin.pagination.next') || 'İleri' }}</span>
+            <span>{{ t('admin.pagination.next') || 'Вперёд' }}</span>
             <ChevronRight class="w-3.5 h-3.5" />
           </button>
         </div>
