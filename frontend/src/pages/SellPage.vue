@@ -35,14 +35,17 @@ import {
   Wheat,
   Gem,
   Palette,
-  Tractor
+  Tractor,
+  Play
 } from 'lucide-vue-next'
+import SellerWalkthroughFilm from '@/components/film/SellerWalkthroughFilm.vue'
 
 const { t, currentLocale } = useI18n()
 const router = useRouter()
 const userStore = useUserStore()
 const uiStore = useUIStore()
 const auctionStore = useAuctionStore()
+const showVideoGuide = ref(false)
 
 const categoryIconMap: Record<string, any> = {
   electronics: Smartphone,
@@ -464,11 +467,24 @@ async function submitAuction() {
             </p>
           </div>
 
-          <div class="flex items-center gap-2 shrink-0">
+          <div class="flex items-center gap-3 shrink-0">
+            <button
+              type="button"
+              class="px-3.5 py-2 rounded-2xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-950 font-black text-xs shadow-2xs hover:shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+              @click="showVideoGuide = !showVideoGuide"
+            >
+              <Play class="w-3.5 h-3.5 fill-emerald-600 text-emerald-600" />
+              <span>{{ showVideoGuide ? (currentLocale === 'ky' ? 'Кинону жабуу' : (currentLocale === 'tr' ? 'Rehber Filmini Kapat' : 'Скрыть видео-гид')) : (currentLocale === 'ky' ? '🎬 Кантип лот чыгаруу керек? (Кино көрүү)' : (currentLocale === 'tr' ? '🎬 Nasıl İlan Verilir? (Filmi İzle)' : '🎬 Как выставить лот? (Видео-гид)')) }}</span>
+            </button>
             <span class="text-xs font-black text-gray-400 font-mono">
               {{ t('sell.stepCounter', { step: currentStep }) || `Шаг ${currentStep} / 4` }}
             </span>
           </div>
+        </div>
+
+        <!-- Expandable Animated Walkthrough Cinema in SellPage -->
+        <div v-if="showVideoGuide" class="p-2 sm:p-4 rounded-3xl bg-slate-900/90 border border-emerald-500/30 shadow-xl space-y-2 animate-fade-in">
+          <SellerWalkthroughFilm />
         </div>
 
         <!-- Visual Stepper Bar -->

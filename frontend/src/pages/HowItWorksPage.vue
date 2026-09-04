@@ -7,17 +7,21 @@ import {
   HelpCircle, ThumbsUp, Smartphone, Layers
 } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
-import { useI18n } from '@/composables/useI18n'
 import SiteWalkthroughFilm from '@/components/film/SiteWalkthroughFilm.vue'
+import SellerWalkthroughFilm from '@/components/film/SellerWalkthroughFilm.vue'
 
 const { t, currentLocale } = useI18n()
 
+const activeFilmTab = ref<'buyer' | 'seller'>('buyer')
 const filmRef = ref<any>(null)
+const sellerFilmRef = ref<any>(null)
 const filmContainerRef = ref<HTMLElement | null>(null)
 
 function jumpToFilmScene(idx: number) {
-  if (filmRef.value) {
+  if (activeFilmTab.value === 'buyer' && filmRef.value) {
     filmRef.value.goToScene(idx)
+  } else if (activeFilmTab.value === 'seller' && sellerFilmRef.value) {
+    sellerFilmRef.value.goToScene(idx)
   }
   filmContainerRef.value?.scrollIntoView({ behavior: 'smooth', block: 'center' })
 }
@@ -196,8 +200,40 @@ function toggleFaq(idx: number) {
           </div>
         </div>
 
+        <!-- Film Mode Tabs -->
+        <div class="flex flex-wrap items-center justify-between gap-3 p-1.5 rounded-2xl bg-white border border-black/10 shadow-xs">
+          <div class="flex items-center gap-1.5 w-full sm:w-auto">
+            <button
+              type="button"
+              class="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer flex items-center justify-center gap-2"
+              :class="activeFilmTab === 'buyer'
+                ? 'bg-amber-400 text-gray-950 shadow-xs'
+                : 'text-gray-600 hover:text-gray-950 hover:bg-slate-50'"
+              @click="activeFilmTab = 'buyer'"
+            >
+              <span>🛍️ {{ currentLocale === 'ky' ? 'Сатып алуучунун Гиди' : (currentLocale === 'tr' ? 'Alıcı Rehberi (Teklif Verme)' : 'Для Покупателей: Как участвовать') }}</span>
+            </button>
+            <button
+              type="button"
+              class="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer flex items-center justify-center gap-2"
+              :class="activeFilmTab === 'seller'
+                ? 'bg-emerald-500 text-gray-950 shadow-xs'
+                : 'text-gray-600 hover:text-gray-950 hover:bg-slate-50'"
+              @click="activeFilmTab = 'seller'"
+            >
+              <span>🏪 {{ currentLocale === 'ky' ? 'Сатуучунун Гиди (Илан берүү)' : (currentLocale === 'tr' ? 'Satıcı Rehberi (Nasıl İlan Verilir?)' : 'Для Продавцов: Как создать лот') }}</span>
+            </button>
+          </div>
+
+          <div class="hidden sm:flex items-center gap-2 pr-3 text-xs font-bold text-gray-500">
+            <Sparkles class="w-4 h-4 text-amber-500" />
+            <span>{{ activeFilmTab === 'buyer' ? (currentLocale === 'ky' ? 'Коюм коюу, эскроу жана жеңүү' : (currentLocale === 'tr' ? 'Teklif verme, emanet ve teslimat' : 'Ставки, эскроу и победа')) : (currentLocale === 'ky' ? 'AI баяндоо, сүрөт жана акча чыгаруу' : (currentLocale === 'tr' ? 'AI açıklama, fotoğraf ve tahsilat' : 'AI-описание, фото и выплата')) }}</span>
+          </div>
+        </div>
+
         <!-- Cinema Device Frame -->
-        <SiteWalkthroughFilm ref="filmRef" />
+        <SiteWalkthroughFilm v-if="activeFilmTab === 'buyer'" ref="filmRef" />
+        <SellerWalkthroughFilm v-else ref="sellerFilmRef" />
       </section>
 
       <!-- ================================================================
