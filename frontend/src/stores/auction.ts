@@ -211,6 +211,33 @@ export const useAuctionStore = defineStore('auction', () => {
     }
   }
 
+  function addAuction(auction: any) {
+    const formatted: Auction = {
+      id: auction.id || 'auc-' + Date.now(),
+      title: auction.title || '',
+      description: auction.description || '',
+      category: auction.category || 'other',
+      city: auction.city || 'Бишкек',
+      startingPrice: auction.startingPrice && typeof auction.startingPrice === 'object'
+        ? auction.startingPrice
+        : { amount: String(auction.startingPrice || 0), currency: 'KGS', minorUnits: (Number(auction.startingPrice) || 0) * 100 },
+      currentPrice: auction.currentPrice && typeof auction.currentPrice === 'object'
+        ? auction.currentPrice
+        : { amount: String(auction.startingPrice || 0), currency: 'KGS', minorUnits: (Number(auction.startingPrice) || 0) * 100 },
+      bidCount: auction.bidCount || 0,
+      sellerId: auction.sellerId || 'usr-1',
+      status: auction.status || 'active',
+      images: Array.isArray(auction.images) ? auction.images : [],
+      createdAt: auction.createdAt || new Date().toISOString(),
+      endsAt: auction.endsAt || new Date(Date.now() + (auction.durationHours || 72) * 3600000).toISOString(),
+      isBlitz: Boolean(auction.isBlitz),
+      isFeatured: Boolean(auction.isFeatured),
+      isWatching: false,
+    }
+    auctions.value.unshift(formatted)
+    totalCount.value++
+  }
+
   return {
     // State
     auctions,
@@ -236,6 +263,7 @@ export const useAuctionStore = defineStore('auction', () => {
     updateAuctionPrice,
     setAuctionStatus,
     setWatchlisted,
+    addAuction,
     clearCurrentAuction,
     clearAuctions,
     resetFilters,

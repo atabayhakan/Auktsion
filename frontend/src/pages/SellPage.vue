@@ -6,6 +6,7 @@ import { useUserStore } from '@/stores/user'
 import { useUIStore } from '@/stores/ui'
 import { useAuctionStore } from '@/stores/auction'
 import { auctionService } from '@/services/auctionService'
+import apiClient from '@/services/api'
 import { generateListingWithAI } from '@/services/aiService'
 import { platformCategories } from '@/data/categories'
 import { kyrgyzstanRegions } from '@/data/regions'
@@ -264,6 +265,57 @@ function prevStep() {
   }
 }
 
+function compressImage(file: File, maxWidth = 1600, quality = 0.82): Promise<{ file: File; dataUrl: string }> {
+  return new Promise((resolve) => {
+    if (file.type === 'image/svg+xml') {
+      const reader = new FileReader()
+      reader.onload = () => resolve({ file, dataUrl: reader.result as string })
+      reader.onerror = () => resolve({ file, dataUrl: '' })
+      reader.readAsDataURL(file)
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const img = new Image()
+      img.onload = () => {
+        let { width, height } = img
+        if (width > maxWidth || height > maxWidth) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width)
+            width = maxWidth
+          } else {
+            width = Math.round((width * maxWidth) / height)
+            height = maxWidth
+          }
+        }
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height)
+          const mime = file.type === 'image/png' ? 'image/png' : 'image/jpeg'
+          const dataUrl = canvas.toDataURL(mime, quality)
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const compressedFile = new File([blob], file.name, { type: mime })
+              resolve({ file: compressedFile, dataUrl })
+            } else {
+              resolve({ file, dataUrl })
+            }
+          }, mime, quality)
+        } else {
+          resolve({ file, dataUrl: reader.result as string })
+        }
+      }
+      img.onerror = () => resolve({ file, dataUrl: reader.result as string })
+      img.src = e.target?.result as string
+    }
+    reader.onerror = () => resolve({ file, dataUrl: '' })
+    reader.readAsDataURL(file)
+  })
+}
+
 async function handleImageFiles(event: Event) {
   const input = event.target as HTMLInputElement
   const files = input.files
@@ -272,8 +324,8 @@ async function handleImageFiles(event: Event) {
   imageUploadError.value = ''
   try {
     for (const file of Array.from(files)) {
-      if (file.size > 10 * 1024 * 1024) {
-        imageUploadError.value = `${file.name} — ${t('sell.maxFileSize') || 'Максимальный размер файла: 10 МБ'}`
+      if (file.size > 25 * 1024 * 1024) {
+        imageUploadError.value = `${file.name} — ${t('sell.maxFileSize') || 'Максимальный размер файла: 25 МБ'}`
         continue
       }
       if (!file.type.startsWith('image/')) {
@@ -281,14 +333,27 @@ async function handleImageFiles(event: Event) {
         continue
       }
 
-      // Convert to base64 preview or upload
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          formData.value.images.push(e.target.result as string)
+      // 1. Client-side downscale and compress (shrinks 10MB down to ~150KB)
+      const compressed = await compressImage(file)
+      if (!compressed.dataUrl) continue
+
+      // 2. If authenticated, try direct server upload to /api/upload
+      if (userStore.isAuthenticated) {
+        try {
+          const uploadFormData = new FormData()
+          uploadFormData.append('file', compressed.file)
+          const res = await apiClient.post<{ success: boolean; url: string }>('/api/upload', uploadFormData)
+          if (res?.data?.url) {
+            formData.value.images.push(res.data.url)
+            continue
+          }
+        } catch (uploadErr) {
+          console.warn('Direct upload failed, using optimized base64:', uploadErr)
         }
       }
-      reader.readAsDataURL(file)
+
+      // 3. Fallback to optimized compressed data URL
+      formData.value.images.push(compressed.dataUrl)
     }
   } catch (err: any) {
     const msg = err?.response?.data?.error || err?.message || (t('sell.uploadError') || 'Ошибка загрузки изображения')
