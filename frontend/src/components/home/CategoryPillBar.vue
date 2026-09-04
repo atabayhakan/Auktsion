@@ -53,9 +53,9 @@ const categories = computed(() => {
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative w-full max-w-full min-w-0 overflow-hidden">
     <!-- Horizontal Scroll Bar -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none scroll-smooth">
+    <div class="flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none scroll-smooth w-full max-w-full min-w-0">
       <button
         v-for="cat in categories"
         :key="cat.slug"

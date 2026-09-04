@@ -42,7 +42,7 @@ const cities = [
 
 const navLinks = computed(() => [
   { path: '/auctions', label: t('nav.auctions') || 'Каталог', icon: Store },
-  { path: '/auctions?status=live', label: t('nav.liveAuctions') || 'Живые торги', icon: Radio, badge: t('common.live') || 'LIVE' },
+  { path: '/auctions?status=live', label: t('nav.liveAuctions') || 'Живые торги', icon: Radio, badge: 'LIVE' },
   { path: '/how-it-works', label: t('nav.howItWorks') || 'Как это работает', icon: HelpCircle },
 ])
 
@@ -235,7 +235,7 @@ watch(() => userStore.isAuthenticated, (val) => {
         </div>
 
         <!-- Center: Interactive Search Bar Trigger (Desktop only lg+) -->
-        <div class="hidden lg:flex flex-1 max-w-lg mx-3">
+        <div class="hidden lg:flex flex-1 max-w-sm xl:max-w-md 2xl:max-w-lg mx-2 xl:mx-3 min-w-[160px]">
           <button
             type="button"
             class="w-full relative flex items-center bg-slate-100/90 hover:bg-slate-100 focus:bg-white rounded-2xl border border-black/[0.08] hover:border-amber-500/40 px-3.5 py-2 transition-all duration-200 cursor-pointer text-left shadow-2xs group"
@@ -245,7 +245,7 @@ watch(() => userStore.isAuthenticated, (val) => {
             <span class="text-xs font-medium text-gray-500 truncate ml-2.5 flex-1">
               {{ t('nav.searchPlaceholder') || 'Что вы ищете? Например: iPhone, Camry, Арашан...' }}
             </span>
-            <span class="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-black/10 text-gray-400 shadow-2xs">
+            <span class="hidden xl:inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-black/10 text-gray-400 shadow-2xs shrink-0">
               <Sparkles class="w-3 h-3 text-amber-500" />
               <span>Поиск</span>
             </span>
@@ -255,8 +255,8 @@ watch(() => userStore.isAuthenticated, (val) => {
         <!-- Right Side: Links, Language, Profile & Mobile Hamburger -->
         <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
           
-          <!-- Primary Navigation Links (Desktop only xl+) -->
-          <nav class="hidden xl:flex items-center gap-1 shrink-0 mr-1">
+          <!-- Primary Navigation Links (Desktop wide only 2xl+) -->
+          <nav class="hidden 2xl:flex items-center gap-1 shrink-0 mr-1">
             <RouterLink
               v-for="link in navLinks"
               :key="link.path"
@@ -275,7 +275,7 @@ watch(() => userStore.isAuthenticated, (val) => {
           <!-- Sell Accent Button (Desktop only) -->
           <RouterLink 
             to="/sell" 
-            class="hidden sm:inline-flex px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs shadow-sm hover:shadow hover:scale-[1.02] active:scale-95 transition-all items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
+            class="hidden sm:inline-flex px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs shadow-sm hover:shadow hover:scale-[1.02] active:scale-95 transition-all items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
           >
             <PlusCircle class="w-3.5 h-3.5 stroke-[2.5]" />
             <span>{{ t('nav.sell') || '+ Продать' }}</span>
@@ -335,7 +335,7 @@ watch(() => userStore.isAuthenticated, (val) => {
                   <div class="w-6 h-6 rounded-lg bg-primary flex items-center justify-center font-black text-xs text-gray-950 shrink-0 shadow-2xs">
                     {{ userStore.fullName?.charAt(0) || 'U' }}
                   </div>
-                  <span class="hidden sm:inline-block text-xs font-bold text-gray-900 max-w-[90px] md:max-w-[120px] truncate">
+                  <span class="hidden sm:inline-block text-xs font-bold text-gray-900 max-w-[70px] sm:max-w-[90px] xl:max-w-[120px] truncate">
                     {{ userStore.fullName }}
                   </span>
                   <ChevronDown class="hidden sm:block w-3.5 h-3.5 text-gray-400 transition-transform duration-200 shrink-0" :class="{ 'rotate-180': userMenuOpen }" />

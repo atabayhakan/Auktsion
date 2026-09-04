@@ -61,15 +61,15 @@ const liveViewers = computed(() => {
 </script>
 
 <template>
-  <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#0B0D13] via-[#12151F] to-[#181C28] border border-white/10 text-white shadow-2xl">
+  <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#0B0D13] via-[#12151F] to-[#181C28] border border-white/10 text-white shadow-2xl w-full max-w-full">
     <!-- Ambient Studio Lighting Effects -->
     <div class="absolute -top-24 -left-24 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
     <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
 
-    <div class="relative grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-10 p-3.5 sm:p-6 lg:p-10 items-center">
+    <div class="relative grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-10 p-3.5 sm:p-6 lg:p-10 items-center w-full min-w-0">
       
       <!-- Left: Hero Product Photography & Live Status -->
-      <div class="lg:col-span-7 flex flex-col justify-center">
+      <div class="lg:col-span-7 flex flex-col justify-center min-w-0">
         <div class="relative rounded-2xl overflow-hidden h-40 sm:h-56 lg:h-[340px] bg-black/40 border border-white/10 shadow-inner group">
           <img
             :src="auction.images[0]"
@@ -111,7 +111,7 @@ const liveViewers = computed(() => {
       </div>
 
       <!-- Right: Commercial Info & Fully Visible CTAs -->
-      <div class="lg:col-span-5 flex flex-col justify-between space-y-3 sm:space-y-4 lg:space-y-6">
+      <div class="lg:col-span-5 flex flex-col justify-between space-y-3 sm:space-y-4 lg:space-y-6 min-w-0">
         
         <!-- Header & Seller -->
         <div class="space-y-2">

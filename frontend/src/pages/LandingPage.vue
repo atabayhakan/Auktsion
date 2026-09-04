@@ -140,13 +140,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F8F9FC] text-gray-900 font-sans pt-28 sm:pt-32 lg:pt-24 pb-24 px-3 sm:px-5 lg:px-8">
-    <div class="max-w-[1440px] mx-auto space-y-8 sm:space-y-12">
+  <div class="min-h-screen w-full max-w-full overflow-x-hidden bg-[#F8F9FC] text-gray-900 font-sans pt-20 sm:pt-24 lg:pt-24 pb-24 px-3 sm:px-5 lg:px-8">
+    <div class="max-w-[1440px] mx-auto space-y-8 sm:space-y-12 w-full min-w-0">
 
       <!-- ================================================================
            1. THE SIGNATURE: FEATURED LIVE AUCTION (Dark Studio Hero)
            ================================================================ -->
-      <section aria-label="Featured Live Auction">
+      <section aria-label="Featured Live Auction" class="w-full min-w-0">
         <FeaturedLiveAuction
           :auction="featuredHeroAuction"
           @open-bid="openBidSheet"
@@ -156,7 +156,7 @@ onMounted(async () => {
       <!-- ================================================================
            2. QUICK HORIZONTAL CATEGORY NAVIGATION BAR
            ================================================================ -->
-      <section aria-label="Category Navigation" class="relative">
+      <section aria-label="Category Navigation" class="relative w-full max-w-full min-w-0 overflow-hidden">
         <CategoryPillBar
           :active-slug="activeCategorySlug"
           @select="activeCategorySlug = $event"
