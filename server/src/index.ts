@@ -90,28 +90,52 @@ app.use('/api', metaRoutes);
 app.get('/sitemap.xml', getSitemapXml);
 app.get('/robots.txt', getRobotsTxt);
 
-// 5. Hostinger / VPS Single-Port SPA Serving
-if (fs.existsSync(config.frontendDist)) {
-  console.log(`📦 Serving frontend SPA static files from ${config.frontendDist}`);
-  app.use(express.static(config.frontendDist));
+// 5. Hostinger / VPS Single-Port SPA Serving (Multi-tenant: itorgo.kg vs admin.itorgo.kg)
+const hasFrontendDist = fs.existsSync(config.frontendDist);
+const hasAdminDist = fs.existsSync(config.adminDist);
+
+if (hasFrontendDist || hasAdminDist) {
+  if (hasFrontendDist) console.log(`📦 Serving frontend SPA static files from ${config.frontendDist}`);
+  if (hasAdminDist) console.log(`📦 Serving admin SPA static files from ${config.adminDist}`);
+
+  // Express static middleware with host routing
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/ws')) {
+      return next();
+    }
+    const host = req.hostname || (req.headers.host || '').split(':')[0];
+    const isAdminHost = host.startsWith('admin.');
+
+    if (isAdminHost && hasAdminDist) {
+      express.static(config.adminDist)(req, res, next);
+    } else if (hasFrontendDist) {
+      express.static(config.frontendDist)(req, res, next);
+    } else {
+      next();
+    }
+  });
 
   // SPA Fallback for all non-API routes
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/ws')) {
       return next();
     }
-    // res.sendFile requires an absolute path (or a `root` option) — passing
-    // config.frontendDist directly throws whenever it's a relative path
-    // (e.g. FRONTEND_DIST=../frontend/dist from .env), which broke every
-    // deep-linked/refreshed SPA route while `/` itself still worked fine via
-    // express.static's own root handling.
-    res.sendFile('index.html', { root: config.frontendDist });
+    const host = req.hostname || (req.headers.host || '').split(':')[0];
+    const isAdminHost = host.startsWith('admin.');
+
+    if (isAdminHost && hasAdminDist) {
+      res.sendFile('index.html', { root: config.adminDist });
+    } else if (hasFrontendDist) {
+      res.sendFile('index.html', { root: config.frontendDist });
+    } else {
+      next();
+    }
   });
 } else {
-  console.log(`ℹ️ Frontend dist not found at ${config.frontendDist}. Running in API-only mode.`);
+  console.log(`ℹ️ Frontend/Admin dist not found. Running in API-only mode.`);
   app.get('/', (req, res) => {
     res.json({
-      message: 'iTorgo API Server is running. To serve frontend, run `npm run build` in /frontend.',
+      message: 'iTorgo API Server is running. To serve frontend, run `npm run build` in /frontend and /admin.',
       health: '/api/health',
       docs: '/api/auctions',
     });

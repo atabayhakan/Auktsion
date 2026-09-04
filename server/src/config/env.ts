@@ -37,6 +37,7 @@ export const config = {
   dbPath: process.env.DB_PATH || path.resolve(__dirname, '../../database/auktsion.sqlite'),
   uploadDir: process.env.UPLOAD_DIR || path.resolve(__dirname, '../../uploads'),
   frontendDist: process.env.FRONTEND_DIST || path.resolve(__dirname, '../../../frontend/dist'),
+  adminDist: process.env.ADMIN_DIST || path.resolve(__dirname, '../../../admin/dist'),
   // Comma-separated list, e.g. "https://itorgo.kg,https://admin.itorgo.kg" — '*' allows all.
   corsOrigin: process.env.CORS_ORIGIN || '*',
 };
