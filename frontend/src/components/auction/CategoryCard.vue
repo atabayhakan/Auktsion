@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { ChevronRight } from 'lucide-vue-next'
+import {
+  ChevronRight, Smartphone, Car, Building2, Wheat,
+  Gem, Palette, Tractor, Layers
+} from 'lucide-vue-next'
 import { useI18n } from '@/composables/useI18n'
 
 interface Props {
@@ -16,7 +19,18 @@ interface Props {
 const props = defineProps<Props>()
 const { t } = useI18n()
 
-// If the cover photo fails to load, fall back to plain icon treatment
+const iconMap: Record<string, any> = {
+  electronics: Smartphone,
+  vehicles: Car,
+  'real-estate': Building2,
+  livestock: Wheat,
+  jewelry: Gem,
+  art: Palette,
+  machinery: Tractor
+}
+
+const categoryIcon = computed(() => iconMap[props.category.slug] || Layers)
+
 const imgFailed = ref(false)
 </script>
 
@@ -38,12 +52,12 @@ const imgFailed = ref(false)
       <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10 group-hover:from-black/95 transition-colors" />
     </template>
     <div v-else class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-amber-500/20 to-primary/20">
-      <span class="text-4xl" aria-hidden="true">{{ props.category.icon }}</span>
+      <component :is="categoryIcon" class="w-10 h-10 text-white" />
     </div>
 
     <!-- Icon Badge (Top Left) -->
-    <div class="absolute top-2.5 left-2.5 w-7 h-7 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-sm shadow-xs">
-      <span>{{ props.category.icon }}</span>
+    <div class="absolute top-2.5 left-2.5 w-7 h-7 rounded-xl bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-xs">
+      <component :is="categoryIcon" class="w-3.5 h-3.5" />
     </div>
 
     <!-- Title & Action Label (Bottom) -->
@@ -61,6 +75,3 @@ const imgFailed = ref(false)
     <div class="absolute bottom-0 left-0 right-0 h-1 bg-primary transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out" />
   </RouterLink>
 </template>
-
-<style scoped>
-</style>
