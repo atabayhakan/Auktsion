@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import {
   Home, Store, CreditCard, LayoutDashboard, User, Settings,
   LogOut, Bell, ShieldCheck, BarChart2, Wallet, FileText, Heart,
-  Gauge, Gavel, Landmark, CheckCircle2, Clock
+  Gauge, Gavel, Landmark, CheckCircle2, Clock, ShieldAlert, Sparkles
 } from 'lucide-vue-next'
 import { useRouter, RouterLink } from 'vue-router'
 import { useUserStore } from '@/stores/user'
@@ -26,77 +26,96 @@ function isRouteActive(routePath: string): boolean {
 }
 
 const navSections = computed(() => [
-  ...(userStore.isAdmin ? [
-    {
-      label: '👑 Admin',
-      items: [
-        { path: '/admin', label: t('nav.adminPanel') || 'Yönetim Paneli', icon: Gauge, badge: 'ADMIN', badgeVariant: 'primary' },
-      ],
-    }
-  ] : []),
   {
-    label: t('nav.navigation') || 'Navigasyon',
+    label: t('nav.navigation') || 'Основное',
     items: [
-      { path: '/dashboard/overview', label: t('nav.dashboard') || 'Kullanıcı Paneli', icon: LayoutDashboard },
-      { path: '/dashboard/listings', label: t('dashboard.myListings') || 'İlanlarım', icon: Store },
-      { path: '/dashboard/bids', label: t('dashboard.myBids') || 'Tekliflerim', icon: Gavel, badge: userStore.activeBidsCount },
-      { path: '/dashboard/watchlist', label: t('dashboard.watchlist') || 'Takip Listem', icon: Heart },
+      { path: '/dashboard/overview', label: t('dashboard.overview') || 'Обзор', icon: LayoutDashboard },
+      { path: '/dashboard/listings', label: t('dashboard.myListings') || 'Мои аукционы', icon: Store },
+      { path: '/dashboard/bids', label: t('dashboard.myBids') || 'Мои ставки', icon: Gavel, badge: userStore.activeBidsCount },
+      { path: '/dashboard/watchlist', label: t('dashboard.watchlist') || 'Избранное', icon: Heart },
     ],
   },
   {
-    label: t('dashboard.payments') || 'Ödemeler',
+    label: t('dashboard.payments') || 'Финансы',
     items: [
-      { path: '/dashboard/payments', label: t('dashboard.paymentsHistory') || 'Ödeme Geçmişi', icon: CreditCard },
-      { path: '/dashboard/payouts', label: t('dashboard.payouts') || 'Para Çekme', icon: Wallet },
-      { path: '/dashboard/payout-methods', label: t('dashboard.payoutMethods') || 'Ödeme Yöntemleri', icon: Landmark },
+      { path: '/dashboard/payments', label: t('dashboard.paymentsHistory') || 'История платежей', icon: CreditCard },
+      { path: '/dashboard/payouts', label: t('dashboard.payouts') || 'Выплаты', icon: Wallet },
+      { path: '/dashboard/payout-methods', label: t('dashboard.payoutMethods') || 'Способы вывода', icon: Landmark },
     ],
   },
   {
-    label: t('dashboard.accountAndSecurity') || t('dashboard.profileInfo') || 'Hesap & Güvenlik',
+    label: t('dashboard.accountAndSecurity') || 'Безопасность',
     items: [
       { 
         path: '/dashboard/kyc', 
-        label: t('dashboard.kyc') || 'KYC Doğrulama', 
+        label: t('dashboard.kyc') || 'Верификация KYC', 
         icon: ShieldCheck, 
-        badge: userStore.kycStatus === 'verified' ? '✓' : 'pending', 
+        badge: userStore.kycStatus === 'verified' ? '✓' : '!', 
         badgeVariant: userStore.kycStatus === 'verified' ? 'success' : 'warning' 
       },
-      { path: '/dashboard/settings', label: t('dashboard.settings') || 'Ayarlar', icon: Settings },
+      { path: '/dashboard/settings', label: t('dashboard.settings') || 'Настройки аккаунта', icon: Settings },
     ],
   },
 ])
 
 function handleLogout() {
   userStore.logout()
-  uiStore.toastInfo(t('nav.logout') || 'Çıkış Yapıldı', t('toasts.loggedOut') || 'Başarıyla oturum kapatıldı.')
+  uiStore.toastInfo(t('nav.logout') || 'Выход', t('toasts.loggedOut') || 'Вы успешно вышли из системы.')
   router.push('/')
 }
 </script>
 
 <template>
   <aside
-    class="bg-white rounded-3xl border border-black/[0.08] p-4 shadow-2xs space-y-4 font-sans"
+    class="bg-white rounded-3xl border border-black/[0.08] p-4 sm:p-5 shadow-2xs space-y-4 font-sans"
     aria-label="Dashboard sidebar"
   >
     <!-- User Profile Header Snippet -->
-    <div class="p-3 rounded-2xl bg-slate-50 border border-black/[0.04] flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-gray-950 font-black text-sm flex items-center justify-center shadow-xs shrink-0">
-        {{ (userStore.fullName || 'HA').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() }}
+    <div class="p-3.5 rounded-2xl bg-slate-50/80 border border-black/[0.04] flex items-center gap-3">
+      <div class="relative shrink-0">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 text-gray-950 font-black text-sm flex items-center justify-center shadow-xs border border-white">
+          {{ (userStore.fullName || 'HA').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() }}
+        </div>
+        <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white ring-1 ring-emerald-500/20" title="В сети"></span>
       </div>
+
       <div class="flex-1 min-w-0">
-        <p class="text-xs font-black text-gray-950 truncate">{{ userStore.fullName || t('common.user') || 'Kullanıcı' }}</p>
-        <div class="flex items-center gap-1 mt-0.5">
-          <span 
-            class="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.2 rounded-md"
-            :class="userStore.kycStatus === 'verified' ? 'text-emerald-700 bg-emerald-100/70' : 'text-amber-800 bg-amber-100/70'"
+        <p class="text-xs font-black text-gray-950 truncate">{{ userStore.fullName || t('common.user') || 'Пользователь' }}</p>
+        <div class="flex items-center gap-1.5 mt-0.5">
+          <RouterLink
+            to="/dashboard/kyc"
+            class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md transition-colors"
+            :class="userStore.kycStatus === 'verified' ? 'text-emerald-800 bg-emerald-100/70 hover:bg-emerald-200/70' : 'text-amber-900 bg-amber-100/70 hover:bg-amber-200/70'"
           >
-            <CheckCircle2 v-if="userStore.kycStatus === 'verified'" class="w-2.5 h-2.5" />
-            <Clock v-else class="w-2.5 h-2.5" />
-            <span>{{ userStore.kycStatus === 'verified' ? (t('status.kyc.verified') || 'Doğrulandı') : (t('status.kyc.pending') || 'KYC Bekliyor') }}</span>
-          </span>
+            <CheckCircle2 v-if="userStore.kycStatus === 'verified'" class="w-3 h-3 text-emerald-600 shrink-0" />
+            <Clock v-else class="w-3 h-3 text-amber-600 shrink-0" />
+            <span class="truncate">{{ userStore.kycStatus === 'verified' ? (t('status.kyc.verified') || 'Верифицирован') : (t('status.kyc.pending') || 'Требуется KYC') }}</span>
+          </RouterLink>
         </div>
       </div>
     </div>
+
+    <!-- Executive Admin Entry (Full card, no text truncation!) -->
+    <RouterLink
+      v-if="userStore.isAdmin"
+      to="/admin"
+      class="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-gray-950 via-slate-900 to-gray-950 text-white border border-amber-500/30 shadow-xs hover:border-amber-500/60 hover:shadow-md transition-all group"
+    >
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/30">
+          <Gauge class="w-4 h-4" />
+        </div>
+        <div class="min-w-0">
+          <p class="text-xs font-black text-white group-hover:text-amber-300 transition-colors truncate">
+            {{ t('nav.adminPanel') || 'Панель управления' }}
+          </p>
+          <p class="text-[10px] text-gray-400 font-mono">itorgo.kg/admin</p>
+        </div>
+      </div>
+      <span class="px-2 py-0.5 rounded-md bg-amber-500 text-gray-950 font-mono font-black text-[9px] uppercase tracking-wider shrink-0 shadow-2xs">
+        ADMIN
+      </span>
+    </RouterLink>
 
     <!-- Navigation Links -->
     <nav class="space-y-4" aria-label="Dashboard navigation">
@@ -110,39 +129,45 @@ function handleLogout() {
             :key="item.path"
             :to="item.path"
             :class="[
-              'flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all',
+              'flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all',
               isRouteActive(item.path)
-                ? 'bg-amber-500/15 text-amber-950 font-black shadow-2xs border border-amber-500/30'
+                ? 'bg-gray-950 text-white font-black shadow-xs'
                 : 'text-gray-600 hover:text-gray-950 hover:bg-slate-50',
             ]"
           >
             <component 
               :is="item.icon" 
               class="w-4 h-4 shrink-0" 
-              :class="isRouteActive(item.path) ? 'text-amber-800' : 'text-gray-400'" 
+              :class="isRouteActive(item.path) ? 'text-amber-400' : 'text-gray-400'" 
             />
             <span class="flex-1 truncate">{{ item.label }}</span>
             
-            <Badge
+            <span
               v-if="item.badge !== undefined && typeof item.badge === 'number' && item.badge > 0"
-              :variant="item.badgeVariant || 'info'"
-              size="sm"
-              class="text-[10px]"
+              class="px-2 py-0.5 rounded-full text-[10px] font-mono font-black"
+              :class="isRouteActive(item.path) ? 'bg-amber-500 text-gray-950' : 'bg-amber-100 text-amber-900 border border-amber-200'"
             >
               {{ item.badge }}
-            </Badge>
-            <Badge
+            </span>
+            <span
               v-else-if="item.badge !== undefined && typeof item.badge === 'string'"
-              :variant="item.badgeVariant || 'warning'"
-              size="sm"
-              class="text-[10px]"
+              class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-black"
+              :class="item.badgeVariant === 'success' 
+                ? (isRouteActive(item.path) ? 'bg-emerald-400 text-gray-950' : 'bg-emerald-100 text-emerald-800') 
+                : (isRouteActive(item.path) ? 'bg-amber-400 text-gray-950' : 'bg-amber-100 text-amber-800')"
             >
               {{ item.badge }}
-            </Badge>
+            </span>
           </RouterLink>
         </div>
       </div>
     </nav>
+
+    <!-- Escrow Trust Footer in Sidebar -->
+    <div class="p-3 rounded-2xl bg-slate-50/80 border border-black/[0.04] flex items-center gap-2.5 text-[11px] text-gray-500">
+      <ShieldCheck class="w-4 h-4 text-amber-600 shrink-0" />
+      <span class="font-medium leading-tight">DemirBank Escrow & AML/CFT</span>
+    </div>
 
     <!-- Logout Button -->
     <div class="pt-2 border-t border-black/[0.06]">
@@ -152,7 +177,7 @@ function handleLogout() {
         @click="handleLogout"
       >
         <LogOut class="w-4 h-4 shrink-0" />
-        <span>{{ t('nav.logout') || 'Çıkış Yap' }}</span>
+        <span>{{ t('nav.logout') || 'Выйти из аккаунта' }}</span>
       </button>
     </div>
   </aside>

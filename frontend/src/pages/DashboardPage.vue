@@ -2,13 +2,15 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import {
   LayoutDashboard, Store, CreditCard, Wallet, FileText, ShieldCheck, Settings, Heart, CheckCircle, Building2, Gauge,
-  Lock, Clock, CheckCircle2, Smartphone, Sparkles, MapPin, Laptop, Camera, AlertTriangle, Bell, KeyRound, Mail
+  Lock, Clock, CheckCircle2, Smartphone, Sparkles, MapPin, Laptop, Camera, AlertTriangle, Bell, KeyRound, Mail,
+  Gavel, Plus, TrendingUp, ArrowRight, ArrowUpRight, Flame, ShieldAlert
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useUIStore } from '@/stores/ui'
 import { useI18n } from '@/composables/useI18n'
 import { useFormatters } from '@/composables/useFormatters'
+import { mockAuctions } from '@/data/mockAuctions'
 import Button from '@/components/ui/Button.vue'
 import Card from '@/components/ui/Card.vue'
 import Badge from '@/components/ui/Badge.vue'
@@ -210,6 +212,7 @@ const payments = computed(() => userStore.paymentHistory)
 const payouts = computed(() => userStore.payoutHistory)
 const payoutMethods = computed(() => userStore.payoutMethods)
 const activeBids = computed(() => userStore.activeBids)
+const recommendedAuctions = computed(() => mockAuctions.slice(0, 3))
 
 const watchlist = ref<any[]>([])
 const isLoadingWatchlist = ref(false)
@@ -254,12 +257,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-text-primary pt-24 sm:pt-28 pb-20 font-sans">
+  <div class="min-h-screen bg-slate-50/60 text-gray-900 pt-24 sm:pt-28 pb-20 font-sans">
     <!-- Mobile Tabs (Inline with horizontal scroll) -->
-    <div class="lg:hidden px-4 pt-4 pb-2 border-b border-black/[0.06] bg-white/60 backdrop-blur-md">
+    <div class="lg:hidden px-4 pt-4 pb-2 border-b border-black/[0.06] bg-white/80 backdrop-blur-md">
       <div class="flex items-center justify-between mb-2.5">
-        <h1 class="text-lg font-extrabold text-text-primary">{{ t('nav.dashboard') }}</h1>
-        <span class="text-xs font-bold text-primary px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 truncate max-w-[160px]">
+        <h1 class="text-lg font-extrabold text-gray-950">{{ t('nav.dashboard') || 'Личный кабинет' }}</h1>
+        <span class="text-xs font-bold text-amber-900 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 truncate max-w-[160px]">
           {{ userStore.fullName }}
         </span>
       </div>
@@ -281,114 +284,261 @@ onMounted(async () => {
           <div>
             <!-- Overview Tab -->
             <div v-if="activeTab === 'overview'" class="space-y-6 animate-fade-in-up">
-              <!-- Overview Header -->
-              <div class="flex items-center justify-between pb-2">
-                <div>
-                  <h2 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">{{ t('dashboard.overview') }}</h2>
-                  <p class="text-xs sm:text-sm text-gray-500 mt-0.5">{{ t('dashboard.welcomeUser', { name: userStore.fullName || '' }) }}</p>
+              <!-- Executive Welcome Hero Header -->
+              <div class="bg-white rounded-3xl border border-black/[0.08] p-6 sm:p-7 shadow-2xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+                <div class="space-y-1.5">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-500/10 text-amber-900 border border-amber-500/20">
+                      <Sparkles class="w-3 h-3 text-amber-600" />
+                      {{ t('dashboard.overview') || 'Обзор' }}
+                    </span>
+                    <span class="text-gray-300">•</span>
+                    <span class="text-xs font-semibold text-gray-500 flex items-center gap-1">
+                      <MapPin class="w-3 h-3 text-gray-400" />
+                      Бишкек, KG
+                    </span>
+                  </div>
+                  <h1 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">
+                    {{ t('dashboard.welcomeUser', { name: userStore.fullName || 'Пользователь' }) }} 👋
+                  </h1>
+                  <p class="text-xs sm:text-sm text-gray-500 max-w-xl">
+                    {{ t('dashboard.quickActions') || 'Управляйте своими лотами, участвуйте в торгах и проводите защищенные сделки через DemirBank Escrow.' }}
+                  </p>
+                </div>
+
+                <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0">
+                  <RouterLink
+                    to="/sell"
+                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-xs hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                  >
+                    <Plus class="w-4 h-4 stroke-[3]" />
+                    <span>{{ t('dashboard.createAuction') || 'Создать аукцион' }}</span>
+                  </RouterLink>
+
+                  <RouterLink
+                    to="/auctions"
+                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-gray-900 border border-black/[0.08] font-bold text-xs sm:text-sm transition-all cursor-pointer"
+                  >
+                    <TrendingUp class="w-4 h-4 text-gray-600" />
+                    <span>{{ t('dashboard.exploreAuctions') || 'Смотреть торги' }}</span>
+                  </RouterLink>
                 </div>
               </div>
 
-              <!-- Stats Grid -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <!-- Stats Grid (4 Numeric & Financial Metrics) -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
                 <StatCard
-                  :title="t('dashboard.activeAuctions')"
-                  :value="userStore.activeBids.filter(b => b.status === 'winning' || b.status === 'active').length"
+                  :title="t('dashboard.myListings') || 'Мои аукционы'"
+                  :value="myListings.length"
+                  :subtitle="myListings.length > 0 ? 'Лотов в продаже' : 'Нет опубликованных'"
                   icon="Store"
                   color="gold"
                   link="/dashboard/listings"
                 />
                 <StatCard
-                  :title="t('dashboard.totalBids')"
-                  :value="userStore.activeBids.length"
-                  icon="CreditCard"
+                  :title="t('dashboard.myBids') || 'Мои ставки'"
+                  :value="activeBids.length"
+                  :subtitle="activeBids.length > 0 ? 'В торгах' : 'Ставок пока нет'"
+                  icon="Gavel"
                   color="blue"
                   link="/dashboard/bids"
                 />
                 <StatCard
-                  :title="t('dashboard.wonAuctions')"
-                  :value="userStore.activeBids.filter(b => b.status === 'won').length"
-                  icon="CheckCircle"
+                  :title="t('dashboard.wonAuctions') || 'Выигранные лоты'"
+                  :value="activeBids.filter(b => b.status === 'won').length"
+                  :subtitle="activeBids.filter(b => b.status === 'won').length > 0 ? 'Готовы к получению' : '0 выиграно'"
+                  icon="CheckCircle2"
                   color="green"
                   link="/dashboard/bids"
                 />
                 <StatCard
-                  :title="t('dashboard.kycStatus')"
-                  :value="statusLabels.kyc(userStore.kycStatus)"
-                  :icon="userStore.kycStatus === 'verified' ? 'CheckCircle' : 'Clock'"
-                  :color="userStore.kycStatus === 'verified' ? 'green' : 'yellow'"
-                  link="/dashboard/kyc"
+                  :title="t('dashboard.walletBalance') || 'Баланс & Escrow'"
+                  :value="'0 сом'"
+                  subtitle="DemirBank Escrow 100%"
+                  icon="Wallet"
+                  color="purple"
+                  link="/dashboard/payments"
                 />
               </div>
 
-              <!-- Recent Activity -->
+              <!-- Activity & Listings 2-Column Grid -->
               <div class="grid lg:grid-cols-2 gap-6">
-                <Card variant="glass">
-                  <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-base font-bold text-text-primary">{{ t('dashboard.recentBids') }}</h3>
-                    <button class="text-sm text-primary hover:underline" @click="activeTab = 'bids'">{{ t('dashboard.viewAll') }}</button>
-                  </div>
-                  <div v-if="activeBids.length > 0" class="space-y-3">
-                    <ActivityItem
-                      v-for="bid in activeBids.slice(0, 5)"
-                      :key="bid.id"
-                      :title="bid.auctionTitle"
-                      :subtitle="`${t('common.bids')}: ${currency.formatMoney(bid.amount)}`"
-                      :time="date.formatRelative(bid.placedAt)"
-                      :icon="bid.status === 'winning' ? 'CheckCircle' : bid.status === 'outbid' ? 'XCircle' : 'Gauge'"
-                      :color="bid.status === 'winning' ? 'green' : bid.status === 'outbid' ? 'red' : 'blue'"
-                      :status="bid.status === 'winning' ? t('status.bid.winning') : bid.status === 'outbid' ? t('status.bid.outbid') : t('status.bid.active')"
-                      :status-color="bid.status === 'winning' ? 'green' : bid.status === 'outbid' ? 'red' : 'blue'"
-                      :link="`/auctions/${bid.auctionId}`"
-                    />
-                  </div>
-                  <div v-else class="text-center py-8 text-text-muted">
-                    <Gauge class="w-12 h-12 mx-auto text-text-muted mb-3" />
-                    <p>{{ t('dashboard.noBids') }}</p>
-                    <Button variant="outline" class="mt-3" @click="$router.push('/auctions')">{{ t('dashboard.exploreAuctions') }}</Button>
-                  </div>
-                </Card>
-
-                <Card variant="glass">
-                  <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-base font-bold text-text-primary">{{ t('dashboard.myListings') }}</h3>
-                    <button class="text-sm text-primary hover:underline" @click="activeTab = 'listings'">{{ t('dashboard.viewAll') }}</button>
-                  </div>
-                  <div v-if="myListings.length > 0" class="space-y-3">
-                    <ListingRow
-                      v-for="listing in myListings.slice(0, 5)"
-                      :key="listing.id"
-                      :listing="listing"
-                    />
-                  </div>
-                  <div v-else class="text-center py-8 text-text-muted">
-                    <Store class="w-12 h-12 mx-auto text-text-muted mb-3" />
-                    <p>{{ t('dashboard.noListings') }}</p>
-                    <Button class="mt-3" @click="$router.push('/sell')">{{ t('dashboard.createAuction') }}</Button>
-                  </div>
-                </Card>
-              </div>
-
-              <!-- KYC Status Card -->
-              <Card :variant="userStore.kycStatus === 'verified' ? 'gold' : 'glass'">
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                  <div class="flex items-center gap-4">
-                    <div :class="['w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-2xl', userStore.kycStatus === 'verified' ? 'bg-success' : 'bg-warning']">
-                      <component :is="userStore.kycStatus === 'verified' ? CheckCircle : ShieldCheck" class="w-8 h-8 text-white" />
+                <!-- Recent Bids Card -->
+                <div class="bg-white rounded-3xl border border-black/[0.08] shadow-2xs p-6 flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between pb-4 border-b border-black/[0.06] mb-4">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-700 flex items-center justify-center border border-blue-500/20">
+                          <Gavel class="w-4 h-4" />
+                        </div>
+                        <h3 class="text-sm sm:text-base font-black text-gray-950">{{ t('dashboard.recentBids') || 'Последние ставки' }}</h3>
+                      </div>
+                      <button 
+                        class="text-xs font-bold text-amber-800 hover:text-amber-950 flex items-center gap-1 cursor-pointer transition-colors" 
+                        @click="activeTab = 'bids'"
+                      >
+                        <span>{{ t('dashboard.viewAll') || 'Все' }}</span>
+                        <ArrowRight class="w-3.5 h-3.5" />
+                      </button>
                     </div>
-                    <div>
-                      <h3 class="text-base font-bold text-text-primary">{{ t('dashboard.kycStatus') }}: {{ statusLabels.kyc(userStore.kycStatus) }}</h3>
-                      <p class="text-text-muted text-sm">{{ statusLabels.kyc(userStore.kycStatus) }}</p>
+
+                    <div v-if="activeBids.length > 0" class="space-y-3">
+                      <ActivityItem
+                        v-for="bid in activeBids.slice(0, 5)"
+                        :key="bid.id"
+                        :title="bid.auctionTitle"
+                        :subtitle="`${t('common.bids')}: ${currency.formatMoney(bid.amount)}`"
+                        :time="date.formatRelative(bid.placedAt)"
+                        :icon="bid.status === 'winning' ? 'CheckCircle' : bid.status === 'outbid' ? 'XCircle' : 'Gauge'"
+                        :color="bid.status === 'winning' ? 'green' : bid.status === 'outbid' ? 'red' : 'blue'"
+                        :status="bid.status === 'winning' ? t('status.bid.winning') : bid.status === 'outbid' ? t('status.bid.outbid') : t('status.bid.active')"
+                        :status-color="bid.status === 'winning' ? 'green' : bid.status === 'outbid' ? 'red' : 'blue'"
+                        :link="`/auctions/${bid.auctionId}`"
+                      />
                     </div>
-                  </div>
-                  <div class="flex flex-wrap gap-2">
-                    <Button v-if="userStore.kycStatus !== 'verified'" variant="primary" @click="activeTab = 'kyc'">
-                      {{ t('dashboard.kyc') }}
-                    </Button>
-                    <Button v-else variant="ghost">{{ t('status.kyc.verified') }}</Button>
+
+                    <div v-else class="text-center py-10 px-4 space-y-3">
+                      <div class="w-14 h-14 rounded-2xl bg-slate-50 border border-black/[0.06] text-gray-400 flex items-center justify-center mx-auto">
+                        <Gavel class="w-6 h-6 stroke-[1.5]" />
+                      </div>
+                      <div>
+                        <p class="text-sm font-bold text-gray-900">{{ t('dashboard.noBids') || 'Вы еще не делали ставок' }}</p>
+                        <p class="text-xs text-gray-500 max-w-xs mx-auto mt-1">
+                          Выберите понравившийся лот и предложите свою цену в реальном времени.
+                        </p>
+                      </div>
+                      <div class="pt-2">
+                        <RouterLink
+                          to="/auctions"
+                          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gray-950 text-white hover:bg-black font-bold text-xs shadow-xs transition-all"
+                        >
+                          <TrendingUp class="w-3.5 h-3.5 text-amber-400" />
+                          <span>{{ t('dashboard.exploreAuctions') || 'Смотреть аукционы' }}</span>
+                        </RouterLink>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </Card>
+
+                <!-- My Listings Card -->
+                <div class="bg-white rounded-3xl border border-black/[0.08] shadow-2xs p-6 flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between pb-4 border-b border-black/[0.06] mb-4">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-800 flex items-center justify-center border border-amber-500/20">
+                          <Store class="w-4 h-4" />
+                        </div>
+                        <h3 class="text-sm sm:text-base font-black text-gray-950">{{ t('dashboard.myListings') || 'Мои аукционы' }}</h3>
+                      </div>
+                      <button 
+                        class="text-xs font-bold text-amber-800 hover:text-amber-950 flex items-center gap-1 cursor-pointer transition-colors" 
+                        @click="activeTab = 'listings'"
+                      >
+                        <span>{{ t('dashboard.viewAll') || 'Все' }}</span>
+                        <ArrowRight class="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <div v-if="myListings.length > 0" class="space-y-3">
+                      <ListingRow
+                        v-for="listing in myListings.slice(0, 5)"
+                        :key="listing.id"
+                        :listing="listing"
+                      />
+                    </div>
+
+                    <div v-else class="text-center py-10 px-4 space-y-3">
+                      <div class="w-14 h-14 rounded-2xl bg-slate-50 border border-black/[0.06] text-gray-400 flex items-center justify-center mx-auto">
+                        <Store class="w-6 h-6 stroke-[1.5]" />
+                      </div>
+                      <div>
+                        <p class="text-sm font-bold text-gray-900">{{ t('dashboard.noListings') || 'У вас пока нет опубликованных лотов' }}</p>
+                        <p class="text-xs text-gray-500 max-w-xs mx-auto mt-1">
+                          Продайте авто, технику, скот или недвижимость на открытом аукционе Кыргызстана.
+                        </p>
+                      </div>
+                      <div class="pt-2">
+                        <RouterLink
+                          to="/sell"
+                          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-gray-950 font-black text-xs shadow-xs hover:shadow-md transition-all"
+                        >
+                          <Plus class="w-3.5 h-3.5 stroke-[3]" />
+                          <span>{{ t('dashboard.createAuction') || 'Создать аукцион' }}</span>
+                        </RouterLink>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hot Recommendations Strip (When user has no bids yet) -->
+              <div v-if="activeBids.length === 0" class="bg-white rounded-3xl border border-black/[0.08] shadow-2xs p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+                    <h3 class="text-base font-black text-gray-950">🔥 Горячие торги прямо сейчас в Бишкеке</h3>
+                  </div>
+                  <RouterLink to="/auctions" class="text-xs font-bold text-amber-800 hover:text-amber-950 flex items-center gap-1">
+                    <span>Все аукционы</span>
+                    <ArrowRight class="w-3.5 h-3.5" />
+                  </RouterLink>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <AuctionCard v-for="lot in recommendedAuctions" :key="lot.id" :auction="lot" />
+                </div>
+              </div>
+
+              <!-- KYC & Fintech Security Card -->
+              <div 
+                class="p-5 sm:p-6 rounded-3xl border transition-all shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5"
+                :class="userStore.kycStatus === 'verified' 
+                  ? 'bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-teal-500/10 border-emerald-500/25' 
+                  : 'bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-yellow-500/10 border-amber-500/30'"
+              >
+                <div class="flex items-center gap-4">
+                  <div 
+                    class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-xs text-white"
+                    :class="userStore.kycStatus === 'verified' ? 'bg-emerald-600' : 'bg-amber-600'"
+                  >
+                    <ShieldCheck v-if="userStore.kycStatus === 'verified'" class="w-6 h-6" />
+                    <Clock v-else class="w-6 h-6" />
+                  </div>
+                  <div class="space-y-0.5">
+                    <div class="flex items-center gap-2">
+                      <h3 class="text-sm sm:text-base font-black text-gray-950">
+                        {{ userStore.kycStatus === 'verified' ? ((t('dashboard.kycVerifiedBadge') || 'Верифицирован') + ': Полная защита аккаунта (Tier 2)') : (t('dashboard.kycBannerTitle') || 'Требуется подтверждение личности (KYC)') }}
+                      </h3>
+                      <span 
+                        class="px-2 py-0.5 rounded-full text-[10px] font-mono font-black"
+                        :class="userStore.kycStatus === 'verified' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'"
+                      >
+                        {{ statusLabels.kyc(userStore.kycStatus) }}
+                      </span>
+                    </div>
+                    <p class="text-xs text-gray-600 max-w-2xl leading-relaxed">
+                      {{ userStore.kycStatus === 'verified' 
+                        ? 'Ваш аккаунт полностью верифицирован. Доступны ставки до 5 000 000 сом, мгновенный вывод через MBank/Элкарт и безопасные Escrow-сделки.' 
+                        : (t('dashboard.kycBannerDesc') || 'Пройдите быструю проверку по паспорту для участия в торгах и мгновенного вывода средств.') 
+                      }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="shrink-0 w-full sm:w-auto">
+                  <button
+                    type="button"
+                    class="w-full sm:w-auto px-5 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                    :class="userStore.kycStatus === 'verified'
+                      ? 'bg-white hover:bg-slate-50 text-emerald-900 border border-emerald-300/80 shadow-2xs'
+                      : 'bg-amber-500 hover:bg-amber-600 text-gray-950 shadow-xs'"
+                    @click="activeTab = 'kyc'"
+                  >
+                    <span>{{ userStore.kycStatus === 'verified' ? 'Управление лимитами' : (t('dashboard.startKyc') || 'Пройти верификацию') }}</span>
+                    <ArrowRight class="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
             </div>
 
             <!-- Listings Tab -->
