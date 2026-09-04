@@ -33,7 +33,7 @@ export function useI18n() {
     }
   }
 
-  function t(path: string, params?: Record<string, any>): string {
+  function t(path: string, params?: Record<string, any>, fallbackStr?: string): string {
     const keys = path.split('.')
     let current: any = messages[currentLocale.value] || messages.ru
 
@@ -47,7 +47,7 @@ export function useI18n() {
           if (fallback && typeof fallback === 'object' && fbKey in fallback) {
             fallback = fallback[fbKey]
           } else {
-            return path
+            return fallbackStr !== undefined ? fallbackStr : ''
           }
         }
         current = fallback
@@ -56,7 +56,7 @@ export function useI18n() {
     }
 
     if (typeof current !== 'string') {
-      return path
+      return fallbackStr !== undefined ? fallbackStr : ''
     }
 
     if (params) {

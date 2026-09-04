@@ -14,12 +14,12 @@ const showMobileNav = computed(() => !isAdminRoute.value && route.name !== 'Auct
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-background text-text-primary font-sans antialiased">
+  <div class="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col bg-background text-text-primary font-sans antialiased">
     <!-- Fixed Header (public & user routes) -->
     <Header v-if="!isAdminRoute" />
     
     <!-- Main Content -->
-    <main id="main-content" role="main" class="flex-1" :class="{ 'pb-24 lg:pb-0': showMobileNav }">
+    <main id="main-content" role="main" class="flex-1 w-full max-w-full overflow-x-hidden" :class="{ 'pb-24 lg:pb-0': showMobileNav }">
       <RouterView v-slot="{ Component }">
         <transition name="page" :duration="300">
           <component :is="Component" />

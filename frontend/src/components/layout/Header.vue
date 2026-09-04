@@ -130,19 +130,19 @@ watch(() => userStore.isAuthenticated, (val) => {
 <template>
   <header
     :class="[
-      'fixed top-0 left-0 right-0 z-40 transition-all duration-300',
+      'fixed top-0 left-0 right-0 z-40 transition-all duration-300 w-full max-w-full overflow-x-clip',
       isScrolled
         ? 'bg-white/95 backdrop-blur-2xl border-b border-black/[0.08] shadow-sm'
         : 'bg-white/92 backdrop-blur-md border-b border-black/[0.06]'
     ]"
   >
-    <div class="w-full max-w-[1600px] mx-auto px-3 sm:px-5 lg:px-6 xl:px-8">
+    <div class="w-full max-w-[1600px] mx-auto px-2.5 sm:px-5 lg:px-6 xl:px-8 overflow-x-clip">
       
       <!-- Top Row: Logo, City, Language, Profile & Mobile Actions -->
-      <div class="flex items-center justify-between h-14 sm:h-16 lg:h-18 gap-2">
+      <div class="flex items-center justify-between h-14 sm:h-16 lg:h-18 gap-1.5 sm:gap-2 min-w-0">
         
         <!-- Left: Brand & City Selector -->
-        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div class="flex items-center gap-1.5 sm:gap-3 shrink-0 min-w-0">
           <RouterLink to="/" class="flex items-center gap-2 group shrink-0" :aria-label="themeStore.theme.logoText || 'ITOrgo'">
             <!-- Custom Image Logo -->
             <img
@@ -182,12 +182,12 @@ watch(() => userStore.isAuthenticated, (val) => {
               <template #trigger>
                 <button
                   type="button"
-                  class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-black/5 text-gray-800 transition-all text-xs font-bold flex items-center gap-1 cursor-pointer shadow-2xs shrink-0"
+                  class="px-2 sm:px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-black/5 text-gray-800 transition-all text-xs font-bold flex items-center gap-1 cursor-pointer shadow-2xs shrink-0"
                   title="Выбрать город"
                 >
                   <MapPin class="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                  <span>{{ selectedCity.name }}</span>
-                  <ChevronDown class="w-3 h-3 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': cityMenuOpen }" />
+                  <span class="truncate max-w-[85px] sm:max-w-none">{{ selectedCity.name }}</span>
+                  <ChevronDown class="w-3 h-3 text-gray-400 transition-transform duration-200 shrink-0" :class="{ 'rotate-180': cityMenuOpen }" />
                 </button>
               </template>
 

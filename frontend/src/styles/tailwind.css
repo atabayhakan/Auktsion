@@ -50,49 +50,23 @@
   html {
     scroll-behavior: smooth;
     font-family: 'Poppins', system-ui, sans-serif;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   body {
     @apply bg-[rgb(var(--color-background))] text-[rgb(var(--color-text-primary))] antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+    position: relative;
   }
 
-  ::selection {
-    @apply bg-[rgb(var(--color-primary))] text-[rgb(var(--color-text-primary))];
-  }
-
-  :focus-visible {
-    @apply outline-none ring-2 ring-[rgb(var(--color-secondary))] ring-offset-2 ring-offset-white;
-  }
-
-  /* FOUT Prevention — titles never flash fallback font */
-  .fonts-pending .font-sans,
-  .fonts-pending h1, .fonts-pending h2, .fonts-pending h3,
-  .fonts-pending .text-2xl, .fonts-pending .text-3xl, .fonts-pending .text-4xl,
-  .fonts-pending .text-5xl, .fonts-pending .text-6xl {
-    opacity: 0;
-    transition: opacity 0.5s ease-out;
-  }
-  .fonts-ready .font-sans,
-  .fonts-ready h1, .fonts-ready h2, .fonts-ready h3,
-  .fonts-ready .text-2xl, .fonts-ready .text-3xl, .fonts-ready .text-4xl,
-  .fonts-ready .text-5xl, .fonts-ready .text-6xl {
-    opacity: 1;
-  }
-
-  /* Respect prefers-reduced-motion globally */
-  @media (prefers-reduced-motion: reduce) {
-    *, ::before, ::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-  }
-
-  /* Horizontal overflow guard — body backstop */
-  body {
-    overflow-x: clip;
+  #app {
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
   }
 }
 

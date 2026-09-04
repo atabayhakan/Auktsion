@@ -363,6 +363,9 @@ export default {
     "talas": "Talas"
   },
   "common": {
+    "processing": "İşleniyor...",
+    "retry": "Yeniden Dene",
+    "ready": "Yayınlanmaya Hazır",
     "actions": "İşlemler",
     "all": "Tümü",
     "amount": "Tutar",
@@ -1254,6 +1257,10 @@ export default {
     "version": "2.0"
   },
   "sell": {
+    "titleRequired": "Lütfen ilan başlığı girin.",
+    "loginRequired": "İlanınızı yayınlamak için lütfen oturum açın.",
+    "descRequired": "Lütfen detaylı açıklama girin.",
+    "previewSubtitle": "Yayınlamadan önce bilgileri kontrol edin.",
     "escrowBadge": "Kırgızistan Genelinde %100 Banka Emanet Güvencesi",
     "aiBadge": "iTorgo AI ile 1 Saniyede İlan Oluşturun",
     "aiHint": "Örnek: \"Ala-Too süt ineği 4 yaşında Koçkor Naryn\" veya \"Toyota Camry 2020 gümrük ödenmiş Bişkek\" yazın, AI formu otomatik doldursun.",

@@ -27,7 +27,14 @@ import {
   FileCheck,
   Loader2,
   ShieldCheck,
-  ArrowRight
+  ArrowRight,
+  Smartphone,
+  Car,
+  Building2,
+  Wheat,
+  Gem,
+  Palette,
+  Tractor
 } from 'lucide-vue-next'
 
 const { t, currentLocale } = useI18n()
@@ -35,6 +42,20 @@ const router = useRouter()
 const userStore = useUserStore()
 const uiStore = useUIStore()
 const auctionStore = useAuctionStore()
+
+const categoryIconMap: Record<string, any> = {
+  electronics: Smartphone,
+  vehicles: Car,
+  'real-estate': Building2,
+  livestock: Wheat,
+  jewelry: Gem,
+  art: Palette,
+  machinery: Tractor
+}
+
+function getCategoryIcon(slug: string) {
+  return categoryIconMap[slug] || Layers
+}
 
 const currentLang = computed(() => currentLocale.value?.code || 'ru')
 
@@ -203,25 +224,25 @@ async function handleAiMagicGenerate() {
 function validateStep(step: number): boolean {
   if (step === 1) {
     if (!formData.value.title.trim()) {
-      uiStore.toastWarning('!', t('sell.titleDescRequired') || 'Lütfen ilan başlığı girin.')
+      uiStore.toastWarning('!', t('sell.titleRequired') || 'Пожалуйста, введите название лота.')
       return false
     }
     if (!formData.value.description.trim()) {
-      uiStore.toastWarning('!', t('sell.titleDescRequired') || 'Lütfen detaylı açıklama girin.')
+      uiStore.toastWarning('!', t('sell.descRequired') || 'Пожалуйста, укажите подробное описание.')
       return false
     }
     if (formData.value.images.length === 0) {
-      uiStore.toastWarning('!', t('sell.photoRequired') || 'Lütfen en az 1 adet fotoğraf yükleyin.')
+      uiStore.toastWarning('!', t('sell.photoRequired') || 'Пожалуйста, загрузите минимум 1 фотографию.')
       return false
     }
   }
   if (step === 3) {
     if (formData.value.startingPrice <= 0) {
-      uiStore.toastWarning('!', t('sell.startingPriceLabel') || 'Başlangıç fiyatı 0\'dan büyük olmalıdır.')
+      uiStore.toastWarning('!', t('sell.startingPriceLabel') || 'Начальная цена должна быть больше 0.')
       return false
     }
     if (formData.value.bidIncrement <= 0) {
-      uiStore.toastWarning('!', t('sell.bidIncrementLabel') || 'Teklif artış tutarı 0\'dan büyük olmalıdır.')
+      uiStore.toastWarning('!', t('sell.bidIncrementLabel') || 'Шаг ставки должен быть больше 0.')
       return false
     }
   }
@@ -284,16 +305,16 @@ function removeImage(idx: number) {
 
 async function submitAuction() {
   if (!userStore.isAuthenticated) {
-    uiStore.toastInfo('iTorgo', t('sell.loginRequired') || 'İlanınızı yayınlamak için lütfen oturum açın.')
+    uiStore.toastInfo('iTorgo', t('sell.loginRequired') || 'Пожалуйста, войдите в систему, чтобы опубликовать лот.')
     router.push('/login?redirect=/sell')
     return
   }
   if (!formData.value.title.trim() || !formData.value.description.trim()) {
-    uiStore.toastWarning('!', t('sell.titleDescRequired') || 'Lütfen ilan başlığı ve açıklama girin.')
+    uiStore.toastWarning('!', t('sell.titleDescRequired') || 'Пожалуйста, укажите заголовок и подробное описание лота.')
     return
   }
   if (formData.value.images.length === 0) {
-    uiStore.toastWarning('!', t('sell.photoRequired') || 'Lütfen en az 1 adet fotoğraf yükleyin.')
+    uiStore.toastWarning('!', t('sell.photoRequired') || 'Пожалуйста, загрузите минимум 1 фотографию.')
     return
   }
 
@@ -333,7 +354,7 @@ async function submitAuction() {
 
   try {
     await auctionService.createAuction(payload)
-    uiStore.toastSuccess('iTorgo', t('sell.successCreated') || 'Açık artırma ilanınız başarıyla oluşturuldu ve yayına alındı.')
+    uiStore.toastSuccess('iTorgo', t('sell.successCreated') || 'Аукционный лот успешно создан и опубликован!')
     router.push('/auctions')
   } catch (err: any) {
     console.error('API createAuction fallback to store:', err)
@@ -348,7 +369,7 @@ async function submitAuction() {
       createdAt: new Date().toISOString(),
       endsAt: new Date(Date.now() + payload.durationHours * 3600000).toISOString()
     })
-    uiStore.toastSuccess('iTorgo', t('sell.successCreated') || 'Açık artırma ilanınız başarıyla yayına alındı.')
+    uiStore.toastSuccess('iTorgo', t('sell.successCreated') || 'Аукционный лот успешно создан и опубликован!')
     router.push('/auctions')
   } finally {
     isSubmitting.value = false
@@ -357,17 +378,17 @@ async function submitAuction() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-text-primary pt-28 sm:pt-32 pb-24 px-4 sm:px-6 lg:px-8 font-sans">
-    <div class="max-w-4xl mx-auto space-y-8">
+  <div class="min-h-screen w-full max-w-full overflow-x-hidden bg-background text-text-primary pt-24 sm:pt-32 pb-24 px-3 sm:px-6 lg:px-8 font-sans">
+    <div class="max-w-4xl mx-auto space-y-6 sm:space-y-8 w-full min-w-0">
 
       <!-- Header & Progress Stepper -->
-      <div class="space-y-6">
+      <div class="space-y-4 sm:space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-black/[0.06]">
-          <div>
+          <div class="min-w-0">
             <div class="flex items-center gap-2 mb-1">
               <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-500/10 text-amber-900 border border-amber-500/20 text-[11px] font-black uppercase">
                 <Sparkles class="w-3 h-3 text-amber-600" />
-                <span>{{ t('sell.zeroCommissionBadge') || '%0 Komisyon Kampanyası' }}</span>
+                <span>{{ t('sell.zeroCommissionBadge') || 'Акция: 0% Комиссия' }}</span>
               </span>
             </div>
             <h1 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">
@@ -378,7 +399,7 @@ async function submitAuction() {
             </p>
           </div>
 
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 shrink-0">
             <span class="text-xs font-black text-gray-400 font-mono">
               {{ t('sell.stepCounter', { step: currentStep }) || `Шаг ${currentStep} / 4` }}
             </span>
@@ -386,11 +407,11 @@ async function submitAuction() {
         </div>
 
         <!-- Visual Stepper Bar -->
-        <div class="grid grid-cols-4 gap-2 sm:gap-4">
+        <div class="grid grid-cols-4 gap-1.5 sm:gap-4 w-full">
           <div
             v-for="(stepName, idx) in [t('sell.step1') || 'Общие данные', t('sell.step2') || 'Параметры', t('sell.step3') || 'Цена и сроки', t('sell.step4') || 'Предпросмотр']"
             :key="idx"
-            class="p-2.5 sm:p-3.5 rounded-2xl border transition-all flex items-center gap-2.5"
+            class="p-2 sm:p-3.5 rounded-2xl border transition-all flex items-center justify-center sm:justify-start gap-2 min-w-0"
             :class="[
               currentStep === idx + 1
                 ? 'bg-amber-500/15 border-amber-500/40 text-amber-950 shadow-2xs font-black'
@@ -419,10 +440,10 @@ async function submitAuction() {
       <div v-if="currentStep === 1" class="space-y-6 animate-fade-in-up">
 
         <!-- AI Smart Auto-Generator Banner -->
-        <div class="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-slate-50 border border-amber-500/20 shadow-2xs space-y-4">
+        <div class="p-4 sm:p-6 rounded-3xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-slate-50 border border-amber-500/20 shadow-2xs space-y-4">
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-gray-950 flex items-center justify-center shadow-xs">
+              <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-gray-950 flex items-center justify-center shadow-xs shrink-0">
                 <Sparkles class="w-4 h-4" />
               </div>
               <div>
@@ -437,13 +458,13 @@ async function submitAuction() {
               v-model="aiPromptInput"
               type="text"
               :placeholder="t('sell.aiPromptPlaceholder') || 'Например: 2020 Toyota Camry 2.5 бензин или кондиционер инверторный 35м²...'"
-              class="flex-1 px-4 py-2.5 rounded-2xl bg-white border border-amber-400/30 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-900 font-medium placeholder:text-gray-400/50 shadow-2xs"
+              class="flex-1 w-full min-w-0 px-4 py-2.5 rounded-2xl bg-white border border-amber-400/30 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-900 font-medium placeholder:text-gray-400/50 shadow-2xs"
               @keydown.enter.prevent="handleAiMagicGenerate"
             />
             <button
               type="button"
               :disabled="isAiGenerating || !aiPromptInput.trim()"
-              class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 transition-all"
+              class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 transition-all shrink-0"
               @click="handleAiMagicGenerate"
             >
               <Loader2 v-if="isAiGenerating" class="w-4 h-4 animate-spin" />
@@ -459,7 +480,7 @@ async function submitAuction() {
               v-for="sugg in aiSuggestions"
               :key="sugg"
               type="button"
-              class="px-2.5 py-1 rounded-lg bg-white/80 hover:bg-amber-100/60 border border-black/5 hover:border-amber-400/40 text-[11px] font-bold text-gray-700 transition-all cursor-pointer shadow-2xs"
+              class="px-2.5 py-1.5 rounded-lg bg-white/90 hover:bg-amber-100/70 border border-black/5 hover:border-amber-400/40 text-[11px] font-bold text-gray-700 transition-all cursor-pointer shadow-2xs text-left max-w-full break-words whitespace-normal leading-tight"
               @click="useAiSuggestion(sugg)"
             >
               {{ sugg }}
@@ -481,7 +502,7 @@ async function submitAuction() {
                 v-for="cat in categories"
                 :key="cat.slug"
                 type="button"
-                class="p-3 rounded-2xl border text-left transition-all flex flex-col items-start gap-2 cursor-pointer"
+                class="p-3 rounded-2xl border text-left transition-all flex flex-col items-start gap-2 cursor-pointer min-w-0"
                 :class="[
                   formData.category === cat.slug
                     ? 'border-amber-500 bg-amber-500/10 text-amber-950 font-black shadow-xs ring-2 ring-amber-500/20'
@@ -489,7 +510,12 @@ async function submitAuction() {
                 ]"
                 @click="formData.category = cat.slug"
               >
-                <span class="text-2xl">{{ cat.icon }}</span>
+                <div
+                  class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-colors shrink-0"
+                  :class="formData.category === cat.slug ? 'bg-amber-500/20 text-amber-900' : 'bg-white text-gray-700 shadow-2xs border border-black/5'"
+                >
+                  <component :is="getCategoryIcon(cat.slug)" class="w-4 h-4 sm:w-5 sm:h-5" />
+                </div>
                 <span class="text-xs line-clamp-1 leading-tight">{{ cat.name }}</span>
               </button>
             </div>
@@ -614,7 +640,7 @@ async function submitAuction() {
         <div class="flex items-center justify-end gap-3">
           <button
             type="button"
-            class="px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-md flex items-center gap-2 cursor-pointer hover:scale-105 transition-all"
+            class="w-full sm:w-auto px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer hover:scale-105 transition-all"
             @click="nextStep"
           >
             <span>{{ t('sell.btnNextCategory') || 'Далее: Параметры категории' }}</span>
@@ -628,14 +654,16 @@ async function submitAuction() {
       <div v-else-if="currentStep === 2" class="space-y-6 animate-fade-in-up">
 
         <div class="bg-white p-6 sm:p-8 rounded-3xl border border-black/[0.08] shadow-2xs space-y-6">
-          <div class="flex items-center justify-between pb-4 border-b border-black/[0.06]">
+          <div class="flex items-center justify-between gap-3 pb-4 border-b border-black/[0.06]">
             <div>
               <h3 class="text-base font-black text-gray-950">
                 {{ currentCategoryData.name[currentLang] || currentCategoryData.name.ru || currentCategoryData.name.tr }} — {{ t('sell.categoryAttributes') || 'Параметры лота' }}
               </h3>
-              <p class="text-xs text-gray-500">{{ t('sell.categoryAttributesSubtitle') || 'Укажите технические детали, интересующие покупателей перед ставкой.' }}</p>
+              <p class="text-xs text-gray-500 mt-0.5">{{ t('sell.categoryAttributesSubtitle') || 'Укажите технические детали, интересующие покупателей перед ставкой.' }}</p>
             </div>
-            <span class="text-2xl">{{ currentCategoryData.icon }}</span>
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-800 flex items-center justify-center shrink-0 border border-amber-500/20">
+              <component :is="getCategoryIcon(currentCategoryData.slug)" class="w-5 h-5" />
+            </div>
           </div>
 
           <!-- Livestock Form -->
@@ -769,10 +797,10 @@ async function submitAuction() {
         </div>
 
         <!-- Navigation Buttons -->
-        <div class="flex items-center justify-between gap-3">
+        <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <button
             type="button"
-            class="px-6 py-3 rounded-2xl border border-black/10 bg-white hover:bg-slate-50 text-gray-800 font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-2xs"
+            class="w-full sm:w-auto px-6 py-3 rounded-2xl border border-black/10 bg-white hover:bg-slate-50 text-gray-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
             @click="prevStep"
           >
             <ChevronLeft class="w-4 h-4" />
@@ -780,7 +808,7 @@ async function submitAuction() {
           </button>
           <button
             type="button"
-            class="px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-md flex items-center gap-2 cursor-pointer hover:scale-105 transition-all"
+            class="w-full sm:w-auto px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer hover:scale-105 transition-all"
             @click="nextStep"
           >
             <span>{{ t('sell.btnNextPricing') || 'Далее: Цена и сроки' }}</span>
@@ -892,10 +920,10 @@ async function submitAuction() {
         </div>
 
         <!-- Navigation Buttons -->
-        <div class="flex items-center justify-between gap-3">
+        <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <button
             type="button"
-            class="px-6 py-3 rounded-2xl border border-black/10 bg-white hover:bg-slate-50 text-gray-800 font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-2xs"
+            class="w-full sm:w-auto px-6 py-3 rounded-2xl border border-black/10 bg-white hover:bg-slate-50 text-gray-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
             @click="prevStep"
           >
             <ChevronLeft class="w-4 h-4" />
@@ -903,7 +931,7 @@ async function submitAuction() {
           </button>
           <button
             type="button"
-            class="px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-md flex items-center gap-2 cursor-pointer hover:scale-105 transition-all"
+            class="w-full sm:w-auto px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer hover:scale-105 transition-all"
             @click="nextStep"
           >
             <span>{{ t('sell.btnNextPreview') || 'Далее: Предпросмотр' }}</span>
@@ -917,12 +945,12 @@ async function submitAuction() {
       <div v-else-if="currentStep === 4" class="space-y-6 animate-fade-in-up">
 
         <div class="bg-white p-6 sm:p-8 rounded-3xl border border-black/[0.08] shadow-2xs space-y-6">
-          <div class="pb-4 border-b border-black/[0.06] flex items-center justify-between">
+          <div class="pb-4 border-b border-black/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h3 class="text-base font-black text-gray-950">{{ t('sell.previewTitle') || 'Сводка лота и онлайн-предпросмотр' }}</h3>
-              <p class="text-xs text-gray-500">{{ t('sell.previewSubtitle') || 'Проверьте данные перед публикацией.' }}</p>
+              <h3 class="text-base sm:text-lg font-black text-gray-950">{{ t('sell.previewTitle') || 'Сводка лота и онлайн-предпросмотр' }}</h3>
+              <p class="text-xs text-gray-500 mt-0.5">{{ t('sell.previewSubtitle') || 'Проверьте данные перед публикацией.' }}</p>
             </div>
-            <span class="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-extrabold text-xs">
+            <span class="self-start sm:self-auto px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-extrabold text-xs shrink-0">
               {{ t('common.ready') || 'Готово к публикации' }}
             </span>
           </div>
@@ -960,16 +988,16 @@ async function submitAuction() {
                 </p>
               </div>
 
-              <div class="pt-4 border-t border-black/[0.06] flex items-end justify-between">
-                <div>
-                  <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">{{ t('sell.startingPriceLabel') || 'Стартовая цена' }}</p>
-                  <p class="text-xl font-black text-amber-800 font-mono">
+              <div class="pt-4 border-t border-black/[0.06] flex flex-col sm:flex-row sm:items-end justify-between gap-3 min-w-0">
+                <div class="min-w-0">
+                  <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider truncate">{{ t('sell.startingPriceLabel') || 'Стартовая цена' }}</p>
+                  <p class="text-xl sm:text-2xl font-black text-amber-800 font-mono mt-0.5">
                     {{ formData.startingPrice.toLocaleString() }} KGS
                   </p>
                 </div>
-                <div class="text-right">
-                  <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">{{ t('sell.bidIncrementLabel') || 'Шаг ставки' }}</p>
-                  <p class="text-sm font-bold text-gray-800 font-mono">
+                <div class="sm:text-right min-w-0">
+                  <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider truncate">{{ t('sell.bidIncrementLabel') || 'Шаг ставки' }}</p>
+                  <p class="text-sm sm:text-base font-bold text-gray-800 font-mono mt-0.5">
                     +{{ formData.bidIncrement.toLocaleString() }} KGS
                   </p>
                 </div>
@@ -993,10 +1021,10 @@ async function submitAuction() {
         </div>
 
         <!-- Navigation Buttons -->
-        <div class="flex items-center justify-between gap-3">
+        <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <button
             type="button"
-            class="px-6 py-3 rounded-2xl border border-black/10 bg-white hover:bg-slate-50 text-gray-800 font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-2xs"
+            class="w-full sm:w-auto px-6 py-3 rounded-2xl border border-black/10 bg-white hover:bg-slate-50 text-gray-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
             @click="prevStep"
           >
             <ChevronLeft class="w-4 h-4" />
@@ -1006,7 +1034,7 @@ async function submitAuction() {
           <button
             type="button"
             :disabled="isSubmitting || !formData.agreeTerms"
-            class="px-10 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-gray-950 font-black text-xs sm:text-sm shadow-lg flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95 disabled:opacity-50 transition-all"
+            class="w-full sm:w-auto px-8 sm:px-10 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-gray-950 font-black text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 cursor-pointer hover:scale-105 active:scale-95 disabled:opacity-50 transition-all"
             @click="submitAuction"
           >
             <Loader2 v-if="isSubmitting" class="w-4 h-4 animate-spin" />
