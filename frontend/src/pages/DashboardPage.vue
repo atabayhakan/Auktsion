@@ -10,7 +10,7 @@ import { useUserStore } from '@/stores/user'
 import { useUIStore } from '@/stores/ui'
 import { useI18n } from '@/composables/useI18n'
 import { useFormatters } from '@/composables/useFormatters'
-import { mockAuctions } from '@/data/mockAuctions'
+import { useAuctionStore } from '@/stores/auction'
 import Button from '@/components/ui/Button.vue'
 import Card from '@/components/ui/Card.vue'
 import Badge from '@/components/ui/Badge.vue'
@@ -40,6 +40,7 @@ import { kyrgyzstanRegions } from '@/data/regions'
 const router = useRouter()
 const userStore = useUserStore()
 const uiStore = useUIStore()
+const auctionStore = useAuctionStore()
 const { t, locale } = useI18n()
 const { currency, date, status: statusLabels } = useFormatters()
 
@@ -211,7 +212,7 @@ const payments = computed(() => userStore.paymentHistory)
 const payouts = computed(() => userStore.payoutHistory)
 const payoutMethods = computed(() => userStore.payoutMethods)
 const activeBids = computed(() => userStore.activeBids)
-const recommendedAuctions = computed(() => mockAuctions.slice(0, 3))
+const recommendedAuctions = computed(() => auctionStore.auctions.slice(0, 3))
 
 const watchlist = ref<any[]>([])
 const isLoadingWatchlist = ref(false)
@@ -252,6 +253,7 @@ onMounted(async () => {
     }
   }
   loadWatchlist()
+  auctionStore.fetchAuctions()
 })
 </script>
 

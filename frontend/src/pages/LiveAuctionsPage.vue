@@ -13,7 +13,6 @@ import { useI18n } from '@/composables/useI18n'
 import AuctionCard from '@/components/auction/AuctionCard.vue'
 import { platformCategories } from '@/data/categories'
 import { kyrgyzstanRegions } from '@/data/regions'
-import { mockAuctions } from '@/data/mockAuctions'
 
 const route = useRoute()
 const router = useRouter()
@@ -118,10 +117,7 @@ const sortOptions = computed(() => [
 ])
 
 const allAuctions = computed(() => {
-  if (auctionStore.auctions && auctionStore.auctions.length > 0) {
-    return auctionStore.auctions
-  }
-  return mockAuctions
+  return auctionStore.auctions || []
 })
 
 const filteredAuctions = computed(() => {

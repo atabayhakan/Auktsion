@@ -9,14 +9,12 @@ import {
 import AuctionCard from '@/components/auction/AuctionCard.vue'
 import FeaturedLiveAuction from '@/components/home/FeaturedLiveAuction.vue'
 import CategoryPillBar from '@/components/home/CategoryPillBar.vue'
-import StoreCard, { type MerchantStore } from '@/components/home/StoreCard.vue'
 import BidBottomSheet from '@/components/auction/BidBottomSheet.vue'
 import AiAssistantModal from '@/components/layout/AiAssistantModal.vue'
 import { useAuctionStore } from '@/stores/auction'
 import { useActivityStore } from '@/stores/activity'
 import { useUserStore } from '@/stores/user'
 import { useI18n } from '@/composables/useI18n'
-import { mockAuctions } from '@/data/mockAuctions'
 import type { Auction } from '@/types'
 
 const auctionStore = useAuctionStore()
@@ -32,19 +30,18 @@ const isBidModalOpen = ref(false)
 const selectedBidAuction = ref<Auction | null>(null)
 const isAiModalOpen = ref(false)
 
-// Guaranteed non-empty auctions list
+// Real database-backed auctions list
 const allAuctions = computed<Auction[]>(() => {
-  if (auctionStore.auctions && auctionStore.auctions.length > 0) {
-    return auctionStore.auctions
-  }
-  return mockAuctions
+  return auctionStore.auctions || []
 })
 
 // Signature Featured Hero Auction
-const featuredHeroAuction = computed<Auction>(() => {
+const featuredHeroAuction = computed<Auction | null>(() => {
+  if (!allAuctions.value || allAuctions.value.length === 0) return null
   const blitz = allAuctions.value.find(a => a.isBlitz && a.status === 'active')
   if (blitz) return blitz
-  return allAuctions.value[0] || mockAuctions[0]
+  const active = allAuctions.value.find(a => a.status === 'active')
+  return active || allAuctions.value[0] || null
 })
 
 // Ending Soon Rail (lots with closest endsAt)
@@ -64,67 +61,18 @@ const forYouAuctions = computed(() => {
   return list.slice(0, 8)
 })
 
-// Category Showcases
+// Category Showcases (real listings only)
 const vehicleAuctions = computed(() =>
-  allAuctions.value.filter(a => a.category === 'vehicles').slice(0, 4)
+  allAuctions.value.filter(a => a.category === 'vehicles' && a.status === 'active').slice(0, 4)
 )
 
 const electronicsAuctions = computed(() =>
-  allAuctions.value.filter(a => a.category === 'electronics').slice(0, 4)
+  allAuctions.value.filter(a => a.category === 'electronics' && a.status === 'active').slice(0, 4)
 )
 
 const livestockAuctions = computed(() =>
-  allAuctions.value.filter(a => a.category === 'livestock').slice(0, 4)
+  allAuctions.value.filter(a => a.category === 'livestock' && a.status === 'active').slice(0, 4)
 )
-
-// Verified Kyrgyz Merchant Storefronts
-const verifiedStores = ref<MerchantStore[]>([
-  {
-    id: 'user-kyrgyz-tech',
-    name: 'Bishkek iStore',
-    city: 'Бишкек',
-    category: 'Официальная электроника',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-    rating: 4.95,
-    totalSales: 342,
-    activeLotsCount: 18,
-    previewImages: [
-      'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=400&q=80',
-      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-      'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=400&q=80'
-    ]
-  },
-  {
-    id: 'user-auto-bishkek',
-    name: 'AutoAsia Kyrgyzstan',
-    city: 'Бишкек',
-    category: 'Автомобили и транспорт',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
-    rating: 4.9,
-    totalSales: 89,
-    activeLotsCount: 12,
-    previewImages: [
-      'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=400&q=80',
-      'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=400&q=80',
-      'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=400&q=80'
-    ]
-  },
-  {
-    id: 'user-chuy-ferma',
-    name: 'Племхоз «Чуй-Арашан»',
-    city: 'Токмок',
-    category: 'Племенное животноводство',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80',
-    rating: 4.97,
-    totalSales: 112,
-    activeLotsCount: 14,
-    previewImages: [
-      'https://images.unsplash.com/photo-1484557052118-f32bd25b45b5?auto=format&fit=crop&w=400&q=80',
-      'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=400&q=80',
-      'https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=400&q=80'
-    ]
-  }
-])
 
 function openBidSheet(lot: Auction) {
   selectedBidAuction.value = lot
@@ -144,11 +92,37 @@ onMounted(async () => {
       <!-- ================================================================
            1. THE SIGNATURE: FEATURED LIVE AUCTION (Dark Studio Hero)
            ================================================================ -->
-      <section aria-label="Featured Live Auction" class="w-full min-w-0">
+      <section v-if="featuredHeroAuction" aria-label="Featured Live Auction" class="w-full min-w-0">
         <FeaturedLiveAuction
           :auction="featuredHeroAuction"
           @open-bid="openBidSheet"
         />
+      </section>
+      <section v-else class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#0B0D13] via-[#12151F] to-[#181C28] border border-white/10 text-white p-8 sm:p-14 text-center space-y-4 shadow-2xl w-full">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 text-xs font-bold border border-amber-400/20">
+          <Sparkles class="w-3.5 h-3.5" />
+          <span>{{ t('home.platformActive') || 'Онлайн-аукцион Кыргызстана' }}</span>
+        </div>
+        <h1 class="text-2xl sm:text-4xl font-black tracking-tight max-w-2xl mx-auto">
+          {{ t('home.heroWelcomeTitle') || 'Покупайте и продавайте товары на открытых торгах' }}
+        </h1>
+        <p class="text-xs sm:text-sm text-white/60 max-w-xl mx-auto">
+          {{ t('home.heroWelcomeDesc') || 'Разместите свой лот с гарантией безопасной сделки через банковский эскроу.' }}
+        </p>
+        <div class="pt-2 flex flex-wrap justify-center gap-3">
+          <RouterLink
+            to="/sell"
+            class="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-500 text-gray-950 font-black text-xs sm:text-sm transition-all shadow-lg hover:scale-105"
+          >
+            {{ t('nav.createAuction') || 'Разместить лот' }}
+          </RouterLink>
+          <RouterLink
+            to="/auctions"
+            class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm border border-white/10 transition-all"
+          >
+            {{ t('nav.allAuctions') || 'Все лоты' }}
+          </RouterLink>
+        </div>
       </section>
 
       <!-- ================================================================
@@ -224,7 +198,7 @@ onMounted(async () => {
         </div>
 
         <!-- Mobile 2-column, Desktop 4-column Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+        <div v-if="forYouAuctions.length > 0" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           <AuctionCard
             v-for="auction in forYouAuctions"
             :key="auction.id"
@@ -232,7 +206,29 @@ onMounted(async () => {
           />
         </div>
 
-        <div class="text-center pt-2">
+        <!-- Empty State when no lots in category -->
+        <div v-else class="text-center py-12 px-4 rounded-3xl bg-white border border-black/5 space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mx-auto">
+            <Sparkles class="w-6 h-6" />
+          </div>
+          <h3 class="text-base font-bold text-gray-900">
+            {{ t('home.noLotsInCategory') || 'В данной категории пока нет активных лотов' }}
+          </h3>
+          <p class="text-xs text-gray-500 max-w-md mx-auto">
+            {{ t('home.beFirstToList') || 'Будьте первыми, кто разместит лот в этой категории!' }}
+          </p>
+          <div class="pt-2">
+            <RouterLink
+              to="/sell"
+              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-500 text-gray-950 font-black text-xs transition-all shadow-xs"
+            >
+              <span>{{ t('nav.createAuction') || 'Разместить лот' }}</span>
+              <ArrowRight class="w-4 h-4" />
+            </RouterLink>
+          </div>
+        </div>
+
+        <div v-if="forYouAuctions.length > 0" class="text-center pt-2">
           <RouterLink
             :to="activeCategorySlug === 'all' ? '/auctions' : `/auctions?category=${activeCategorySlug}`"
             class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-black/10 text-gray-900 font-extrabold text-xs sm:text-sm hover:bg-slate-50 transition-all shadow-2xs"
@@ -240,40 +236,6 @@ onMounted(async () => {
             <span>{{ t('home.showMoreLots') || 'Показать больше лотов' }}</span>
             <ArrowRight class="w-4 h-4" />
           </RouterLink>
-        </div>
-      </section>
-
-      <!-- ================================================================
-           5. VERIFIED MERCHANT STOREFRONTS ("Проверенные магазины")
-           ================================================================ -->
-      <section aria-labelledby="verified-stores-title" class="space-y-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
-              <CheckCircle2 class="w-4 h-4" />
-            </div>
-            <div>
-              <h2 id="verified-stores-title" class="text-lg sm:text-xl font-black text-gray-950 tracking-tight">
-                {{ t('home.verifiedStores') || 'Проверенные магазины Кыргызстана' }}
-              </h2>
-              <p class="text-xs text-gray-500 hidden sm:block">{{ t('home.verifiedStoresDesc') || 'Магазины с официальной верификацией, рейтингом от 4.8 и гарантией возврата' }}</p>
-            </div>
-          </div>
-          <RouterLink
-            to="/auctions"
-            class="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1"
-          >
-            <span>{{ t('home.allStores') || 'Все магазины' }}</span>
-            <ChevronRight class="w-4 h-4" />
-          </RouterLink>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          <StoreCard
-            v-for="store in verifiedStores"
-            :key="store.id"
-            :store="store"
-          />
         </div>
       </section>
 

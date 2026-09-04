@@ -72,7 +72,7 @@ const liveViewers = computed(() => {
       <div class="lg:col-span-7 flex flex-col justify-center min-w-0">
         <div class="relative rounded-2xl overflow-hidden h-40 sm:h-56 lg:h-[340px] bg-black/40 border border-white/10 shadow-inner group">
           <img
-            :src="auction.images[0]"
+            :src="auction.images?.[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'"
             :alt="auction.title"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           />
@@ -129,20 +129,20 @@ const liveViewers = computed(() => {
           <!-- Verified Seller Compact Chip -->
           <div class="flex items-center gap-2.5 p-2 rounded-xl bg-white/[0.04] border border-white/5">
             <img
-              v-if="auction.seller.avatar"
+              v-if="auction.seller?.avatar"
               :src="auction.seller.avatar"
-              :alt="auction.seller.fullName"
+              :alt="auction.seller?.fullName || 'Seller'"
               class="w-8 h-8 rounded-lg object-cover border border-white/10 shrink-0"
             />
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-1 text-xs font-bold text-white truncate">
-                <span>{{ auction.seller.fullName }}</span>
-                <CheckCircle2 class="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>{{ auction.seller?.fullName || 'Сатуучу' }}</span>
+                <CheckCircle2 v-if="auction.seller?.kycStatus === 'verified'" class="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               </div>
               <div class="text-[10px] text-white/50 flex items-center gap-2">
-                <span>⭐ {{ auction.seller.rating }}</span>
-                <span>•</span>
-                <span>{{ t('home.successfulDeals', { n: auction.seller.totalSales }) || `${auction.seller.totalSales} успешных сделок` }}</span>
+                <span v-if="auction.seller?.rating">⭐ {{ auction.seller.rating }}</span>
+                <span v-if="auction.seller?.totalSales !== undefined">•</span>
+                <span v-if="auction.seller?.totalSales !== undefined">{{ t('home.successfulDeals', { n: auction.seller.totalSales }) || `${auction.seller.totalSales} успешных сделок` }}</span>
               </div>
             </div>
           </div>

@@ -2,11 +2,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Auction, AuctionFilters, Money } from '@/types'
-import { mockAuctions } from '@/data/mockAuctions'
+import apiClient from '@/services/api'
 
 export const useAuctionStore = defineStore('auction', () => {
   // State
-  const auctions = ref<Auction[]>([...mockAuctions])
+  const auctions = ref<Auction[]>([])
   const currentAuction = ref<Auction | null>(null)
   const filters = ref<AuctionFilters>({
     page: 1,
@@ -16,7 +16,7 @@ export const useAuctionStore = defineStore('auction', () => {
   const isLoading = ref(false)
   const error = ref<string | null>(null)
   const hasMore = ref(false)
-  const totalCount = ref(mockAuctions.length)
+  const totalCount = ref(0)
   
   // Real-time bid updates
   const priceUpdates = ref<Map<string, Money>>(new Map())
@@ -48,42 +48,6 @@ export const useAuctionStore = defineStore('auction', () => {
       .sort((a, b) => b.bidCount - a.bidCount)
   )
 
-  // Filter helper for mock data
-  function filterMockAuctions(currentFilters: AuctionFilters): Auction[] {
-    let result = [...mockAuctions]
-
-    if (currentFilters.category) {
-      result = result.filter(a => a.category.toLowerCase() === currentFilters.category?.toLowerCase())
-    }
-    if (currentFilters.city) {
-      result = result.filter(a => a.city.toLowerCase() === currentFilters.city?.toLowerCase())
-    }
-    if (currentFilters.search) {
-      const q = currentFilters.search.toLowerCase()
-      result = result.filter(a => a.title.toLowerCase().includes(q) || a.description.toLowerCase().includes(q))
-    }
-    if (currentFilters.minPrice !== undefined) {
-      result = result.filter(a => a.currentPrice.minorUnits >= (currentFilters.minPrice || 0))
-    }
-    if (currentFilters.maxPrice !== undefined) {
-      result = result.filter(a => a.currentPrice.minorUnits <= (currentFilters.maxPrice || Infinity))
-    }
-
-    if (currentFilters.sortBy === 'ending_soon') {
-      result.sort((a, b) => new Date(a.endsAt).getTime() - new Date(b.endsAt).getTime())
-    } else if (currentFilters.sortBy === 'newest') {
-      result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    } else if (currentFilters.sortBy === 'price_asc') {
-      result.sort((a, b) => a.currentPrice.minorUnits - b.currentPrice.minorUnits)
-    } else if (currentFilters.sortBy === 'price_desc') {
-      result.sort((a, b) => b.currentPrice.minorUnits - a.currentPrice.minorUnits)
-    } else if (currentFilters.sortBy === 'most_bids') {
-      result.sort((a, b) => b.bidCount - a.bidCount)
-    }
-
-    return result
-  }
-
   // Actions
   async function fetchAuctions(newFilters?: Partial<AuctionFilters>, append = false) {
     if (newFilters) {
@@ -94,33 +58,30 @@ export const useAuctionStore = defineStore('auction', () => {
     error.value = null
     
     try {
-      if (window.axios) {
-        const response = await window.axios.get('/api/auctions', { 
-          params: filters.value 
-        })
-        if (response?.data?.data && response.data.data.length > 0) {
-          if (append) {
-            auctions.value = [...auctions.value, ...response.data.data]
-          } else {
-            auctions.value = response.data.data
-          }
-          hasMore.value = response.data.meta?.hasMore || false
-          totalCount.value = response.data.meta?.total || response.data.data.length
-          return
+      const response = await apiClient.get<any>('/api/auctions', filters.value)
+      if (response?.data?.data && Array.isArray(response.data.data)) {
+        if (append) {
+          const existingIds = new Set(auctions.value.map(a => a.id))
+          const fresh = response.data.data.filter((a: any) => !existingIds.has(a.id))
+          auctions.value = [...auctions.value, ...fresh]
+        } else {
+          auctions.value = response.data.data
         }
+        hasMore.value = Boolean(response.data.meta && response.data.meta.currentPage < response.data.meta.lastPage)
+        totalCount.value = response.data.meta?.total ?? response.data.data.length
+        return
       }
       
-      // Standalone / Mock fallback
-      const filtered = filterMockAuctions(filters.value)
-      auctions.value = filtered
-      totalCount.value = filtered.length
+      auctions.value = []
+      totalCount.value = 0
       hasMore.value = false
     } catch (err: any) {
-      console.warn('API error, using mock data:', err)
-      const filtered = filterMockAuctions(filters.value)
-      auctions.value = filtered
-      totalCount.value = filtered.length
-      hasMore.value = false
+      console.error('API error fetching auctions:', err)
+      error.value = err.message || 'Ошибка загрузки аукционов'
+      if (!append) {
+        auctions.value = []
+        totalCount.value = 0
+      }
     } finally {
       isLoading.value = false
     }
@@ -131,20 +92,17 @@ export const useAuctionStore = defineStore('auction', () => {
     error.value = null
     
     try {
-      if (window.axios) {
-        const response = await window.axios.get(`/api/auctions/${id}`)
-        if (response?.data?.data) {
-          currentAuction.value = response.data.data
-          return currentAuction.value
-        }
+      const response = await apiClient.get<any>(`/api/auctions/${id}`)
+      if (response?.data?.data) {
+        currentAuction.value = response.data.data
+        return currentAuction.value
       }
       
-      // Fallback
-      const found = auctions.value.find(a => a.id === id) || mockAuctions.find(a => a.id === id) || null
+      const found = auctions.value.find(a => a.id === id) || null
       currentAuction.value = found
       return currentAuction.value
     } catch (err: any) {
-      const found = auctions.value.find(a => a.id === id) || mockAuctions.find(a => a.id === id) || null
+      const found = auctions.value.find(a => a.id === id) || null
       currentAuction.value = found
       return currentAuction.value
     } finally {
@@ -153,7 +111,7 @@ export const useAuctionStore = defineStore('auction', () => {
   }
 
   function getAuctionById(id: string) {
-    return auctions.value.find(a => a.id === id) || mockAuctions.find(a => a.id === id) || null
+    return auctions.value.find(a => a.id === id) || null
   }
 
   function updateAuctionPrice(auctionId: string, newPrice: Money, bidCount: number) {
