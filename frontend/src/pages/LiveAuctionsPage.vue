@@ -557,7 +557,7 @@ onMounted(() => {
                   {{ t('liveAuctionsPage.noResultsTitle') || 'Bu Filtrelere Uygun İlan Bulunamadı' }}
                 </h3>
                 <p class="text-xs sm:text-sm text-gray-500 leading-relaxed">
-                  Filtrelerinizi genişleterek diğer kategorilere göz atabilir veya ilk açık artırmayı %0 komisyonla siz başlatabilirsiniz.
+                  {{ t('liveAuctionsPage.noResultsDesc') || 'Filtrelerinizi genişleterek diğer kategorilere göz atabilir veya ilk açık artırmayı %0 komisyonla siz başlatabilirsiniz.' }}
                 </p>
               </div>
 
@@ -585,10 +585,10 @@ onMounted(() => {
               <div class="flex items-center justify-between pb-2 border-b border-black/[0.05]">
                 <div class="flex items-center gap-2">
                   <Sparkles class="w-4 h-4 text-amber-600" />
-                  <h4 class="text-sm font-black text-gray-950">Popüler Kategorileri Keşfedin</h4>
+                  <h4 class="text-sm font-black text-gray-950">{{ t('liveAuctionsPage.exploreCategoriesTitle') || 'Popüler Kategorileri Keşfedin' }}</h4>
                 </div>
                 <RouterLink to="/categories" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-                  <span>Tüm Kategoriler</span>
+                  <span>{{ t('liveAuctionsPage.allCategories') || 'Tüm Kategoriler' }}</span>
                   <ArrowRight class="w-3.5 h-3.5" />
                 </RouterLink>
               </div>

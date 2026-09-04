@@ -741,7 +741,7 @@ async function submitAuction() {
               <input
                 v-model="formData.electronics.brand"
                 type="text"
-                placeholder="Örn: Samsung, LG, Midea, Apple, Sony..."
+                :placeholder="t('sell.electronicsBrandPlaceholder') || 'Samsung, LG, Midea, Apple, Sony...'"
                 class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-black/10 text-xs sm:text-sm font-bold placeholder:text-gray-400/50"
               />
             </div>
@@ -750,7 +750,7 @@ async function submitAuction() {
               <input
                 v-model="formData.electronics.storage"
                 type="text"
-                placeholder="Örn: 35м² / Inverter, 256GB, 12000 BTU..."
+                :placeholder="t('sell.electronicsCapacityPlaceholder') || '35м² / Inverter, 256GB, 12000 BTU...'"
                 class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-black/10 text-xs sm:text-sm font-bold placeholder:text-gray-400/50"
               />
             </div>

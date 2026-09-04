@@ -302,13 +302,13 @@ onMounted(async () => {
           <div class="max-w-2xl mx-auto space-y-3">
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-900 text-xs font-black">
               <Sparkles class="w-4 h-4 text-amber-600" />
-              <span>İlk Ay %0 Komisyon Fırsatı</span>
+              <span>{{ t('home.emptyPromoBadge') || 'İlk Ay %0 Komisyon Fırsatı' }}</span>
             </div>
             <h3 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">
-              Henüz Bu Kategoride Aktif İlan Bulunmuyor
+              {{ t('home.emptyCategoryTitle') || 'Henüz Bu Kategoride Aktif İlan Bulunmuyor' }}
             </h3>
             <p class="text-xs sm:text-sm text-gray-500 leading-relaxed max-w-lg mx-auto">
-              Kırgızistan genelinde binlerce alıcı yeni ilanları bekliyor. İlk açık artırmanızı komisyonsuz başlatın, dakikalar içinde en yüksek teklifi alın.
+              {{ t('home.emptyCategoryDesc') || 'Kırgızistan genelinde binlerce alıcı yeni ilanları bekliyor. İlk açık artırmanızı komisyonsuz başlatın, dakikalar içinde en yüksek teklifi alın.' }}
             </p>
             <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
               <RouterLink
@@ -316,14 +316,14 @@ onMounted(async () => {
                 class="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-950 font-black text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer hover:scale-[1.02]"
               >
                 <PlusCircle class="w-4 h-4" />
-                <span>+ Hemen İlk İlanı Siz Verin</span>
+                <span>{{ t('home.emptyBtnCreate') || '+ Hemen İlk İlanı Siz Verin' }}</span>
               </RouterLink>
               <RouterLink
                 to="/how-it-works"
                 class="px-6 py-3 rounded-2xl bg-white border border-black/10 text-gray-800 font-bold text-xs sm:text-sm hover:bg-slate-50 transition-all flex items-center gap-2"
               >
                 <HelpCircle class="w-4 h-4 text-gray-500" />
-                <span>Açık Artırma Nasıl Çalışır?</span>
+                <span>{{ t('home.emptyBtnHowItWorks') || 'Açık Artırma Nasıl Çalışır?' }}</span>
               </RouterLink>
             </div>
           </div>
@@ -334,24 +334,24 @@ onMounted(async () => {
               <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-black text-sm">
                 1
               </div>
-              <h4 class="text-sm font-black text-gray-950">İlanınızı Oluşturun</h4>
-              <p class="text-xs text-gray-500 leading-relaxed">Yapay zeka asistanımızla fotoğrafları yükleyin, başlangıç fiyatını belirleyin.</p>
+              <h4 class="text-sm font-black text-gray-950">{{ t('home.emptyStep1Title') || 'İlanınızı Oluşturun' }}</h4>
+              <p class="text-xs text-gray-500 leading-relaxed">{{ t('home.emptyStep1Desc') || 'Yapay zeka asistanımızla fotoğrafları yükleyin, başlangıç fiyatını belirleyin.' }}</p>
             </div>
 
             <div class="p-5 rounded-2xl bg-white border border-black/[0.05] space-y-2 shadow-2xs">
               <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-black text-sm">
                 2
               </div>
-              <h4 class="text-sm font-black text-gray-950">Canlı Teklifleri Toplayın</h4>
-              <p class="text-xs text-gray-500 leading-relaxed">Gerçek zamanlı WebSocket ile alıcıların rekabetini anlık izleyin.</p>
+              <h4 class="text-sm font-black text-gray-950">{{ t('home.emptyStep2Title') || 'Canlı Teklifleri Toplayın' }}</h4>
+              <p class="text-xs text-gray-500 leading-relaxed">{{ t('home.emptyStep2Desc') || 'Gerçek zamanlı WebSocket ile alıcıların rekabetini anlık izleyin.' }}</p>
             </div>
 
             <div class="p-5 rounded-2xl bg-white border border-black/[0.05] space-y-2 shadow-2xs">
               <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black text-sm">
                 3
               </div>
-              <h4 class="text-sm font-black text-gray-950">Escrow ile Güvenli Ödeme</h4>
-              <p class="text-xs text-gray-500 leading-relaxed">Teslimat onaylandığında kazandığınız tutar anında banka hesabınıza geçer.</p>
+              <h4 class="text-sm font-black text-gray-950">{{ t('home.emptyStep3Title') || 'Escrow ile Güvenli Ödeme' }}</h4>
+              <p class="text-xs text-gray-500 leading-relaxed">{{ t('home.emptyStep3Desc') || 'Teslimat onaylandığında kazandığınız tutar anında banka hesabınıza geçer.' }}</p>
             </div>
           </div>
         </div>

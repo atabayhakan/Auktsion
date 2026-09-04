@@ -468,6 +468,8 @@ export default {
     "title": "İletişim ve Destek"
   },
   "dashboard": {
+    "smsAlertsDesc": "Güvenlik doğrulamaları ve banka emanet para transferi bilgilendirmeleri SMS ile iletilsin.",
+    "smsAlertsTitle": "SMS ile Kritik Uyarılar",
     "settingsSubtitle": "Profil bilgilerinizi, iletişim kanallarınızı, güvenlik seçeneklerinizi ve bildirim tercihlerinizi yönetin.",
     "endToEndEncrypted": "Uçtan uca şifreli",
     "notPep": "Siyasi nüfuz sahibi değil",
@@ -679,6 +681,17 @@ export default {
     "terms": "Kullanım Şartları"
   },
   "home": {
+    "emptyStep3Desc": "Teslimat onaylandığında kazandığınız tutar anında banka hesabınıza geçer.",
+    "emptyStep3Title": "Escrow ile Güvenli Ödeme",
+    "emptyStep2Desc": "Gerçek zamanlı WebSocket ile alıcıların rekabetini anlık izleyin.",
+    "emptyStep2Title": "Canlı Teklifleri Toplayın",
+    "emptyStep1Desc": "Yapay zeka asistanımızla fotoğrafları yükleyin, başlangıç fiyatını belirleyin.",
+    "emptyStep1Title": "İlanınızı Oluşturun",
+    "emptyBtnHowItWorks": "Açık Artırma Nasıl Çalışır?",
+    "emptyBtnCreate": "+ Hemen İlk İlanı Siz Verin",
+    "emptyCategoryDesc": "Kırgızistan genelinde binlerce alıcı yeni ilanları bekliyor. İlk açık artırmanızı komisyonsuz başlatın, dakikalar içinde en yüksek teklifi alın.",
+    "emptyCategoryTitle": "Henüz Bu Kategoride Aktif İlan Bulunmuyor",
+    "emptyPromoBadge": "İlk Ay %0 Komisyon Fırsatı",
     "instantTileDesc": "5 saniyede komisyonsuz ödeme ve doğrudan banka hesabına bakiye çekimi.",
     "instantTileTitle": "MBank & Optima QR",
     "instantTileLabel": "ANINDA ÇEKİM",
@@ -868,6 +881,7 @@ export default {
     "title": "iTorgo Nasıl Çalışır?"
   },
   "liveAuctionsPage": {
+    "exploreCategoriesTitle": "Popüler Kategorileri Keşfedin",
     "title": "Kırgızistan Canlı ve Aktif Açık Artırmalar",
     "subtitle": "Hayvan pazarı, otomotiv, Dordoy toptan ticaret ürünleri ve gayrimenkul",
     "activeLots": "{n} Aktif İlan",
@@ -1211,6 +1225,8 @@ export default {
     "version": "2.0"
   },
   "sell": {
+    "electronicsCapacityPlaceholder": "Örn: 35m² / Inverter, 256GB, 12000 BTU...",
+    "electronicsBrandPlaceholder": "Örn: Samsung, LG, Midea, Apple, Sony...",
     "photoRequired": "Lütfen en az 1 adet fotoğraf yükleyin.",
     "titleDescRequired": "Lütfen ilan başlığı ve detaylı açıklama girin.",
     "successCreated": "Açık artırma ilanınız başarıyla oluşturuldu ve yayına alındı.",

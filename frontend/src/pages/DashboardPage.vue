@@ -888,8 +888,8 @@ onMounted(async () => {
                   <!-- SMS Notifications -->
                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-black/[0.04]">
                     <div class="space-y-0.5">
-                      <p class="font-black text-xs sm:text-sm text-gray-950">SMS ile Kritik Uyarılar</p>
-                      <p class="text-xs text-gray-500">Güvenlik doğrulamaları ve banka emanet para transferi bilgilendirmeleri SMS ile iletilsin.</p>
+                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.smsAlertsTitle') || 'SMS ile Kritik Uyarılar' }}</p>
+                      <p class="text-xs text-gray-500">{{ t('dashboard.smsAlertsDesc') || 'Güvenlik doğrulamaları ve banka emanet para transferi bilgilendirmeleri SMS ile iletilsin.' }}</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
                       <input v-model="smsNotifEnabled" type="checkbox" class="sr-only peer" />
