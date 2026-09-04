@@ -665,6 +665,8 @@ export default {
     "verifiedOnly": "Sadece Doğrulanmış Satıcılar"
   },
   "footer": {
+    "nbkrTitle": "Kırgızistan Ulusal Bankası AML/CFT Uyumlu",
+    "nbkrDesc": "256-Bit SSL Şifreleme ve DemirBank Escrow Emanet Güvencesi",
     "aboutUs": "Hakkımızda",
     "allAuctions": "Tüm Açık Artırmalar",
     "allCategories": "Kategoriler",

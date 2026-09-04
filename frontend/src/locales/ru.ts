@@ -665,6 +665,8 @@ export default {
     "verifiedOnly": "Только проверенные продавцы"
   },
   "footer": {
+    "nbkrTitle": "Соответствие требованиям НБКР (ПОД/ФТ)",
+    "nbkrDesc": "256-битное SSL шифрование и эскроу-депозит DemirBank",
     "aboutUs": "О нас",
     "allAuctions": "Все аукционы",
     "allCategories": "Категории",
