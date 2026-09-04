@@ -24,6 +24,7 @@ import { authenticateToken } from './middleware/auth.js';
 import { apiLimiter } from './middleware/rateLimit.js';
 
 const app = express();
+app.set('trust proxy', 1);
 const server = http.createServer(app);
 
 // 1. Initialize SQLite Database & Seed
