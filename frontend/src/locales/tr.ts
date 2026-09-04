@@ -411,7 +411,9 @@ export default {
     "viewAll": "Tümünü Gör",
     "views": "görüntülenme",
     "yes": "Evet",
-    "you": "Siz"
+    "you": "Siz",
+    "user": "Kullanıcı",
+    "pending": "Bekliyor"
   },
   "contact": {
     "address": "Bişkek şehri, Çüy Caddesi, 120/1",
@@ -594,7 +596,32 @@ export default {
     "walletBalance": "Cüzdan Bakiyesi",
     "watchlist": "Takip Listem",
     "withdrawFunds": "Para Çek",
-    "wonAuctions": "Kazanılan Açık Artırmalar"
+    "wonAuctions": "Kazanılan Açık Artırmalar",
+    "welcomeUser": "Hoş geldiniz, {name}",
+    "bidHistoryDesc": "Katıldığınız açık artırma ve teklif geçmişiniz",
+    "registeredUser": "Kayıtlı Üye",
+    "photoUploadHint": "Fotoğrafı güncellemek için kamera ikonuna tıklayın.",
+    "avatarUpdated": "Profil fotoğrafı güncellendi",
+    "saving": "Kaydediliyor...",
+    "loginPasswordTitle": "Giriş Şifresi",
+    "loginPasswordHint": "Son güncelleme: 30 gün önce. Güçlü bir şifre kullanmanız önerilir.",
+    "activeSessionTitle": "Aktif Oturum: Windows (Chrome) • Bişkek, KG",
+    "activeSessionDesc": "Şu anda bu cihaz üzerinden oturum açtınız.",
+    "kycStages": "Doğrulama Aşamaları",
+    "kycStageOf": "Aşama {current} / {total}",
+    "passportDesc": "Ön & Arka Yüz",
+    "selfieDesc": "Net Yüz Fotoğrafı",
+    "addressDesc": "Fatura / İkametgah",
+    "verifiedCheck": "Doğrulandı ✓",
+    "amlComplianceStatus": "AML & Yasal Uyumluluk Durumu",
+    "cleanOfac": "Temiz (OFAC/UN)",
+    "adminPanel": "Yönetim Paneli",
+    "accountAndSecurity": "Hesap & Güvenlik",
+    "changeOrReupload": "Değiştir / Yeniden Yükle",
+    "document": "Doküman",
+    "unsupportedFormat": "Desteklenmeyen dosya formatı: {format}",
+    "maxFileSize": "Maksimum dosya boyutu: {size}",
+    "uploadFailed": "Yükleme başarısız"
   },
   "dashboardComponents": {
     "browseFiles": "dosya seçiniz",
@@ -2211,4 +2238,4 @@ export default {
       }
     }
   }
-} as const
+} as const;

@@ -69,13 +69,13 @@ function handleFileSelect(selectedFile: File) {
   })
   
   if (!isValidType) {
-    uiStore.toastError(t('common.error') || 'Hata', `Desteklenmeyen dosya formatı: ${props.accepted}`)
+    uiStore.toastError(t('common.error') || 'Hata', t('dashboard.unsupportedFormat', { format: props.accepted }) || `Desteklenmeyen dosya formatı: ${props.accepted}`)
     return
   }
   
   const maxSizeMB = parseInt(props.maxSize) || 10
   if (selectedFile.size > maxSizeMB * 1024 * 1024) {
-    uiStore.toastError(t('common.error') || 'Hata', `Maksimum dosya boyutu: ${props.maxSize}`)
+    uiStore.toastError(t('common.error') || 'Hata', t('dashboard.maxFileSize', { size: props.maxSize }) || `Maksimum dosya boyutu: ${props.maxSize}`)
     return
   }
   
@@ -102,11 +102,11 @@ async function handleUpload(selectedFile: File) {
     const res: any = await userStore.uploadKycDocument(type, selectedFile)
     const url = res?.url || (res?.data as any)?.url || preview.value || ''
     uploadProgress.value = 100
-    uiStore.toastSuccess(t('toasts.success') || 'Başarılı', `${selectedFile.name} yüklendi`)
+    uiStore.toastSuccess(t('toasts.success') || 'Başarılı', `${selectedFile.name} ${t('toasts.uploaded') || 'yüklendi'}`)
     emit('update:uploaded', url)
   } catch (err: any) {
     uploadProgress.value = 0
-    const msg = err?.response?.data?.error || err?.data?.error || err?.message || 'Yükleme başarısız'
+    const msg = err?.response?.data?.error || err?.data?.error || err?.message || (t('dashboard.uploadFailed') || 'Yükleme başarısız')
     uiStore.toastError(t('common.error') || 'Hata', msg)
     file.value = null
     if (preview.value && !props.uploaded) {
@@ -153,14 +153,14 @@ function triggerFileInput() {
         class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-extrabold shrink-0"
       >
         <CheckCircle2 class="w-3.5 h-3.5 text-emerald-600" />
-        <span>{{ t('status.kyc.verified') || 'Yüklendi' }}</span>
+        <span>{{ t('toasts.uploaded') || t('status.kyc.verified') || 'Yüklendi' }}</span>
       </div>
       <div 
         v-else 
         class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-gray-500 text-[11px] font-bold shrink-0"
       >
         <Clock class="w-3.5 h-3.5 text-gray-400" />
-        <span>Bekliyor</span>
+        <span>{{ t('common.pending') || 'Bekliyor' }}</span>
       </div>
     </div>
 
@@ -198,7 +198,7 @@ function triggerFileInput() {
           />
           <div v-else class="w-28 h-28 rounded-xl bg-slate-100 flex flex-col items-center justify-center gap-2">
             <FileText class="w-8 h-8 text-primary" />
-            <span class="text-[10px] font-bold text-gray-600 truncate max-w-[90px]">{{ file?.name || 'Doküman' }}</span>
+            <span class="text-[10px] font-bold text-gray-600 truncate max-w-[90px]">{{ file?.name || t('dashboard.document') || 'Doküman' }}</span>
           </div>
 
           <button 
@@ -216,7 +216,7 @@ function triggerFileInput() {
           class="text-xs font-bold text-primary hover:text-primary-hover mt-3 z-20 cursor-pointer"
           @click.stop="triggerFileInput"
         >
-          Değiştir / Yeniden Yükle
+          {{ t('dashboard.changeOrReupload') || 'Değiştir / Yeniden Yükle' }}
         </button>
       </div>
       

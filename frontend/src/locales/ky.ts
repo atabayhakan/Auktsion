@@ -411,7 +411,9 @@ export default {
     "viewAll": "Баарын көрүү",
     "views": "көрүү",
     "yes": "Ооба",
-    "you": "Сиз"
+    "you": "Сиз",
+    "user": "Колдонуучу",
+    "pending": "Күтүүдө"
   },
   "contact": {
     "address": "Бишкек ш., Чүй проспектиси, 120/1",
@@ -479,8 +481,8 @@ export default {
     "utilityBill": "Коммуналдык төлөм / Маалымкат",
     "clearSelfie": "Беттин так сүрөтү (селфи)",
     "frontBack": "Алдыңкы жана арткы бети",
-    "sslProtected": "256-биттик SSL коргоосу",
-    "kycUploadHint": "Жарактуу жана так документтериңизди жүктөңүз",
+    "sslProtected": "256-Bit SSL корголгон",
+    "kycUploadHint": "Жарактуу жана так окулган документтерди жүктөңүз",
     "kycStepBadge": "Кадам {step} / 5",
     "kycStepsTitle": "Текшерүү кадамдары",
     "activeAuctions": "Активдүү аукциондор",
@@ -594,7 +596,32 @@ export default {
     "walletBalance": "Капчык балансы",
     "watchlist": "Күзөтүү тизмеси",
     "withdrawFunds": "Акча чыгаруу",
-    "wonAuctions": "Утулган аукциондор"
+    "wonAuctions": "Утулган аукциондор",
+    "welcomeUser": "Кош келиңиз, {name}",
+    "bidHistoryDesc": "Катышкан аукциондоруңуз жана коюмдар тарыхы",
+    "registeredUser": "Катталган колдонуучу",
+    "photoUploadHint": "Сүрөттү жаңыртуу үчүн камера сөлөкөтүн басыңыз.",
+    "avatarUpdated": "Профиль сүрөтү жаңыртылды",
+    "saving": "Сакталууда...",
+    "loginPasswordTitle": "Кирүү сыр сөзү",
+    "loginPasswordHint": "Акыркы жаңыртуу: 30 күн мурун. Ишенимдүү сыр сөз колдонуу сунушталат.",
+    "activeSessionTitle": "Активдүү сессия: Windows (Chrome) • Бишкек, KG",
+    "activeSessionDesc": "Учурда сиз бул түзмөк аркылуу кирдиңиз.",
+    "kycStages": "Текшерүү баскычтары",
+    "kycStageOf": "Баскыч {current} / {total}",
+    "passportDesc": "Алдыңкы жана арткы бети",
+    "selfieDesc": "Так жүз сүрөтү",
+    "addressDesc": "Квитанция / Жашаган жеринен маалымкат",
+    "verifiedCheck": "Тастыкталды ✓",
+    "amlComplianceStatus": "AML жана мыйзамга ылайыктуулук абалы",
+    "cleanOfac": "Таза (OFAC/UN)",
+    "adminPanel": "Администратор панели",
+    "accountAndSecurity": "Аккаунт жана коопсуздук",
+    "changeOrReupload": "Алмаштыруу / Кайра жүктөө",
+    "document": "Документ",
+    "unsupportedFormat": "Колдоого алынбаган файл форматы: {format}",
+    "maxFileSize": "Файлдын максималдуу көлөмү: {size}",
+    "uploadFailed": "Жүктөө оңунан чыкпады"
   },
   "dashboardComponents": {
     "browseFiles": "тандаңыз",
@@ -2211,4 +2238,4 @@ export default {
       }
     }
   }
-} as const
+} as const;

@@ -411,7 +411,9 @@ export default {
     "viewAll": "Смотреть все",
     "views": "просмотров",
     "yes": "Да",
-    "you": "Вы"
+    "you": "Вы",
+    "user": "Пользователь",
+    "pending": "В ожидании"
   },
   "contact": {
     "address": "г. Бишкек, пр. Чуй, 120/1",
@@ -479,8 +481,8 @@ export default {
     "utilityBill": "Счет за комм. услуги / Справка",
     "clearSelfie": "Четкое фото лица (селфи)",
     "frontBack": "Лицевая и оборотная сторона",
-    "sslProtected": "Защищено 256-бит SSL",
-    "kycUploadHint": "Загрузите действительные и четкие документы",
+    "sslProtected": "Защищено 256-Bit SSL",
+    "kycUploadHint": "Пожалуйста, загрузите действительные и четкие документы",
     "kycStepBadge": "Этап {step} из 5",
     "kycStepsTitle": "Этапы верификации",
     "activeAuctions": "Активные аукционы",
@@ -594,7 +596,32 @@ export default {
     "walletBalance": "Баланс кошелька",
     "watchlist": "Избранное",
     "withdrawFunds": "Вывести средства",
-    "wonAuctions": "Выигранные лоты"
+    "wonAuctions": "Выигранные лоты",
+    "welcomeUser": "Добро пожаловать, {name}",
+    "bidHistoryDesc": "История аукционов и ваших ставок",
+    "registeredUser": "Зарегистрированный пользователь",
+    "photoUploadHint": "Нажмите на значок камеры, чтобы обновить фото.",
+    "avatarUpdated": "Фото профиля обновлено",
+    "saving": "Сохранение...",
+    "loginPasswordTitle": "Пароль учетной записи",
+    "loginPasswordHint": "Последнее обновление: 30 дней назад. Рекомендуется использовать надежный пароль.",
+    "activeSessionTitle": "Активная сессия: Windows (Chrome) • Бишкек, KG",
+    "activeSessionDesc": "Вы авторизованы на этом устройстве в данный момент.",
+    "kycStages": "Этапы верификации",
+    "kycStageOf": "Этап {current} из {total}",
+    "passportDesc": "Лицевая и оборотная сторона",
+    "selfieDesc": "Четкое фото лица",
+    "addressDesc": "Квитанция / Справка с места жительства",
+    "verifiedCheck": "Подтверждено ✓",
+    "amlComplianceStatus": "Статус соответствия ПОД/ФТ (AML)",
+    "cleanOfac": "Чисто (OFAC/UN)",
+    "adminPanel": "Панель администратора",
+    "accountAndSecurity": "Аккаунт и безопасность",
+    "changeOrReupload": "Заменить / Загрузить снова",
+    "document": "Документ",
+    "unsupportedFormat": "Неподдерживаемый формат файла: {format}",
+    "maxFileSize": "Максимальный размер файла: {size}",
+    "uploadFailed": "Ошибка загрузки"
   },
   "dashboardComponents": {
     "browseFiles": "выберите файл",
@@ -2211,4 +2238,4 @@ export default {
       }
     }
   }
-} as const
+} as const;

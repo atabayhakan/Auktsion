@@ -38,11 +38,11 @@ import { kyrgyzstanRegions } from '@/data/regions'
 const router = useRouter()
 const userStore = useUserStore()
 const uiStore = useUIStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { currency, date, status: statusLabels } = useFormatters()
 
 const tabs = computed(() => [
-  ...(userStore.isAdmin ? [{ id: 'admin', label: '👑 Admin Paneli', icon: Gauge, path: '/admin' }] : []),
+  ...(userStore.isAdmin ? [{ id: 'admin', label: `👑 ${t('dashboard.adminPanel') || 'Yönetim Paneli'}`, icon: Gauge, path: '/admin' }] : []),
   { id: 'overview', label: t('dashboard.overview'), icon: LayoutDashboard, path: '/dashboard/overview' },
   { id: 'listings', label: t('dashboard.myListings'), icon: Store, path: '/dashboard/listings' },
   { id: 'bids', label: t('dashboard.myBids'), icon: CreditCard, path: '/dashboard/bids' },
@@ -186,7 +186,7 @@ function handleAvatarUpload(event: Event) {
     const reader = new FileReader()
     reader.onload = (e) => {
       avatarPreview.value = e.target?.result as string
-      uiStore.toastSuccess(t('toasts.success') || 'Başarılı', 'Profil fotoğrafı güncellendi')
+      uiStore.toastSuccess(t('toasts.success') || 'Başarılı', t('dashboard.avatarUpdated') || 'Profil fotoğrafı güncellendi')
     }
     reader.readAsDataURL(file)
   }
@@ -264,7 +264,7 @@ onMounted(async () => {
               <div class="flex items-center justify-between pb-2">
                 <div>
                   <h2 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">{{ t('dashboard.overview') }}</h2>
-                  <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Hoş geldiniz, {{ userStore.fullName }}</p>
+                  <p class="text-xs sm:text-sm text-gray-500 mt-0.5">{{ t('dashboard.welcomeUser', { name: userStore.fullName || '' }) }}</p>
                 </div>
               </div>
 
@@ -401,7 +401,7 @@ onMounted(async () => {
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
                 <div>
                   <h2 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">{{ t('dashboard.myBids') }}</h2>
-                  <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Katıldığınız açık artırma ve teklif geçmişiniz</p>
+                  <p class="text-xs sm:text-sm text-gray-500 mt-0.5">{{ t('dashboard.bidHistoryDesc') || 'Katıldığınız açık artırma ve teklif geçmişiniz' }}</p>
                 </div>
                 <Tabs v-model="bidTab" :tabs="bidTabs" variant="pills" />
               </div>
@@ -551,10 +551,10 @@ onMounted(async () => {
               <div class="bg-white p-6 sm:p-8 rounded-3xl border border-black/[0.08] shadow-2xs space-y-5">
                 <div class="flex items-center justify-between">
                   <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">
-                    Doğrulama Aşamaları
+                    {{ t('dashboard.kycStages') || 'Doğrulama Aşamaları' }}
                   </h3>
                   <span class="text-xs font-bold font-mono text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200">
-                    Aşama {{ currentKycStep + 1 }} / 5
+                    {{ t('dashboard.kycStageOf', { current: currentKycStep + 1, total: 5 }) || `Aşama ${currentKycStep + 1} / 5` }}
                   </span>
                 </div>
 
@@ -571,18 +571,18 @@ onMounted(async () => {
                 <div class="flex items-center justify-between">
                   <div>
                     <h3 class="text-base font-extrabold text-gray-950">{{ t('dashboard.kycRequiredDocs') }}</h3>
-                    <p class="text-xs text-gray-500">Lütfen geçerli ve okunabilir belgelerinizi yükleyin</p>
+                    <p class="text-xs text-gray-500">{{ t('dashboard.kycUploadHint') || 'Lütfen geçerli ve okunabilir belgelerinizi yükleyin' }}</p>
                   </div>
                   <div class="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
                     <Lock class="w-3.5 h-3.5 text-emerald-600" />
-                    <span>256-Bit SSL Korumalı</span>
+                    <span>{{ t('dashboard.sslProtected') || '256-Bit SSL Korumalı' }}</span>
                   </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <DocumentUpload
                     :title="t('dashboard.kycPassport')"
-                    description="Ön & Arka Yüz"
+                    :description="t('dashboard.passportDesc') || 'Ön & Arka Yüz'"
                     accepted="image/*,.pdf"
                     max-size="10MB"
                     document-type="idFront"
@@ -590,7 +590,7 @@ onMounted(async () => {
                   />
                   <DocumentUpload
                     :title="t('dashboard.kycSelfieDoc')"
-                    description="Net Yüz Fotoğrafı"
+                    :description="t('dashboard.selfieDesc') || 'Net Yüz Fotoğrafı'"
                     accepted="image/*"
                     max-size="10MB"
                     document-type="selfie"
@@ -598,7 +598,7 @@ onMounted(async () => {
                   />
                   <DocumentUpload
                     :title="t('dashboard.kycProofAddress')"
-                    description="Fatura / İkametgah"
+                    :description="t('dashboard.addressDesc') || 'Fatura / İkametgah'"
                     accepted="image/*,.pdf"
                     max-size="10MB"
                     document-type="proofOfAddress"
@@ -614,7 +614,7 @@ onMounted(async () => {
                     </div>
                     <div>
                       <p class="font-extrabold text-gray-900">{{ t('dashboard.kycReviewTime') || 'Ortalama inceleme süresi: 5 - 15 dakika' }}</p>
-                      <p class="text-gray-500 text-[11px]">Belgeler yüklendikten sonra doğrudan güvenlik ekibimize iletilir.</p>
+                      <p class="text-gray-500 text-[11px]">{{ t('dashboard.kycSecurityForward') || 'Belgeler yüklendikten sonra doğrudan güvenlik ekibimize iletilir.' }}</p>
                     </div>
                   </div>
 
@@ -624,7 +624,7 @@ onMounted(async () => {
                     :disabled="userStore.kycStatus === 'verified'" 
                     @click="submitKyc"
                   >
-                    {{ userStore.kycStatus === 'verified' ? 'Doğrulandı ✓' : (t('dashboard.submitKyc') || 'Onaya Gönder') }}
+                    {{ userStore.kycStatus === 'verified' ? (t('dashboard.verifiedCheck') || 'Doğrulandı ✓') : (t('dashboard.submitKyc') || 'Onaya Gönder') }}
                   </Button>
                 </div>
               </div>
@@ -634,7 +634,7 @@ onMounted(async () => {
                 <div class="flex items-center gap-2">
                   <ShieldCheck class="w-5 h-5 text-emerald-600" />
                   <h3 class="text-sm font-black text-gray-950 uppercase tracking-wider">
-                    AML & Yasal Uyumluluk Durumu
+                    {{ t('dashboard.amlComplianceTitle') || 'AML & Yasal Uyumluluk Durumu' }}
                   </h3>
                 </div>
 
@@ -649,9 +649,9 @@ onMounted(async () => {
                     <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">{{ t('dashboard.sanctionsCheck') }}</p>
                     <div class="flex items-center gap-1.5 text-sm font-black text-emerald-700">
                       <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                      <span>{{ t('dashboard.clean') || 'Temiz (OFAC/UN)' }}</span>
+                      <span>{{ t('dashboard.cleanOfac') || 'Temiz (OFAC/UN)' }}</span>
                     </div>
-                    <p class="text-[10px] text-gray-400">Yaptırım riski bulunmuyor</p>
+                    <p class="text-[10px] text-gray-400">{{ t('dashboard.noSanctionsRisk') || 'Yaptırım riski bulunmuyor' }}</p>
                   </div>
 
                   <div class="p-4 rounded-2xl bg-slate-50 border border-black/[0.04] space-y-1">
@@ -659,13 +659,13 @@ onMounted(async () => {
                     <div class="flex items-center gap-1.5 text-sm font-black text-gray-900">
                       <span>{{ t('dashboard.none') || 'Yok' }}</span>
                     </div>
-                    <p class="text-[10px] text-gray-400">Siyasi nüfuz sahibi değil</p>
+                    <p class="text-[10px] text-gray-400">{{ t('dashboard.notPep') || 'Siyasi nüfuz sahibi değil' }}</p>
                   </div>
 
                   <div class="p-4 rounded-2xl bg-slate-50 border border-black/[0.04] space-y-1">
                     <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">{{ t('dashboard.kycDataSecurity') || 'Veri Güvenliği' }}</p>
                     <p class="text-sm font-black text-amber-700 font-mono">256-Bit SSL</p>
-                    <p class="text-[10px] text-gray-400">Uçtan uca şifreli</p>
+                    <p class="text-[10px] text-gray-400">{{ t('dashboard.endToEndEncrypted') || 'Uçtan uca şifreli' }}</p>
                   </div>
                 </div>
               </div>
@@ -682,7 +682,7 @@ onMounted(async () => {
                   <span>{{ t('dashboard.settings') || 'Ayarlar & Hesap Yönetimi' }}</span>
                 </h2>
                 <p class="text-xs sm:text-sm text-gray-500 mt-1 leading-relaxed">
-                  Profil bilgilerinizi, iletişim kanallarınızı, güvenlik seçeneklerinizi ve bildirim tercihlerinizi yönetin.
+                  {{ t('dashboard.settingsSubtitle') || 'Profil bilgilerinizi, iletişim kanallarınızı, güvenlik seçeneklerinizi ve bildirim tercihlerinizi yönetin.' }}
                 </p>
               </div>
 
@@ -714,11 +714,11 @@ onMounted(async () => {
                       <h4 class="text-base font-black text-gray-950">{{ userStore.fullName || 'Hakan Atabay' }}</h4>
                       <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                         <CheckCircle2 class="w-3 h-3 text-emerald-600" />
-                        <span>Kayıtlı Üye</span>
+                        <span>{{ t('dashboard.registeredUser') || 'Kayıtlı Üye' }}</span>
                       </span>
                     </div>
                     <p class="text-xs text-gray-500">{{ userStore.user?.email || 'atabayhakan007@gmail.com' }}</p>
-                    <p class="text-[11px] text-gray-400 font-medium">Fotoğrafı güncellemek için kamera ikonuna tıklayın.</p>
+                    <p class="text-[11px] text-gray-400 font-medium">{{ t('dashboard.photoUploadHint') || 'Fotoğrafı güncellemek için kamera ikonuna tıklayın.' }}</p>
                   </div>
                 </div>
 
@@ -776,14 +776,13 @@ onMounted(async () => {
                         v-model="profileForm.city"
                         class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-black/10 text-xs sm:text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all cursor-pointer"
                       >
-                        <option value="Бишкек">Bişkek Şehri (г. Бишкек)</option>
-                        <option value="Ош">Oş Şehri (г. Ош)</option>
-                        <option value="Чүй">Çüy Bölgesi (Чуйская область)</option>
-                        <option value="Жалал-Абад">Celal-Abad Bölgesi (Джалал-Абад)</option>
-                        <option value="Ысык-Көл">Isık-Göl Bölgesi (Иссык-Куль)</option>
-                        <option value="Нарын">Narın Bölgesi (Нарынская область)</option>
-                        <option value="Талас">Talas Bölgesi (Таласская область)</option>
-                        <option value="Баткен">Batken Bölgesi (Баткенская область)</option>
+                        <option 
+                          v-for="region in kyrgyzstanRegions" 
+                          :key="region.id" 
+                          :value="region.name.ru"
+                        >
+                          {{ region.name[locale as 'ru'|'ky'|'tr'] || region.name.ru }}
+                        </option>
                       </select>
                     </div>
 
@@ -797,7 +796,7 @@ onMounted(async () => {
                     >
                       <span v-if="isSavingProfile" class="w-3.5 h-3.5 border-2 border-gray-950 border-t-transparent rounded-full animate-spin" />
                       <CheckCircle2 v-else class="w-4 h-4" />
-                      <span>{{ isSavingProfile ? 'Kaydediliyor...' : (t('common.save') || 'Değişiklikleri Kaydet') }}</span>
+                      <span>{{ isSavingProfile ? (t('dashboard.saving') || 'Kaydediliyor...') : (t('common.save') || 'Değişiklikleri Kaydet') }}</span>
                     </button>
                   </div>
                 </form>
@@ -827,8 +826,8 @@ onMounted(async () => {
                   <!-- Password Management -->
                   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 border border-black/[0.04]">
                     <div class="space-y-0.5">
-                      <p class="font-black text-xs sm:text-sm text-gray-950">Giriş Şifresi</p>
-                      <p class="text-xs text-gray-500">Son güncelleme: 30 gün önce. Güçlü bir şifre kullanmanız önerilir.</p>
+                      <p class="font-black text-xs sm:text-sm text-gray-950">{{ t('dashboard.loginPasswordTitle') || 'Giriş Şifresi' }}</p>
+                      <p class="text-xs text-gray-500">{{ t('dashboard.loginPasswordHint') || 'Son güncelleme: 30 gün önce. Güçlü bir şifre kullanmanız önerilir.' }}</p>
                     </div>
                     <button
                       type="button"
@@ -844,8 +843,8 @@ onMounted(async () => {
                   <div class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/60 text-xs">
                     <Laptop class="w-5 h-5 text-emerald-700 shrink-0" />
                     <div>
-                      <p class="font-bold text-emerald-950">Aktif Oturum: Windows (Chrome) • Bişkek, KG</p>
-                      <p class="text-emerald-800/80 text-[11px]">Şu anda bu cihaz üzerinden oturum açtınız.</p>
+                      <p class="font-bold text-emerald-950">{{ t('dashboard.activeSessionTitle') || 'Aktif Oturum: Windows (Chrome) • Bişkek, KG' }}</p>
+                      <p class="text-emerald-800/80 text-[11px]">{{ t('dashboard.activeSessionDesc') || 'Şu anda bu cihaz üzerinden oturum açtınız.' }}</p>
                     </div>
                   </div>
 

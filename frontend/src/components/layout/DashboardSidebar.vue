@@ -46,13 +46,13 @@ const navSections = computed(() => [
   {
     label: t('dashboard.payments') || 'Ödemeler',
     items: [
-      { path: '/dashboard/payments', label: t('dashboard.payments') || 'Ödeme Geçmişi', icon: CreditCard },
+      { path: '/dashboard/payments', label: t('dashboard.paymentsHistory') || 'Ödeme Geçmişi', icon: CreditCard },
       { path: '/dashboard/payouts', label: t('dashboard.payouts') || 'Para Çekme', icon: Wallet },
       { path: '/dashboard/payout-methods', label: t('dashboard.payoutMethods') || 'Ödeme Yöntemleri', icon: Landmark },
     ],
   },
   {
-    label: t('dashboard.profileInfo') || 'Hesap & Güvenlik',
+    label: t('dashboard.accountAndSecurity') || t('dashboard.profileInfo') || 'Hesap & Güvenlik',
     items: [
       { 
         path: '/dashboard/kyc', 
@@ -84,7 +84,7 @@ function handleLogout() {
         {{ (userStore.fullName || 'HA').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() }}
       </div>
       <div class="flex-1 min-w-0">
-        <p class="text-xs font-black text-gray-950 truncate">{{ userStore.fullName || 'Kullanıcı' }}</p>
+        <p class="text-xs font-black text-gray-950 truncate">{{ userStore.fullName || t('common.user') || 'Kullanıcı' }}</p>
         <div class="flex items-center gap-1 mt-0.5">
           <span 
             class="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.2 rounded-md"
