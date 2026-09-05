@@ -72,9 +72,12 @@ export function useI18n() {
     return supportedLocales.find(l => l.code === currentLocale.value) || supportedLocales[0]
   })
 
+  const currentLang = computed<LocaleKey>(() => currentLocale.value)
+
   return {
     locale: currentLocale,
     currentLocale: currentLocaleInfo,
+    currentLang,
     supportedLocales,
     setLocale,
     t,

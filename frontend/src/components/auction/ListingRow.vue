@@ -66,7 +66,7 @@ function getStatusBadgeVariant(status: string): 'default' | 'gold' | 'success' |
       <!-- Image -->
       <div class="relative aspect-[4/3] overflow-hidden">
         <img 
-          :src="listing.image" 
+          :src="listing.image || (listing as any).images?.[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80'" 
           :alt="listing.title"
           class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
           loading="lazy"

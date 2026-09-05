@@ -24,9 +24,15 @@ const emit = defineEmits<{
 
 const { currentLocale } = useI18n()
 
-// Active language in player: Starts in Russian ('ru') by default
+// Active language in player: Starts in Russian ('ru') by default or active site locale
 type LangCode = 'ru' | 'ky' | 'tr'
 const filmLang = ref<LangCode>(props.initialLang || 'ru')
+
+watch(() => props.initialLang, (newLang) => {
+  if (newLang && ['ru', 'ky', 'tr'].includes(newLang)) {
+    filmLang.value = newLang as LangCode
+  }
+})
 
 // Playback state
 const currentScene = ref(props.initialScene)

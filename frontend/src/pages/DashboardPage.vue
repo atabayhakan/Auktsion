@@ -35,6 +35,7 @@ import PaymentRow from '@/components/dashboard/PaymentRow.vue'
 import PayoutRow from '@/components/dashboard/PayoutRow.vue'
 import PayoutMethodCard from '@/components/dashboard/PayoutMethodCard.vue'
 import DocumentUpload from '@/components/dashboard/DocumentUpload.vue'
+import { userService } from '@/services/userService'
 import { kyrgyzstanRegions } from '@/data/regions'
 
 const router = useRouter()
@@ -207,7 +208,27 @@ const profileForm = ref({
 })
 
 // Computed data from store
-const myListings = computed(() => userStore.user?.listings || [])
+const myListings = ref<any[]>([])
+const isLoadingListings = ref(false)
+
+async function loadMyListings() {
+  if (!userStore.isAuthenticated) return
+  isLoadingListings.value = true
+  try {
+    const res = await userService.getListings('all')
+    if (res && res.data) {
+      myListings.value = res.data.map(l => ({
+        ...l,
+        image: l.image || (Array.isArray(l.images) && l.images.length > 0 ? l.images[0] : '') || ''
+      }))
+    }
+  } catch (err) {
+    console.error('Failed to load listings:', err)
+  } finally {
+    isLoadingListings.value = false
+  }
+}
+
 const payments = computed(() => userStore.paymentHistory)
 const payouts = computed(() => userStore.payoutHistory)
 const payoutMethods = computed(() => userStore.payoutMethods)
@@ -253,7 +274,14 @@ onMounted(async () => {
     }
   }
   loadWatchlist()
+  loadMyListings()
   auctionStore.fetchAuctions()
+})
+
+watch(() => userStore.isAuthenticated, (authed) => {
+  if (authed) {
+    loadMyListings()
+  }
 })
 </script>
 

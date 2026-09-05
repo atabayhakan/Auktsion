@@ -484,7 +484,7 @@ async function submitAuction() {
 
         <!-- Expandable Animated Walkthrough Cinema in SellPage -->
         <div v-if="showVideoGuide" class="p-2 sm:p-4 rounded-3xl bg-slate-900/90 border border-emerald-500/30 shadow-xl space-y-2 animate-fade-in">
-          <SellerWalkthroughFilm initial-lang="ru" />
+          <SellerWalkthroughFilm :initial-lang="currentLang" />
         </div>
 
         <!-- Visual Stepper Bar -->

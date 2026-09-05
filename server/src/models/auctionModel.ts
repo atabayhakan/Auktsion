@@ -147,7 +147,7 @@ export function getAuctions(filters: {
   if (filters.status && filters.status !== 'all') {
     conditions.push('a.status = ?');
     params.push(filters.status);
-  } else if (!filters.status) {
+  } else if (!filters.status && !filters.sellerId) {
     conditions.push("a.status IN ('active', 'ended_sold', 'ended_unsold')");
   }
 

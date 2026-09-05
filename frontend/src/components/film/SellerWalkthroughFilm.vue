@@ -28,6 +28,12 @@ const { currentLocale } = useI18n()
 type LangCode = 'ru' | 'ky' | 'tr'
 const filmLang = ref<LangCode>(props.initialLang || 'ru')
 
+watch(() => props.initialLang, (newLang) => {
+  if (newLang && ['ru', 'ky', 'tr'].includes(newLang)) {
+    filmLang.value = newLang as LangCode
+  }
+})
+
 // Playback state
 const currentScene = ref(props.initialScene)
 const isPlaying = ref(true)

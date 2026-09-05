@@ -11,7 +11,7 @@ import { useI18n } from '@/composables/useI18n'
 import SiteWalkthroughFilm from '@/components/film/SiteWalkthroughFilm.vue'
 import SellerWalkthroughFilm from '@/components/film/SellerWalkthroughFilm.vue'
 
-const { t, currentLocale } = useI18n()
+const { t, currentLocale, currentLang } = useI18n()
 
 const activeFilmTab = ref<'buyer' | 'seller'>('buyer')
 const filmRef = ref<any>(null)
@@ -169,7 +169,7 @@ function toggleFaq(idx: number) {
       <div class="text-center max-w-3xl mx-auto space-y-4">
         <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 text-amber-700 text-xs font-black border border-amber-500/20 shadow-xs">
           <Sparkles class="w-4 h-4 text-amber-600" />
-          <span>iTorgo Кыргызстан — {{ currentLocale === 'ky' ? 'Расмий Колдонмо' : (currentLocale === 'tr' ? 'Resmi Kullanım Rehberi' : 'Официальное Руководство') }}</span>
+          <span>iTorgo Кыргызстан — {{ currentLang === 'ky' ? 'Расмий Колдонмо' : (currentLang === 'tr' ? 'Resmi Kullanım Rehberi' : 'Официальное Руководство') }}</span>
         </div>
 
         <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-950 tracking-tight leading-tight">
@@ -193,11 +193,11 @@ function toggleFaq(idx: number) {
           <div class="flex items-center gap-2">
             <div class="w-3 h-3 rounded-full bg-amber-500 animate-pulse" />
             <h2 class="text-base sm:text-lg font-black text-gray-950">
-              {{ currentLocale === 'ky' ? '🎬 Интерактивдүү Видео-Гид (3 Тилде)' : (currentLocale === 'tr' ? '🎬 İnteraktif Tanıtım Filmi (3 Dilde)' : '🎬 Интерактивный Фильм-Гид (на 3 языках)') }}
+              {{ currentLang === 'ky' ? '🎬 Интерактивдүү Видео-Гид (3 Тилде)' : (currentLang === 'tr' ? '🎬 İnteraktif Tanıtım Filmi (3 Dilde)' : '🎬 Интерактивный Фильм-Гид (на 3 языках)') }}
             </h2>
           </div>
           <div class="text-xs font-bold text-gray-500">
-            {{ currentLocale === 'ky' ? '▶ Кадамдарды басып өтүңүз' : (currentLocale === 'tr' ? '▶ Durdurabilir ve deneyebilirsiniz' : '▶ Интерактивные шаги и симуляция') }}
+            {{ currentLang === 'ky' ? '▶ Кадамдарды басып өтүңүз' : (currentLang === 'tr' ? '▶ Durdurabilir ve deneyebilirsiniz' : '▶ Интерактивные шаги и симуляция') }}
           </div>
         </div>
 
@@ -212,7 +212,7 @@ function toggleFaq(idx: number) {
                 : 'text-gray-600 hover:text-gray-950 hover:bg-slate-50'"
               @click="activeFilmTab = 'buyer'"
             >
-              <span>🛍️ {{ currentLocale === 'ky' ? 'Сатып алуучунун Гиди' : (currentLocale === 'tr' ? 'Alıcı Rehberi (Teklif Verme)' : 'Для Покупателей: Как участвовать') }}</span>
+              <span>🛍️ {{ currentLang === 'ky' ? 'Сатып алуучунун Гиди' : (currentLang === 'tr' ? 'Alıcı Rehberi (Teklif Verme)' : 'Для Покупателей: Как участвовать') }}</span>
             </button>
             <button
               type="button"
@@ -222,19 +222,19 @@ function toggleFaq(idx: number) {
                 : 'text-gray-600 hover:text-gray-950 hover:bg-slate-50'"
               @click="activeFilmTab = 'seller'"
             >
-              <span>🏪 {{ currentLocale === 'ky' ? 'Сатуучунун Гиди (Илан берүү)' : (currentLocale === 'tr' ? 'Satıcı Rehberi (Nasıl İlan Verilir?)' : 'Для Продавцов: Как создать лот') }}</span>
+              <span>🏪 {{ currentLang === 'ky' ? 'Сатуучунун Гиди (Илан берүү)' : (currentLang === 'tr' ? 'Satıcı Rehberi (Nasıl İlan Verilir?)' : 'Для Продавцов: Как создать лот') }}</span>
             </button>
           </div>
 
           <div class="hidden sm:flex items-center gap-2 pr-3 text-xs font-bold text-gray-500">
             <Sparkles class="w-4 h-4 text-amber-500" />
-            <span>{{ activeFilmTab === 'buyer' ? (currentLocale === 'ky' ? 'Коюм коюу, эскроу жана жеңүү' : (currentLocale === 'tr' ? 'Teklif verme, emanet ve teslimat' : 'Ставки, эскроу и победа')) : (currentLocale === 'ky' ? 'AI баяндоо, сүрөт жана акча чыгаруу' : (currentLocale === 'tr' ? 'AI açıklama, fotoğraf ve tahsilat' : 'AI-описание, фото и выплата')) }}</span>
+            <span>{{ activeFilmTab === 'buyer' ? (currentLang === 'ky' ? 'Коюм коюу, эскроу жана жеңүү' : (currentLang === 'tr' ? 'Teklif verme, emanet ve teslimat' : 'Ставки, эскроу и победа')) : (currentLang === 'ky' ? 'AI баяндоо, сүрөт жана акча чыгаруу' : (currentLang === 'tr' ? 'AI açıklama, fotoğraf ve tahsilat' : 'AI-описание, фото и выплата')) }}</span>
           </div>
         </div>
 
         <!-- Cinema Device Frame -->
-        <SiteWalkthroughFilm v-if="activeFilmTab === 'buyer'" ref="filmRef" initial-lang="ru" />
-        <SellerWalkthroughFilm v-else ref="sellerFilmRef" initial-lang="ru" />
+        <SiteWalkthroughFilm v-if="activeFilmTab === 'buyer'" ref="filmRef" :initial-lang="currentLang" />
+        <SellerWalkthroughFilm v-else ref="sellerFilmRef" :initial-lang="currentLang" />
       </section>
 
       <!-- ================================================================
@@ -243,13 +243,13 @@ function toggleFaq(idx: number) {
       <section aria-labelledby="steps-grid-title" class="space-y-6">
         <div class="text-center max-w-2xl mx-auto space-y-2">
           <span class="text-xs font-black text-amber-600 uppercase tracking-widest">
-            {{ currentLocale === 'ky' ? '6 ЖӨНӨКӨЙ КАДАМ' : (currentLocale === 'tr' ? '6 KOLAY ADIM' : '6 ПРОСТЫХ ШАГОВ') }}
+            {{ currentLang === 'ky' ? '6 ЖӨНӨКӨЙ КАДАМ' : (currentLang === 'tr' ? '6 KOLAY ADIM' : '6 ПРОСТЫХ ШАГОВ') }}
           </span>
           <h2 id="steps-grid-title" class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">
-            {{ currentLocale === 'ky' ? 'Каттоодон баштап утушка чейин' : (currentLocale === 'tr' ? 'Kayıttan Teslimata Alışveriş Süreci' : 'От регистрации до получения лота') }}
+            {{ currentLang === 'ky' ? 'Каттоодон баштап утушка чейин' : (currentLang === 'tr' ? 'Kayıttan Teslimata Alışveriş Süreci' : 'От регистрации до получения лота') }}
           </h2>
           <p class="text-xs sm:text-sm text-gray-500">
-            {{ currentLocale === 'ky' ? 'Карточканы басып, кинодогу тиешелүү кадамды көрүңүз' : (currentLocale === 'tr' ? 'Kartlara tıklayarak animasyondaki ilgili adımı izleyebilirsiniz' : 'Нажмите на любую карточку, чтобы открыть шаг в интерактивном гиде') }}
+            {{ currentLang === 'ky' ? 'Карточканы басып, кинодогу тиешелүү кадамды көрүңүз' : (currentLang === 'tr' ? 'Kartlara tıklayarak animasyondaki ilgili adımı izleyebilirsiniz' : 'Нажмите на любую карточку, чтобы открыть шаг в интерактивном гиде') }}
           </p>
         </div>
 
@@ -289,7 +289,7 @@ function toggleFaq(idx: number) {
             <div class="pt-4 mt-4 border-t border-black/5 flex items-center justify-between text-xs font-bold text-amber-600 group-hover:text-amber-700">
               <span class="flex items-center gap-1.5">
                 <Play class="w-3.5 h-3.5 fill-current" />
-                <span>{{ currentLocale === 'ky' ? 'Кинодон көрүү' : (currentLocale === 'tr' ? 'Filmde İzle' : 'Смотреть в гиде') }}</span>
+                <span>{{ currentLang === 'ky' ? 'Кинодон көрүү' : (currentLang === 'tr' ? 'Filmde İzle' : 'Смотреть в гиде') }}</span>
               </span>
               <ChevronRight class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
             </div>
@@ -309,10 +309,10 @@ function toggleFaq(idx: number) {
             DEMIRBANK & OPTIMA 100% ESCROW
           </span>
           <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            {{ currentLocale === 'ky' ? 'Каражаттарыңыз Кантип Корголот?' : (currentLocale === 'tr' ? 'Paranız Nasıl %100 Güvende Tutulur?' : 'Как защищены ваши деньги?') }}
+            {{ currentLang === 'ky' ? 'Каражаттарыңыз Кантип Корголот?' : (currentLang === 'tr' ? 'Paranız Nasıl %100 Güvende Tutulur?' : 'Как защищены ваши деньги?') }}
           </h2>
           <p class="text-xs sm:text-sm text-white/60">
-            {{ currentLocale === 'ky' ? 'Сиз товарды текшерип, кабыл алганга чейин сатуучуга акча төлөнбөйт' : (currentLocale === 'tr' ? 'Ürünü elinize alıp onaylamadan önce satıcıya tek kuruş aktarılmaz' : 'Продавец не получит оплату, пока вы лично не проверите и не подтвердите лот') }}
+            {{ currentLang === 'ky' ? 'Сиз товарды текшерип, кабыл алганга чейин сатуучуга акча төлөнбөйт' : (currentLang === 'tr' ? 'Ürünü elinize alıp onaylamadan önce satıcıya tek kuruş aktarılmaz' : 'Продавец не получит оплату, пока вы лично не проверите и не подтвердите лот') }}
           </p>
         </div>
 
@@ -324,10 +324,10 @@ function toggleFaq(idx: number) {
               1
             </div>
             <h4 class="text-base font-black text-white">
-              {{ currentLocale === 'ky' ? 'Сатып алуучу төлөйт' : (currentLocale === 'tr' ? 'Alıcı Tutarını Öder' : 'Покупатель вносит сумму') }}
+              {{ currentLang === 'ky' ? 'Сатып алуучу төлөйт' : (currentLang === 'tr' ? 'Alıcı Tutarını Öder' : 'Покупатель вносит сумму') }}
             </h4>
             <p class="text-xs text-white/60 leading-relaxed">
-              {{ currentLocale === 'ky' ? 'MBank QR, Optima же Элкарт аркылуу расмий эсепке каражат которулат.' : (currentLocale === 'tr' ? 'MBank QR, Optima veya kartla ödeme sisteme iletilir.' : 'Оплата через MBank QR, карты Optima или Элкарт поступает в защищенный шлюз.') }}
+              {{ currentLang === 'ky' ? 'MBank QR, Optima же Элкарт аркылуу расмий эсепке каражат которулат.' : (currentLang === 'tr' ? 'MBank QR, Optima veya kartla ödeme sisteme iletilir.' : 'Оплата через MBank QR, карты Optima или Элкарт поступает в защищенный шлюз.') }}
             </p>
           </div>
 
@@ -337,10 +337,10 @@ function toggleFaq(idx: number) {
               🔒
             </div>
             <h4 class="text-base font-black text-purple-200">
-              {{ currentLocale === 'ky' ? 'DemirBank Эскроу Капчыгы' : (currentLocale === 'tr' ? 'DemirBank Emanet Havuzu' : 'Эскроу-хранилище DemirBank') }}
+              {{ currentLang === 'ky' ? 'DemirBank Эскроу Капчыгы' : (currentLang === 'tr' ? 'DemirBank Emanet Havuzu' : 'Эскроу-хранилище DemirBank') }}
             </h4>
             <p class="text-xs text-white/70 leading-relaxed">
-              {{ currentLocale === 'ky' ? 'Акча атайын эсепте тоңдурулат. Эч ким, атүгүл сатуучу да аны чыгарып кете албайт.' : (currentLocale === 'tr' ? 'Tutar banka emanet havuzunda kilitlenir. Teslimata kadar hiç kimse çekemez.' : 'Средства надежно заморожены на расчетном счете. Продавец не имеет к ним доступа.') }}
+              {{ currentLang === 'ky' ? 'Акча атайын эсепте тоңдурулат. Эч ким, атүгүл сатуучу да аны чыгарып кете албайт.' : (currentLang === 'tr' ? 'Tutar banka emanet havuzunda kilitlenir. Teslimata kadar hiç kimse çekemez.' : 'Средства надежно заморожены на расчетном счете. Продавец не имеет к ним доступа.') }}
             </p>
           </div>
 
@@ -350,10 +350,10 @@ function toggleFaq(idx: number) {
               3
             </div>
             <h4 class="text-base font-black text-white">
-              {{ currentLocale === 'ky' ? 'Текшерүү жана Төлөм' : (currentLocale === 'tr' ? 'Kontrol & Satıcıya Aktarım' : 'Проверка и Выплата') }}
+              {{ currentLang === 'ky' ? 'Текшерүү жана Төлөм' : (currentLang === 'tr' ? 'Kontrol & Satıcıya Aktarım' : 'Проверка и Выплата') }}
             </h4>
             <p class="text-xs text-white/60 leading-relaxed">
-              {{ currentLocale === 'ky' ? 'Товар текшерилген соң, эскроу кулпусу ачылып, акча сатуучунун эсебине түшөт.' : (currentLocale === 'tr' ? 'Alıcı onay verdiği an bloke çözülür ve para satıcının kartına aktarılır.' : 'После подтверждения покупателем деньги мгновенно зачисляются на баланс продавца.') }}
+              {{ currentLang === 'ky' ? 'Товар текшерилген соң, эскроу кулпусу ачылып, акча сатуучунун эсебине түшөт.' : (currentLang === 'tr' ? 'Alıcı onay verdiği an bloke çözülür ve para satıcının kartına aktarılır.' : 'После подтверждения покупателем деньги мгновенно зачисляются на баланс продавца.') }}
             </p>
           </div>
         </div>
@@ -362,7 +362,7 @@ function toggleFaq(idx: number) {
         <div class="pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs text-white/50">
           <span class="flex items-center gap-2">
             <ShieldCheck class="w-4 h-4 text-emerald-400" />
-            {{ currentLocale === 'ky' ? 'Кыргыз Республикасынын Улуттук Банкынын эрежелерине шайкеш' : (currentLocale === 'tr' ? 'Kırgızistan Merkez Bankası Standartlarına Tam Uyum' : 'Соответствует стандартам Национального Банка КР') }}
+            {{ currentLang === 'ky' ? 'Кыргыз Республикасынын Улуттук Банкынын эрежелерине шайкеш' : (currentLang === 'tr' ? 'Kırgızistan Merkez Bankası Standartlarına Tam Uyum' : 'Соответствует стандартам Национального Банка КР') }}
           </span>
           <div class="flex items-center gap-4 font-black text-white/80">
             <span>DEMIRBANK</span>
@@ -382,7 +382,7 @@ function toggleFaq(idx: number) {
       <section aria-labelledby="features-title" class="space-y-8">
         <div class="text-center max-w-2xl mx-auto space-y-2">
           <span class="text-xs font-black text-amber-600 uppercase tracking-widest">
-            {{ currentLocale === 'ky' ? 'АРТЫКЧЫЛЫКТАР' : (currentLocale === 'tr' ? 'AVANTAJLAR' : 'ПРЕИМУЩЕСТВА') }}
+            {{ currentLang === 'ky' ? 'АРТЫКЧЫЛЫКТАР' : (currentLang === 'tr' ? 'AVANTAJLAR' : 'ПРЕИМУЩЕСТВА') }}
           </span>
           <h2 id="features-title" class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">
             {{ t('aboutPage.whyUsTitle') }}
@@ -418,7 +418,7 @@ function toggleFaq(idx: number) {
       <section aria-labelledby="faq-title" class="space-y-6 max-w-3xl mx-auto">
         <div class="text-center space-y-2">
           <span class="text-xs font-black text-amber-600 uppercase tracking-widest">
-            {{ currentLocale === 'ky' ? 'СУРОО-ЖООП' : (currentLocale === 'tr' ? 'SORULAR VE CEVAPLAR' : 'ВОПРОСЫ И ОТВЕТЫ') }}
+            {{ currentLang === 'ky' ? 'СУРОО-ЖООП' : (currentLang === 'tr' ? 'SORULAR VE CEVAPLAR' : 'ВОПРОСЫ И ОТВЕТЫ') }}
           </span>
           <h2 id="faq-title" class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">
             {{ t('howItWorksPage.faqTitle') }}
@@ -432,10 +432,10 @@ function toggleFaq(idx: number) {
         <div class="flex flex-wrap items-center justify-center gap-2 pt-2">
           <button
             v-for="cat in [
-              { id: 'all', label: currentLocale === 'ky' ? 'Бардык суроолор' : (currentLocale === 'tr' ? 'Tüm Sorular' : 'Все вопросы') },
-              { id: 'buyer', label: currentLocale === 'ky' ? 'Сатып алуучуларга' : (currentLocale === 'tr' ? 'Alıcılar' : 'Покупателям') },
-              { id: 'escrow', label: currentLocale === 'ky' ? 'Эскроу коопсуздугу' : (currentLocale === 'tr' ? 'Escrow Güvenliği' : 'Эскроу и Защита') },
-              { id: 'seller', label: currentLocale === 'ky' ? 'Сатуучуларга' : (currentLocale === 'tr' ? 'Satıcılar' : 'Продавцам') }
+              { id: 'all', label: currentLang === 'ky' ? 'Бардык суроолор' : (currentLang === 'tr' ? 'Tüm Sorular' : 'Все вопросы') },
+              { id: 'buyer', label: currentLang === 'ky' ? 'Сатып алуучуларга' : (currentLang === 'tr' ? 'Alıcılar' : 'Покупателям') },
+              { id: 'escrow', label: currentLang === 'ky' ? 'Эскроу коопсуздугу' : (currentLang === 'tr' ? 'Escrow Güvenliği' : 'Эскроу и Защита') },
+              { id: 'seller', label: currentLang === 'ky' ? 'Сатуучуларга' : (currentLang === 'tr' ? 'Satıcılar' : 'Продавцам') }
             ]"
             :key="cat.id"
             type="button"
@@ -482,7 +482,7 @@ function toggleFaq(idx: number) {
       <section aria-label="Call to Action" class="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-400/10 via-white to-amber-500/5 p-8 sm:p-14 text-center space-y-4 shadow-sm">
         <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/20 text-amber-900 text-xs font-bold border border-amber-400/30">
           <Sparkles class="w-3.5 h-3.5" />
-          <span>{{ currentLocale === 'ky' ? 'Тооруктар күн сайын жүрөт' : (currentLocale === 'tr' ? 'Her Gün Canlı Açık Artırmalar' : 'Торги идут каждый день') }}</span>
+          <span>{{ currentLang === 'ky' ? 'Тооруктар күн сайын жүрөт' : (currentLang === 'tr' ? 'Her Gün Canlı Açık Artırmalar' : 'Торги идут каждый день') }}</span>
         </div>
 
         <h3 class="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-950 tracking-tight">
