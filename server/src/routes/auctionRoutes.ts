@@ -9,6 +9,7 @@ import {
   getAuctionBids,
   buyNow,
 } from '../controllers/auctionController.js';
+import { createDisputeHandler } from '../controllers/disputeController.js';
 import { authenticateToken, optionalAuth } from '../middleware/auth.js';
 import { bidLimiter } from '../middleware/rateLimit.js';
 
@@ -25,3 +26,4 @@ auctionRoutes.put('/:id', authenticateToken, updateAuction);
 auctionRoutes.delete('/:id', authenticateToken, deleteAuction);
 auctionRoutes.post('/:id/bids', bidLimiter, authenticateToken, placeBid);
 auctionRoutes.post('/:id/buy-now', bidLimiter, authenticateToken, buyNow);
+auctionRoutes.post('/:id/report', authenticateToken, createDisputeHandler);

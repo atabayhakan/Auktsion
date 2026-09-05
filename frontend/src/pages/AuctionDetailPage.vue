@@ -17,6 +17,8 @@ import {
 import Input from '@/components/ui/Input.vue'
 import Modal from '@/components/ui/Modal.vue'
 import PaymentModal from '@/components/payment/PaymentModal.vue'
+import DisputeModal from '@/components/auction/DisputeModal.vue'
+
 
 const route = useRoute()
 const router = useRouter()
@@ -37,7 +39,9 @@ const selectedImageIndex = ref(0)
 // Bidding Form state
 const showBidModal = ref(false)
 const showPaymentModal = ref(false)
+const showDisputeModal = ref(false)
 const bidAmount = ref<string>('')
+
 const isPlacingBid = ref(false)
 const bidError = ref<string | null>(null)
 const bidConfirmed = ref(true)
@@ -682,13 +686,14 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
               </button>
 
               <button
-                class="w-full py-2.5 px-3.5 rounded-xl border border-border bg-white/90 hover:bg-black/5 text-text-primary font-semibold text-xs transition-all flex items-center gap-2 shadow-sm"
-                @click="uiStore.toastInfo(t('auction.reportAuction'), t('auction.reportAuction'))"
+                class="w-full py-2.5 px-3.5 rounded-xl border border-border bg-white/90 hover:bg-black/5 text-text-primary font-semibold text-xs transition-all flex items-center gap-2 shadow-sm cursor-pointer"
+                @click="showDisputeModal = true"
               >
                 <AlertCircle class="w-4 h-4 text-error" />
-                <span>{{ t('auction.reportAuction') }}</span>
+                <span>{{ isOwnListing ? (t('dashboard.reportDispute') || 'Şikayet / İtiraz Bildir') : t('auction.reportAuction') }}</span>
               </button>
             </div>
+
           </div>
 
           <!-- Auction Details Info Table -->
@@ -907,5 +912,13 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
       @payment-success="() => { showPaymentModal = false; uiStore.toastSuccess(t('toasts.paymentCompleted'), t('paymentModal.successDescription')); }"
     />
 
+    <!-- Dispute / Report Modal -->
+    <DisputeModal
+      v-model="showDisputeModal"
+      :auction="auction"
+      :is-seller="isOwnListing"
+    />
+
   </div>
 </template>
+

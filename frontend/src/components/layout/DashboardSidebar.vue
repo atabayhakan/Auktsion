@@ -3,8 +3,9 @@ import { ref, computed } from 'vue'
 import {
   Home, Store, CreditCard, LayoutDashboard, User, Settings,
   LogOut, Bell, ShieldCheck, BarChart2, Wallet, FileText, Heart,
-  Gauge, Gavel, Landmark, CheckCircle2, Clock, ShieldAlert, Sparkles, ExternalLink
+  Gauge, Gavel, Landmark, CheckCircle2, Clock, ShieldAlert, Sparkles, ExternalLink, Scale
 } from 'lucide-vue-next'
+
 import { useRouter, RouterLink } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useUIStore } from '@/stores/ui'
@@ -62,10 +63,12 @@ const navSections = computed(() => [
         badge: userStore.kycStatus === 'verified' ? '✓' : '!', 
         badgeVariant: userStore.kycStatus === 'verified' ? 'success' : 'warning' 
       },
+      { path: '/dashboard/disputes', label: t('dashboard.disputes') || 'Споры и жалобы', icon: Scale },
       { path: '/dashboard/settings', label: t('dashboard.settings') || 'Настройки аккаунта', icon: Settings },
     ],
   },
 ])
+
 
 function handleLogout() {
   userStore.logout()

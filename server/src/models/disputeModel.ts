@@ -39,7 +39,7 @@ export function formatDispute(row: DisputeRow) {
   };
 }
 
-export function getDisputes(status?: string) {
+export function getDisputes(status?: string, userId?: string) {
   const db = getDatabase();
   let query = `
     SELECT d.*, a.title as auction_title, u1.full_name as complainant_name, u2.full_name as respondent_name
@@ -48,11 +48,21 @@ export function getDisputes(status?: string) {
     LEFT JOIN users u1 ON d.complainant_id = u1.id
     LEFT JOIN users u2 ON d.respondent_id = u2.id
   `;
+  const conditions: string[] = [];
   const params: any[] = [];
 
   if (status && status !== 'all') {
-    query += ' WHERE d.status = ?';
+    conditions.push('d.status = ?');
     params.push(status);
+  }
+
+  if (userId) {
+    conditions.push('(d.complainant_id = ? OR d.respondent_id = ?)');
+    params.push(userId, userId);
+  }
+
+  if (conditions.length > 0) {
+    query += ' WHERE ' + conditions.join(' AND ');
   }
 
   query += ' ORDER BY d.created_at DESC';
@@ -64,16 +74,39 @@ export function getDisputes(status?: string) {
 export function createDispute(data: {
   auctionId: string;
   complainantId: string;
-  respondentId: string;
+  respondentId?: string;
   reason: string;
 }) {
   const db = getDatabase();
   const id = `disp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
+  // Ensure respondent exists to preserve foreign key integrity
+  let respondentId = data.respondentId;
+  if (respondentId) {
+    const userExists = db.prepare('SELECT id FROM users WHERE id = ?').get(respondentId);
+    if (!userExists) respondentId = undefined;
+  }
+
+  if (!respondentId) {
+    // If not valid, find auction seller or admin or any admin/system user
+    const auction = db.prepare('SELECT seller_id, winner_id FROM auctions WHERE id = ?').get(data.auctionId) as any;
+    if (auction) {
+      if (auction.seller_id !== data.complainantId && auction.seller_id) {
+        respondentId = auction.seller_id;
+      } else if (auction.winner_id && auction.winner_id !== data.complainantId) {
+        respondentId = auction.winner_id;
+      }
+    }
+    if (!respondentId) {
+      const admin = db.prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1").get() as any;
+      respondentId = admin ? admin.id : data.complainantId;
+    }
+  }
+
   db.prepare(`
     INSERT INTO disputes (id, auction_id, complainant_id, respondent_id, reason, status, resolution, refund_amount_minor, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, 'open', NULL, 0, datetime('now'), datetime('now'))
-  `).run(id, data.auctionId, data.complainantId, data.respondentId, data.reason);
+  `).run(id, data.auctionId, data.complainantId, respondentId, data.reason);
 
   const row = db.prepare(`
     SELECT d.*, a.title as auction_title, u1.full_name as complainant_name, u2.full_name as respondent_name

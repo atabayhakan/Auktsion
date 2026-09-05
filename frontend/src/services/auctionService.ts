@@ -54,6 +54,18 @@ export const auctionService = {
     const res = await apiClient.get<{ success: boolean; data: any[] }>('/api/regions')
     return res.data
   },
+
+  async reportAuction(auctionId: string, data: {
+    reason?: string
+    reasonCategory?: string
+    details?: string
+    role?: 'buyer' | 'seller'
+    respondentId?: string
+  }): Promise<{ success: boolean; data: any; message?: string }> {
+    const res = await apiClient.post<{ success: boolean; data: any; message?: string }>(`/api/auctions/${auctionId}/report`, data)
+    return res.data
+  },
 }
 
 export default auctionService
+

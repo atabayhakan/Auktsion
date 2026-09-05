@@ -3,7 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import {
   LayoutDashboard, Store, CreditCard, Wallet, FileText, ShieldCheck, Settings, Heart, CheckCircle, Building2, Gauge,
   Lock, Clock, CheckCircle2, Smartphone, Sparkles, MapPin, Laptop, Camera, AlertTriangle, Bell, KeyRound, Mail,
-  Gavel, Plus, TrendingUp, ArrowRight, ArrowUpRight, Flame, ShieldAlert
+  Gavel, Plus, TrendingUp, ArrowRight, ArrowUpRight, Flame, ShieldAlert, AlertCircle, Scale
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
@@ -23,6 +23,8 @@ import PayoutModal from '@/components/payment/PayoutModal.vue'
 import AddPayoutMethodModal from '@/components/payment/AddPayoutMethodModal.vue'
 import DeleteProfileModal from '@/components/ui/DeleteProfileModal.vue'
 import ChangePasswordModal from '@/components/ui/ChangePasswordModal.vue'
+import DisputeModal from '@/components/auction/DisputeModal.vue'
+
 
 // Auction & Dashboard components
 import DashboardSidebar from '@/components/layout/DashboardSidebar.vue'
@@ -54,8 +56,10 @@ const tabs = computed(() => [
   { id: 'payouts', label: t('dashboard.payouts'), icon: FileText, path: '/dashboard/payouts' },
   { id: 'payout-methods', label: t('dashboard.payoutMethods'), icon: Building2, path: '/dashboard/payout-methods' },
   { id: 'kyc', label: t('dashboard.kyc'), icon: ShieldCheck, path: '/dashboard/kyc' },
+  { id: 'disputes', label: t('dashboard.disputes'), icon: AlertCircle, path: '/dashboard/disputes' },
   { id: 'settings', label: t('dashboard.settings'), icon: Settings, path: '/dashboard/settings' },
 ])
+
 
 // Active tab synced with route (with validation)
 const route = router.currentRoute.value
@@ -252,6 +256,89 @@ async function loadWatchlist() {
   }
 }
 
+// Dispute and Complaints state
+const userDisputes = ref<any[]>([])
+const isLoadingDisputes = ref(false)
+const disputeModalOpen = ref(false)
+const disputeTargetAuction = ref<any>(null)
+const disputeIsSeller = ref(false)
+
+async function fetchDisputes() {
+  isLoadingDisputes.value = true
+  try {
+    const res = await userService.getDisputes()
+    if (res && res.success && res.data) {
+      userDisputes.value = res.data
+    }
+  } catch (err) {
+    console.error('Failed to fetch user disputes', err)
+  } finally {
+    isLoadingDisputes.value = false
+  }
+}
+
+function openDisputeForBid(bid: any) {
+  disputeTargetAuction.value = {
+    id: bid.auctionId,
+    title: bid.auctionTitle,
+    image: bid.auctionImage,
+    images: bid.auctionImage ? [bid.auctionImage] : []
+  }
+  disputeIsSeller.value = false
+  disputeModalOpen.value = true
+}
+
+function openDisputeForListing(listing: any) {
+  disputeTargetAuction.value = {
+    id: listing.id,
+    title: listing.title,
+    image: listing.image,
+    images: listing.images || (listing.image ? [listing.image] : [])
+  }
+  disputeIsSeller.value = true
+  disputeModalOpen.value = true
+}
+
+function getDisputeStatusLabel(status: string): string {
+  switch (status) {
+    case 'open':
+      return t('dashboard.disputeStatusOpen') || 'İnceleme Bekliyor'
+    case 'under_review':
+      return t('dashboard.disputeStatusUnderReview') || 'İnceleniyor'
+    case 'resolved':
+      return t('dashboard.disputeStatusResolved') || 'Çözümlendi'
+    case 'rejected':
+      return t('dashboard.disputeStatusRejected') || 'Reddedildi'
+    default:
+      return status
+  }
+}
+
+function openNewDisputeModal() {
+  if (myListings.value.length > 0) {
+    disputeTargetAuction.value = {
+      id: myListings.value[0].id,
+      title: myListings.value[0].title,
+      images: myListings.value[0].images || [myListings.value[0].image]
+    }
+    disputeIsSeller.value = true
+    disputeModalOpen.value = true
+  } else if (userStore.activeBids.length > 0) {
+    disputeTargetAuction.value = {
+      id: userStore.activeBids[0].auctionId,
+      title: userStore.activeBids[0].auctionTitle,
+      images: [userStore.activeBids[0].auctionImage]
+    }
+    disputeIsSeller.value = false
+    disputeModalOpen.value = true
+  } else {
+    uiStore.toastInfo(
+      t('dashboard.noActivity') || 'Aktif İşlem Yok',
+      'Şikayet bildirmek için önce bir ilana teklif vermeli veya ilan açmalısınız.'
+    )
+  }
+}
+
 watch(() => userStore.user, (u) => {
   if (u && !isSavingProfile.value) {
     if (u.fullName !== undefined) profileForm.value.fullName = u.fullName
@@ -275,14 +362,17 @@ onMounted(async () => {
   }
   loadWatchlist()
   loadMyListings()
+  fetchDisputes()
   auctionStore.fetchAuctions()
 })
 
 watch(() => userStore.isAuthenticated, (authed) => {
   if (authed) {
     loadMyListings()
+    fetchDisputes()
   }
 })
+
 </script>
 
 <template>
@@ -584,6 +674,7 @@ watch(() => userStore.isAuthenticated, (authed) => {
                   :key="listing.id"
                   :listing="listing"
                   :show-actions="true"
+                  @report="openDisputeForListing"
                 />
               </div>
               <div v-if="myListings.length === 0" class="text-center py-20">
@@ -610,8 +701,10 @@ watch(() => userStore.isAuthenticated, (authed) => {
                   v-for="bid in filteredBids"
                   :key="bid.id"
                   :bid="bid"
+                  @report="openDisputeForBid"
                 />
               </div>
+
               <div v-if="filteredBids.length === 0" class="text-center py-12">
                 <Gauge class="w-12 h-12 mx-auto text-text-muted mb-3" />
                 <p class="text-text-muted">{{ t('dashboard.noBids') }}</p>
@@ -872,8 +965,127 @@ watch(() => userStore.isAuthenticated, (authed) => {
 
             </div>
 
+            <!-- Disputes & Complaints Tab -->
+            <div v-else-if="activeTab === 'disputes'" class="animate-fade-in-up space-y-6">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+                <div>
+                  <h2 class="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight flex items-center gap-2.5">
+                    <Scale class="w-7 h-7 text-primary" />
+                    <span>{{ t('dashboard.disputesTitle') || 'Şikayet ve Uyuşmazlıklarım' }}</span>
+                  </h2>
+                  <p class="text-xs sm:text-sm text-gray-500 mt-1">
+                    {{ t('dashboard.disputesDesc') || 'Alıcı ve satıcı olarak bildirdiğiniz tüm şikayetler ve DemirBank Escrow arabuluculuk süreçleri.' }}
+                  </p>
+                </div>
+                <Button
+                  variant="primary"
+                  class="shrink-0 flex items-center gap-1.5"
+                  @click="openNewDisputeModal"
+                >
+                  <Plus class="w-4 h-4" />
+                  <span>{{ t('dashboard.reportDispute') || 'Yeni Şikayet / İtiraz' }}</span>
+                </Button>
+              </div>
+
+              <!-- Loading State -->
+              <div v-if="isLoadingDisputes" class="text-center py-16">
+                <Clock class="w-8 h-8 mx-auto text-primary animate-spin mb-3" />
+                <p class="text-xs text-text-muted">{{ t('common.loading') || 'Yükleniyor...' }}</p>
+              </div>
+
+              <!-- Disputes List -->
+              <div v-else-if="userDisputes.length > 0" class="space-y-4">
+                <div
+                  v-for="disp in userDisputes"
+                  :key="disp.id"
+                  class="bg-white rounded-3xl border border-black/[0.08] shadow-2xs p-5 sm:p-6 space-y-4 transition-all hover:border-primary/20"
+                >
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-black/[0.06]">
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                      <span class="font-mono text-xs font-bold text-gray-900 px-2.5 py-1 rounded-lg bg-black/[0.04] border border-black/[0.06]">
+                        #{{ disp.id }}
+                      </span>
+                      <span class="text-xs text-text-muted">
+                        {{ date.formatDateTime(disp.createdAt) }}
+                      </span>
+                    </div>
+
+                    <div>
+                      <Badge
+                        :variant="disp.status === 'resolved' ? 'success' : (disp.status === 'rejected' ? 'danger' : (disp.status === 'under_review' ? 'info' : 'warning'))"
+                        class="text-xs capitalize"
+                      >
+                        {{ getDisputeStatusLabel(disp.status) }}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <!-- Dispute Details -->
+                  <div class="space-y-2.5 text-xs">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <RouterLink
+                        :to="`/auctions/${disp.auctionId}`"
+                        class="font-bold text-sm text-gray-950 hover:text-primary transition-colors flex items-center gap-1.5"
+                      >
+                        <span>{{ disp.auctionTitle || `Lot #${disp.auctionId}` }}</span>
+                        <ArrowUpRight class="w-3.5 h-3.5 text-gray-400" />
+                      </RouterLink>
+
+                      <div class="flex items-center gap-3 text-text-secondary text-[11px]">
+                        <span>{{ t('dashboard.complainant') || 'Şikayetçi' }}: <strong>{{ disp.complainantName }}</strong></span>
+                        <span>•</span>
+                        <span>{{ t('dashboard.respondent') || 'Karşı Taraf' }}: <strong>{{ disp.respondentName }}</strong></span>
+                      </div>
+                    </div>
+
+                    <!-- Complaint reason -->
+                    <div class="p-3.5 rounded-2xl bg-black/[0.02] border border-black/[0.04]">
+                      <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-1">
+                        {{ t('disputeModal.detailsLabel') || 'Şikayet Detayı' }}
+                      </p>
+                      <p class="text-gray-800 leading-relaxed">{{ disp.reason }}</p>
+                    </div>
+
+                    <!-- Resolution (if available) -->
+                    <div v-if="disp.resolution" class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 space-y-1">
+                      <div class="flex items-center justify-between">
+                        <p class="font-bold uppercase tracking-wider text-[10px] text-emerald-700 flex items-center gap-1">
+                          <CheckCircle2 class="w-3.5 h-3.5" />
+                          <span>{{ t('dashboard.resolution') || 'Hakem / Moderasyon Kararı' }}</span>
+                        </p>
+                        <span v-if="disp.refundAmount && disp.refundAmount.minorUnits > 0" class="font-mono font-bold text-xs text-emerald-700">
+                          {{ t('dashboard.refund') || 'İade' }}: {{ disp.refundAmount.formatted }}
+                        </span>
+                      </div>
+                      <p class="text-xs leading-relaxed text-emerald-900">{{ disp.resolution }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Empty State -->
+              <div v-else class="text-center py-20 bg-white rounded-3xl border border-black/[0.08] shadow-2xs p-8">
+                <Scale class="w-16 h-16 mx-auto text-text-muted mb-4 opacity-40" />
+                <h3 class="text-base font-bold text-text-primary mb-2">
+                  {{ t('dashboard.noDisputes') || 'Kayıtlı bir şikayet veya uyuşmazlığınız bulunmuyor' }}
+                </h3>
+                <p class="text-text-muted max-w-md mx-auto text-xs mb-6 leading-relaxed">
+                  {{ t('disputeModal.escrowNotice') }}
+                </p>
+                <div class="flex items-center justify-center gap-3">
+                  <Button variant="outline" @click="$router.push('/dashboard/bids')">
+                    {{ t('dashboard.myBids') || 'Tekliflerime Git' }}
+                  </Button>
+                  <Button variant="outline" @click="$router.push('/dashboard/listings')">
+                    {{ t('dashboard.myListings') || 'İlanlarıma Git' }}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
             <!-- Settings Tab -->
             <div v-else-if="activeTab === 'settings'" class="animate-fade-in-up space-y-8 max-w-4xl">
+
               
               <!-- Header -->
               <div class="pb-6 border-b border-black/[0.06]">
@@ -1158,5 +1370,13 @@ watch(() => userStore.isAuthenticated, (authed) => {
       @success="onPasswordChanged"
       @update:model-value="showChangePasswordModal = $event"
     />
+
+    <DisputeModal
+      v-model="disputeModalOpen"
+      :auction="disputeTargetAuction"
+      :is-seller="disputeIsSeller"
+      @submitted="fetchDisputes"
+    />
   </div>
 </template>
+

@@ -108,6 +108,24 @@ export const userService = {
     const res = await apiClient.put<{ success: boolean; data: any }>('/api/user/settings', settings)
     return res.data
   },
+
+  async getDisputes(status?: string): Promise<{ success: boolean; data: any[] }> {
+    const res = await apiClient.get<{ success: boolean; data: any[] }>('/api/user/disputes', { status })
+    return res.data
+  },
+
+  async createDispute(data: {
+    auctionId: string
+    reason?: string
+    reasonCategory?: string
+    details?: string
+    role?: 'buyer' | 'seller'
+    respondentId?: string
+  }): Promise<{ success: boolean; data: any; message?: string }> {
+    const res = await apiClient.post<{ success: boolean; data: any; message?: string }>('/api/user/disputes', data)
+    return res.data
+  },
 }
 
 export default userService
+

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { AlertCircle } from 'lucide-vue-next'
 import { useFormatters } from '@/composables/useFormatters'
 import { useI18n } from '@/composables/useI18n'
 import type { AuctionStatus } from '@/types'
@@ -22,6 +23,10 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits<{
+  report: [listing: Props['listing']]
+}>()
+
 const { currency, status: statusLabels } = useFormatters()
 const { formatMoney } = currency
 const { t } = useI18n()
@@ -106,7 +111,20 @@ function getStatusBadgeVariant(status: string): 'default' | 'gold' | 'success' |
             </span>
           </div>
         </div>
+
+        <div v-if="showActions" class="pt-3 border-t border-black/5 flex items-center justify-end">
+          <button
+            type="button"
+            class="px-2.5 py-1.5 rounded-lg border border-black/10 hover:border-error/30 hover:bg-error/5 text-text-muted hover:text-error text-xs font-semibold flex items-center gap-1.5 transition-all"
+            :title="t('dashboard.reportDispute') || 'Şikayet / İtiraz'"
+            @click.prevent.stop="emit('report', listing)"
+          >
+            <AlertCircle class="w-3.5 h-3.5" />
+            <span>{{ t('dashboard.reportDispute') || 'Şikayet / İtiraz' }}</span>
+          </button>
+        </div>
       </div>
     </Card>
+
   </RouterLink>
 </template>

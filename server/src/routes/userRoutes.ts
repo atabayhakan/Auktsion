@@ -18,6 +18,7 @@ import {
   getSettings,
   updateSettings,
 } from '../controllers/userController.js';
+import { createDisputeHandler, getUserDisputesHandler } from '../controllers/disputeController.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 export const userRoutes = Router();
@@ -59,3 +60,7 @@ userRoutes.post('/payouts', requestPayout);
 // Settings
 userRoutes.get('/settings', getSettings);
 userRoutes.put('/settings', updateSettings);
+
+// Disputes & Complaints
+userRoutes.get('/disputes', getUserDisputesHandler);
+userRoutes.post('/disputes', createDisputeHandler);

@@ -474,6 +474,15 @@ export default {
     "title": "İletişim ve Destek"
   },
   "dashboard": {
+    "disputes": "Şikayetler & İtirazlar",
+    "disputesTitle": "Şikayet ve Uyuşmazlıklarım",
+    "disputesDesc": "Alıcı ve satıcı olarak bildirdiğiniz tüm şikayetler ve DemirBank Escrow arabuluculuk süreçleri.",
+    "noDisputes": "Kayıtlı bir şikayet veya uyuşmazlığınız bulunmuyor.",
+    "reportDispute": "Şikayet / İtiraz Bildir",
+    "disputeStatusOpen": "İnceleme Bekliyor",
+    "disputeStatusUnderReview": "İnceleniyor",
+    "disputeStatusResolved": "Çözümlendi",
+    "disputeStatusRejected": "Reddedildi",
     "smsAlertsDesc": "Güvenlik doğrulamaları ve banka emanet para transferi bilgilendirmeleri SMS ile iletilsin.",
     "smsAlertsTitle": "SMS ile Kritik Uyarılar",
     "settingsSubtitle": "Profil bilgilerinizi, iletişim kanallarınızı, güvenlik seçeneklerinizi ve bildirim tercihlerinizi yönetin.",
@@ -2413,5 +2422,38 @@ export default {
     "bidSuccessMsg": "{amount} сом tutarındaki teklifiniz alındı. Şu an lidersiniz!",
     "bidErrorTitle": "Teklif Hatası",
     "bidErrorMin": "Minimum teklif: {min} сом"
+  }
+,
+  "disputeModal": {
+      "titleBuyer": "Lot / Satıcı Şikayet & İtiraz Bildirimi",
+      "titleSeller": "Alıcı / Teklif Veren Şikayet Bildirimi",
+      "subtitle": "DemirBank Escrow koruması altında 24 saat içinde moderatörlerimiz tarafından incelenir.",
+      "roleBuyer": "Alıcı Olarak Şikayet",
+      "roleSeller": "Satıcı Olarak İtiraz / Şikayet",
+      "selectReason": "Şikayet / İtiraz Nedeni Seçin",
+      "detailsLabel": "Ayrıntılı Açıklama ve Deliller",
+      "detailsPlaceholder": "Lütfen durumu detaylı açıklayın (varsa teslimat durumu, ürün hasarı, mesajlaşma detayları)...",
+      "reasonsBuyer": {
+          "item_mismatch": "Ürün açıklamaya uymuyor veya hasarlı",
+          "item_not_delivered": "Satıcı ürünü teslim etmedi / göndermedi",
+          "counterfeit": "Şüpheli veya sahte ürün iddiası",
+          "seller_unresponsive": "Satıcı iletişime geçmiyor / cevap vermiyor",
+          "other": "Diğer kural ihlali / haksız talep"
+      },
+      "reasonsSeller": {
+          "buyer_unpaid": "Kazanan alıcı ödemeyi yapmadı",
+          "fake_bidding": "Kötü niyetli / sahte teklif verme",
+          "buyer_unresponsive": "Alıcıya ulaşılamıyor / iletişim kurulamıyor",
+          "delivery_unconfirmed": "Alıcı teslimatı haksız yere onaylamıyor",
+          "other": "Diğer kural ihlali"
+      },
+      "escrowNotice": "Tüm işlemler DemirBank Escrow emanet hesabı garantisi altındadır. Haklı bulunmanız halinde ödeme iadesi veya bloke işlemi başlatılır.",
+      "cancel": "Vazgeç",
+      "submit": "Şikayeti Gönder",
+      "submitting": "Gönderiliyor...",
+      "successTitle": "Şikayetiniz Alındı",
+      "successMessage": "Talebiniz moderasyon ekibimize iletildi. Durumu Profilinizden takip edebilirsiniz.",
+      "errorTitle": "Hata",
+      "loginRequired": "Şikayette bulunmak için lütfen önce giriş yapın."
   }
 }

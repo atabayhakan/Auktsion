@@ -315,3 +315,24 @@ export interface KafkaBidStream {
 }
 
 export type LoadingState = 'idle' | 'loading' | 'success' | 'error'
+
+export interface Dispute {
+  id: string
+  auctionId: string
+  auctionTitle?: string
+  complainantId: string
+  complainantName?: string
+  respondentId: string
+  respondentName?: string
+  reason: string
+  status: 'open' | 'under_review' | 'resolved' | 'rejected' | string
+  resolution: string | null
+  refundAmount?: {
+    amount: string
+    minorUnits: number
+    currency: string
+    formatted: string
+  }
+  createdAt: string
+  updatedAt: string
+}

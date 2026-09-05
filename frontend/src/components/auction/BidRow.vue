@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { AlertCircle } from 'lucide-vue-next'
 import { useFormatters } from '@/composables/useFormatters'
 import { useI18n } from '@/composables/useI18n'
 import type { BidStatus } from '@/types'
@@ -20,6 +21,10 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits<{
+  report: [bid: Props['bid']]
+}>()
+
 const { currency, status: statusLabels } = useFormatters()
 const { formatMoney } = currency
 const { t } = useI18n()
@@ -66,11 +71,21 @@ const timeRemaining = computed(() => {
       </div>
     </RouterLink>
 
-    <div class="flex flex-col items-end gap-1 shrink-0">
-      <Badge :variant="statusBadgeVariant">
-        {{ localizedStatus }}
-      </Badge>
-      <span class="text-text-muted text-xs">{{ timeRemaining }}</span>
+    <div class="flex items-center gap-2 shrink-0">
+      <div class="flex flex-col items-end gap-1">
+        <Badge :variant="statusBadgeVariant">
+          {{ localizedStatus }}
+        </Badge>
+        <span class="text-text-muted text-xs">{{ timeRemaining }}</span>
+      </div>
+      <button
+        type="button"
+        class="p-2 rounded-xl border border-black/10 hover:border-error/30 hover:bg-error/10 text-text-muted hover:text-error transition-all"
+        :title="t('dashboard.reportDispute') || 'Şikayet / İtiraz Bildir'"
+        @click.prevent.stop="emit('report', bid)"
+      >
+        <AlertCircle class="w-4 h-4" />
+      </button>
     </div>
   </div>
 </template>

@@ -18,6 +18,7 @@ import { userRoutes } from './routes/userRoutes.js';
 import { auctionRoutes } from './routes/auctionRoutes.js';
 import { adminRoutes } from './routes/adminRoutes.js';
 import { notificationRoutes } from './routes/notificationRoutes.js';
+import { disputeRoutes } from './routes/disputeRoutes.js';
 import { uploadRoutes, serveKycFile } from './routes/uploadRoutes.js';
 import { metaRoutes, getSitemapXml, getRobotsTxt } from './routes/metaRoutes.js';
 import { authenticateToken } from './middleware/auth.js';
@@ -85,6 +86,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/auctions', auctionRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/disputes', disputeRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api', metaRoutes);
 
