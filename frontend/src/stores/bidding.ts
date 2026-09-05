@@ -228,14 +228,14 @@ export const useBiddingStore = defineStore('bidding', () => {
     if (auctionId) {
       const auction = auctionStore.auctions.find(a => a.id === auctionId)
       if (auction) {
-        minBidIncrement.value = auction.bidIncrement
+        minBidIncrement.value = auction.bidIncrement || null
       }
     }
     bidError.value = null
   }
 
-  function setMinBidIncrement(increment: Money) {
-    minBidIncrement.value = increment
+  function setMinBidIncrement(increment?: Money | null) {
+    minBidIncrement.value = increment || null
   }
 
   function setBidHistory(bids: Bid[]) {

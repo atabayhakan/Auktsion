@@ -94,22 +94,23 @@ export interface Auction {
   currentPrice: Money
   reservePrice?: Money
   buyNowPrice?: Money // Дароо сатып алуу (Buy It Now)
-  bidIncrement: Money
+  bidIncrement?: Money
   bidCount: number
   status: AuctionStatus
   sellerId: string
-  seller: UserSummary
+  seller?: UserSummary
   city: string
   regionId?: string
   district?: string
-  startAt: string
+  startAt?: string
   endsAt: string
   createdAt: string
-  updatedAt: string
+  updatedAt?: string
   views?: number
   isWatching?: boolean
   isWatchlisted?: boolean
   isBlitz?: boolean // Flaş аукцион
+  isFeatured?: boolean
   livestock?: LivestockAttributes
   vehicle?: VehicleAttributes
   realEstate?: RealEstateAttributes
@@ -155,6 +156,7 @@ export interface User {
   fullName: string
   avatar?: string
   role?: string
+  status?: 'active' | 'banned' | 'suspended' | string
   kycStatus: KycStatus
   kycDocuments: {
     idFront?: string
