@@ -159,6 +159,8 @@ watch(() => props.modelValue, (val) => {
     :title="paymentStep === 'success' ? t('paymentModal.successTitle') : t('paymentModal.title')"
     :description="paymentStep === 'success' ? t('paymentModal.successDescription') : t('paymentModal.selectGateway')"
     :hide-footer="true"
+    @update:model-value="emit('update:modelValue', $event)"
+    @close="closeModal"
     @cancel="closeModal"
   >
     <div class="space-y-6">

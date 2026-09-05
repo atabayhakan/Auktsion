@@ -126,6 +126,8 @@ async function submitPayout() {
     hide-footer
     :close-on-escape="!isProcessing"
     :close-on-overlay-click="!isProcessing"
+    @update:model-value="emit('update:modelValue', $event)"
+    @close="closeModal"
     @cancel="closeModal"
   >
     <Stepper
