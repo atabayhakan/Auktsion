@@ -40,7 +40,8 @@ Thumbs.db
 *.sln.docstates
 
 # Agents / local tooling (do not commit)
-.agents/
+.agents/*
+!.agents/skills/
 .claude/
 .opencode/
 

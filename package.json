@@ -10,7 +10,9 @@
     "start": "npm --prefix server run start",
     "dev:server": "npm --prefix server run dev",
     "dev:frontend": "npm --prefix frontend run dev",
-    "test": "npm --prefix server run test"
+    "test": "npm --prefix server run test",
+    "audit:qa": "node .agents/skills/itorgo-quality-doctor/scripts/run_full_audit.js",
+    "audit:i18n-fix": "node .agents/skills/itorgo-quality-doctor/scripts/fix_i18n_parity.js"
   },
   "engines": {
     "node": ">=20.0.0",
