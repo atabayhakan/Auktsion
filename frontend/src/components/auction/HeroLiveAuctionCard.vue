@@ -8,6 +8,7 @@ import { currency } from '@/composables/useFormatters'
 import { useI18n } from '@/composables/useI18n'
 import type { Auction } from '@/types'
 import Button from '@/components/ui/Button.vue'
+import SmartShareModal from '@/components/auction/SmartShareModal.vue'
 
 interface Props {
   /** The auction to display as the hero featured lot */
@@ -494,9 +495,9 @@ watch(() => props.auction.bidCount, (newCount) => {
             <div
               class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-black/80 backdrop-blur-xl border border-white/10 text-white text-caption-md shadow-lg"
             >
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gold-500/20 text-gold-300 border border-gold-500/30">MBank</span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">Optima</span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">DemirBank</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Escrow 100%</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Verified</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">Fast Deal</span>
             </div>
           </div>
 

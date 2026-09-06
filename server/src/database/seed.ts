@@ -8,8 +8,8 @@ export function seedDatabase(db: Database): void {
   // Initialize schema first
   initializeSchema(db);
 
-  if (process.env.SEED_DATABASE === 'false') {
-    console.log('ℹ️ SEED_DATABASE=false: skipping seed.');
+  if (process.env.SEED_DATABASE === 'false' || process.env.NODE_ENV === 'production') {
+    console.log('ℹ️ Production mode or SEED_DATABASE=false: skipping demo seed.');
     return;
   }
 

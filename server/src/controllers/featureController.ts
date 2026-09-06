@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import { 
   getFeatureSettings, 
   updateFeatureSettings,
+  getBankSettings,
+  updateBankSettings,
+  getPublicBankGateways,
   getGroupBuyByAuction,
   createOrGetGroupBuy,
   joinGroupBuy,
@@ -11,6 +14,7 @@ import {
   getMatchingSellersForAuction
 } from '../models/featureModel.js';
 import { getDatabase } from '../config/database.js';
+import { purgeDemoUsers } from '../database/purgeDemoData.js';
 
 // ============================================================================
 // 1. Feature Config
@@ -233,7 +237,7 @@ export async function evaluateProductHandler(req: Request, res: Response): Promi
     const suggestedBuyNowPrice = avgPriceKgs;
 
     const detectedTitle = userTitle || 'Сапаттуу буюм (Колдонулган / Идеалдуу абалда)';
-    const detectedDescription = `Товардын абалы: ${condition === 'new' ? 'Жаңы (Таңгакталган)' : 'Мыкты (Аз колдонулган)'}. Бардык функциялары толук иштейт. Текшерип алууга толук мүмкүнчүлүк бар. DemirBank Escrow аркылуу коопсуз соодалашууга даярмын.`;
+    const detectedDescription = `Товардын абалы: ${condition === 'new' ? 'Жаңы (Таңгакталган)' : 'Мыкты (Аз колдонулган)'}. Бардык функциялары толук иштейт. Текшерип алууга толук мүмкүнчүлүк бар. iTorgo Escrow аркылуу коопсуз соодалашууга даярмын.`;
 
     const result = {
       category: userCategory || 'electronics',
@@ -355,9 +359,9 @@ export async function shoppingAssistantHandler(req: Request, res: Response): Pro
     if (locale === 'tr') {
       advice = `Aramanıza göre en uygun seçenekleri inceledim. Bütçenize (${budgetFilter ? (budgetFilter / 100).toLocaleString('tr-TR') + ' KGS' : 'belirtilen tutara'}) uygun ve güvenilir satıcılara ait öne çıkan ${formattedLots.length} lot aşağıda listelenmiştir:`;
     } else if (locale === 'ru') {
-      advice = `Я подобрал для вас наиболее выгодные и проверенные предложения в каталоге iTorgo под ваш запрос. Вот лучшие лоты с безопасной сделкой через эскроу DemirBank:`;
+      advice = `Я подобрал для вас наиболее выгодные и проверенные предложения в каталоге iTorgo под ваш запрос. Вот лучшие проверенные лоты с безопасной сделкой через эскроу iTorgo:`;
     } else {
-      advice = `Сиздин сурооңуз боюнча iTorgo платформасындагы эң ылайыктуу сунуштарды таптым. DemirBank Эскроу коргоосу астындагы тандалган ${formattedLots.length} лот:`;
+      advice = `Сиздин сурооңуз боюнча iTorgo платформасындагы эң ылайыктуу сунуштарды таптым. iTorgo Эскроу коргоосу астындагы тандалган ${formattedLots.length} лот:`;
     }
 
     // Log query for admin demand analytics
@@ -378,3 +382,44 @@ export async function shoppingAssistantHandler(req: Request, res: Response): Pro
     res.status(500).json({ success: false, error: err.message });
   }
 }
+
+// ============================================================================
+// 7. Bank & Payment Gateways Config (Public & Admin)
+// ============================================================================
+
+export async function getPublicBanks(req: Request, res: Response): Promise<void> {
+  try {
+    const data = getPublicBankGateways();
+    res.json({ success: true, data });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+export async function getAdminBanks(req: Request, res: Response): Promise<void> {
+  try {
+    const settings = getBankSettings();
+    res.json({ success: true, data: settings });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+export async function updateAdminBanks(req: Request, res: Response): Promise<void> {
+  try {
+    const updated = updateBankSettings(req.body);
+    res.json({ success: true, data: updated });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+export async function cleanupDemoData(req: Request, res: Response): Promise<void> {
+  try {
+    const result = purgeDemoUsers();
+    res.json({ success: true, data: result });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+

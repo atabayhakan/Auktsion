@@ -22,7 +22,9 @@ import type {
   ThemeSettings,
   ThemePresetItem,
   FeatureSettings,
-  FeatureStats
+  FeatureStats,
+  BankSettings,
+  BankGateway
 } from '@/types/admin'
 
 function shouldUseMockFallback(err: any): boolean {
@@ -775,6 +777,57 @@ export const adminService = {
       return res.data
     } catch (err: any) {
       console.error('Failed to update feature settings:', err)
+      throw err
+    }
+  },
+
+  // 10.2 Bank & Payment Gateway Controls
+  async getBankSettings(): Promise<{ success: boolean; data: BankSettings }> {
+    try {
+      const res = await apiClient.get<any>('/api/admin/banks')
+      if (res.data?.success) {
+        return { success: true, data: res.data.data }
+      }
+    } catch (err: any) {
+      console.warn('[adminService] Failed to load banks from server:', err)
+    }
+
+    return {
+      success: true,
+      data: {
+        banks: [
+          { id: 'mbank', name: 'MBank (Коммерческий банк КЫРГЫЗСТАН)', shortName: 'MBank', active: false, badge: 'MBank QR', type: 'qr', color: '#00C389', desc: 'Быстрая оплата по QR-коду и прямому переводу MBank' },
+          { id: 'optima', name: 'Optima Bank (Оптима Банк)', shortName: 'Optima Bank', active: false, badge: 'Optima24 / Visa', type: 'card', color: '#E30613', desc: 'Оплата банковскими картами и через приложение Optima24' },
+          { id: 'demir', name: 'DemirBank (Демир Кыргыз Интернэшнл Банк)', shortName: 'DemirBank', active: false, badge: 'DemirBank', type: 'escrow', color: '#1A3B8B', desc: 'Банковский расчет и эскроу-аккредитив' },
+          { id: 'bakai', name: 'Bakai Bank (Бакай Банк)', shortName: 'Bakai Bank', active: false, badge: 'Bakai24', type: 'qr', color: '#0055A5', desc: 'Оплата через систему Bakai24 и карты Visa/Элкарт' },
+          { id: 'odengi', name: 'O!Dengi / MegaPay', shortName: 'O!Dengi', active: false, badge: 'Электрондук капчык', type: 'wallet', color: '#FF0055', desc: 'Оплата через мобильные кошельки O!Dengi и MegaPay' },
+          { id: 'cards', name: 'Банковские карты (Элкарт / Visa / Mastercard)', shortName: 'Банковские карты', active: false, badge: 'Элкарт / Visa / MC', type: 'card', color: '#F59E0B', desc: 'Прием национальных карт Элкарт и международных Visa/Mastercard' },
+          { id: 'cash', name: 'Наличный расчет / При передаче лота', shortName: 'Наличный расчет', active: false, badge: 'Колдон колго', type: 'cash', color: '#10B981', desc: 'Оплата наличными при личной встрече и осмотре товара' }
+        ],
+        defaultNotice: 'В настоящее время прямые банковские шлюзы находятся в процессе официальной интеграции и тестирования.',
+        supportPhone: '+996 507 975 873',
+        whatsappNumber: '+996 507 975 873',
+        telegramHandle: '@itorgo_support'
+      }
+    }
+  },
+
+  async updateBankSettings(settings: Partial<BankSettings>): Promise<{ success: boolean; data: BankSettings }> {
+    try {
+      const res = await apiClient.put<any>('/api/admin/banks', settings)
+      return res.data
+    } catch (err: any) {
+      console.error('Failed to update bank settings:', err)
+      throw err
+    }
+  },
+
+  async cleanupDemoData(): Promise<{ success: boolean; data: { deletedUsers: number; demoUserIds: string[] } }> {
+    try {
+      const res = await apiClient.post<any>('/api/admin/cleanup-demo-data')
+      return res.data
+    } catch (err: any) {
+      console.error('Failed to cleanup demo data:', err)
       throw err
     }
   },

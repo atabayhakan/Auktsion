@@ -35,6 +35,27 @@ export interface PublicFeatureConfig {
   }
 }
 
+export interface BankGateway {
+  id: string
+  name: string
+  shortName: string
+  active: boolean
+  badge: string
+  type: 'qr' | 'card' | 'escrow' | 'wallet' | 'cash'
+  color: string
+  desc: string
+  instructions?: string
+}
+
+export interface PublicBankConfig {
+  activeBanks: BankGateway[]
+  hasActiveBanks: boolean
+  defaultNotice: string
+  supportPhone: string
+  whatsappNumber: string
+  telegramHandle: string
+}
+
 export interface GroupBuyData {
   id: string
   auctionId: string
@@ -140,6 +161,19 @@ export const useFeatureStore = defineStore('feature', () => {
   const isAiAssistantEnabled = computed(() => config.value.aiAssistant?.enabled ?? true)
   const isVideoListingEnabled = computed(() => config.value.videoListing?.enabled ?? true)
 
+  // Bank Gateways Configuration
+  const banksConfig = ref<PublicBankConfig>({
+    activeBanks: [],
+    hasActiveBanks: false,
+    defaultNotice: 'В настоящее время прямые банковские шлюзы находятся в процессе официальной интеграции и тестирования.',
+    supportPhone: '+996 507 975 873',
+    whatsappNumber: '+996 507 975 873',
+    telegramHandle: '@itorgo_support'
+  })
+
+  const activeBanks = computed(() => banksConfig.value.activeBanks || [])
+  const hasActiveBanks = computed(() => activeBanks.value.length > 0)
+
   // Fetch Public Flags from Backend
   async function fetchFeaturesConfig() {
     isLoading.value = true
@@ -153,6 +187,17 @@ export const useFeatureStore = defineStore('feature', () => {
       console.warn('[FeatureStore] Using default feature config:', err)
     } finally {
       isLoading.value = false
+    }
+  }
+
+  async function fetchBanksConfig() {
+    try {
+      const res = await apiClient.get<any>('/api/config/banks')
+      if (res && res.success && res.data) {
+        banksConfig.value = res.data
+      }
+    } catch (err) {
+      console.warn('[FeatureStore] Using default banks config:', err)
     }
   }
 
@@ -246,9 +291,13 @@ export const useFeatureStore = defineStore('feature', () => {
     isSellerComparisonEnabled,
     isAiAssistantEnabled,
     isVideoListingEnabled,
+    banksConfig,
+    activeBanks,
+    hasActiveBanks,
 
     // Actions
     fetchFeaturesConfig,
+    fetchBanksConfig,
     getAuctionGroupBuy,
     joinGroupBuy,
     evaluateProduct,

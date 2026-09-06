@@ -3,15 +3,18 @@ import { ref, computed, watch } from 'vue'
 import { 
   CreditCard, Smartphone, QrCode, Building2, 
   CheckCircle, XCircle, AlertCircle, ArrowRight, 
-  Clock, ShieldCheck, Copy, Check, RefreshCw, Lock
+  Clock, ShieldCheck, Copy, Check, RefreshCw, Lock,
+  MessageCircle, Send, PhoneCall
 } from 'lucide-vue-next'
 import { useUIStore } from '@/stores/ui'
+import { useFeatureStore } from '@/stores/feature'
 import { useI18n } from '@/composables/useI18n'
 import Modal from '@/components/ui/Modal.vue'
 import Button from '@/components/ui/Button.vue'
 import Badge from '@/components/ui/Badge.vue'
 
 const uiStore = useUIStore()
+const featureStore = useFeatureStore()
 const { t } = useI18n()
 
 const props = defineProps<{
@@ -29,9 +32,9 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
-type GatewayType = 'mbank' | 'optima' | 'demir' | 'card'
+type GatewayType = string
 
-const selectedGateway = ref<GatewayType>('mbank')
+const selectedGateway = ref<GatewayType>('')
 const paymentStep = ref<'select' | 'qr_scan' | '3ds' | 'success' | 'failed'>('select')
 const isProcessing = ref(false)
 const countdownSeconds = ref(15 * 60)
@@ -48,44 +51,18 @@ const formattedAmount = computed(() => {
   return `185 000 ${t('common.currency')}`
 })
 
-const gateways = computed(() => [
-  {
-    id: 'mbank' as GatewayType,
-    name: 'MBank',
-    subtitle: 'MBank QR & Fast Pay',
-    color: '#00C389',
-    badge: t('paymentModal.recommended'),
-    desc: t('paymentModal.mbankDesc'),
-    instant: true,
-  },
-  {
-    id: 'optima' as GatewayType,
-    name: 'Optima Bank',
-    subtitle: 'Visa / Mastercard / Optima24',
-    color: '#E30613',
-    badge: '3D Secure',
-    desc: t('paymentModal.optimaDesc'),
-    instant: true,
-  },
-  {
-    id: 'demir' as GatewayType,
-    name: 'DemirBank',
-    subtitle: 'Escrow Bank Transfer',
-    color: '#1A3B8B',
-    badge: t('paymentModal.escrowSecured'),
-    desc: t('paymentModal.demirDesc'),
-    instant: false,
-  },
-  {
-    id: 'card' as GatewayType,
-    name: 'Elkart / Visa / Mastercard',
-    subtitle: 'Bank Cards',
-    color: '#FFB800',
-    badge: 'KGS / USD',
-    desc: t('paymentModal.optimaDesc'),
-    instant: true,
-  },
-])
+const gateways = computed(() => {
+  return featureStore.activeBanks.map(b => ({
+    id: b.id as GatewayType,
+    name: b.name,
+    subtitle: b.shortName,
+    color: b.color || '#10B981',
+    badge: b.badge || 'Активен',
+    desc: b.desc,
+    instant: b.type === 'qr' || b.type === 'wallet',
+    instructions: b.instructions
+  }))
+})
 
 function handleSelectGateway(gateway: GatewayType) {
   selectedGateway.value = gateway
@@ -131,6 +108,12 @@ function simulateSimulatedApproval() {
   }, 1200)
 }
 
+watch(gateways, (newVal) => {
+  if (newVal.length > 0 && (!selectedGateway.value || !newVal.some(g => g.id === selectedGateway.value))) {
+    selectedGateway.value = newVal[0].id
+  }
+}, { immediate: true })
+
 function copyToClipboard(text: string) {
   navigator.clipboard.writeText(text)
   copied.value = true
@@ -157,7 +140,7 @@ watch(() => props.modelValue, (val) => {
     :model-value="modelValue" 
     size="lg" 
     :title="paymentStep === 'success' ? t('paymentModal.successTitle') : t('paymentModal.title')"
-    :description="paymentStep === 'success' ? t('paymentModal.successDescription') : t('paymentModal.selectGateway')"
+    :description="paymentStep === 'success' ? t('paymentModal.successDescription') : (gateways.length > 0 ? t('paymentModal.selectGateway') : (featureStore.banksConfig?.defaultNotice || t('paymentModal.title')))"
     :hide-footer="true"
     @update:model-value="emit('update:modelValue', $event)"
     @close="closeModal"
@@ -182,8 +165,8 @@ watch(() => props.modelValue, (val) => {
           </span>
         </div>
 
-        <!-- Bank Gateways Grid -->
-        <div class="space-y-3">
+        <!-- Bank Gateways Grid (when banks are active) -->
+        <div v-if="gateways.length > 0" class="space-y-3">
           <label class="block text-xs font-bold text-text-secondary">{{ t('paymentModal.selectGateway') }}</label>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -215,19 +198,62 @@ watch(() => props.modelValue, (val) => {
               <p class="text-[11px] text-text-secondary leading-normal">{{ gw.desc }}</p>
             </div>
           </div>
+
+          <!-- Action Button -->
+          <div class="pt-2">
+            <Button
+              size="lg"
+              class="w-full font-bold"
+              :disabled="!selectedGateway"
+              :loading="isProcessing"
+              @click="proceedToPayment"
+            >
+              <span>{{ t('paymentModal.proceed') }}</span>
+              <ArrowRight class="w-4 h-4 ml-1.5" />
+            </Button>
+          </div>
         </div>
 
-        <!-- Action Button -->
-        <div class="pt-2">
-          <Button
-            size="lg"
-            class="w-full font-bold"
-            :loading="isProcessing"
-            @click="proceedToPayment"
-          >
-            <span>{{ t('paymentModal.proceed') }}</span>
-            <ArrowRight class="w-4 h-4 ml-1.5" />
-          </Button>
+        <!-- Inactive Banks Notice Card (when 0 banks active) -->
+        <div v-else class="p-6 rounded-2xl border border-amber-200/60 bg-gradient-to-b from-amber-50/70 to-amber-50/20 text-center space-y-4">
+          <div class="w-12 h-12 mx-auto rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shadow-xs">
+            <Building2 class="w-6 h-6" />
+          </div>
+          <div class="space-y-1.5">
+            <h4 class="text-base font-bold text-text-primary">
+              {{ featureStore.banksConfig?.defaultNotice || t('paymentModal.gatewaysUnderMaintenanceTitle') }}
+            </h4>
+            <p class="text-xs text-text-secondary max-w-md mx-auto leading-relaxed">
+              {{ t('paymentModal.gatewaysUnderMaintenanceDesc') }}
+            </p>
+          </div>
+
+          <div class="pt-2 border-t border-amber-100/80 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+            <a 
+              href="https://wa.me/996555123456?text=Здравствуйте,%20хочу%20уточнить%20статус%20оплаты%20по%20сделке%20iTorgo" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366] text-white text-xs font-bold hover:brightness-95 transition-all shadow-xs"
+            >
+              <MessageCircle class="w-4 h-4" />
+              <span>WhatsApp Эскроу</span>
+            </a>
+            <a 
+              href="https://t.me/itorgo_support" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#229ED9] text-white text-xs font-bold hover:brightness-95 transition-all shadow-xs"
+            >
+              <Send class="w-4 h-4" />
+              <span>Telegram Поддержка</span>
+            </a>
+          </div>
+
+          <div class="pt-1">
+            <Button variant="ghost" size="sm" class="text-xs text-text-muted" @click="closeModal">
+              {{ t('common.close') }}
+            </Button>
+          </div>
         </div>
       </div>
 

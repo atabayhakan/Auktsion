@@ -39,11 +39,11 @@ const promoSlides = computed<Slide[]>(() => [
     subtitle: t('home.promoMbankDesc') || 'Komisyonsuz, 5 saniyede — kazandığınız lotu hemen güvenle ödeyin.',
     ctaLabel: t('home.promoMbankCta') || 'Nasıl Çalışır?',
     ctaLink: '/how-it-works',
-    badgeText: t('home.promoMbankBadge') || '0% Komisyon • MBank QR',
+    badgeText: t('home.promoMbankBadge') || 'Эскроу-защита • 100% Коопсуздук',
     highlights: [
-      t('home.promoMbankH1') || '5 Saniyede QR ile Doğrudan Ödeme',
-      t('home.promoMbankH2') || '%100 Güvenli Banka Emaneti',
-      t('home.promoMbankH3') || 'Optima & DemirBank Desteği'
+      t('home.promoMbankH1') || 'Ыкчам соода жана кепилдик',
+      t('home.promoMbankH2') || '100% Коопсуз эскроу эсеби',
+      t('home.promoMbankH3') || 'Ачык-айкын аукцион шарттары'
     ],
     gradient: 'from-amber-500/15 via-amber-500/5 to-transparent',
   },

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useI18n } from '@/composables/useI18n'
+import { useFeatureStore } from '@/stores/feature'
 import { ShieldCheck, Lock, Smartphone, CreditCard, Mail, MapPin, Building2, Gavel } from 'lucide-vue-next'
 import IlbirsIcon from '@/components/icons/IlbirsIcon.vue'
 
 const { t } = useI18n()
+const featureStore = useFeatureStore()
 const currentYear = new Date().getFullYear()
 
 const footerLinks = {
@@ -36,26 +38,35 @@ const footerLinks = {
           </div>
           <div>
             <p class="font-extrabold text-gray-950">{{ t('footer.nbkrTitle') || 'Соответствие требованиям НБКР (ПОД/ФТ)' }}</p>
-            <p class="text-gray-500 text-[11px]">{{ t('footer.nbkrDesc') || '256-битное SSL шифрование и эскроу-депозит DemirBank' }}</p>
+            <p class="text-gray-500 text-[11px]">{{ t('footer.nbkrDesc') || '256-битное SSL шифрование и гарантия безопасности iTorgo Escrow' }}</p>
           </div>
         </div>
 
-        <!-- Bank & Payment Badges -->
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="px-3 py-1.5 rounded-xl bg-white border border-black/10 text-xs font-black text-emerald-800 shadow-2xs">
-            MBank Pay
+        <!-- Bank & Payment Badges: Dynamic or Trust fallback -->
+        <div v-if="featureStore.activeBanks.length > 0" class="flex flex-wrap items-center gap-2">
+          <span 
+            v-for="bank in featureStore.activeBanks" 
+            :key="bank.id"
+            class="px-3 py-1.5 rounded-xl bg-white border border-black/10 text-xs font-black shadow-2xs"
+            :style="{ color: bank.color || '#10B981' }"
+          >
+            {{ bank.name }}
           </span>
-          <span class="px-3 py-1.5 rounded-xl bg-white border border-black/10 text-xs font-black text-rose-800 shadow-2xs">
-            Optima Bank
+        </div>
+        <div v-else class="flex flex-wrap items-center gap-2">
+          <span class="px-3 py-1.5 rounded-xl bg-white border border-black/10 text-xs font-bold text-gray-700 shadow-2xs flex items-center gap-1.5">
+            <Lock class="w-3.5 h-3.5 text-emerald-600" />
+            SSL 256-bit
           </span>
-          <span class="px-3 py-1.5 rounded-xl bg-white border border-black/10 text-xs font-black text-blue-800 shadow-2xs">
-            DemirBank
+          <span class="px-3 py-1.5 rounded-xl bg-white border border-black/10 text-xs font-bold text-gray-700 shadow-2xs flex items-center gap-1.5">
+            <ShieldCheck class="w-3.5 h-3.5 text-amber-600" />
+            iTorgo Escrow
           </span>
-          <span class="px-3 py-1.5 rounded-xl bg-white border border-black/10 text-xs font-black text-gray-800 shadow-2xs">
-            Elkart
+          <span class="px-3 py-1.5 rounded-xl bg-white border border-black/10 text-xs font-bold text-gray-700 shadow-2xs">
+            KYC 100%
           </span>
-          <span class="px-3 py-1.5 rounded-xl bg-white border border-black/10 text-xs font-bold text-gray-600 shadow-2xs">
-            Visa / MC
+          <span class="px-3 py-1.5 rounded-xl bg-white border border-black/10 text-xs font-bold text-gray-700 shadow-2xs">
+            24/7 Support
           </span>
         </div>
       </div>
@@ -80,7 +91,7 @@ const footerLinks = {
           </router-link>
 
           <p class="text-xs text-gray-500 leading-relaxed max-w-sm">
-            {{ t('footer.tagline') || 'Онлайн-аукцион №1 в Кыргызстане. 100% безопасные сделки через MBank, Optima Bank, DemirBank.' }}
+            {{ t('footer.tagline') || 'Онлайн-аукцион №1 в Кыргызстане. 100% безопасные сделки и защита покупателя.' }}
           </p>
 
           <div class="pt-2 space-y-1.5 text-xs text-gray-500 font-medium">

@@ -12,17 +12,25 @@ import {
   deletePriceAlertHandler,
   getMatchingSellersHandler,
   evaluateProductHandler,
-  shoppingAssistantHandler
+  shoppingAssistantHandler,
+  getPublicBanks,
+  getAdminBanks,
+  updateAdminBanks,
+  cleanupDemoData
 } from '../controllers/featureController.js';
 
 const router = Router();
 
 // Public Config
 router.get('/config/features', getPublicFeaturesConfig);
+router.get('/config/banks', getPublicBanks);
 
 // Admin Controls & Inspection
 router.get('/admin/features', authenticateToken, requireRole('admin', 'moderator'), getAdminFeatureSettings);
 router.put('/admin/features', authenticateToken, requireRole('admin', 'moderator'), updateAdminFeatureSettings);
+router.get('/admin/banks', authenticateToken, requireRole('admin', 'moderator'), getAdminBanks);
+router.put('/admin/banks', authenticateToken, requireRole('admin', 'moderator'), updateAdminBanks);
+router.post('/admin/cleanup-demo-data', authenticateToken, requireRole('admin'), cleanupDemoData);
 
 
 // Group Buys

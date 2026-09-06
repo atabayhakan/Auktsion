@@ -1,4 +1,4 @@
-﻿import { getDatabase } from '../config/database.js';
+import { getDatabase } from '../config/database.js';
 
 export interface FeatureSettings {
   groupBuy: {
@@ -138,6 +138,161 @@ export function updateFeatureSettings(newSettings: Partial<FeatureSettings>): Fe
   `).run(JSON.stringify(merged));
 
   return getFeatureSettings();
+}
+
+// ============================================================================
+// 1.1 Bank & Payment Gateway Settings
+// ============================================================================
+
+export interface BankGateway {
+  id: string;
+  name: string;
+  shortName: string;
+  active: boolean;
+  badge: string;
+  type: 'qr' | 'card' | 'escrow' | 'wallet' | 'cash';
+  color: string;
+  desc: string;
+  instructions?: string;
+}
+
+export interface BankSettings {
+  banks: BankGateway[];
+  defaultNotice: string;
+  supportPhone: string;
+  whatsappNumber: string;
+  telegramHandle: string;
+  updatedAt?: string;
+}
+
+export const DEFAULT_BANK_SETTINGS: BankSettings = {
+  banks: [
+    {
+      id: 'mbank',
+      name: 'MBank (Коммерческий банк КЫРГЫЗСТАН)',
+      shortName: 'MBank',
+      active: false,
+      badge: 'MBank QR',
+      type: 'qr',
+      color: '#00C389',
+      desc: 'Быстрая оплата по QR-коду и прямому переводу MBank'
+    },
+    {
+      id: 'optima',
+      name: 'Optima Bank (Оптима Банк)',
+      shortName: 'Optima Bank',
+      active: false,
+      badge: 'Optima24 / Visa',
+      type: 'card',
+      color: '#E30613',
+      desc: 'Оплата банковскими картами и через приложение Optima24'
+    },
+    {
+      id: 'demir',
+      name: 'DemirBank (Демир Кыргыз Интернэшнл Банк)',
+      shortName: 'DemirBank',
+      active: false,
+      badge: 'DemirBank',
+      type: 'escrow',
+      color: '#1A3B8B',
+      desc: 'Банковский расчет и эскроу-аккредитив'
+    },
+    {
+      id: 'bakai',
+      name: 'Bakai Bank (Бакай Банк)',
+      shortName: 'Bakai Bank',
+      active: false,
+      badge: 'Bakai24',
+      type: 'qr',
+      color: '#0055A5',
+      desc: 'Оплата через систему Bakai24 и карты Visa/Элкарт'
+    },
+    {
+      id: 'odengi',
+      name: 'O!Dengi / MegaPay',
+      shortName: 'O!Dengi',
+      active: false,
+      badge: 'Электрондук капчык',
+      type: 'wallet',
+      color: '#FF0055',
+      desc: 'Оплата через мобильные кошельки O!Dengi и MegaPay'
+    },
+    {
+      id: 'cards',
+      name: 'Банковские карты (Элкарт / Visa / Mastercard)',
+      shortName: 'Банковские карты',
+      active: false,
+      badge: 'Элкарт / Visa / MC',
+      type: 'card',
+      color: '#F59E0B',
+      desc: 'Прием национальных карт Элкарт и международных Visa/Mastercard'
+    },
+    {
+      id: 'cash',
+      name: 'Наличный расчет / При передаче лота',
+      shortName: 'Наличный расчет',
+      active: false,
+      badge: 'Колдон колго',
+      type: 'cash',
+      color: '#10B981',
+      desc: 'Оплата наличными при личной встрече и осмотре товара (Самовывоз / Курьер)'
+    }
+  ],
+  defaultNotice: 'В настоящее время прямые банковские шлюзы находятся в процессе официальной интеграции и тестирования. Для безопасного завершения сделки свяжитесь с поддержкой платформы iTorgo.',
+  supportPhone: '+996 507 975 873',
+  whatsappNumber: '+996 507 975 873',
+  telegramHandle: '@itorgo_support',
+  updatedAt: new Date().toISOString()
+};
+
+export function getBankSettings(): BankSettings {
+  const db = getDatabase();
+  try {
+    const row = db.prepare('SELECT value FROM platform_settings WHERE key = ?').get('bank_gateways') as { value: string } | undefined;
+    if (row && row.value) {
+      const parsed = JSON.parse(row.value);
+      return {
+        ...DEFAULT_BANK_SETTINGS,
+        ...parsed,
+        banks: Array.isArray(parsed.banks) ? parsed.banks : DEFAULT_BANK_SETTINGS.banks
+      };
+    }
+  } catch (err) {
+    console.error('Error fetching bank settings:', err);
+  }
+  return DEFAULT_BANK_SETTINGS;
+}
+
+export function updateBankSettings(newSettings: Partial<BankSettings>): BankSettings {
+  const db = getDatabase();
+  const current = getBankSettings();
+  const merged: BankSettings = {
+    ...current,
+    ...newSettings,
+    banks: newSettings.banks || current.banks,
+    updatedAt: new Date().toISOString(),
+  };
+
+  db.prepare(`
+    INSERT INTO platform_settings (key, value, updated_at)
+    VALUES ('bank_gateways', ?, datetime('now'))
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = datetime('now')
+  `).run(JSON.stringify(merged));
+
+  return getBankSettings();
+}
+
+export function getPublicBankGateways() {
+  const settings = getBankSettings();
+  const activeBanks = settings.banks.filter(b => b.active === true);
+  return {
+    activeBanks,
+    hasActiveBanks: activeBanks.length > 0,
+    defaultNotice: settings.defaultNotice,
+    supportPhone: settings.supportPhone,
+    whatsappNumber: settings.whatsappNumber,
+    telegramHandle: settings.telegramHandle
+  };
 }
 
 // ============================================================================

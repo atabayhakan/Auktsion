@@ -552,7 +552,7 @@ watch(() => userStore.isAuthenticated, (val) => {
         </div>
 
         <div class="pt-6 pb-2 border-t border-black/[0.06] mt-4 text-center">
-          <p class="text-[11px] text-gray-400 font-medium">ITOrgo • MBank / Optima / DemirBank</p>
+          <p class="text-[11px] text-gray-400 font-medium">ITOrgo • Платформа онлайн-аукционов</p>
         </div>
       </div>
     </div>

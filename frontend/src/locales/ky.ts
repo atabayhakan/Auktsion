@@ -1,5 +1,21 @@
 // Generated locale dictionary
 export default {
+
+  "shareSheet": {
+      "title": "Лот менен бөлүшүү",
+      "subtitle": "Ыңгайлуу жөнөтүү ыкмасын тандаңыз",
+      "whatsapp": "WhatsApp",
+      "telegram": "Telegram",
+      "copyLink": "Шилтемени көчүрүү",
+      "copied": "Шилтеме көчүрүлдү!",
+      "email": "Электрондук почта",
+      "sms": "SMS Кабар",
+      "qrCode": "QR-код",
+      "systemShare": "Дагы варианттар (iOS / Android)",
+      "shareMessage": "iTorgo онлайн-аукционундагы бул лотту көрүңүз: {title} {price} сомго. Шилтеме: {url}",
+      "close": "Жокко чыгаруу",
+      "scanToOpen": "Лотту ачуу үчүн телефондун камерасы менен сканерлеңиз"
+  },
   "about": {
     "ctaSubtitle": "Баалуу буюмдарды утуп алыңыз же өз лотторуңузду пайдалуу сатыңыз.",
     "ctaTitle": "Аукциондорго бүгүн кошулуңуз!",
@@ -709,7 +725,7 @@ export default {
     "ariaLabel": "Сайттын төмөнкү бөлүгү",
     "location": "Бишкек, Кыргыз Республикасы",
     "nbkrTitle": "КР Улуттук Банкынын AML/CFT талаптарына ылайык",
-    "nbkrDesc": "256-биттик SSL шифрлөө жана DemirBank эскроу кепилдиги",
+    "nbkrDesc": "256-биттик SSL шифрлөө жана iTorgo эскроу коопсуздук кепилдиги",
     "aboutUs": "Биз жөнүндө",
     "allAuctions": "Бардык аукциондор",
     "allCategories": "Категориялар",
@@ -722,7 +738,7 @@ export default {
     "platform": "Платформа",
     "privacy": "Купуялык саясаты",
     "support": "Колдоо",
-    "tagline": "Кыргызстандагы №1 онлайн аукцион платформасы. MBank, Optima Bank, DemirBank менен 100% корголгон бүтүмдөр.",
+    "tagline": "Кыргызстандагы №1 онлайн аукцион платформасы. 100% коопсуз бүтүмдөр жана сатып алуучуну коргоо.",
     "terms": "Колдонуу шарттары"
   },
   "home": {
@@ -743,7 +759,7 @@ export default {
     "escrowTileDesc": "Товарды кабыл алганга чейин каражатыңыз банк эскроусунда коопсуз сакталат.",
     "escrowTileTitle": "100% Банк эскроусу",
     "escrowTileLabel": "КООПСУЗ СООДА",
-    "nbkrDesc": "256-биттик SSL шифрлөө жана DemirBank эскроу кепилдиги",
+    "nbkrDesc": "256-биттик SSL шифрлөө жана iTorgo эскроу коопсуздук кепилдиги",
     "nbkrTitle": "КР Улуттук Банкынын AML/CFT талаптарына ылайык",
     "trustWsDesc": "Кечигүүсүз заматта коюмдар",
     "trustWsTitle": "Реалдуу убакыттагы түз тоорук",
@@ -759,7 +775,7 @@ export default {
     "promoNewSellersH2": "Түз тоорукта эң жогорку баа",
     "promoNewSellersH1": "AI колдогон лот жардамчысы",
     "promoNewSellersBadge": "Сатуучу артыкчылыгы",
-    "promoMbankH3": "Optima жана DemirBank колдоосу",
+    "promoMbankH3": "Коопсуз төлөм жана эскроу",
     "promoMbankH2": "100% Коопсуз банк эскроусу",
     "promoMbankH1": "QR менен 5 секундда түз төлөм",
     "promoMbankBadge": "0% Комиссия • MBank QR",
@@ -875,7 +891,7 @@ export default {
     "bankMbankTitle": "MBank Pay & QR",
     "bankMbankFee": "0% комиссия",
     "bankMbankDesc": "MBank тиркемеси аркылуу кезексиз жана жашыруун комиссиясыз тез төлөө.",
-    "bankDemirTitle": "DemirBank Escrow",
+    "bankDemirTitle": "Эскроу коргоосу",
     "bankDemirBadge": "Каражатты коргоо",
     "bankDemirDesc": "Товарды өткөрүп берип текшергенге чейин акчаны расмий банктык сактоо.",
     "bankOptimaTitle": "Optima Bank & Элкарт",
@@ -1099,7 +1115,7 @@ export default {
     "amountToPay": "Төлөнүүчү сумма",
     "back": "Артка",
     "bankName": "Банкыңыз",
-    "bankNamePlaceholder": "Мисалы: MBank, Optima Bank, DemirBank",
+    "bankNamePlaceholder": "Мисалы: Банктык которуу, карта, капчык",
     "bankTransferInfo": "Төмөндөгү эсепке которуп, төлөмдү ырастаңыз",
     "buyNowDesc": "{amount} суммасын төлөп, лотту өзүңүздүкү кылыңыз",
     "buyNowTitle": "Төлөмдү аяктаңыз",
@@ -1115,7 +1131,7 @@ export default {
     "goToProfile": "Жеке кабинетиме өтүү",
     "method": "Ыкма",
     "methodBank": "Банктык которуу",
-    "methodBankDesc": "MBank, Optima Bank, DemirBank",
+    "methodBankDesc": "Банктык которуулар жана эсептер",
     "methodCard": "Банк картасы",
     "methodCardDesc": "Visa, Mastercard, Элкарт",
     "methodQr": "MBank QR / Мобилдик төлөм",
@@ -1147,6 +1163,8 @@ export default {
     "yourAccountNumber": "Сиздин эсеп номериңиз"
   },
   "paymentModal": {
+    "gatewaysUnderMaintenanceTitle": "Банк шлюздары туташтыруу баскычында",
+    "gatewaysUnderMaintenanceDesc": "Учурда банктардын түз шлюздары туташтырылууда. Бардык төлөмдөр жана эскроу-кепилдиктер iTorgo 24/7 расмий модерация кызматы аркылуу коопсуз жүргүзүлөт.",
     "amount": "Сумма:",
     "amountToPay": "Төлөнүүчү сумма:",
     "backToAuction": "Аукционго кайтуу",

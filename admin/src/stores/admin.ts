@@ -21,7 +21,9 @@ import type {
   MediaFolderItem,
   MediaExplorerFile,
   FeatureSettings,
-  FeatureStats
+  FeatureStats,
+  BankSettings,
+  BankGateway
 } from '@/types/admin'
 
 import { adminService } from '@/services/adminService'
@@ -680,6 +682,52 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  // 12. Bank & Payment Gateway Settings
+  const bankSettings = ref<BankSettings | null>(null)
+
+  async function fetchBankSettings() {
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = await adminService.getBankSettings()
+      if (res.success && res.data) {
+        bankSettings.value = res.data
+      }
+    } catch (err: any) {
+      error.value = err.message || 'Банк жөндөөлөрүн жүктөөдө ката кетти'
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function updateBankSettings(newSettings: Partial<BankSettings>) {
+    isActionLoading.value = true
+    try {
+      const res = await adminService.updateBankSettings(newSettings)
+      if (res.success && res.data) {
+        bankSettings.value = res.data
+      }
+      return res
+    } catch (err: any) {
+      error.value = err.message || 'Банк жөндөөлөрүн сактоодо ката кетти'
+      throw err
+    } finally {
+      isActionLoading.value = false
+    }
+  }
+
+  async function cleanupDemoData() {
+    isActionLoading.value = true
+    try {
+      const res = await adminService.cleanupDemoData()
+      return res
+    } catch (err: any) {
+      error.value = err.message || 'Демо маалыматтарды тазалоодо ката кетти'
+      throw err
+    } finally {
+      isActionLoading.value = false
+    }
+  }
 
   return {
     // State
@@ -719,6 +767,7 @@ export const useAdminStore = defineStore('admin', () => {
     settings,
     featureSettings,
     featureStats,
+    bankSettings,
 
     // Getters
 
@@ -762,10 +811,12 @@ export const useAdminStore = defineStore('admin', () => {
     fetchSettings,
     updateSettings,
     fetchFeatureSettings,
-    updateFeatureSettings
+    updateFeatureSettings,
+    fetchBankSettings,
+    updateBankSettings,
+    cleanupDemoData
   }
 })
 
 
 export default useAdminStore
-

@@ -26,19 +26,33 @@ import {
   Video,
   Layers,
   Activity,
-  Check
+  Check,
+  Landmark,
+  CreditCard,
+  Trash2,
+  Smartphone
 } from 'lucide-vue-next'
 import { useAdminStore } from '@/stores/admin'
 import { useUIStore } from '@/stores/ui'
 import { useI18n } from '@/composables/useI18n'
-import type { PlatformSettings, FeatureSettings } from '@/types/admin'
+import type { PlatformSettings, FeatureSettings, BankSettings } from '@/types/admin'
 
 const adminStore = useAdminStore()
 const uiStore = useUIStore()
 const { t } = useI18n()
 
-const activeTab = ref<'general' | 'auction' | 'security' | 'features'>('general')
+const activeTab = ref<'general' | 'auction' | 'security' | 'features' | 'banks'>('general')
 const isSaving = ref(false)
+const isCleaningDemo = ref(false)
+
+const bankForm = ref<BankSettings>({
+  banks: [],
+  defaultNotice: '',
+  supportPhone: '',
+  whatsappNumber: '',
+  telegramHandle: '',
+  updatedAt: ''
+})
 
 const form = ref<PlatformSettings>({
   siteName: 'iTorgo',
@@ -121,6 +135,10 @@ async function loadFeatureSettings() {
   if (adminStore.featureSettings) {
     featuresForm.value = JSON.parse(JSON.stringify(adminStore.featureSettings))
   }
+  await adminStore.fetchBankSettings()
+  if (adminStore.bankSettings) {
+    bankForm.value = JSON.parse(JSON.stringify(adminStore.bankSettings))
+  }
 }
 
 async function handleSave() {
@@ -130,6 +148,13 @@ async function handleSave() {
       const res = await adminStore.updateFeatureSettings(featuresForm.value)
       if (res && res.success) {
         uiStore.toastSuccess('Ийгиликтүү сакталды', 'Инновациялык модулдардын жөндөөлөрү жаңыртылды')
+      } else {
+        uiStore.toastSuccess('Жөндөөлөр жаңыланды', 'Өзгөртүүлөр күчүнө кирди')
+      }
+    } else if (activeTab.value === 'banks') {
+      const res = await adminStore.updateBankSettings(bankForm.value)
+      if (res && res.success) {
+        uiStore.toastSuccess('Ийгиликтүү сакталды', 'Банк жана төлөм шлюздарынын жөндөөлөрү жаңыртылды')
       } else {
         uiStore.toastSuccess('Жөндөөлөр жаңыланды', 'Өзгөртүүлөр күчүнө кирди')
       }
@@ -154,11 +179,33 @@ function handleReset() {
       featuresForm.value = JSON.parse(JSON.stringify(adminStore.featureSettings))
       uiStore.toastInfo('Калыбына келтирилди', 'Модулдар баштапкы абалына келтирилди')
     }
+  } else if (activeTab.value === 'banks') {
+    if (adminStore.bankSettings) {
+      bankForm.value = JSON.parse(JSON.stringify(adminStore.bankSettings))
+      uiStore.toastInfo('Калыбына келтирилди', 'Банк жөндөөлөрү баштапкы абалына келтирилди')
+    }
   } else {
     if (adminStore.settings) {
       form.value = { ...adminStore.settings }
       uiStore.toastInfo('Калыбына келтирилди', 'Жөндөөлөр баштапкы абалына келтирилди')
     }
+  }
+}
+
+async function handleCleanupDemoData() {
+  if (!confirm('Чын эле бардык демо/жалган колдонуучуларды (user-001, user-201..204) базадан биротоло тазалоону каалайсызбы? Чыныгы катталган колдонуучулар сакталат.')) {
+    return
+  }
+  isCleaningDemo.value = true
+  try {
+    const res = await adminStore.cleanupDemoData()
+    if (res && res.success) {
+      uiStore.toastSuccess('Ийгиликтүү тазаланды', `Бардык демо колдонуучулар базадан өчүрүлдү (${res.data.deletedUsers} колдонуучу)`)
+    }
+  } catch (err: any) {
+    uiStore.toastError('Ката кетти', err.message || 'Демо маалыматтарды тазалоо мүмкүн болгон жок')
+  } finally {
+    isCleaningDemo.value = false
   }
 }
 </script>
@@ -255,6 +302,20 @@ function handleReset() {
       >
         <Sparkles class="w-4 h-4 text-amber-500" />
         <span>{{ t('admin.settings.tabs.features') || 'Инновационные модули & ИИ (6 функций)' }}</span>
+      </button>
+
+      <button
+        type="button"
+        :class="[
+          'px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer',
+          activeTab === 'banks'
+            ? 'bg-primary text-text-primary shadow-xs'
+            : 'text-text-secondary hover:text-text-primary hover:bg-black/5'
+        ]"
+        @click="activeTab = 'banks'"
+      >
+        <Landmark class="w-4 h-4 text-emerald-600" />
+        <span>Банки & Платежи ({{ bankForm.banks?.filter(b => b.active).length || 0 }} акт.)</span>
       </button>
     </div>
 
@@ -1007,6 +1068,189 @@ function handleReset() {
         </div>
 
       </div>
+    </div>
+
+    <!-- TAB 5: Bank & Payment Gateways (Control & Inspection) -->
+    <div v-if="activeTab === 'banks'" class="space-y-6">
+      
+      <!-- Top Overview Banner -->
+      <div class="rounded-3xl p-6 bg-gradient-to-br from-emerald-500/10 via-white to-amber-500/5 border border-emerald-500/20 shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-700 shrink-0">
+              <Landmark class="w-6 h-6" />
+            </div>
+            <div>
+              <h2 class="text-base font-extrabold text-text-primary">
+                Банки & Платежные шлюзы (Управление доступностью)
+              </h2>
+              <p class="text-xs text-text-secondary mt-1 max-w-2xl leading-relaxed">
+                Настройте видимость банковских систем в платформе. 
+                <strong class="text-emerald-700">Только включенные банки</strong> отображаются в окне оформления заказа и вывода средств. 
+                Отключенные банки полностью скрыты от покупателей и не создают ложных ожиданий.
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3 self-end sm:self-center">
+            <span :class="[
+              'px-3 py-1.5 rounded-xl text-xs font-black border',
+              bankForm.banks?.some(b => b.active) 
+                ? 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30' 
+                : 'bg-amber-500/15 text-amber-700 border-amber-500/30'
+            ]">
+              {{ bankForm.banks?.filter(b => b.active).length || 0 }} из {{ bankForm.banks?.length || 0 }} активно
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bank Cards List -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div 
+          v-for="bank in bankForm.banks" 
+          :key="bank.id"
+          class="bg-white rounded-2xl p-5 border transition-all space-y-4"
+          :class="bank.active ? 'border-emerald-500/40 shadow-xs ring-1 ring-emerald-500/20' : 'border-border opacity-85'"
+        >
+          <!-- Bank Card Header -->
+          <div class="flex items-start justify-between gap-3 pb-3 border-b border-border/80">
+            <div class="flex items-center gap-3">
+              <div 
+                class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs text-white shadow-xs"
+                :style="{ backgroundColor: bank.color || '#10B981' }"
+              >
+                {{ bank.shortName ? bank.shortName.slice(0, 2).toUpperCase() : 'BK' }}
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-text-primary leading-tight">{{ bank.name }}</h3>
+                <span class="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold bg-black/5 text-text-secondary">
+                  {{ bank.badge }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Master Toggle for Bank -->
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input v-model="bank.active" type="checkbox" class="sr-only peer" />
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+            </label>
+          </div>
+
+          <!-- Status Indicator -->
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-semibold text-text-secondary">Статус на витрине:</span>
+            <span :class="bank.active ? 'text-emerald-600 font-bold flex items-center gap-1' : 'text-gray-400 font-semibold'">
+              <span v-if="bank.active" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              {{ bank.active ? 'Отображается покупателям' : 'Скрыт (Не активен)' }}
+            </span>
+          </div>
+
+          <!-- Inputs -->
+          <div class="space-y-3 pt-1">
+            <div>
+              <label class="block text-[11px] font-bold text-text-secondary mb-1">
+                Краткое описание для покупателя
+              </label>
+              <input
+                v-model="bank.desc"
+                type="text"
+                class="w-full px-3 py-2 rounded-xl border border-border bg-black/[0.02] text-text-primary text-xs focus:outline-none focus:ring-2 focus:ring-primary/40"
+              />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-text-secondary mb-1">
+                Реквизиты / Инструкция (IBAN, Номер кошелька или QR)
+              </label>
+              <input
+                v-model="bank.instructions"
+                type="text"
+                placeholder="Например: Ссылка на QR-код или расчетный счет IBAN"
+                class="w-full px-3 py-2 rounded-xl border border-border bg-black/[0.02] text-text-primary text-xs focus:outline-none focus:ring-2 focus:ring-primary/40"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notice When All Banks Inactive & Support Contacts -->
+      <div class="bg-white rounded-2xl p-6 border border-border shadow-xs space-y-5">
+        <h3 class="text-sm font-bold text-text-primary flex items-center gap-2 border-b border-border pb-3">
+          <MessageCircle class="w-4 h-4 text-primary" />
+          <span>Уведомление для покупателей при отсутствии активных банков</span>
+        </h3>
+
+        <div>
+          <label class="block text-xs font-bold text-text-secondary mb-1.5">
+            Текст сообщения в окне оплаты (когда банки отключены)
+          </label>
+          <textarea
+            v-model="bankForm.defaultNotice"
+            rows="3"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-border bg-black/[0.02] text-text-primary text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/40"
+          ></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-text-secondary mb-1">
+              Телефон поддержки
+            </label>
+            <input
+              v-model="bankForm.supportPhone"
+              type="text"
+              class="w-full px-3 py-2 rounded-xl border border-border bg-black/[0.02] text-text-primary text-xs focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-text-secondary mb-1">
+              WhatsApp номер
+            </label>
+            <input
+              v-model="bankForm.whatsappNumber"
+              type="text"
+              class="w-full px-3 py-2 rounded-xl border border-border bg-black/[0.02] text-text-primary text-xs focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-text-secondary mb-1">
+              Telegram никнейм
+            </label>
+            <input
+              v-model="bankForm.telegramHandle"
+              type="text"
+              class="w-full px-3 py-2 rounded-xl border border-border bg-black/[0.02] text-text-primary text-xs focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo Data Cleanup Tool Card -->
+      <div class="bg-rose-500/[0.04] rounded-2xl p-6 border border-rose-500/20 shadow-xs space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-sm font-bold text-rose-800 flex items-center gap-2">
+              <Trash2 class="w-4 h-4 text-rose-600" />
+              <span>Очистка тестовых / демо-пользователей из базы</span>
+            </h3>
+            <p class="text-xs text-rose-600/80 mt-1 max-w-2xl">
+              Удаляет тестовых пользователей начальной инициализации (Улан Асанов, Бакыт Мусаев, Азамат Бакиров и др.). 
+              Ваши реальные администраторы и зарегистрированные пользователи платформы будут сохранены.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            :disabled="isCleaningDemo"
+            class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-2 cursor-pointer disabled:opacity-50 shrink-0"
+            @click="handleCleanupDemoData"
+          >
+            <Trash2 class="w-3.5 h-3.5" />
+            <span>{{ isCleaningDemo ? 'Очистка...' : 'Удалить демо-пользователей' }}</span>
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>

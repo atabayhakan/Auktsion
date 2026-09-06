@@ -433,6 +433,23 @@ export interface FeatureStats {
   aiQueriesCount: number
   videoLotsCount: number
 }
+export interface BankGateway {
+  id: string
+  name: string
+  shortName: string
+  active: boolean
+  badge: string
+  type: 'qr' | 'card' | 'escrow' | 'wallet' | 'cash'
+  color: string
+  desc: string
+  instructions?: string
+}
 
-
-
+export interface BankSettings {
+  banks: BankGateway[]
+  defaultNotice: string
+  supportPhone: string
+  whatsappNumber: string
+  telegramHandle: string
+  updatedAt?: string
+}

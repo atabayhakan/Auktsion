@@ -22,6 +22,7 @@ import DisputeModal from '@/components/auction/DisputeModal.vue'
 import GroupBuyWidget from '@/components/auction/GroupBuyWidget.vue'
 import PriceAlertModal from '@/components/auction/PriceAlertModal.vue'
 import SellerComparisonTable from '@/components/auction/SellerComparisonTable.vue'
+import SmartShareModal from '@/components/auction/SmartShareModal.vue'
 import { useFeatureStore } from '@/stores/feature'
 
 
@@ -50,6 +51,7 @@ const showPriceAlertModal = ref(false)
 const showBidModal = ref(false)
 const showPaymentModal = ref(false)
 const showDisputeModal = ref(false)
+const showShareModal = ref(false)
 const bidAmount = ref<string>('')
 
 const isPlacingBid = ref(false)
@@ -314,15 +316,8 @@ async function submitBid() {
 
 const shareUrl = computed(() => typeof window !== 'undefined' ? window.location.href : '')
 
-function copyShareLink() {
-  const url = shareUrl.value
-  if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
-    navigator.clipboard.writeText(url)
-      .then(() => uiStore.toastSuccess(t('toasts.success'), t('toasts.copiedToClipboard')))
-      .catch(() => uiStore.toastSuccess(t('toasts.success'), t('toasts.copiedToClipboard')))
-  } else {
-    uiStore.toastSuccess(t('toasts.success'), t('toasts.copiedToClipboard'))
-  }
+function openShareModal() {
+  showShareModal.value = true
 }
 </script>
 
@@ -483,8 +478,8 @@ function copyShareLink() {
                 </button>
 
                 <button
-                  class="p-2.5 rounded-xl border border-border bg-white/80 hover:bg-black/5 text-text-secondary transition-all shadow-sm flex items-center gap-1.5 text-xs font-semibold"
-                  @click="copyShareLink"
+                  class="p-2.5 rounded-xl border border-border bg-white/80 hover:bg-black/5 text-text-secondary transition-all shadow-sm flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
+                  @click="openShareModal"
                 >
                   <Share2 class="w-4 h-4 text-secondary" />
                   <span>{{ t('auction.share') }}</span>
@@ -742,8 +737,8 @@ function copyShareLink() {
               </button>
 
               <button
-                class="w-full py-2.5 px-3.5 rounded-xl border border-border bg-white/90 hover:bg-black/5 text-text-primary font-semibold text-xs transition-all flex items-center gap-2 shadow-sm"
-                @click="copyShareLink"
+                class="w-full py-2.5 px-3.5 rounded-xl border border-border bg-white/90 hover:bg-black/5 text-text-primary font-semibold text-xs transition-all flex items-center gap-2 shadow-sm cursor-pointer"
+                @click="openShareModal"
               >
                 <Share2 class="w-4 h-4 text-secondary" />
                 <span>{{ t('auction.share') }}</span>
@@ -988,6 +983,18 @@ function copyShareLink() {
       v-if="featureStore.isPriceDropAlertEnabled"
       v-model="showPriceAlertModal"
       :auction="auction"
+    />
+
+    <!-- iOS-Style Smart Share Sheet Modal -->
+    <SmartShareModal
+      v-if="auction"
+      v-model="showShareModal"
+      :lot-id="auction.id"
+      :title="auction.title"
+      :price="currentPrice ? formatMoney(currentPrice) : ''"
+      :image-url="auction.images?.[0] || ''"
+      :seller-name="auction.seller?.fullName || auction.seller?.companyName || ''"
+      :category-name="auction.category?.name || ''"
     />
 
   </div>

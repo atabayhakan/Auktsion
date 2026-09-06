@@ -15,6 +15,7 @@ const showAiAssistant = ref(false)
 
 onMounted(() => {
   featureStore.fetchFeaturesConfig()
+  featureStore.fetchBanksConfig()
 })
 
 // The auction detail page gets its own sticky bid bar on mobile instead —

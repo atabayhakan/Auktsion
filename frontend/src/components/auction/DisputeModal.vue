@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { 
@@ -161,7 +161,7 @@ async function handleSubmit() {
           <h4 class="text-sm font-bold text-text-primary truncate">{{ auction.title }}</h4>
           <span class="inline-flex items-center gap-1 text-[11px] font-medium text-primary mt-0.5">
             <Clock class="w-3 h-3" />
-            <span>24/7 DemirBank Escrow Güvencesi</span>
+            <span>{{ t('disputeModal.escrowNoticeBadge') || '24/7 iTorgo Эскроу & Модерация' }}</span>
           </span>
         </div>
       </div>
