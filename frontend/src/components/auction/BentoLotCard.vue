@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { Clock, TrendingUp, ShieldCheck, Zap, Heart } from 'lucide-vue-next'
+import { Clock, TrendingUp, ShieldCheck, Zap, Heart, Video } from 'lucide-vue-next'
 import { currency } from '@/composables/useFormatters'
 import { useCountdown } from '@/composables/useCountdown'
 import { useI18n } from '@/composables/useI18n'
@@ -161,14 +161,23 @@ function handleWatchToggle() {
 
       <!-- Badges -->
       <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-dark-950/85 backdrop-blur-md border border-white/10 text-white flex items-center gap-1.5 shadow-sm">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          {{ categoryName }}
-        </span>
+        <div class="flex items-center gap-1.5">
+          <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-dark-950/85 backdrop-blur-md border border-white/10 text-white flex items-center gap-1.5 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            {{ categoryName }}
+          </span>
+          <span
+            v-if="auction.videoUrl || (auction as any).video_url"
+            class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white shadow-sm flex items-center gap-1"
+          >
+            <Video class="w-3 h-3" />
+            <span>ВИДЕО</span>
+          </span>
+        </div>
 
         <span
-class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-dark-950/85 backdrop-blur-md border border-gold-500/30 text-gold-300 flex items-center gap-1.5 shadow-sm"
-              :class="{ '!border-red-500/50 !text-red-300 !bg-red-950/85': timeRemaining.isCritical && !timeRemaining.isEnded }">
+          class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-dark-950/85 backdrop-blur-md border border-gold-500/30 text-gold-300 flex items-center gap-1.5 shadow-sm"
+          :class="{ '!border-red-500/50 !text-red-300 !bg-red-950/85': timeRemaining.isCritical && !timeRemaining.isEnded }">
           <Clock class="w-3.5 h-3.5" />
           {{ timeRemaining.text }}
         </span>

@@ -378,4 +378,61 @@ export interface ThemePresetItem {
   theme: Partial<ThemeSettings>
 }
 
+export interface FeatureSettings {
+  groupBuy: {
+    enabled: boolean
+    defaultDurationHours: number
+    minParticipants: number
+    autoRefundOnFail: boolean
+    allowedCategories: string[]
+  }
+  aiValuation: {
+    enabled: boolean
+    model: string
+    priceMarginPct: number
+    requireAdminModeration: boolean
+    dailyUserLimit: number
+  }
+  priceDropAlert: {
+    enabled: boolean
+    minDropPct: number
+    channels: {
+      inApp: boolean
+      email: boolean
+      push: boolean
+    }
+  }
+  sellerComparison: {
+    enabled: boolean
+    algorithm: 'lowest_price' | 'best_value_weighted' | 'fastest_delivery'
+    minSellerCount: number
+    autoMatchByTitle: boolean
+  }
+  aiAssistant: {
+    enabled: boolean
+    maxResults: number
+    systemPrompt: string
+    showSuggestions: boolean
+  }
+  videoListing: {
+    enabled: boolean
+    maxDurationSeconds: number
+    maxFileSizeMb: number
+    allowedCategories: string[]
+    moderationRequired: boolean
+  }
+  updatedAt?: string
+}
+
+export interface FeatureStats {
+  activeGroups: number
+  totalParticipants: number
+  activeAlerts: number
+  triggeredAlerts: number
+  aiEvaluationsCount: number
+  aiQueriesCount: number
+  videoLotsCount: number
+}
+
+
 

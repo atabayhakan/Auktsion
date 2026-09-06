@@ -3,7 +3,7 @@ import { computed, ref, watch, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import {
   Clock, TrendingUp, MapPin, Flame, CheckCircle2,
-  Wheat, Car, Building2, Zap, ArrowUpRight
+  Wheat, Car, Building2, Zap, ArrowUpRight, Video
 } from 'lucide-vue-next'
 import { useFormatters } from '@/composables/useFormatters'
 import { useI18n } from '@/composables/useI18n'
@@ -109,6 +109,16 @@ const categorySpec = computed(() => {
         </span>
 
         <div class="flex items-center gap-1.5">
+          <!-- Video Listing Badge (Feature 18) -->
+          <span
+            v-if="auction.videoUrl || (auction as any).video_url"
+            class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white shadow-sm flex items-center gap-1"
+            title="Видеолуу лот"
+          >
+            <Video class="w-3 h-3" />
+            <span>ВИДЕО</span>
+          </span>
+
           <!-- Blitz Flame Badge -->
           <span v-if="auction.isBlitz" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white shadow-sm flex items-center gap-1">
             <Flame class="w-3 h-3" />

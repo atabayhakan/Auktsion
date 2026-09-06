@@ -20,8 +20,11 @@ import type {
   MediaFolderItem,
   MediaExplorerFile,
   ThemeSettings,
-  ThemePresetItem
+  ThemePresetItem,
+  FeatureSettings,
+  FeatureStats
 } from '@/types/admin'
+
 function shouldUseMockFallback(err: any): boolean {
   // Only fallback on network errors or 5xx, not on 4xx client errors (401/403/404 etc. must surface)
   if (!err) return true
@@ -697,6 +700,85 @@ export const adminService = {
       throw err
     }
   },
+
+  // 10.1 Feature Modules & Controls
+  async getFeatureSettings(): Promise<{ success: boolean; data: { settings: FeatureSettings; stats: FeatureStats } }> {
+    try {
+      const res = await apiClient.get<any>('/api/admin/features')
+      if (res.data?.success) {
+        return { success: true, data: res.data.data }
+      }
+    } catch (err: any) {
+      console.warn('[adminService] Failed to load features from server:', err)
+    }
+
+    return {
+      success: true,
+      data: {
+        settings: {
+          groupBuy: {
+            enabled: true,
+            defaultDurationHours: 24,
+            minParticipants: 5,
+            autoRefundOnFail: true,
+            allowedCategories: ['electronics', 'appliances', 'clothing', 'wholesale', 'home', 'general'],
+          },
+          aiValuation: {
+            enabled: true,
+            model: 'gemini-2.0-flash',
+            priceMarginPct: 15,
+            requireAdminModeration: false,
+            dailyUserLimit: 10,
+          },
+          priceDropAlert: {
+            enabled: true,
+            minDropPct: 5,
+            channels: { inApp: true, email: true, push: true },
+          },
+          sellerComparison: {
+            enabled: true,
+            algorithm: 'best_value_weighted',
+            minSellerCount: 2,
+            autoMatchByTitle: true,
+          },
+          aiAssistant: {
+            enabled: true,
+            maxResults: 4,
+            systemPrompt: 'Сиз Кыргызстандын эң ири iTorgo аукцион жана соода платформасынын акылдуу жардамчысысыз.',
+            showSuggestions: true,
+          },
+          videoListing: {
+            enabled: true,
+            maxDurationSeconds: 30,
+            maxFileSizeMb: 30,
+            allowedCategories: ['vehicles', 'livestock', 'real_estate', 'electronics'],
+            moderationRequired: false,
+          },
+          updatedAt: new Date().toISOString(),
+        },
+        stats: {
+          activeGroups: 0,
+          totalParticipants: 0,
+          activeAlerts: 0,
+          triggeredAlerts: 0,
+          aiEvaluationsCount: 0,
+          aiQueriesCount: 0,
+          videoLotsCount: 0,
+        }
+      }
+    }
+  },
+
+  async updateFeatureSettings(settings: Partial<FeatureSettings>): Promise<{ success: boolean; data: FeatureSettings; message?: string }> {
+    try {
+      const res = await apiClient.put<any>('/api/admin/features', settings)
+      return res.data
+    } catch (err: any) {
+      console.error('Failed to update feature settings:', err)
+      throw err
+    }
+  },
+
 
   // 11. Theme & Design Customizer
   async getTheme(): Promise<{ success: boolean; data: ThemeSettings }> {

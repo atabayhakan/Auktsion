@@ -2455,5 +2455,38 @@ export default {
       "successMessage": "Talebiniz moderasyon ekibimize iletildi. Durumu Profilinizden takip edebilirsiniz.",
       "errorTitle": "Hata",
       "loginRequired": "Şikayette bulunmak için lütfen önce giriş yapın."
+  },
+  "features": {
+    "groupBuy": {
+      "title": "Arkadaşlarınla Birlikte Satın Al",
+      "subtitle": "Birlikte satın alın, en yüksek toptan indirime ulaşın!",
+      "joinBtn": "Gruba Katıl / Birlikte Satın Al",
+      "progress": "Şu anda {count} kişi katıldı. Bir sonraki fiyat seviyesine ulaşmak için {needed} kişi daha gerekiyor.",
+      "completed": "Tebrikler! En düşük fiyat kademesine ulaşıldı!"
+    },
+    "priceAlert": {
+      "btn": "Fiyat Takibi",
+      "title": "Fiyat Takibi & İndirim Bildirimi",
+      "subtitle": "Fiyat düştüğünde anında haberiniz olsun",
+      "success": "Fiyat alarmı başarıyla kuruldu"
+    },
+    "sellerComparison": {
+      "title": "Birden Fazla Satıcıyı Karşılaştır",
+      "subtitle": "Aynı ürünü satan diğer satıcıları fiyat, teslimat ve puana göre inceleyin",
+      "bestOffer": "EN İYİ TEKLİF"
+    },
+    "aiValuation": {
+      "title": "Ürünümü Değerlendir / Fiyatını Belirle",
+      "subtitle": "Fotoğraf yükleyin, yapay zeka piyasa değerini analiz etsin ve 30 saniyede ilan oluştursun",
+      "fastListingBtn": "30 Saniyede İlan Oluştur"
+    },
+    "aiAssistant": {
+      "title": "Akıllı Alışveriş Asistanı",
+      "subtitle": "Bütçenize en uygun ürünleri bulan kişisel alışveriş rehberiniz"
+    },
+    "videoListing": {
+      "badge": "Videolu",
+      "title": "Videolu İlan"
+    }
   }
 }

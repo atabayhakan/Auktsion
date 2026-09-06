@@ -245,6 +245,64 @@ export function initializeSchema(db: Database): void {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
+    -- 16. Group Buys Table
+    CREATE TABLE IF NOT EXISTS group_buys (
+      id TEXT PRIMARY KEY,
+      auction_id TEXT NOT NULL,
+      creator_id TEXT NOT NULL,
+      status TEXT DEFAULT 'active' CHECK(status IN ('active', 'completed', 'expired', 'cancelled')),
+      tier_1_count INTEGER DEFAULT 5,
+      tier_1_price_minor BIGINT NOT NULL,
+      tier_2_count INTEGER DEFAULT 10,
+      tier_2_price_minor BIGINT NOT NULL,
+      current_count INTEGER DEFAULT 1,
+      expires_at DATETIME NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (auction_id) REFERENCES auctions(id) ON DELETE CASCADE,
+      FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS group_buy_participants (
+      id TEXT PRIMARY KEY,
+      group_buy_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      payment_status TEXT DEFAULT 'hold' CHECK(payment_status IN ('hold', 'captured', 'refunded')),
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (group_buy_id) REFERENCES group_buys(id) ON DELETE CASCADE,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    -- 17. Price Drop Alerts Table
+    CREATE TABLE IF NOT EXISTS price_alerts (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      auction_id TEXT NOT NULL,
+      target_price_minor BIGINT NOT NULL,
+      initial_price_minor BIGINT NOT NULL,
+      is_triggered INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (auction_id) REFERENCES auctions(id) ON DELETE CASCADE
+    );
+
+    -- 18. AI Evaluations & Shopping Assistant Logs
+    CREATE TABLE IF NOT EXISTS ai_evaluations (
+      id TEXT PRIMARY KEY,
+      user_id TEXT,
+      images_json TEXT NOT NULL,
+      result_json TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS ai_assistant_logs (
+      id TEXT PRIMARY KEY,
+      user_id TEXT,
+      query TEXT NOT NULL,
+      response TEXT NOT NULL,
+      matched_auction_ids TEXT DEFAULT '[]',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
     -- Indexes for performance
     CREATE INDEX IF NOT EXISTS idx_auctions_status ON auctions(status);
     CREATE INDEX IF NOT EXISTS idx_auctions_category ON auctions(category);
@@ -262,12 +320,20 @@ export function initializeSchema(db: Database): void {
     CREATE INDEX IF NOT EXISTS idx_watchlists_auction_id ON watchlists(auction_id);
     CREATE INDEX IF NOT EXISTS idx_media_folders_parent ON media_folders(parent_id);
     CREATE INDEX IF NOT EXISTS idx_media_files_folder ON media_files(folder_id);
+    CREATE INDEX IF NOT EXISTS idx_group_buys_auction ON group_buys(auction_id);
+    CREATE INDEX IF NOT EXISTS idx_price_alerts_user ON price_alerts(user_id);
+    CREATE INDEX IF NOT EXISTS idx_price_alerts_auction ON price_alerts(auction_id);
   `);
 
-  // Migration for existing DBs: add ban audit columns if missing
+  // Migration for existing DBs: add columns if missing
   try { db.exec(`ALTER TABLE users ADD COLUMN ban_reason TEXT`); } catch {}
   try { db.exec(`ALTER TABLE users ADD COLUMN banned_by TEXT`); } catch {}
   try { db.exec(`ALTER TABLE users ADD COLUMN banned_at DATETIME`); } catch {}
   try { db.exec(`ALTER TABLE notifications ADD COLUMN link TEXT`); } catch {}
   try { db.exec(`ALTER TABLE notifications ADD COLUMN metadata_json TEXT DEFAULT '{}'`); } catch {}
+  try { db.exec(`ALTER TABLE auctions ADD COLUMN video_url TEXT`); } catch {}
+  try { db.exec(`ALTER TABLE auctions ADD COLUMN video_duration INTEGER DEFAULT 0`); } catch {}
+  try { db.exec(`ALTER TABLE auctions ADD COLUMN product_code TEXT`); } catch {}
+  try { db.exec(`CREATE INDEX IF NOT EXISTS idx_auctions_product_code ON auctions(product_code)`); } catch {}
 }
+

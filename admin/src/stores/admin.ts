@@ -19,8 +19,11 @@ import type {
   PlatformSettings,
   MediaExplorerData,
   MediaFolderItem,
-  MediaExplorerFile
+  MediaExplorerFile,
+  FeatureSettings,
+  FeatureStats
 } from '@/types/admin'
+
 import { adminService } from '@/services/adminService'
 
 export const useAdminStore = defineStore('admin', () => {
@@ -611,6 +614,8 @@ export const useAdminStore = defineStore('admin', () => {
 
   // 11. Platform Settings
   const settings = ref<PlatformSettings | null>(null)
+  const featureSettings = ref<FeatureSettings | null>(null)
+  const featureStats = ref<FeatureStats | null>(null)
 
   async function fetchSettings() {
     isLoading.value = true
@@ -642,6 +647,39 @@ export const useAdminStore = defineStore('admin', () => {
       isActionLoading.value = false
     }
   }
+
+  async function fetchFeatureSettings() {
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = await adminService.getFeatureSettings()
+      if (res.success && res.data) {
+        featureSettings.value = res.data.settings
+        featureStats.value = res.data.stats
+      }
+    } catch (err: any) {
+      error.value = err.message || 'Модулдардын жөндөөлөрүн жүктөөдө ката кетти'
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function updateFeatureSettings(newSettings: Partial<FeatureSettings>) {
+    isActionLoading.value = true
+    try {
+      const res = await adminService.updateFeatureSettings(newSettings)
+      if (res.success && res.data) {
+        featureSettings.value = res.data
+      }
+      return res
+    } catch (err: any) {
+      error.value = err.message || 'Модулдарды сактоодо ката кетти'
+      throw err
+    } finally {
+      isActionLoading.value = false
+    }
+  }
+
 
   return {
     // State
@@ -679,8 +717,11 @@ export const useAdminStore = defineStore('admin', () => {
     mediaExplorer,
     activeMediaFolderId,
     settings,
+    featureSettings,
+    featureStats,
 
     // Getters
+
     pendingKycCount,
     openDisputesCount,
     pendingPayoutsCount,
@@ -719,9 +760,12 @@ export const useAdminStore = defineStore('admin', () => {
     deleteMediaFile,
     addMediaFile,
     fetchSettings,
-    updateSettings
+    updateSettings,
+    fetchFeatureSettings,
+    updateFeatureSettings
   }
 })
+
 
 export default useAdminStore
 

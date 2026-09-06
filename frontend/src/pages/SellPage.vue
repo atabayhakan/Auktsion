@@ -36,16 +36,28 @@ import {
   Gem,
   Palette,
   Tractor,
-  Play
+  Play,
+  Video,
+  Camera
 } from 'lucide-vue-next'
 import SellerWalkthroughFilm from '@/components/film/SellerWalkthroughFilm.vue'
+import AiProductValuationModal from '@/components/auction/AiProductValuationModal.vue'
+import { useFeatureStore } from '@/stores/feature'
 
 const { t, currentLocale } = useI18n()
 const router = useRouter()
 const userStore = useUserStore()
 const uiStore = useUIStore()
 const auctionStore = useAuctionStore()
+const featureStore = useFeatureStore()
 const showVideoGuide = ref(false)
+const showAiValuationModal = ref(false)
+
+const videoFile = ref<File | null>(null)
+const videoPreviewUrl = ref<string>('')
+const isUploadingVideo = ref(false)
+const videoUploadError = ref('')
+const videoInput = ref<HTMLInputElement | null>(null)
 
 const categoryIconMap: Record<string, any> = {
   electronics: Smartphone,
@@ -82,6 +94,8 @@ const formData = ref({
   regionId: 'chuy',
   districtId: 'bishkek-lenin',
   images: [] as string[],
+  videoUrl: '',
+  videoDuration: 0,
   startingPrice: 5000,
   bidIncrement: 500,
   reservePrice: 0,
@@ -371,6 +385,52 @@ function removeImage(idx: number) {
   formData.value.images.splice(idx, 1)
 }
 
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    const cached = sessionStorage.getItem('itorgo_ai_valuation')
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached)
+        if (parsed.title) formData.value.title = parsed.title
+        if (parsed.category) formData.value.category = parsed.category
+        if (parsed.startingPrice) formData.value.startingPrice = parsed.startingPrice
+        if (parsed.buyNowPrice) formData.value.buyNowPrice = parsed.buyNowPrice
+        if (parsed.description) formData.value.description = parsed.description
+        sessionStorage.removeItem('itorgo_ai_valuation')
+        uiStore.toastSuccess('ИИ маалыматтары жүктөлдү', 'Товардын маалыматтары автоматтык түрдө толтурулду')
+      } catch (e) {
+        console.error('Failed to parse cached valuation:', e)
+      }
+    }
+  }
+})
+
+function handleVideoSelect(e: Event) {
+  const target = e.target as HTMLInputElement
+  if (!target.files || target.files.length === 0) return
+
+  const file = target.files[0]
+  const maxMb = featureStore.config.videoListing.maxFileSizeMb || 25
+  if (file.size > maxMb * 1024 * 1024) {
+    videoUploadError.value = `Видео файлдын көлөмү чоң. Максимум ${maxMb} МБ уруксат.`
+    return
+  }
+
+  videoFile.value = file
+  videoPreviewUrl.value = URL.createObjectURL(file)
+  videoUploadError.value = ''
+  formData.value.videoUrl = videoPreviewUrl.value
+  formData.value.videoDuration = 20
+  uiStore.toastSuccess('Видео тандалды', 'Кыска видеоролик лотко кошулду')
+}
+
+function removeVideo() {
+  videoFile.value = null
+  videoPreviewUrl.value = ''
+  formData.value.videoUrl = ''
+  formData.value.videoDuration = 0
+}
+
 async function submitAuction() {
   if (!userStore.isAuthenticated) {
     uiStore.toastInfo('iTorgo', t('sell.loginRequired') || 'Пожалуйста, войдите в систему, чтобы опубликовать лот.')
@@ -405,6 +465,8 @@ async function submitAuction() {
     durationDays: Number(formData.value.durationDays) || 3,
     isBlitz: Boolean(formData.value.isBlitz),
     images: formData.value.images,
+    videoUrl: formData.value.videoUrl,
+    videoDuration: formData.value.videoDuration,
     attributes: {
       ...formData.value.livestock,
       ...formData.value.vehicle,
@@ -519,6 +581,30 @@ async function submitAuction() {
 
       <!-- STEP 1: General Info & Photos -->
       <div v-if="currentStep === 1" class="space-y-6 animate-fade-in-up">
+
+        <!-- AI Vision Valuation Trigger (Feature 13: Ürünümü Değerlendir / Fiyatını Belirle) -->
+        <div v-if="featureStore.isAiValuationEnabled" class="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-purple-950 via-indigo-950 to-slate-950 text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-purple-500/30">
+          <div class="flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-400 to-amber-500 text-gray-950 flex items-center justify-center font-bold shadow-md shrink-0">
+              <Sparkles class="w-5 h-5 text-purple-950" />
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-sm font-black tracking-tight">Ürünümü Değerlendir / Fiyatını Belirle</h3>
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-400 text-purple-950 uppercase">NEW AI</span>
+              </div>
+              <p class="text-xs text-purple-200 mt-0.5">Сүрөттү жүктөңүз — ИИ базар баасын чыгарып, 30 секундда иланды өзү толтурат!</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-gray-950 font-black text-xs shadow-md hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
+            @click="showAiValuationModal = true"
+          >
+            <Camera class="w-4 h-4" />
+            <span>Баасын аныктоо (AI)</span>
+          </button>
+        </div>
 
         <!-- AI Smart Auto-Generator Banner -->
         <div class="p-4 sm:p-6 rounded-3xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-slate-50 border border-amber-500/20 shadow-2xs space-y-4">
@@ -712,6 +798,50 @@ async function submitAuction() {
             <p v-if="formData.images.length === 0" class="text-xs text-amber-800 font-medium bg-amber-50/80 p-3 rounded-xl border border-amber-200/60 flex items-center gap-2">
               <Info class="w-4 h-4 text-amber-600 shrink-0" />
               <span>{{ t('sell.noPhotosYet') || 'Фотографии еще не загружены. Первое фото станет обложкой лота.' }}</span>
+            </p>
+          </div>
+
+          <!-- Video Upload (Feature 18: Video ile Ürün Satışı) -->
+          <div v-if="featureStore.isVideoListingEnabled" class="space-y-3 pt-4 border-t border-black/[0.06]">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-black text-gray-950 uppercase tracking-wider flex items-center gap-1.5">
+                <Video class="w-4 h-4 text-rose-600" />
+                <span>Видеоролик к лоту (15–30 сек)</span>
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-rose-100 text-rose-700 uppercase">ОПЦИОНАЛЬНО</span>
+              </label>
+              <span class="text-[11px] font-bold text-gray-400">MP4, WebM (макс. {{ featureStore.config.videoListing.maxFileSizeMb }}MB)</span>
+            </div>
+
+            <!-- Video Preview or Upload Box -->
+            <div v-if="videoPreviewUrl" class="relative rounded-2xl overflow-hidden border-2 border-rose-500/30 bg-black aspect-video max-w-md">
+              <video :src="videoPreviewUrl" controls class="w-full h-full object-cover"></video>
+              <button
+                type="button"
+                class="absolute top-2 right-2 p-1.5 rounded-full bg-rose-600 text-white shadow-md hover:scale-110 transition-transform cursor-pointer"
+                @click="removeVideo"
+                title="Видеону өчүрүү"
+              >
+                <X class="w-4 h-4" />
+              </button>
+            </div>
+
+            <div v-else class="flex items-center gap-3">
+              <label class="border-2 border-dashed border-rose-300 hover:border-rose-500 bg-rose-500/[0.03] hover:bg-rose-500/[0.06] rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1.5 cursor-pointer transition-all flex-1">
+                <Video class="w-6 h-6 text-rose-500" />
+                <span class="text-xs font-bold text-gray-800">Кыска видео жүктөө (15-30 сек)</span>
+                <span class="text-[10px] text-gray-400">Товарды жандуу көргөзүп, сатуу ыктымалдыгын 3 эсеге арттырыңыз</span>
+                <input
+                  ref="videoInput"
+                  type="file"
+                  accept="video/*"
+                  class="sr-only"
+                  @change="handleVideoSelect"
+                />
+              </label>
+            </div>
+
+            <p v-if="videoUploadError" class="text-xs text-rose-600 font-bold">
+              {{ videoUploadError }}
             </p>
           </div>
 
@@ -1127,5 +1257,11 @@ async function submitAuction() {
       </div>
 
     </div>
+
+    <!-- AI Product Valuation Modal (Feature 13: Ürünümü Değerlendir / Fiyatını Belirle) -->
+    <AiProductValuationModal
+      v-if="featureStore.isAiValuationEnabled"
+      v-model="showAiValuationModal"
+    />
   </div>
 </template>

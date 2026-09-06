@@ -12,12 +12,17 @@ import type { Auction, Money } from '@/types'
 import {
   Heart, Share2, Clock, AlertCircle, ChevronLeft,
   ChevronRight, MessageSquare, Flame, Send, CreditCard,
-  Loader2, Gauge, MapPin, Zap, Car, Building2, Sparkles, ShieldCheck
+  Loader2, Gauge, MapPin, Zap, Car, Building2, Sparkles, ShieldCheck,
+  Bell, Video, Play
 } from 'lucide-vue-next'
 import Input from '@/components/ui/Input.vue'
 import Modal from '@/components/ui/Modal.vue'
 import PaymentModal from '@/components/payment/PaymentModal.vue'
 import DisputeModal from '@/components/auction/DisputeModal.vue'
+import GroupBuyWidget from '@/components/auction/GroupBuyWidget.vue'
+import PriceAlertModal from '@/components/auction/PriceAlertModal.vue'
+import SellerComparisonTable from '@/components/auction/SellerComparisonTable.vue'
+import { useFeatureStore } from '@/stores/feature'
 
 
 const route = useRoute()
@@ -35,6 +40,11 @@ const isLoading = ref(true)
 
 // Media carousel state
 const selectedImageIndex = ref(0)
+const isViewingVideo = ref(false)
+
+// Features state
+const featureStore = useFeatureStore()
+const showPriceAlertModal = ref(false)
 
 // Bidding Form state
 const showBidModal = ref(false)
@@ -345,7 +355,16 @@ function copyShareLink() {
           <!-- Image Gallery Card -->
           <div class="glass rounded-3xl overflow-hidden shadow-sm">
             <div class="relative aspect-[16/10] sm:aspect-[16/9] bg-black/5 overflow-hidden">
+              <video
+                v-if="isViewingVideo && (auction.videoUrl || (auction as any).video_url)"
+                :src="auction.videoUrl || (auction as any).video_url"
+                controls
+                autoplay
+                playsinline
+                class="w-full h-full object-cover bg-black"
+              ></video>
               <img
+                v-else
                 :src="auction.images[selectedImageIndex] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&auto=format&fit=crop&q=80'"
                 :alt="auction.title"
                 class="w-full h-full object-cover transition-all duration-300"
@@ -353,13 +372,22 @@ function copyShareLink() {
 
               <!-- Badges Over Image -->
               <div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
-                <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-black/70 backdrop-blur-md text-white border border-white/15 flex items-center gap-1.5 shadow-sm">
-                  <span class="w-2 h-2 rounded-full bg-success animate-pulse" />
-                  {{ categoryName }}
-                </span>
+                <div class="flex items-center gap-1.5">
+                  <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-black/70 backdrop-blur-md text-white border border-white/15 flex items-center gap-1.5 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-success animate-pulse" />
+                    {{ categoryName }}
+                  </span>
+                  <span
+                    v-if="(auction.videoUrl || (auction as any).video_url) && featureStore.isVideoListingEnabled"
+                    class="px-2.5 py-1.5 rounded-full text-xs font-black bg-rose-600/90 backdrop-blur-md text-white border border-rose-400/30 flex items-center gap-1 shadow-sm"
+                  >
+                    <Video class="w-3.5 h-3.5" />
+                    <span>ВИДЕО</span>
+                  </span>
+                </div>
 
                 <span
-class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop-blur-md border border-primary-container/40 text-primary-container flex items-center gap-1.5 shadow-sm"
+                  class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop-blur-md border border-primary-container/40 text-primary-container flex items-center gap-1.5 shadow-sm"
                   :class="{ '!border-red-400/60 !text-red-300 !bg-red-950/85': timeRemaining.isCritical && !timeRemaining.isEnded }">
                   <Clock class="w-3.5 h-3.5" />
                   {{ timeRemaining.text }}
@@ -367,7 +395,7 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
               </div>
 
               <!-- Navigation Arrows -->
-              <div v-if="auction.images.length > 1" class="absolute inset-y-0 inset-x-3 flex items-center justify-between pointer-events-none">
+              <div v-if="!isViewingVideo && auction.images.length > 1" class="absolute inset-y-0 inset-x-3 flex items-center justify-between pointer-events-none">
                 <button
                   class="pointer-events-auto p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-sm transition-all hover:scale-105 active:scale-95 shadow-md"
                   aria-label="Previous"
@@ -385,14 +413,27 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
               </div>
             </div>
 
-            <!-- Thumbnails -->
-            <div v-if="auction.images.length > 1" class="p-3 sm:p-4 border-t border-black/[0.06] flex items-center gap-2.5 overflow-x-auto">
+            <!-- Thumbnails (with Video Tab if available) -->
+            <div v-if="auction.images.length > 1 || (auction.videoUrl || (auction as any).video_url)" class="p-3 sm:p-4 border-t border-black/[0.06] flex items-center gap-2.5 overflow-x-auto">
+              <!-- Video Thumbnail Button -->
+              <button
+                v-if="(auction.videoUrl || (auction as any).video_url) && featureStore.isVideoListingEnabled"
+                type="button"
+                class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all flex flex-col items-center justify-center bg-gray-950 text-white relative cursor-pointer"
+                :class="isViewingVideo ? 'border-primary ring-2 ring-primary/30' : 'border-transparent opacity-75 hover:opacity-100'"
+                @click="isViewingVideo = true"
+              >
+                <Play class="w-5 h-5 text-amber-400 fill-amber-400" />
+                <span class="text-[9px] font-black uppercase tracking-wider mt-0.5 text-amber-300">Видео</span>
+              </button>
+
+              <!-- Image Thumbnails -->
               <button
                 v-for="(img, idx) in auction.images"
                 :key="idx"
-                class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all"
-                :class="selectedImageIndex === idx ? 'border-primary scale-95 ring-2 ring-primary/30' : 'border-transparent opacity-70 hover:opacity-100'"
-                @click="selectedImageIndex = idx"
+                class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all cursor-pointer"
+                :class="(!isViewingVideo && selectedImageIndex === idx) ? 'border-primary scale-95 ring-2 ring-primary/30' : 'border-transparent opacity-70 hover:opacity-100'"
+                @click="() => { isViewingVideo = false; selectedImageIndex = idx; }"
               >
                 <img :src="img" class="w-full h-full object-cover" />
               </button>
@@ -422,6 +463,17 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
 
               <!-- Action buttons -->
               <div class="flex items-center gap-2 flex-shrink-0">
+                <!-- Feature 14: Price Drop Alert Button -->
+                <button
+                  v-if="featureStore.isPriceDropAlertEnabled"
+                  class="p-2.5 rounded-xl border border-amber-300/80 bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 transition-all shadow-sm flex items-center gap-1.5 text-xs font-bold cursor-pointer"
+                  @click="showPriceAlertModal = true"
+                  title="Fiyat Takibi / Fiyat Düştüğünde Bildir"
+                >
+                  <Bell class="w-4 h-4 text-amber-600" />
+                  <span>Fiyat Takibi</span>
+                </button>
+
                 <button
                   class="p-2.5 rounded-xl border border-border bg-white/80 hover:bg-black/5 text-text-secondary transition-all shadow-sm flex items-center gap-1.5 text-xs font-semibold"
                   @click="uiStore.toastSuccess(t('auction.watchlist'), t('auction.watchlistAdded'))"
@@ -616,6 +668,12 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
 
           </div>
 
+          <!-- Feature 11: Arkadaşlarınla Birlikte Satın Al (Group Buy Widget) -->
+          <GroupBuyWidget
+            v-if="featureStore.isGroupBuyEnabled && auction"
+            :auction="auction"
+          />
+
           <!-- Bid History Feed (Kafka Live) -->
           <div class="glass p-6 sm:p-7 rounded-3xl shadow-sm space-y-4">
             <div class="flex items-center justify-between">
@@ -658,6 +716,12 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
               </p>
             </div>
           </div>
+
+          <!-- Feature 16: Birden Fazla Satıcıyı Karşılaştır (Seller Comparison Table) -->
+          <SellerComparisonTable
+            v-if="featureStore.isSellerComparisonEnabled && auction"
+            :auction-id="auction.id"
+          />
 
         </div>
 
@@ -917,6 +981,13 @@ class="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-black/70 backdrop
       v-model="showDisputeModal"
       :auction="auction"
       :is-seller="isOwnListing"
+    />
+
+    <!-- Feature 14: Price Drop Alert Modal -->
+    <PriceAlertModal
+      v-if="featureStore.isPriceDropAlertEnabled"
+      v-model="showPriceAlertModal"
+      :auction="auction"
     />
 
   </div>

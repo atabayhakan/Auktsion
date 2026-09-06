@@ -1,12 +1,22 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { Bot, Sparkles } from 'lucide-vue-next'
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
 import MobileBottomNav from '@/components/layout/MobileBottomNav.vue'
 import ToastContainer from '@/components/ui/ToastContainer.vue'
+import AiAssistantModal from '@/components/layout/AiAssistantModal.vue'
+import { useFeatureStore } from '@/stores/feature'
 
 const route = useRoute()
+const featureStore = useFeatureStore()
+const showAiAssistant = ref(false)
+
+onMounted(() => {
+  featureStore.fetchFeaturesConfig()
+})
+
 // The auction detail page gets its own sticky bid bar on mobile instead —
 // two competing fixed bottom bars would fight for the same thumb real estate.
 const showMobileNav = computed(() => route.name !== 'AuctionDetail')
@@ -32,6 +42,23 @@ const showMobileNav = computed(() => route.name !== 'AuctionDetail')
     <!-- Mobile Bottom Navigation (not on auction detail) -->
     <MobileBottomNav v-if="showMobileNav" />
 
+    <!-- Floating AI Shopping Assistant Button (controlled via Admin Feature Flags) -->
+    <button
+      v-if="featureStore.isAiAssistantEnabled"
+      type="button"
+      class="fixed bottom-20 lg:bottom-7 right-5 z-40 p-3.5 sm:px-4 sm:py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-gray-950 font-black text-xs shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border-2 border-white/50 backdrop-blur-md cursor-pointer group"
+      @click="showAiAssistant = true"
+      title="Akıllı Alışveriş Asistanı"
+    >
+      <div class="relative">
+        <Bot class="w-5 h-5 text-gray-950" />
+        <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white animate-pulse"></span>
+      </div>
+      <span class="hidden sm:inline font-black tracking-tight">AI Asistan</span>
+    </button>
+
+    <!-- AI Assistant Modal -->
+    <AiAssistantModal v-if="featureStore.isAiAssistantEnabled" v-model="showAiAssistant" />
     
     <!-- Global Toast Container -->
     <ToastContainer />

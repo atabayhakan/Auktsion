@@ -19,7 +19,9 @@ import { auctionRoutes } from './routes/auctionRoutes.js';
 import { adminRoutes } from './routes/adminRoutes.js';
 import { notificationRoutes } from './routes/notificationRoutes.js';
 import { disputeRoutes } from './routes/disputeRoutes.js';
+import featureRoutes from './routes/featureRoutes.js';
 import { uploadRoutes, serveKycFile } from './routes/uploadRoutes.js';
+
 import { metaRoutes, getSitemapXml, getRobotsTxt } from './routes/metaRoutes.js';
 import { authenticateToken } from './middleware/auth.js';
 import { apiLimiter } from './middleware/rateLimit.js';
@@ -88,7 +90,9 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/disputes', disputeRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api', featureRoutes);
 app.use('/api', metaRoutes);
+
 
 // Search Engine Optimization (SEO) Endpoints
 app.get('/sitemap.xml', getSitemapXml);
