@@ -410,6 +410,12 @@ export interface FeatureSettings {
   }
   aiAssistant: {
     enabled: boolean
+    provider: 'gemini' | 'openrouter' | 'nvidia' | 'custom' | 'offline'
+    apiKey: string
+    baseUrl: string
+    modelName: string
+    temperature: number
+    maxTokens: number
     maxResults: number
     systemPrompt: string
     showSuggestions: boolean

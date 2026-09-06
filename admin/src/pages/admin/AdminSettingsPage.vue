@@ -31,8 +31,15 @@ import {
   CreditCard,
   Trash2,
   Smartphone,
-  Eye
+  Eye,
+  EyeOff,
+  Cpu,
+  Zap,
+  Key,
+  Loader2,
+  Play
 } from 'lucide-vue-next'
+import { adminService } from '@/services/adminService'
 import { useAdminStore } from '@/stores/admin'
 import { useUIStore } from '@/stores/ui'
 import { useI18n } from '@/composables/useI18n'
@@ -109,8 +116,22 @@ const featuresForm = ref<FeatureSettings>({
   },
   aiAssistant: {
     enabled: true,
+    provider: 'offline',
+    apiKey: '',
+    baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+    modelName: 'gemini-2.0-flash',
+    temperature: 0.7,
+    maxTokens: 1000,
     maxResults: 4,
-    systemPrompt: 'Сиз iTorgo платформасынын акылдуу жардамчысысыз. Кардарларга ылайыктуу товарларды тандап бериңиз.',
+    systemPrompt: `Вы — официальный ИИ-консультант кыргызской аукционной платформы iTorgo (itorgo.kg).
+Ваша задача — помогать покупателям находить лучшие лоты, ориентировать по ценам, объяснять правила аукционов и условия безопасных сделок через iTorgo Эскроу.
+
+ПРАВИЛА ОБЩЕНИЯ:
+1. ЯЗЫК: Отвечайте СТРОГО на том языке, на котором обратился пользователь (Русский, Кыргызча же Türkçe).
+2. ТОН: Вежливый, доброжелательный, лаконичный и авторитетный эксперт по торговле в Кыргызстане.
+3. ДАННЫЕ: Рекомендуйте реальные активные лоты из предоставленного списка. Если точных совпадений нет, предложите близкие категории или альтернативы.
+4. ВАЛЮТА: Все цены в кыргызских сомах (сом / KGS).
+5. БЕЗОПАСНОСТЬ: Напоминайте, что сделки защищены системой эскроу iTorgo.`,
     showSuggestions: true
   },
   videoListing: {
@@ -144,6 +165,14 @@ async function loadFeatureSettings() {
   await adminStore.fetchFeatureSettings()
   if (adminStore.featureSettings) {
     featuresForm.value = JSON.parse(JSON.stringify(adminStore.featureSettings))
+    if (!featuresForm.value.aiAssistant.provider) {
+      featuresForm.value.aiAssistant.provider = 'offline';
+      featuresForm.value.aiAssistant.apiKey = '';
+      featuresForm.value.aiAssistant.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/openai';
+      featuresForm.value.aiAssistant.modelName = 'gemini-2.0-flash';
+      featuresForm.value.aiAssistant.temperature = 0.7;
+      featuresForm.value.aiAssistant.maxTokens = 1000;
+    }
     if (!featuresForm.value.splashScreen) {
       featuresForm.value.splashScreen = {
         enabled: true,
@@ -158,6 +187,95 @@ async function loadFeatureSettings() {
   if (adminStore.bankSettings) {
     bankForm.value = JSON.parse(JSON.stringify(adminStore.bankSettings))
   }
+}
+
+
+const isTestingAi = ref(false)
+const aiTestResult = ref<{ success: boolean; latencyMs?: number; reply?: string; error?: string; model?: string } | null>(null)
+const showAiApiKey = ref(false)
+
+function setAiProvider(prov: 'gemini' | 'openrouter' | 'nvidia' | 'custom' | 'offline') {
+  featuresForm.value.aiAssistant.provider = prov
+  aiTestResult.value = null
+  if (prov === 'gemini') {
+    featuresForm.value.aiAssistant.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/openai'
+    if (!featuresForm.value.aiAssistant.modelName || featuresForm.value.aiAssistant.modelName.includes('llama') || featuresForm.value.aiAssistant.modelName.includes('deepseek')) {
+      featuresForm.value.aiAssistant.modelName = 'gemini-2.0-flash'
+    }
+  } else if (prov === 'openrouter') {
+    featuresForm.value.aiAssistant.baseUrl = 'https://openrouter.ai/api/v1'
+    if (!featuresForm.value.aiAssistant.modelName || featuresForm.value.aiAssistant.modelName === 'gemini-2.0-flash') {
+      featuresForm.value.aiAssistant.modelName = 'google/gemini-2.0-flash-001'
+    }
+  } else if (prov === 'nvidia') {
+    featuresForm.value.aiAssistant.baseUrl = 'https://integrate.api.nvidia.com/v1'
+    if (!featuresForm.value.aiAssistant.modelName || featuresForm.value.aiAssistant.modelName.includes('gemini')) {
+      featuresForm.value.aiAssistant.modelName = 'meta/llama-3.3-70b-instruct'
+    }
+  } else if (prov === 'custom') {
+    if (!featuresForm.value.aiAssistant.baseUrl) {
+      featuresForm.value.aiAssistant.baseUrl = 'https://api.openai.com/v1'
+    }
+  }
+}
+
+async function runAiConnectionTest() {
+  isTestingAi.value = true
+  aiTestResult.value = null
+  try {
+    const res = await adminService.testAiConnection({
+      provider: featuresForm.value.aiAssistant.provider,
+      apiKey: featuresForm.value.aiAssistant.apiKey,
+      baseUrl: featuresForm.value.aiAssistant.baseUrl,
+      modelName: featuresForm.value.aiAssistant.modelName,
+      temperature: featuresForm.value.aiAssistant.temperature,
+      systemPrompt: featuresForm.value.aiAssistant.systemPrompt
+    })
+    if (res.success && res.data) {
+      aiTestResult.value = {
+        success: true,
+        latencyMs: res.data.latencyMs,
+        reply: res.data.reply,
+        model: res.data.model
+      }
+      uiStore.addToast({
+        type: 'success',
+        message: `Подключение успешно! Ответ получен за ${res.data.latencyMs} мс`
+      })
+    } else {
+      aiTestResult.value = {
+        success: false,
+        error: res.error || 'Не удалось установить соединение с моделью'
+      }
+      uiStore.addToast({
+        type: 'error',
+        message: res.error || 'Ошибка подключения к ИИ'
+      })
+    }
+  } catch (err: any) {
+    aiTestResult.value = {
+      success: false,
+      error: err.message || 'Ошибка сети'
+    }
+    uiStore.addToast({
+      type: 'error',
+      message: err.message || 'Ошибка сети'
+    })
+  } finally {
+    isTestingAi.value = false
+  }
+}
+
+function resetAiPromptToDefault() {
+  featuresForm.value.aiAssistant.systemPrompt = `Вы — официальный ИИ-консультант кыргызской аукционной платформы iTorgo (itorgo.kg).
+Ваша задача — помогать покупателям находить лучшие лоты, ориентировать по ценам, объяснять правила аукционов и условия безопасных сделок через iTorgo Эскроу.
+
+ПРАВИЛА ОБЩЕНИЯ:
+1. ЯЗЫК: Отвечайте СТРОГО на том языке, на котором обратился пользователь (Русский, Кыргызча же Türkçe).
+2. ТОН: Вежливый, доброжелательный, лаконичный и авторитетный эксперт по торговле в Кыргызстане.
+3. ДАННЫЕ: Рекомендуйте реальные активные лоты из предоставленного списка. Если точных совпадений нет, предложите близкие категории или альтернативы.
+4. ВАЛЮТА: Все цены в кыргызских сомах (сом / KGS).
+5. БЕЗОПАСНОСТЬ: Напоминайте, что сделки защищены системой эскроу iTorgo.`
 }
 
 function testSplashPreview() {
@@ -953,23 +1071,23 @@ async function handleCleanupDemoData() {
           </div>
         </div>
 
-        <!-- 5. AI Shopping Assistant (Akıllı Alışveriş Asistanı) -->
-        <div class="bg-white rounded-2xl p-6 border border-border shadow-xs space-y-4 relative overflow-hidden transition-all"
+        <!-- 5. AI Shopping Assistant (Akıllı Alışveriş Asistanı & Multi-Model Engine) -->
+        <div class="bg-white rounded-2xl p-6 border border-border shadow-xs space-y-5 relative overflow-hidden transition-all"
           :class="{ 'border-primary/50 shadow-md': featuresForm.aiAssistant.enabled, 'opacity-70': !featuresForm.aiAssistant.enabled }">
           <div class="flex items-start justify-between gap-4 pb-3 border-b border-border">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 to-amber-500 flex items-center justify-center text-gray-950 shadow-xs">
                 <Bot class="w-5 h-5" />
               </div>
               <div>
                 <div class="flex items-center gap-2">
-                  <h3 class="text-sm font-bold text-text-primary">Умный ассистент по покупкам</h3>
+                  <h3 class="text-sm font-bold text-text-primary">Умный ассистент & Мульти-модельный ИИ</h3>
                   <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full"
                     :class="featuresForm.aiAssistant.enabled ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'">
                     {{ featuresForm.aiAssistant.enabled ? 'АКТИВЕН' : 'ОТКЛЮЧЕН' }}
                   </span>
                 </div>
-                <p class="text-xs text-text-secondary mt-0.5">Akıllı Alışveriş Asistanı & Персональный шопинг-гид</p>
+                <p class="text-xs text-text-secondary mt-0.5">Akıllı Alışveriş Asistanı • Google Gemini, NVIDIA NIM, OpenRouter & OpenAI</p>
               </div>
             </div>
             <!-- Master Toggle -->
@@ -979,15 +1097,224 @@ async function handleCleanupDemoData() {
             </label>
           </div>
 
-          <p class="text-xs text-text-secondary">
-            Диалоговый ИИ-консультант в правом нижнем углу сайта: понимает бюджет и пожелания покупателя, ищет реальные товары в БД и выдает интерактивные карточки.
+          <p class="text-xs text-text-secondary leading-relaxed">
+            Подключайте любые современные LLM-модели для онлайн-консультирования покупателей. ИИ автоматически адаптируется к языку пользователя (Кыргызча, Русский, Türkçe), понимает бюджет и предлагает реальные лоты из базы данных.
           </p>
 
-          <div class="space-y-3 pt-1">
-            <div class="grid grid-cols-2 gap-3">
+          <!-- 1. Provider Selection Bar -->
+          <div>
+            <label class="block text-xs font-bold text-text-secondary mb-2 uppercase tracking-wider">
+              Провайдер языковой модели (LLM Provider)
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              <button
+                type="button"
+                @click="setAiProvider('gemini')"
+                class="p-2.5 rounded-xl border text-left transition-all flex flex-col items-start gap-1 cursor-pointer"
+                :class="featuresForm.aiAssistant.provider === 'gemini'
+                  ? 'border-amber-500 bg-amber-500/10 text-amber-900 ring-2 ring-amber-500/20'
+                  : 'border-border bg-black/[0.01] hover:bg-black/[0.03] text-text-primary'"
+              >
+                <div class="flex items-center gap-1.5 font-bold text-xs">
+                  <Zap class="w-3.5 h-3.5 text-amber-500" />
+                  <span>Google Gemini</span>
+                </div>
+                <span class="text-[10px] text-text-secondary">Gemini 2.0 Flash / Pro</span>
+              </button>
+
+              <button
+                type="button"
+                @click="setAiProvider('openrouter')"
+                class="p-2.5 rounded-xl border text-left transition-all flex flex-col items-start gap-1 cursor-pointer"
+                :class="featuresForm.aiAssistant.provider === 'openrouter'
+                  ? 'border-indigo-500 bg-indigo-500/10 text-indigo-900 ring-2 ring-indigo-500/20'
+                  : 'border-border bg-black/[0.01] hover:bg-black/[0.03] text-text-primary'"
+              >
+                <div class="flex items-center gap-1.5 font-bold text-xs">
+                  <Globe class="w-3.5 h-3.5 text-indigo-500" />
+                  <span>OpenRouter</span>
+                </div>
+                <span class="text-[10px] text-text-secondary">DeepSeek, Claude, Llama</span>
+              </button>
+
+              <button
+                type="button"
+                @click="setAiProvider('nvidia')"
+                class="p-2.5 rounded-xl border text-left transition-all flex flex-col items-start gap-1 cursor-pointer"
+                :class="featuresForm.aiAssistant.provider === 'nvidia'
+                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-900 ring-2 ring-emerald-500/20'
+                  : 'border-border bg-black/[0.01] hover:bg-black/[0.03] text-text-primary'"
+              >
+                <div class="flex items-center gap-1.5 font-bold text-xs">
+                  <Cpu class="w-3.5 h-3.5 text-emerald-600" />
+                  <span>NVIDIA NIM</span>
+                </div>
+                <span class="text-[10px] text-text-secondary">build.nvidia.com</span>
+              </button>
+
+              <button
+                type="button"
+                @click="setAiProvider('custom')"
+                class="p-2.5 rounded-xl border text-left transition-all flex flex-col items-start gap-1 cursor-pointer"
+                :class="featuresForm.aiAssistant.provider === 'custom'
+                  ? 'border-blue-500 bg-blue-500/10 text-blue-900 ring-2 ring-blue-500/20'
+                  : 'border-border bg-black/[0.01] hover:bg-black/[0.03] text-text-primary'"
+              >
+                <div class="flex items-center gap-1.5 font-bold text-xs">
+                  <Sliders class="w-3.5 h-3.5 text-blue-500" />
+                  <span>Custom / OpenAI</span>
+                </div>
+                <span class="text-[10px] text-text-secondary">Ollama, Groq, vLLM</span>
+              </button>
+
+              <button
+                type="button"
+                @click="setAiProvider('offline')"
+                class="p-2.5 rounded-xl border text-left transition-all flex flex-col items-start gap-1 cursor-pointer"
+                :class="featuresForm.aiAssistant.provider === 'offline'
+                  ? 'border-gray-500 bg-gray-500/10 text-gray-900 ring-2 ring-gray-500/20'
+                  : 'border-border bg-black/[0.01] hover:bg-black/[0.03] text-text-primary'"
+              >
+                <div class="flex items-center gap-1.5 font-bold text-xs">
+                  <Bot class="w-3.5 h-3.5 text-gray-500" />
+                  <span>Локальный поиск</span>
+                </div>
+                <span class="text-[10px] text-text-secondary">Без API (Offline)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. API Credentials & Model Configuration (If not offline) -->
+          <div v-if="featuresForm.aiAssistant.provider !== 'offline'" class="p-4 rounded-xl bg-black/[0.02] border border-border space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- API Key Input -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-xs font-bold text-text-primary flex items-center gap-1.5">
+                    <Key class="w-3.5 h-3.5 text-amber-500" />
+                    API-ключ (API Key)
+                  </label>
+                  <span class="text-[10px] text-emerald-600 font-mono">Безопасно в SQLite</span>
+                </div>
+                <div class="relative">
+                  <input
+                    v-model="featuresForm.aiAssistant.apiKey"
+                    :type="showAiApiKey ? 'text' : 'password'"
+                    placeholder="Вставьте API-ключ (например: AIzaSy... или sk-or-v1-...)"
+                    class="w-full pl-3 pr-10 py-2 rounded-xl border border-border bg-white text-text-primary text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  />
+                  <button
+                    type="button"
+                    class="absolute right-2.5 top-2.5 text-gray-400 hover:text-gray-600 cursor-pointer"
+                    @click="showAiApiKey = !showAiApiKey"
+                  >
+                    <Eye v-if="!showAiApiKey" class="w-4 h-4" />
+                    <EyeOff v-else class="w-4 h-4" />
+                  </button>
+                </div>
+                <p class="text-[10px] text-text-secondary mt-1">
+                  <span v-if="featuresForm.aiAssistant.provider === 'gemini'">Получите бесплатный ключ: <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-primary hover:underline font-medium">aistudio.google.com</a></span>
+                  <span v-else-if="featuresForm.aiAssistant.provider === 'openrouter'">Ключи OpenRouter: <a href="https://openrouter.ai/keys" target="_blank" class="text-primary hover:underline font-medium">openrouter.ai/keys</a></span>
+                  <span v-else-if="featuresForm.aiAssistant.provider === 'nvidia'">Ключи NVIDIA NIM: <a href="https://build.nvidia.com" target="_blank" class="text-primary hover:underline font-medium">build.nvidia.com</a></span>
+                  <span v-else>Совместимый OpenAI API эндпоинт и ключ</span>
+                </p>
+              </div>
+
+              <!-- Model Identifier -->
+              <div>
+                <label class="block text-xs font-bold text-text-primary mb-1">
+                  Идентификатор модели (Model ID)
+                </label>
+                <input
+                  v-model="featuresForm.aiAssistant.modelName"
+                  type="text"
+                  placeholder="Например: gemini-2.0-flash или meta/llama-3.3-70b-instruct"
+                  class="w-full px-3 py-2 rounded-xl border border-border bg-white text-text-primary text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+                <!-- Quick Preset Pills -->
+                <div class="flex items-center gap-1.5 flex-wrap mt-1.5">
+                  <span class="text-[10px] text-text-secondary">Быстрый выбор:</span>
+                  <template v-if="featuresForm.aiAssistant.provider === 'gemini'">
+                    <button type="button" @click="featuresForm.aiAssistant.modelName = 'gemini-2.0-flash'" class="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] hover:border-amber-400 font-mono cursor-pointer">gemini-2.0-flash</button>
+                    <button type="button" @click="featuresForm.aiAssistant.modelName = 'gemini-1.5-flash'" class="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] hover:border-amber-400 font-mono cursor-pointer">gemini-1.5-flash</button>
+                    <button type="button" @click="featuresForm.aiAssistant.modelName = 'gemini-1.5-pro'" class="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] hover:border-amber-400 font-mono cursor-pointer">gemini-1.5-pro</button>
+                  </template>
+                  <template v-else-if="featuresForm.aiAssistant.provider === 'openrouter'">
+                    <button type="button" @click="featuresForm.aiAssistant.modelName = 'google/gemini-2.0-flash-001'" class="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] hover:border-indigo-400 font-mono cursor-pointer">gemini-2.0-flash</button>
+                    <button type="button" @click="featuresForm.aiAssistant.modelName = 'deepseek/deepseek-chat'" class="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] hover:border-indigo-400 font-mono cursor-pointer">deepseek-chat</button>
+                    <button type="button" @click="featuresForm.aiAssistant.modelName = 'meta-llama/llama-3.3-70b-instruct'" class="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] hover:border-indigo-400 font-mono cursor-pointer">llama-3.3-70b</button>
+                  </template>
+                  <template v-else-if="featuresForm.aiAssistant.provider === 'nvidia'">
+                    <button type="button" @click="featuresForm.aiAssistant.modelName = 'meta/llama-3.3-70b-instruct'" class="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] hover:border-emerald-400 font-mono cursor-pointer">llama-3.3-70b</button>
+                    <button type="button" @click="featuresForm.aiAssistant.modelName = 'mistralai/mixtral-8x22b-instruct-v0.1'" class="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] hover:border-emerald-400 font-mono cursor-pointer">mixtral-8x22b</button>
+                    <button type="button" @click="featuresForm.aiAssistant.modelName = 'nvidia/llama-3.1-nemotron-70b-instruct'" class="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] hover:border-emerald-400 font-mono cursor-pointer">nemotron-70b</button>
+                  </template>
+                  <template v-else>
+                    <button type="button" @click="featuresForm.aiAssistant.modelName = 'gpt-4o-mini'" class="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] hover:border-blue-400 font-mono cursor-pointer">gpt-4o-mini</button>
+                    <button type="button" @click="featuresForm.aiAssistant.modelName = 'deepseek-chat'" class="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] hover:border-blue-400 font-mono cursor-pointer">deepseek-chat</button>
+                  </template>
+                </div>
+              </div>
+            </div>
+
+            <!-- Base URL & Endpoint -->
+            <div>
+              <label class="block text-xs font-bold text-text-primary mb-1">
+                Базовый URL эндпоинта (Base API URL)
+              </label>
+              <input
+                v-model="featuresForm.aiAssistant.baseUrl"
+                type="text"
+                placeholder="https://..."
+                class="w-full px-3 py-2 rounded-xl border border-border bg-white text-text-primary text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/40"
+              />
+            </div>
+
+            <!-- Test Connection Button & Status Box -->
+            <div class="pt-2 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <button
+                type="button"
+                :disabled="isTestingAi || !featuresForm.aiAssistant.apiKey || !featuresForm.aiAssistant.modelName"
+                @click="runAiConnectionTest"
+                class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-gray-950 font-bold text-xs shadow-xs hover:shadow transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Loader2 v-if="isTestingAi" class="w-4 h-4 animate-spin" />
+                <Play v-else class="w-4 h-4" />
+                <span>{{ isTestingAi ? 'Проверка связи с моделью...' : 'Проверить подключение к ИИ (Test API)' }}</span>
+              </button>
+
+              <span class="text-[11px] text-text-secondary">
+                Отправляет тестовый запрос и измеряет задержку ответа
+              </span>
+            </div>
+
+            <!-- Live Test Result Banner -->
+            <div v-if="aiTestResult" class="p-3.5 rounded-xl border text-xs animate-fade-in"
+              :class="aiTestResult.success ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-rose-50 border-rose-200 text-rose-900'">
+              <div class="flex items-center gap-2 font-bold mb-1">
+                <CheckCircle2 v-if="aiTestResult.success" class="w-4 h-4 text-emerald-600 shrink-0" />
+                <AlertTriangle v-else class="w-4 h-4 text-rose-600 shrink-0" />
+                <span>{{ aiTestResult.success ? 'Соединение успешно установлено!' : 'Ошибка подключения к API модели' }}</span>
+                <span v-if="aiTestResult.latencyMs" class="ml-auto font-mono text-[10px] px-2 py-0.5 rounded-full"
+                  :class="aiTestResult.success ? 'bg-emerald-200 text-emerald-800' : 'bg-rose-200 text-rose-800'">
+                  {{ aiTestResult.latencyMs }} мс
+                </span>
+              </div>
+              <p v-if="aiTestResult.success" class="text-emerald-750 font-mono text-[11px] bg-white/80 p-2 rounded-lg border border-emerald-100 mt-1.5">
+                "{{ aiTestResult.reply }}"
+              </p>
+              <p v-else class="text-rose-700 font-mono text-[11px] bg-white/80 p-2 rounded-lg border border-rose-100 mt-1.5">
+                {{ aiTestResult.error }}
+              </p>
+            </div>
+          </div>
+
+          <!-- 3. Model Parameters & Catalog matching -->
+          <div class="space-y-4 pt-1">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label class="block text-xs font-bold text-text-secondary mb-1">
-                  Макс. карточек товаров в ответе
+                  Макс. товаров в ответе
                 </label>
                 <input
                   v-model.number="featuresForm.aiAssistant.maxResults"
@@ -997,6 +1324,21 @@ async function handleCleanupDemoData() {
                   class="w-full px-3.5 py-2.5 rounded-xl border border-border bg-black/[0.02] text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
                 />
               </div>
+
+              <div>
+                <label class="block text-xs font-bold text-text-secondary mb-1">
+                  Креативность (Temperature: {{ featuresForm.aiAssistant.temperature || 0.7 }})
+                </label>
+                <input
+                  v-model.number="featuresForm.aiAssistant.temperature"
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  class="w-full accent-primary mt-2"
+                />
+              </div>
+
               <div class="flex flex-col justify-end">
                 <div class="flex items-center justify-between p-2.5 rounded-xl bg-black/[0.02] border border-border">
                   <span class="text-xs font-bold text-text-primary">
@@ -1010,15 +1352,30 @@ async function handleCleanupDemoData() {
               </div>
             </div>
 
+            <!-- 4. System Prompt Editor -->
             <div>
-              <label class="block text-xs font-bold text-text-secondary mb-1">
-                Системный промпт (Инструкция ассистента)
-              </label>
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-xs font-bold text-text-secondary">
+                  Системный промпт (Инструкция ассистента)
+                </label>
+                <button
+                  type="button"
+                  @click="resetAiPromptToDefault"
+                  class="text-[11px] text-primary hover:underline cursor-pointer flex items-center gap-1 font-medium"
+                >
+                  <RotateCcw class="w-3 h-3" />
+                  Сбросить на базовый
+                </button>
+              </div>
               <textarea
                 v-model="featuresForm.aiAssistant.systemPrompt"
-                rows="3"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-border bg-black/[0.02] text-text-primary text-xs focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none font-mono"
+                rows="4"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-border bg-black/[0.02] text-text-primary text-xs focus:outline-none focus:ring-2 focus:ring-primary/40 resize-y font-mono leading-relaxed"
+                placeholder="Инструкция для модели..."
               ></textarea>
+              <p class="text-[11px] text-text-secondary mt-1">
+                Совет: укажите в промпте правила ответа на трёх языках (Кыргызча, Русский, Türkçe) и акцент на безопасные сделки через iTorgo.
+              </p>
             </div>
           </div>
         </div>

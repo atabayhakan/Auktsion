@@ -781,6 +781,25 @@ export const adminService = {
     }
   },
 
+  async testAiConnection(config: {
+    provider: string
+    apiKey: string
+    baseUrl: string
+    modelName: string
+    temperature?: number
+    systemPrompt?: string
+  }): Promise<{ success: boolean; data?: { latencyMs: number; reply: string; model: string; provider: string }; error?: string }> {
+    try {
+      const res = await apiClient.post<any>('/api/admin/ai/test-connection', config)
+      return res.data
+    } catch (err: any) {
+      return {
+        success: false,
+        error: err.response?.data?.error || err.message || 'Ошибка подключения к API'
+      }
+    }
+  },
+
   // 10.2 Bank & Payment Gateway Controls
   async getBankSettings(): Promise<{ success: boolean; data: BankSettings }> {
     try {

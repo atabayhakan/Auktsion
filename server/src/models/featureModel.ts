@@ -32,6 +32,12 @@ export interface FeatureSettings {
   };
   aiAssistant: {
     enabled: boolean;
+    provider: 'gemini' | 'openrouter' | 'nvidia' | 'custom' | 'offline';
+    apiKey: string;
+    baseUrl: string;
+    modelName: string;
+    temperature: number;
+    maxTokens: number;
     maxResults: number;
     systemPrompt: string;
     showSuggestions: boolean;
@@ -85,8 +91,22 @@ export const DEFAULT_FEATURE_SETTINGS: FeatureSettings = {
   },
   aiAssistant: {
     enabled: true,
-    maxResults: 6,
-    systemPrompt: 'Вы — умный персональный ассистент аукционной платформы iTorgo.kg в Кыргызстане. Помогайте покупателям находить лучшие лоты.',
+    provider: 'offline',
+    apiKey: '',
+    baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+    modelName: 'gemini-2.0-flash',
+    temperature: 0.7,
+    maxTokens: 1000,
+    maxResults: 4,
+    systemPrompt: `Вы — официальный ИИ-консультант кыргызской аукционной платформы iTorgo (itorgo.kg).
+Ваша задача — помогать покупателям находить лучшие лоты, ориентировать по ценам, объяснять правила аукционов и условия безопасных сделок через iTorgo Эскроу.
+
+ПРАВИЛА ОБЩЕНИЯ:
+1. ЯЗЫК: Отвечайте СТРОГО на том языке, на котором обратился пользователь (Русский, Кыргызча же Türkçe).
+2. ТОН: Вежливый, доброжелательный, лаконичный и авторитетный эксперт по торговле в Кыргызстане.
+3. ДАННЫЕ: Рекомендуйте реальные активные лоты из предоставленного списка. Если точных совпадений нет, предложите близкие категории или альтернативы.
+4. ВАЛЮТА: Все цены в кыргызских сомах (сом / KGS).
+5. БЕЗОПАСНОСТЬ: Напоминайте, что сделки защищены системой эскроу iTorgo.`,
     showSuggestions: true,
   },
   videoListing: {

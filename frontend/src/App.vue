@@ -9,8 +9,10 @@ import ToastContainer from '@/components/ui/ToastContainer.vue'
 import AiAssistantModal from '@/components/layout/AiAssistantModal.vue'
 import BrandSplashScreen from '@/components/common/BrandSplashScreen.vue'
 import { useFeatureStore } from '@/stores/feature'
+import { useI18n } from '@/composables/useI18n'
 
 const route = useRoute()
+const { t } = useI18n()
 const featureStore = useFeatureStore()
 const showAiAssistant = ref(false)
 
@@ -50,13 +52,13 @@ const showMobileNav = computed(() => route.name !== 'AuctionDetail')
       type="button"
       class="fixed bottom-20 lg:bottom-7 right-5 z-40 p-3.5 sm:px-4 sm:py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-gray-950 font-black text-xs shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border-2 border-white/50 backdrop-blur-md cursor-pointer group"
       @click="showAiAssistant = true"
-      title="Akıllı Alışveriş Asistanı"
+      :title="t('modules.aiAssistant.title')"
     >
       <div class="relative">
         <Bot class="w-5 h-5 text-gray-950" />
         <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white animate-pulse"></span>
       </div>
-      <span class="hidden sm:inline font-black tracking-tight">AI Asistan</span>
+      <span class="hidden sm:inline font-black tracking-tight">{{ t('modules.aiAssistant.floatingButton') }}</span>
     </button>
 
     <!-- AI Assistant Modal -->

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
+import { useI18n } from '@/composables/useI18n'
 import {
   Sparkles,
   X,
@@ -27,6 +28,7 @@ const emit = defineEmits<{
 }>()
 
 const router = useRouter()
+const { t, locale } = useI18n()
 const featureStore = useFeatureStore()
 
 const promptInput = ref('')
@@ -44,22 +46,34 @@ interface ChatMessage {
     category: string
     city: string
     imageUrl: string
+    price?: {
+      amount: string
+      currency: string
+      formatted: string
+    }
   }>
 }
 
 const messages = ref<ChatMessage[]>([
   {
     role: 'assistant',
-    content: 'Саламатсызбы! Мен iTorgo акылдуу соода жардамчысымын. Кандай товар издеп жатасыз? Бюджетиңизди же талаптарыңызды жазыңыз, мен сизге ылайыктуу лотторду тандап берем! 🛍️'
+    content: t('modules.aiAssistant.welcomeMessage')
   }
 ])
 
-const quickChips = [
-  'iPhone 13 же 14 арзан баада',
-  'Бишкекте растаможкасы бар унаалар',
-  'Арашан породасындагы кочкорлор',
-  'Бүгүн бүтө турган кызуу аукциондор'
-]
+// Auto-update initial message if user changes language before chatting
+watch(locale, () => {
+  if (messages.value.length === 1 && messages.value[0].role === 'assistant') {
+    messages.value[0].content = t('modules.aiAssistant.welcomeMessage')
+  }
+})
+
+const quickChips = computed(() => [
+  t('modules.aiAssistant.chip1'),
+  t('modules.aiAssistant.chip2'),
+  t('modules.aiAssistant.chip3'),
+  t('modules.aiAssistant.chip4')
+])
 
 watch(() => props.modelValue, (open) => {
   if (open) {
@@ -89,7 +103,7 @@ function resetChat() {
   messages.value = [
     {
       role: 'assistant',
-      content: 'Маек жаңыртылды. Сизге кайсы товар же категория боюнча кеңеш керек?'
+      content: t('modules.aiAssistant.chatReset')
     }
   ]
 }
@@ -105,18 +119,18 @@ async function sendQuery(text?: string) {
   isLoading.value = true
   try {
     const history = messages.value.slice(-6).map(m => ({ role: m.role, content: m.content }))
-    const res = await featureStore.askAiAssistant(query, history)
+    const res = await featureStore.askAiAssistant(query, history, locale.value)
 
     messages.value.push({
       role: 'assistant',
       content: res.reply,
-      recommendedAuctions: res.recommendedAuctions
+      recommendedAuctions: res.recommendedAuctions || (res as any).products || []
     })
   } catch (err) {
-    // Fallback response with suggested category search
+    // Fallback response with localized message
     messages.value.push({
       role: 'assistant',
-      content: `Сиздин сурооңуз боюнча платформадагы актуалдуу лоттор текшерилди. "${query}" боюнча жаңы сунуштарды көрүү үчүн каталокторду карап чыгууну сунуштайм.`,
+      content: t('modules.aiAssistant.fallbackError'),
       recommendedAuctions: []
     })
   } finally {
@@ -138,15 +152,15 @@ async function sendQuery(text?: string) {
           <!-- Header -->
           <div class="p-4 sm:p-5 bg-gradient-to-br from-gray-950 via-gray-900 to-indigo-950 text-white shrink-0 relative flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-amber-500 flex items-center justify-center shadow-lg text-gray-950">
+              <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-amber-500 flex items-center justify-center shadow-lg text-gray-950 shrink-0">
                 <Bot class="w-5 h-5" />
               </div>
               <div>
                 <div class="flex items-center gap-1.5">
-                  <h3 class="text-base font-black tracking-tight">Akıllı Alışveriş Asistanı</h3>
-                  <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-400 text-gray-950">AI COPILOT</span>
+                  <h3 class="text-base font-black tracking-tight">{{ t('modules.aiAssistant.title') }}</h3>
+                  <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-400 text-gray-950 uppercase">{{ t('modules.aiAssistant.copilotBadge') }}</span>
                 </div>
-                <p class="text-[11px] text-gray-400">Сиздин жеке шопинг кеңешчиңиз</p>
+                <p class="text-[11px] text-gray-400">{{ t('modules.aiAssistant.subtitle') }}</p>
               </div>
             </div>
 
@@ -154,7 +168,7 @@ async function sendQuery(text?: string) {
               <button
                 type="button"
                 class="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
-                title="Чататты тазалоо"
+                :title="t('modules.aiAssistant.clearChat')"
                 @click="resetChat"
               >
                 <RotateCcw class="w-4 h-4" />
@@ -208,7 +222,7 @@ async function sendQuery(text?: string) {
                 <RouterLink
                   v-for="lot in msg.recommendedAuctions"
                   :key="lot.id"
-                  :to="`/auctions/${lot.id}`"
+                  :to="'/auctions/' + lot.id"
                   class="p-2.5 rounded-2xl bg-white hover:bg-amber-500/[0.04] border border-black/5 hover:border-amber-400/50 transition-all flex items-center gap-3 shadow-2xs group"
                   @click="close"
                 >
@@ -222,7 +236,7 @@ async function sendQuery(text?: string) {
                       {{ lot.title }}
                     </h4>
                     <span class="text-xs font-black text-amber-700 font-mono block mt-0.5">
-                      {{ lot.currentPrice?.toLocaleString() }} сом
+                      {{ lot.price?.formatted || (lot.currentPrice?.toLocaleString() + ' сом') }}
                     </span>
                     <span class="text-[10px] text-gray-400 block truncate">
                       {{ lot.city }} • {{ lot.category }}
@@ -236,13 +250,13 @@ async function sendQuery(text?: string) {
             <!-- Loading Spinner -->
             <div v-if="isLoading" class="flex items-center gap-2 pl-9 text-xs text-gray-400 font-medium">
               <Loader2 class="w-3.5 h-3.5 animate-spin text-amber-500" />
-              <span>Сунуштар талданууда...</span>
+              <span>{{ t('modules.aiAssistant.thinking') }}</span>
             </div>
           </div>
 
           <!-- Quick Chips Bar (shown if enabled in admin) -->
           <div
-            v-if="featureStore.config.aiAssistant.showSuggestions"
+            v-if="featureStore.config.aiAssistant?.showSuggestions"
             class="px-4 py-2 bg-white border-t border-black/[0.04] flex items-center gap-1.5 overflow-x-auto shrink-0"
           >
             <button
@@ -263,7 +277,7 @@ async function sendQuery(text?: string) {
                 ref="inputEl"
                 v-model="promptInput"
                 type="text"
-                placeholder="Мисалы: 20 000 сомго телефон сунуштаңыз..."
+                :placeholder="t('modules.aiAssistant.inputPlaceholder')"
                 class="w-full bg-black/[0.03] border border-black/10 focus:border-amber-400 focus:bg-white rounded-2xl pl-4 pr-12 py-3 text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 outline-none transition-all"
                 :disabled="isLoading"
                 @keydown.enter="sendQuery()"
@@ -272,6 +286,7 @@ async function sendQuery(text?: string) {
               <button
                 type="button"
                 :disabled="!promptInput.trim() || isLoading"
+                :title="t('modules.aiAssistant.send')"
                 class="absolute right-2 p-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-gray-950 transition-all cursor-pointer shadow-xs disabled:opacity-40"
                 @click="sendQuery()"
               >

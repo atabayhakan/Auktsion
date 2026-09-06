@@ -2503,9 +2503,24 @@ export default {
       "subtitle": "Fotoğraf yükleyin, yapay zeka piyasa değerini analiz etsin ve 30 saniyede ilan oluştursun",
       "fastListingBtn": "30 Saniyede İlan Oluştur"
     },
-    "aiAssistant": {
+        "aiAssistant": {
+      "floatingButton": "AI Asistan",
       "title": "Akıllı Alışveriş Asistanı",
-      "subtitle": "Bütçenize en uygun ürünleri bulan kişisel alışveriş rehberiniz"
+      "copilotBadge": "AI COPILOT",
+      "subtitle": "Kişisel alışveriş danışmanınız",
+      "welcomeMessage": "Merhaba! Ben iTorgo akıllı alışveriş asistanıyım. Nasıl bir ürün arıyorsunuz? Bütçenizi veya isteklerinizi yazın, size en uygun lotları bulayım! 🛍️",
+      "clearChat": "Sohbeti temizle",
+      "chatReset": "Sohbet sıfırlandı. Hangi ürün veya kategori hakkında yardıma ihtiyacınız var?",
+      "thinking": "Teklifler inceleniyor...",
+      "inputPlaceholder": "Örnek: 20.000 som bütçeye telefon öner...",
+      "send": "Gönder",
+      "fallbackError": "Talebinize göre platformdaki güncel lotlar incelendi. Kataloğu da incelemenizi öneririm.",
+      "suggestedLots": "Önerilen lotlar",
+      "viewLot": "İncele",
+      "chip1": "Uygun fiyata iPhone 13 veya 14",
+      "chip2": "Bişkek gümrüklü araçlar",
+      "chip3": "Araşan cinsi koçlar",
+      "chip4": "Bugün bitecek sıcak açık artırmalar"
     },
     "videoListing": {
       "badge": "Videolu",
