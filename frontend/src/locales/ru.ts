@@ -1,6 +1,11 @@
 // Generated locale dictionary
 export default {
 
+  "splash": {
+      "skip": "Пропустить ✕",
+      "tagline": "КЫРГЫЗСТАН • REAL-TIME AUCTION PLATFORM"
+  },
+
   "shareSheet": {
       "title": "Поделиться лотом",
       "subtitle": "Выберите удобный способ отправки",

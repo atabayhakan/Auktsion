@@ -1,6 +1,11 @@
 // Generated locale dictionary
 export default {
 
+  "splash": {
+      "skip": "Өткөрүп жиберүү ✕",
+      "tagline": "КЫРГЫЗСТАН • РЕАЛДУУ УБАКЫТТАГЫ АУКЦИОНДОР"
+  },
+
   "shareSheet": {
       "title": "Лот менен бөлүшүү",
       "subtitle": "Ыңгайлуу жөнөтүү ыкмасын тандаңыз",

@@ -30,11 +30,13 @@ import {
   Landmark,
   CreditCard,
   Trash2,
-  Smartphone
+  Smartphone,
+  Eye
 } from 'lucide-vue-next'
 import { useAdminStore } from '@/stores/admin'
 import { useUIStore } from '@/stores/ui'
 import { useI18n } from '@/composables/useI18n'
+import IlbirsIcon from '@/components/icons/IlbirsIcon.vue'
 import type { PlatformSettings, FeatureSettings, BankSettings } from '@/types/admin'
 
 const adminStore = useAdminStore()
@@ -44,6 +46,7 @@ const { t } = useI18n()
 const activeTab = ref<'general' | 'auction' | 'security' | 'features' | 'banks'>('general')
 const isSaving = ref(false)
 const isCleaningDemo = ref(false)
+const showSplashPreview = ref(false)
 
 const bankForm = ref<BankSettings>({
   banks: [],
@@ -116,6 +119,13 @@ const featuresForm = ref<FeatureSettings>({
     maxFileSizeMb: 25,
     allowedCategories: [],
     moderationRequired: false
+  },
+  splashScreen: {
+    enabled: true,
+    durationMs: 2000,
+    oncePerSession: true,
+    showSkipButton: true,
+    taglineText: 'КЫРГЫЗСТАН • REAL-TIME AUCTION PLATFORM'
   }
 })
 
@@ -134,11 +144,27 @@ async function loadFeatureSettings() {
   await adminStore.fetchFeatureSettings()
   if (adminStore.featureSettings) {
     featuresForm.value = JSON.parse(JSON.stringify(adminStore.featureSettings))
+    if (!featuresForm.value.splashScreen) {
+      featuresForm.value.splashScreen = {
+        enabled: true,
+        durationMs: 2000,
+        oncePerSession: true,
+        showSkipButton: true,
+        taglineText: 'КЫРГЫЗСТАН • REAL-TIME AUCTION PLATFORM'
+      }
+    }
   }
   await adminStore.fetchBankSettings()
   if (adminStore.bankSettings) {
     bankForm.value = JSON.parse(JSON.stringify(adminStore.bankSettings))
   }
+}
+
+function testSplashPreview() {
+  showSplashPreview.value = true
+  setTimeout(() => {
+    showSplashPreview.value = false
+  }, featuresForm.value.splashScreen?.durationMs || 2000)
 }
 
 async function handleSave() {
@@ -301,7 +327,7 @@ async function handleCleanupDemoData() {
         @click="activeTab = 'features'"
       >
         <Sparkles class="w-4 h-4 text-amber-500" />
-        <span>{{ t('admin.settings.tabs.features') || 'Инновационные модули & ИИ (6 функций)' }}</span>
+        <span>{{ t('admin.settings.tabs.features') || 'Инновационные модули & ИИ (7 функций)' }}</span>
       </button>
 
       <button
@@ -589,7 +615,7 @@ async function handleCleanupDemoData() {
           </div>
           <div class="mt-2 flex items-baseline gap-2">
             <span class="text-2xl font-black text-text-primary">
-              {{ [featuresForm.groupBuy.enabled, featuresForm.aiValuation.enabled, featuresForm.priceDropAlert.enabled, featuresForm.sellerComparison.enabled, featuresForm.aiAssistant.enabled, featuresForm.videoListing.enabled].filter(Boolean).length }} / 6
+              {{ [featuresForm.groupBuy.enabled, featuresForm.aiValuation.enabled, featuresForm.priceDropAlert.enabled, featuresForm.sellerComparison.enabled, featuresForm.aiAssistant.enabled, featuresForm.videoListing.enabled, featuresForm.splashScreen?.enabled].filter(Boolean).length }} / 7
             </span>
             <span class="text-xs text-text-secondary">включено</span>
           </div>
@@ -1067,6 +1093,111 @@ async function handleCleanupDemoData() {
           </div>
         </div>
 
+        <!-- 7. Splash Screen (Site Açılış Animasyonu) -->
+        <div class="bg-white rounded-2xl p-6 border border-border shadow-xs space-y-4 relative overflow-hidden transition-all md:col-span-2"
+          :class="{ 'border-primary/50 shadow-md ring-1 ring-primary/20': featuresForm.splashScreen?.enabled, 'opacity-70': !featuresForm.splashScreen?.enabled }">
+          <div class="flex items-start justify-between gap-4 pb-3 border-b border-border">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-700">
+                <Sparkles class="w-5 h-5" />
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="text-sm font-bold text-text-primary">Анимация при открытии сайта (Splash Screen)</h3>
+                  <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full"
+                    :class="featuresForm.splashScreen?.enabled ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'">
+                    {{ featuresForm.splashScreen?.enabled ? 'АКТИВЕН' : 'ОТКЛЮЧЕН' }}
+                  </span>
+                </div>
+                <p class="text-xs text-text-secondary mt-0.5">2-секундная премиум-заставка с гербом Илбирс и анимацией ауры при первом входе</p>
+              </div>
+            </div>
+            <!-- Master Toggle -->
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input v-model="featuresForm.splashScreen.enabled" type="checkbox" class="sr-only peer" />
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+            </label>
+          </div>
+
+          <p class="text-xs text-text-secondary">
+            При переходе на сайт отображается кинематографичная 2-секундная брендовая анимация. Если выключено, сайт открывается мгновенно без вступительной заставки.
+          </p>
+
+          <div class="space-y-3 pt-1">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-text-secondary mb-1">
+                  Длительность анимации
+                </label>
+                <select
+                  v-model.number="featuresForm.splashScreen.durationMs"
+                  class="w-full px-3.5 py-2.5 rounded-xl border border-border bg-black/[0.02] text-text-primary text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/40"
+                >
+                  <option :value="1500">1.5 секунды (Быстро)</option>
+                  <option :value="2000">2.0 секунды (Рекомендуется)</option>
+                  <option :value="2500">2.5 секунды (Стандарт)</option>
+                  <option :value="3000">3.0 секунды (Кинематографично)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-text-secondary mb-1">
+                  Слоган на заставке
+                </label>
+                <input
+                  v-model="featuresForm.splashScreen.taglineText"
+                  type="text"
+                  placeholder="КЫРГЫЗСТАН • REAL-TIME AUCTION PLATFORM"
+                  class="w-full px-3.5 py-2.5 rounded-xl border border-border bg-black/[0.02] text-text-primary text-xs focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+              </div>
+
+              <div class="flex items-end">
+                <button
+                  type="button"
+                  class="w-full py-2.5 px-4 rounded-xl border border-border bg-black/5 hover:bg-black/10 text-text-primary font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  @click="testSplashPreview"
+                >
+                  <Eye class="w-4 h-4 text-primary" />
+                  <span>Протестировать заставку</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div class="flex items-center justify-between p-3 rounded-xl bg-black/[0.02] border border-border">
+                <div>
+                  <span class="text-xs font-bold text-text-primary block">
+                    Показывать только 1 раз за сессию
+                  </span>
+                  <span class="text-[11px] text-text-muted">
+                    Не повторять заставку при каждом клике внутри сайта
+                  </span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input v-model="featuresForm.splashScreen.oncePerSession" type="checkbox" class="sr-only peer" />
+                  <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                </label>
+              </div>
+
+              <div class="flex items-center justify-between p-3 rounded-xl bg-black/[0.02] border border-border">
+                <div>
+                  <span class="text-xs font-bold text-text-primary block">
+                    Кнопка «Пропустить / Geç»
+                  </span>
+                  <span class="text-[11px] text-text-muted">
+                    Позволяет пользователю мгновенно пропустить заставку
+                  </span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input v-model="featuresForm.splashScreen.showSkipButton" type="checkbox" class="sr-only peer" />
+                  <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1252,5 +1383,63 @@ async function handleCleanupDemoData() {
       </div>
 
     </div>
+
+    <!-- Live Splash Screen Preview Overlay -->
+    <Teleport to="body">
+      <div 
+        v-if="showSplashPreview"
+        class="fixed inset-0 z-[9999] bg-[#0A0D14] flex flex-col items-center justify-center p-6 text-center select-none overflow-hidden animate-in fade-in duration-300"
+      >
+        <!-- Ambient radial glow -->
+        <div class="absolute inset-0 bg-radial from-amber-500/15 via-transparent to-transparent pointer-events-none" />
+
+        <!-- Skip preview button in top right -->
+        <button
+          type="button"
+          class="absolute top-6 right-6 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-md border border-white/10 transition-all cursor-pointer"
+          @click="showSplashPreview = false"
+        >
+          Пропустить ✕
+        </button>
+
+        <div class="relative z-10 flex flex-col items-center max-w-sm mx-auto space-y-6">
+          <!-- Ilbirs Emblem Box with rotating energy ring -->
+          <div class="relative flex items-center justify-center">
+            <div class="absolute -inset-3 rounded-full border border-amber-500/30 animate-spin border-t-amber-400 border-r-transparent" style="animation-duration: 3s;" />
+            <div class="absolute -inset-6 rounded-full border border-amber-500/15 animate-ping" style="animation-duration: 2.4s;" />
+            
+            <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 p-0.5 shadow-2xl shadow-amber-500/30">
+              <div class="w-full h-full rounded-[22px] bg-[#0A0D14] flex items-center justify-center p-4">
+                <IlbirsIcon class="w-full h-full text-amber-400" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Brand Typography -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-center text-3xl font-black text-white tracking-tight">
+              <span>iTorgo</span>
+              <span class="w-2 h-2 rounded-full bg-amber-500 ml-1.5 animate-pulse" />
+              <span class="text-amber-500 text-sm font-mono ml-1 font-bold">.kg</span>
+            </div>
+            <p class="text-[10px] uppercase font-mono font-bold tracking-[0.25em] text-amber-400/90">
+              {{ featuresForm.splashScreen?.taglineText || 'КЫРГЫЗСТАН • REAL-TIME AUCTION PLATFORM' }}
+            </p>
+          </div>
+
+          <!-- Animated Loading Bar -->
+          <div class="w-44 h-1.5 rounded-full bg-white/10 overflow-hidden relative">
+            <div 
+              class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full animate-pulse"
+              :style="{ width: '100%', transition: `width ${featuresForm.splashScreen?.durationMs || 2000}ms linear` }"
+            />
+          </div>
+
+          <span class="text-[11px] text-white/40 font-mono">
+            Предпросмотр: {{ ((featuresForm.splashScreen?.durationMs || 2000) / 1000).toFixed(1) }} сек
+          </span>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>

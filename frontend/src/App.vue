@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer.vue'
 import MobileBottomNav from '@/components/layout/MobileBottomNav.vue'
 import ToastContainer from '@/components/ui/ToastContainer.vue'
 import AiAssistantModal from '@/components/layout/AiAssistantModal.vue'
+import BrandSplashScreen from '@/components/common/BrandSplashScreen.vue'
 import { useFeatureStore } from '@/stores/feature'
 
 const route = useRoute()
@@ -63,6 +64,9 @@ const showMobileNav = computed(() => route.name !== 'AuctionDetail')
     
     <!-- Global Toast Container -->
     <ToastContainer />
+
+    <!-- 2-Second Cinematic Brand Splash Screen (Admin Configurable) -->
+    <BrandSplashScreen />
   </div>
 </template>
 

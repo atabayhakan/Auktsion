@@ -33,6 +33,13 @@ export interface PublicFeatureConfig {
     maxDurationSeconds: number
     maxFileSizeMb: number
   }
+  splashScreen: {
+    enabled: boolean
+    durationMs: number
+    oncePerSession: boolean
+    showSkipButton: boolean
+    taglineText?: string
+  }
 }
 
 export interface BankGateway {
@@ -147,6 +154,13 @@ export const useFeatureStore = defineStore('feature', () => {
       enabled: true,
       maxDurationSeconds: 30,
       maxFileSizeMb: 25
+    },
+    splashScreen: {
+      enabled: true,
+      durationMs: 2000,
+      oncePerSession: true,
+      showSkipButton: true,
+      taglineText: 'КЫРГЫЗСТАН • REAL-TIME AUCTION PLATFORM'
     }
   })
 
@@ -160,6 +174,14 @@ export const useFeatureStore = defineStore('feature', () => {
   const isSellerComparisonEnabled = computed(() => config.value.sellerComparison?.enabled ?? true)
   const isAiAssistantEnabled = computed(() => config.value.aiAssistant?.enabled ?? true)
   const isVideoListingEnabled = computed(() => config.value.videoListing?.enabled ?? true)
+  const isSplashScreenEnabled = computed(() => config.value.splashScreen?.enabled ?? true)
+  const splashScreenConfig = computed(() => config.value.splashScreen || {
+    enabled: true,
+    durationMs: 2000,
+    oncePerSession: true,
+    showSkipButton: true,
+    taglineText: 'КЫРГЫЗСТАН • REAL-TIME AUCTION PLATFORM'
+  })
 
   // Bank Gateways Configuration
   const banksConfig = ref<PublicBankConfig>({
@@ -291,6 +313,8 @@ export const useFeatureStore = defineStore('feature', () => {
     isSellerComparisonEnabled,
     isAiAssistantEnabled,
     isVideoListingEnabled,
+    isSplashScreenEnabled,
+    splashScreenConfig,
     banksConfig,
     activeBanks,
     hasActiveBanks,

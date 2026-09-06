@@ -421,6 +421,13 @@ export interface FeatureSettings {
     allowedCategories: string[]
     moderationRequired: boolean
   }
+  splashScreen: {
+    enabled: boolean
+    durationMs: number
+    oncePerSession: boolean
+    showSkipButton: boolean
+    taglineText: string
+  }
   updatedAt?: string
 }
 

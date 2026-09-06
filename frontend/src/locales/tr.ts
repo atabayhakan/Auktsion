@@ -1,6 +1,11 @@
 // Generated locale dictionary
 export default {
 
+  "splash": {
+      "skip": "Geç ✕",
+      "tagline": "KIRGIZİSTAN • GERÇEK ZAMANLI AÇIK ARTIRMA PLATFORMU"
+  },
+
   "shareSheet": {
       "title": "Bu Lotu Paylaş",
       "subtitle": "Paylaşmak için bir yöntem seçin",

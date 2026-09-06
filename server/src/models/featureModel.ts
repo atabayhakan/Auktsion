@@ -43,6 +43,13 @@ export interface FeatureSettings {
     allowedCategories: string[];
     moderationRequired: boolean;
   };
+  splashScreen: {
+    enabled: boolean;
+    durationMs: number;
+    oncePerSession: boolean;
+    showSkipButton: boolean;
+    taglineText: string;
+  };
   updatedAt?: string;
 }
 
@@ -78,8 +85,8 @@ export const DEFAULT_FEATURE_SETTINGS: FeatureSettings = {
   },
   aiAssistant: {
     enabled: true,
-    maxResults: 4,
-    systemPrompt: 'Сиз Кыргызстандын эң ири iTorgo аукцион жана соода платформасынын акылдуу жардамчысысыз. Колдонуучуларга товарларды табууга, бааларды салыштырууга жана сонун сунуштарды тандоого жардам бересиз. Жоопторду сылык, так жана колдонуучунун тилинде (Кыргызча, Орусча же Түркчө) бериңиз.',
+    maxResults: 6,
+    systemPrompt: 'Вы — умный персональный ассистент аукционной платформы iTorgo.kg в Кыргызстане. Помогайте покупателям находить лучшие лоты.',
     showSuggestions: true,
   },
   videoListing: {
@@ -88,6 +95,13 @@ export const DEFAULT_FEATURE_SETTINGS: FeatureSettings = {
     maxFileSizeMb: 30,
     allowedCategories: ['vehicles', 'livestock', 'real_estate', 'electronics', 'machinery'],
     moderationRequired: false,
+  },
+  splashScreen: {
+    enabled: true,
+    durationMs: 2000,
+    oncePerSession: true,
+    showSkipButton: true,
+    taglineText: 'КЫРГЫЗСТАН • REAL-TIME AUCTION PLATFORM',
   },
   updatedAt: new Date().toISOString(),
 };
@@ -109,6 +123,7 @@ export function getFeatureSettings(): FeatureSettings {
         sellerComparison: { ...DEFAULT_FEATURE_SETTINGS.sellerComparison, ...(parsed.sellerComparison || {}) },
         aiAssistant: { ...DEFAULT_FEATURE_SETTINGS.aiAssistant, ...(parsed.aiAssistant || {}) },
         videoListing: { ...DEFAULT_FEATURE_SETTINGS.videoListing, ...(parsed.videoListing || {}) },
+        splashScreen: { ...DEFAULT_FEATURE_SETTINGS.splashScreen, ...(parsed.splashScreen || {}) },
         updatedAt: row.updated_at || new Date().toISOString(),
       };
     }
@@ -128,6 +143,7 @@ export function updateFeatureSettings(newSettings: Partial<FeatureSettings>): Fe
     sellerComparison: { ...current.sellerComparison, ...(newSettings.sellerComparison || {}) },
     aiAssistant: { ...current.aiAssistant, ...(newSettings.aiAssistant || {}) },
     videoListing: { ...current.videoListing, ...(newSettings.videoListing || {}) },
+    splashScreen: { ...current.splashScreen, ...(newSettings.splashScreen || {}) },
     updatedAt: new Date().toISOString(),
   };
 
