@@ -224,6 +224,7 @@ export const useFeatureStore = defineStore('feature', () => {
   // Feature 17: AI Shopping Assistant
   async function askAiAssistant(message: string, history: Array<{ role: string; content: string }> = []): Promise<AiAssistantResponse> {
     const res = await apiClient.post<any>('/api/ai/shopping-assistant', {
+      query: message,
       message,
       history
     })

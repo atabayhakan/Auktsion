@@ -1,4 +1,4 @@
-﻿import { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { 
   getFeatureSettings, 
   updateFeatureSettings,
@@ -287,11 +287,13 @@ export async function shoppingAssistantHandler(req: Request, res: Response): Pro
       return;
     }
 
-    const { query, locale = 'ky' } = req.body;
-    if (!query || typeof query !== 'string') {
+    const rawQuery = req.body.query || req.body.message || '';
+    const locale = req.body.locale || 'ky';
+    if (!rawQuery || typeof rawQuery !== 'string' || !rawQuery.trim()) {
       res.status(400).json({ success: false, error: 'Суроо талап кылынат' });
       return;
     }
+    const query = rawQuery.trim();
 
     const db = getDatabase();
 
